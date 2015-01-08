@@ -10,4 +10,4 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ClickPartial", {
 		
 });
 
-BetaJS.Dynamics.handlerPartialRegistry.register("ba-click", BetaJS.Dynamics.ClickPartial);
+BetaJS.Dynamics.ClickPartial.register("ba-click");

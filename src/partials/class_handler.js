@@ -11,4 +11,4 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ClassPartial", {
 	
 });
 
-BetaJS.Dynamics.handlerPartialRegistry.register("ba-class", BetaJS.Dynamics.ClassPartial);
+BetaJS.Dynamics.ClassPartial.register("ba-class");

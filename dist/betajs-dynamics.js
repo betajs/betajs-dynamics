@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-01-07
+betajs-dynamics - v0.0.1 - 2015-01-08
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -57,7 +57,6 @@ BetaJS.Dynamics.Parser = {
 		var data = {};
 		BetaJS.Objs.iter(code.dependencies, function (dep) {
 			dep = dep.indexOf(".") >= 0 ? dep.substring(0, dep.indexOf(".")) : dep;
-			data[dep] = null;
 			for (var i = list.length - 1; i >= 0; --i) {
 				if (dep in list[i]) {
 					data[dep] = list[i][dep];
@@ -66,6 +65,8 @@ BetaJS.Dynamics.Parser = {
 					break;
 				}
 			}
+			if (!(dep in data) && !(dep in window))
+				data[dep] = null;
 		});
 		var result = code.func(data);
 		return result;
@@ -98,7 +99,11 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 	BetaJS.Events.ListenMixin,
 	BetaJS.Classes.ObjectIdMixin, {
 		
-	constructor: function (parent) {
+	constructor: function (options) {
+		options = BetaJS.Objs.extend({
+			parent: null
+		}, options);
+		var parent = options.parent;
 		this.__manager = parent ? parent.__manager : this._auto_destroy(new BetaJS.Scopes.ScopeManager(this));
 		this._inherited(BetaJS.Scopes.Scope, "constructor");
 		this.__parent = parent;
@@ -157,12 +162,17 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 		return this;
 	},
 	
-	get: function (key) {
-		return this.__properties.get(key, value);
+	setAll: function (obj) {
+		this.__properties.setAll(obj);
+		return this;
 	},
 	
-	define: function (name, func) {
-		this.__functions[name] = func;
+	get: function (key) {
+		return this.__properties.get(key);
+	},
+	
+	define: function (name, func, ctx) {
+		this.__functions[name] = BetaJS.Functions.as_method(func, ctx || this);
 		return this;
 	},
 	
@@ -183,7 +193,7 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 	},
 	
 	properties: function () {
-		return this.__properties();
+		return this.__properties;
 	},
 	
 	scope: function (base, query) {
@@ -360,6 +370,135 @@ BetaJS.Class.extend("BetaJS.Scopes.ScopeManager", [
 	}
 	
 }]);
+BetaJS.Dynamics.HandlerMixin = {
+	
+	_notifications: {
+		_construct: "__handlerConstruct",
+		_destruct: "__handlerDestruct"
+	},
+	
+	__handlerConstruct: function () {
+		
+	},
+	
+	__handlerDestruct: function () {
+		if (this.__rootNode)
+			this.__rootNode.destroy();
+	},
+	
+	_handlerInitialize: function (options) {
+		options = options || {};
+		this._parentHandler = options.parentHandler || null;
+		var template = options.template || this.template;
+		this.__element = options.element ? options.element : null;
+		if (template) {
+			if (this.__element)
+				BetaJS.$(this.__element).html(template);
+			else if (options.parentElement) {
+				BetaJS.$(options.parentElement).html(template);
+				this.__element = BetaJS.$(options.parentElement).find(">").get(0);
+			} else
+				this.__element = BetaJS.$(template).get(0);
+		}
+	},
+	
+	element: function () {
+		return this.__element;
+	},
+	
+	activate: function () {
+		this.__rootNode = new BetaJS.Dynamics.Node(this, null, this.__element);
+	}
+	
+		
+};
+
+BetaJS.Class.extend("BetaJS.Dynamics.Handler", [
+    BetaJS.Dynamics.HandlerMixin,
+    {
+	
+	constructor: function (options) {
+		this._inherited(BetaJS.Dynamics.Handler, "constructor");
+		options = options || {};
+		this._properties = options.properties ? options.properties : new BetaJS.Properties.Properties();
+		this.functions = {};
+		this._handlerInitialize(options);
+	},
+	
+	properties: function () {
+		return this._properties;
+	}	
+	
+}], {
+	
+	register: function (key, registry) {
+		registry = registry || BetaJS.Dynamics.handlerRegistry;
+		registry.register(key, this);
+	}
+	
+});
+
+BetaJS.Dynamics.handlerRegistry = new BetaJS.Classes.ClassRegistry();
+
+
+BetaJS.Class.extend("BetaJS.Dynamics.HandlerPartial", {
+	
+	constructor: function (node, args, value) {
+		this._inherited(BetaJS.Dynamics.HandlerPartial, "constructor");
+		this._node = node;
+		this._args = args;
+		this._value = value;
+		this._active = false;
+	},
+	
+	change: function (value, oldValue) {
+		this._change(value, oldValue);
+		this._apply(value, oldValue);
+	},
+	
+	activate: function () {
+		if (this._active)
+			return;
+		this._active = true;
+		this._activate();
+		this._apply(this._value, null);
+	},
+	
+	deactivate: function () {
+		if (!this._active)
+			return;
+		this._active = false;
+		this._deactivate();
+	},
+	
+	_change: function (value, oldValue) {},
+	
+	_activate: function () {},
+	
+	_deactivate: function () {},
+	
+	_apply: function (value, oldValue) {},
+	
+	_execute: function () {
+		var dyn = BetaJS.Dynamics.Parser.parseCode(this._value);
+		this._node.__executeDyn(dyn);
+		//eval(this._value);
+		//this._node.properties().set("yes", !this._node.properties().get("yes"));
+	}
+	
+	
+}, {
+	
+	register: function (key, registry) {
+		registry = registry || BetaJS.Dynamics.handlerPartialRegistry;
+		registry.register(key, this);
+	}
+	
+});
+
+
+BetaJS.Dynamics.handlerPartialRegistry = new BetaJS.Classes.ClassRegistry();
+
 BetaJS.Class.extend("BetaJS.Dynamics.Node", [
     BetaJS.Events.EventsMixin,
 	{
@@ -529,7 +668,7 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 				}
 			}
 		}
-		this._tagHandler.bind();
+		this._tagHandler.activate();
 		return true;
 	},
 	
@@ -608,110 +747,10 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 	},	
 		
 	properties: function () {
-		return this._handler._properties;
+		return this._handler.properties();
 	}
 	
 }]);
-
-
-
-
-BetaJS.Class.extend("BetaJS.Dynamics.Handler", {
-	
-	constructor: function (options) {
-		this._inherited(BetaJS.Dynamics.Handler, "constructor");
-		options = BetaJS.Objs.extend({
-			template: this.template,
-			autobind: true
-		}, options);
-		this.functions = {};
-		this._properties = options.properties ? options.properties : new BetaJS.Properties.Properties();
-		this._element = options.element ? options.element : null;
-		if (options.template) {
-			if (this._element)
-				BetaJS.$(this._element).html(options.template);
-			else if (options.parentElement) {
-				BetaJS.$(options.parentElement).html(options.template);
-				this._element = BetaJS.$(options.parentElement).find(">").get(0);
-			} else
-				this._element = BetaJS.$(options.template).get(0);
-		}
-		if (options.autobind)
-			this.bind();
-	},
-	
-	bind: function () {
-		this._root = new BetaJS.Dynamics.Node(this, null, this._element);
-	},
-	
-	element: function () {
-		return this._element;
-	},
-	
-	properties: function () {
-		return this._properties;
-	},
-	
-	destroy: function () {
-		this._root.destroy();
-		this._inherited(BetaJS.Dynamics.Handler, "destroy");
-	}	
-	
-});
-
-BetaJS.Dynamics.handlerRegistry = new BetaJS.Classes.ClassRegistry();
-
-
-BetaJS.Class.extend("BetaJS.Dynamics.HandlerPartial", {
-	
-	constructor: function (node, args, value) {
-		this._inherited(BetaJS.Dynamics.HandlerPartial, "constructor");
-		this._node = node;
-		this._args = args;
-		this._value = value;
-		this._active = false;
-	},
-	
-	change: function (value, oldValue) {
-		this._change(value, oldValue);
-		this._apply(value, oldValue);
-	},
-	
-	activate: function () {
-		if (this._active)
-			return;
-		this._active = true;
-		this._activate();
-		this._apply(this._value, null);
-	},
-	
-	deactivate: function () {
-		if (!this._active)
-			return;
-		this._active = false;
-		this._deactivate();
-	},
-	
-	_change: function (value, oldValue) {},
-	
-	_activate: function () {},
-	
-	_deactivate: function () {},
-	
-	_apply: function (value, oldValue) {},
-	
-	_execute: function () {
-		var dyn = BetaJS.Dynamics.Parser.parseCode(this._value);
-		this._node.__executeDyn(dyn);
-		//eval(this._value);
-		//this._node.properties().set("yes", !this._node.properties().get("yes"));
-	}
-	
-	
-});
-
-
-BetaJS.Dynamics.handlerPartialRegistry = new BetaJS.Classes.ClassRegistry();
 
 BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ClassPartial", {
 	
@@ -726,7 +765,7 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ClassPartial", {
 	
 });
 
-BetaJS.Dynamics.handlerPartialRegistry.register("ba-class", BetaJS.Dynamics.ClassPartial);
+BetaJS.Dynamics.ClassPartial.register("ba-class");
 
 BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ClickPartial", {
 	
@@ -740,7 +779,7 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ClickPartial", {
 		
 });
 
-BetaJS.Dynamics.handlerPartialRegistry.register("ba-click", BetaJS.Dynamics.ClickPartial);
+BetaJS.Dynamics.ClickPartial.register("ba-click");
 
 BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.IfPartial", {
 	
@@ -753,7 +792,7 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.IfPartial", {
 	
 });
 
-BetaJS.Dynamics.handlerPartialRegistry.register("ba-if", BetaJS.Dynamics.IfPartial);
+BetaJS.Dynamics.IfPartial.register("ba-if");
 
 BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.RepeatPartial", {
 	
@@ -814,8 +853,7 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.RepeatPartial", {
 	
 });
 
-BetaJS.Dynamics.handlerPartialRegistry.register("ba-repeat", BetaJS.Dynamics.RepeatPartial);
-
+BetaJS.Dynamics.RepeatPartial.register("ba-repeat");
 BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ShowPartial", {
 	
 	_apply: function (value) {
@@ -827,5 +865,23 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ShowPartial", {
 	
 });
 
-BetaJS.Dynamics.handlerPartialRegistry.register("ba-show", BetaJS.Dynamics.ShowPartial);
-
+BetaJS.Dynamics.ShowPartial.register("ba-show");
+BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
+	BetaJS.Dynamics.HandlerMixin, 
+	{
+	
+	constructor: function (options) {
+		options = options || {};
+		if (!options.parent && options._parentHandler) {
+			var ph = options._parentHandler;
+			while (ph && !options.parent) {
+				options.parent = ph.instance_of(BetaJS.Dynamics.Dynamic) ? ph.parent() : null;
+				ph = ph._parentHandler;
+			}
+		}
+		this._inherited(BetaJS.Dynamics.Dynamic, "constructor", options);
+		this.functions = this.__functions;
+		this._handlerInitialize(options);
+	}
+		
+}]);

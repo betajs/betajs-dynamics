@@ -52,7 +52,6 @@ BetaJS.Dynamics.Parser = {
 		var data = {};
 		BetaJS.Objs.iter(code.dependencies, function (dep) {
 			dep = dep.indexOf(".") >= 0 ? dep.substring(0, dep.indexOf(".")) : dep;
-			data[dep] = null;
 			for (var i = list.length - 1; i >= 0; --i) {
 				if (dep in list[i]) {
 					data[dep] = list[i][dep];
@@ -61,6 +60,8 @@ BetaJS.Dynamics.Parser = {
 					break;
 				}
 			}
+			if (!(dep in data) && !(dep in window))
+				data[dep] = null;
 		});
 		var result = code.func(data);
 		return result;

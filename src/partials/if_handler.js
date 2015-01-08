@@ -9,4 +9,4 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.IfPartial", {
 	
 });
 
-BetaJS.Dynamics.handlerPartialRegistry.register("ba-if", BetaJS.Dynamics.IfPartial);
+BetaJS.Dynamics.IfPartial.register("ba-if");

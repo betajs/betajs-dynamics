@@ -47,11 +47,14 @@
 		</div>
 		<script>
 			BetaJS.Dynamics.Handler.extend("BetaJS.Dynamics.CuteHandler", {template: $("#cute").html()});
-			BetaJS.Dynamics.handlerRegistry.register("ba-cute", BetaJS.Dynamics.CuteHandler);
+			BetaJS.Dynamics.CuteHandler.register("ba-cute");
 			BetaJS.Dynamics.Handler.extend("BetaJS.Dynamics.FoobarHandler", {template: $("#foobar").html()});
-			BetaJS.Dynamics.handlerRegistry.register("ba-foobar", BetaJS.Dynamics.FoobarHandler);
+			BetaJS.Dynamics.FoobarHandler.register("ba-foobar");
 		
-			var props = new BetaJS.Properties.Properties({
+			var dynamic = new BetaJS.Dynamics.Dynamic({
+				element: $("#go").get(0),
+			});
+			dynamic.setAll({
 				text: "Hello World",
 				showing: true,
 				yes: false,
@@ -62,14 +65,11 @@
 					{ key: "def" }
 				]})
 			});
-			var dynamic = new BetaJS.Dynamics.Handler({
-				element: $("#go").get(0),
-				properties: props
+			dynamic.activate();
+			dynamic.define("gogo", function () {
+				this.set("yes", !this.get("yes"));
 			});
-			dynamic.functions.gogo = function () {
-				props.set("yes", !props.get("yes"));
-			};
-			props.set("text", "abc");
+			dynamic.set("text", "abc");
 		</script>
 	</body>
 </html>

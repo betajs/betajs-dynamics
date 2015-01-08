@@ -3,7 +3,11 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 	BetaJS.Events.ListenMixin,
 	BetaJS.Classes.ObjectIdMixin, {
 		
-	constructor: function (parent) {
+	constructor: function (options) {
+		options = BetaJS.Objs.extend({
+			parent: null
+		}, options);
+		var parent = options.parent;
 		this.__manager = parent ? parent.__manager : this._auto_destroy(new BetaJS.Scopes.ScopeManager(this));
 		this._inherited(BetaJS.Scopes.Scope, "constructor");
 		this.__parent = parent;
@@ -62,12 +66,17 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 		return this;
 	},
 	
-	get: function (key) {
-		return this.__properties.get(key, value);
+	setAll: function (obj) {
+		this.__properties.setAll(obj);
+		return this;
 	},
 	
-	define: function (name, func) {
-		this.__functions[name] = func;
+	get: function (key) {
+		return this.__properties.get(key);
+	},
+	
+	define: function (name, func, ctx) {
+		this.__functions[name] = BetaJS.Functions.as_method(func, ctx || this);
 		return this;
 	},
 	
@@ -88,7 +97,7 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 	},
 	
 	properties: function () {
-		return this.__properties();
+		return this.__properties;
 	},
 	
 	scope: function (base, query) {

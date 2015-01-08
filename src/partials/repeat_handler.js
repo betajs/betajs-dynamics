@@ -57,4 +57,4 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.RepeatPartial", {
 	
 });
 
-BetaJS.Dynamics.handlerPartialRegistry.register("ba-repeat", BetaJS.Dynamics.RepeatPartial);
+BetaJS.Dynamics.RepeatPartial.register("ba-repeat");

@@ -9,4 +9,4 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ShowPartial", {
 	
 });
 
-BetaJS.Dynamics.handlerPartialRegistry.register("ba-show", BetaJS.Dynamics.ShowPartial);
+BetaJS.Dynamics.ShowPartial.register("ba-show");

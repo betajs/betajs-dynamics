@@ -1,0 +1,75 @@
+<html>
+	<head>
+		<script src="assets/jquery.js"></script>
+		<script src="assets/beta.js"></script>
+		<script>BetaJS.$ = $;</script>
+		<script src="../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+	<style>
+	.a {background-color: blue}
+	.b {background-color: red}
+	</style>
+		<script type="text/template" id="cute">
+			<div style="border: 1px solid green">
+				<p>I am as cute as a button</p>
+				<button>{{title}}</button>
+				<input type="text" value="{{=title}}" />
+			</div>
+		</script>
+		<script type="text/template" id="foobar">
+			<div style="background: red">
+				Foobarina: {{title}}
+			</div>
+		</script>
+		<div id="go">
+			<input type="text" value="{{=dir}}" />
+			<button ba-click="gogo()">Click me</button>
+			<p ba-class="{{{a: yes}}}">
+				This is the {{text}}.
+			</p>
+			<p ba-if="{{showing}}" class="{{superclass}}">
+				Yo: {{text + " -- " + text}}
+			</p>
+			<input type="text" class="{{superclass}}" value="{{=text}}" />
+			<ul ba-repeat="{{item :: items}}">
+				<li>{{item}}<ul ba-repeat="{{inner :: item}}">
+					<li>Go now: {{text}} -- {{item}} -- {{inner}} <input type="text" class="{{superclass}}" value="{{=text}}" /></li>
+				</ul></li>
+			</ul>
+			<ul ba-repeat="{{sub :: subs}}">
+				<li>test: {{sub.key}} <input type="text" value="{{=sub.key}}" /></li>
+			</ul>
+			<ul ba-repeat="{{sub :: subs}}">
+				<ba-{{dir}} ba-title="{{=sub.key}}">
+				</ba-{{dir}}>
+			</ul>
+		</div>
+		<script>
+			BetaJS.Dynamics.Handler.extend("BetaJS.Dynamics.CuteHandler", {template: $("#cute").html()});
+			BetaJS.Dynamics.handlerRegistry.register("ba-cute", BetaJS.Dynamics.CuteHandler);
+			BetaJS.Dynamics.Handler.extend("BetaJS.Dynamics.FoobarHandler", {template: $("#foobar").html()});
+			BetaJS.Dynamics.handlerRegistry.register("ba-foobar", BetaJS.Dynamics.FoobarHandler);
+		
+			var props = new BetaJS.Properties.Properties({
+				text: "Hello World",
+				showing: true,
+				yes: false,
+				dir: "foobar",
+				items: [[1,2],[2,3],[3,4]],
+				subs: new BetaJS.Collections.Collection({objects: [
+					{ key: "abc" },
+					{ key: "def" }
+				]})
+			});
+			var dynamic = new BetaJS.Dynamics.Handler({
+				element: $("#go").get(0),
+				properties: props
+			});
+			dynamic.functions.gogo = function () {
+				props.set("yes", !props.get("yes"));
+			};
+			props.set("text", "abc");
+		</script>
+	</body>
+</html>

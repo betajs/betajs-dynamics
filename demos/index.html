@@ -13,13 +13,13 @@
 		<script type="text/template" id="cute">
 			<div style="border: 1px solid green">
 				<p>I am as cute as a button</p>
-				<button>{{title}}</button>
+				<button>{{title}}</button> {{other}}
 				<input type="text" value="{{=title}}" />
 			</div>
 		</script>
 		<script type="text/template" id="foobar">
 			<div style="background: red">
-				Foobarina: {{title}}
+				Foobarina: {{title}} {{other}}
 			</div>
 		</script>
 		<div id="go">
@@ -46,15 +46,15 @@
 			</ul>
 		</div>
 		<script>
-			BetaJS.Dynamics.Handler.extend("BetaJS.Dynamics.CuteHandler", {template: $("#cute").html()});
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.CuteHandler", {template: $("#cute").html()});
 			BetaJS.Dynamics.CuteHandler.register("ba-cute");
-			BetaJS.Dynamics.Handler.extend("BetaJS.Dynamics.FoobarHandler", {template: $("#foobar").html()});
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.FoobarHandler", {template: $("#foobar").html()});
 			BetaJS.Dynamics.FoobarHandler.register("ba-foobar");
 		
-			var dynamic = new BetaJS.Dynamics.Dynamic({
+			var mainDynamic = new BetaJS.Dynamics.Dynamic({
 				element: $("#go").get(0),
 			});
-			dynamic.setAll({
+			mainDynamic.setAll({
 				text: "Hello World",
 				showing: true,
 				yes: false,
@@ -65,11 +65,11 @@
 					{ key: "def" }
 				]})
 			});
-			dynamic.activate();
-			dynamic.define("gogo", function () {
+			mainDynamic.activate();
+			mainDynamic.define("gogo", function () {
 				this.set("yes", !this.get("yes"));
 			});
-			dynamic.set("text", "abc");
+			mainDynamic.set("text", "abc");
 		</script>
 	</body>
 </html>

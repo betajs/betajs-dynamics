@@ -145,6 +145,7 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 			return false;
 		this._tagHandler = BetaJS.Dynamics.handlerRegistry.create(tagv, {
 			parentElement: this._$element.get(0),
+			parentHandler: this._handler,
 			autobind: false
 		});
 		this._$element.append(this._tagHandler.element());

@@ -110,8 +110,6 @@ BetaJS.Class.extend("BetaJS.Dynamics.HandlerPartial", {
 	_execute: function () {
 		var dyn = BetaJS.Dynamics.Parser.parseCode(this._value);
 		this._node.__executeDyn(dyn);
-		//eval(this._value);
-		//this._node.properties().set("yes", !this._node.properties().get("yes"));
 	}
 	
 	

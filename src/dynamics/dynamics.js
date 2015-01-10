@@ -4,10 +4,10 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 	
 	constructor: function (options) {
 		options = options || {};
-		if (!options.parent && options._parentHandler) {
-			var ph = options._parentHandler;
+		if (!options.parent && options.parentHandler) {
+			var ph = options.parentHandler;
 			while (ph && !options.parent) {
-				options.parent = ph.instance_of(BetaJS.Dynamics.Dynamic) ? ph.parent() : null;
+				options.parent = ph.instance_of(BetaJS.Dynamics.Dynamic) ? ph : null;
 				ph = ph._parentHandler;
 			}
 		}
@@ -16,4 +16,11 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 		this._handlerInitialize(options);
 	}
 		
-}]);
+}], {
+	
+	register: function (key, registry) {
+		registry = registry || BetaJS.Dynamics.handlerRegistry;
+		registry.register(key, this);
+	}
+
+});

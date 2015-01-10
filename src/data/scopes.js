@@ -33,7 +33,8 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 		});
 		this.__properties.destroy();
 		if (this.__parent)
-			this.__parent.remove(this);
+			this.__parent.__remove(this);
+		this.trigger("destroy");
 		this._inherited(BetaJS.Scopes.Scope, "destroy");
 	},
 	
@@ -107,7 +108,7 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 		}
 		if (!query)
 			return base;
-		if (base && base.instanceOf(BetaJS.Scopes.MultiScope))
+		if (base && base.instance_of(BetaJS.Scopes.MultiScope))
 			base = base.iterator().next();
 		if (!base)
 			return base;
@@ -118,7 +119,7 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 	},
 	
 	bind: function (scope, key, options) {
-		if (scope.instanceOf(BetaJS.Scopes.MultiScope)) {
+		if (scope.instance_of(BetaJS.Scopes.MultiScope)) {
 			var iter = scope.iterator();
 			while (iter.hasNext())
 				this.properties().bind(key, iter.next().properties(), options);
@@ -153,7 +154,7 @@ BetaJS.Class.extend("BetaJS.Scopes.MultiScope", [
 			scope.off(null, null, this);
 			this.trigger("removescope", scope);
 		}, this);
-		BetaJS.Objs.iterate(this.__query.result(), function (scope) {
+		BetaJS.Objs.iter(this.__query.result(), function (scope) {
 			this.delegateEvents(null, scope);
 		}, this);
 	},
@@ -258,7 +259,7 @@ BetaJS.Class.extend("BetaJS.Scopes.ScopeManager", [
 			func.call(context, "data");
 		}, context);
 		node.on("add", function (child) {
-			func.call(context, "add", child);
+			func.call(context, "addChild", child);
 		}, context);
 		node.on("destroy", function () {
 			func.call(context, "remove");
@@ -269,7 +270,7 @@ BetaJS.Class.extend("BetaJS.Scopes.ScopeManager", [
 		node.off(null, null, context);
 	},
 	
-	_query: function (scope, query) {
+	query: function (scope, query) {
 		return this.__query.query(scope, query);
 	}
 	

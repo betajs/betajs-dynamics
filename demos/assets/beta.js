@@ -1,5 +1,5 @@
 /*!
-betajs - v1.0.0 - 2015-01-06
+betajs - v1.0.0 - 2015-01-10
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -2782,7 +2782,7 @@ BetaJS.Properties.PropertiesMixin = {
 	__properties_guid: "ec816b66-7284-43b1-a945-0600c6abfde3",
 	
 	set: function (key, value) {
-		if (BetaJS.Types.is_object(value) && value.guid == this.__properties_guid) {
+		if (BetaJS.Types.is_object(value) && value && value.guid == this.__properties_guid) {
 			if (value.properties)
 				this.bind(key, value.properties, {secondKey: value.key});
 			if (value.func)
@@ -4114,7 +4114,7 @@ BetaJS.Class.extend("BetaJS.Trees.TreeQueryObject", [
 		var owner = partial.owner;
 		var node = owner.node;
 		var node_id = this.__navigator.nodeId(node);
-		if (partial.partial_final) {
+		if (partial.partial_final && this.__result[node_id]) {
 			this.__result[node_id].count--;
 			if (this.__result[node_id].count <= 0) {
 				delete this.__result[node_id];
@@ -4147,15 +4147,13 @@ BetaJS.Class.extend("BetaJS.Trees.TreeQueryObject", [
 		var node = partial.owner.node;
 		var node_id = this.__navigator.nodeId(node);
 		var node_data = this.__navigator.nodeData(node);
-		if (!partial.partial_final) {
-			for (var i = partial.query_index_start; i < partial.query_index_last; ++i) {
-				var q = this.__query[i];
-				if (q.token != "Selector")
-					break;
-				if (node_data[q.key] != q.value) {
-					matching = false;
-					break;
-				}
+		for (var i = partial.query_index_start; i < partial.query_index_last; ++i) {
+			var q = this.__query[i];
+			if (q.token != "Selector")
+				break;
+			if (node_data[q.key] != q.value) {
+				matching = false;
+				break;
 			}
 		}
 		if (matching == partial.partial_match)
@@ -4219,10 +4217,10 @@ BetaJS.Class.extend("BetaJS.Channels.Receiver", [
 }]);
 
 
-BetaJS.Channels.Sender.extend("BetaJS.Channels.ReveiverSender", {
+BetaJS.Channels.Sender.extend("BetaJS.Channels.ReceiverSender", {
 	
 	constructor: function (receiver) {
-		this._inherited(BetaJS.Channels.ReveiverSender, "constructor");
+		this._inherited(BetaJS.Channels.ReceiverSender, "constructor");
 		this.__receiver = receiver;
 	},
 	
@@ -4467,7 +4465,7 @@ BetaJS.Class.extend("BetaJS.RMI.Skeleton", {
 	},
 	
 	invoke: function (message, data) {
-		if (!(this._intf[message] || this._intfSync[message]))
+		if (!(this._intf[message]))
 			return BetaJS.Promise.error(message);
 		try {
 			var result = this[message].apply(this, data);
@@ -4622,7 +4620,7 @@ BetaJS.Class.extend("BetaJS.RMI.Client", {
 		var self = this;
 		instance.__send = function (message, data) {
 			return self.__channel.send(instance_name + ":" + message, data).mapSuccess(function (result) {
-				return BetaJS.Types.is_object(result) && result.__rmi_meta ? this.acquire(result.__rmi_stub, result.__rmi_stub_id) : result;
+				return result && result.__rmi_meta ? this.acquire(result.__rmi_stub, result.__rmi_stub_id) : result;
 			}, self);
 		};
 		return instance;		

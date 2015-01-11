@@ -3,7 +3,7 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 	{
 	
 	constructor: function (options) {
-		options = options || {};
+		options = BetaJS.Objs.extend(this.initial, options);
 		if (!options.parent && options.parentHandler) {
 			var ph = options.parentHandler;
 			while (ph && !options.parent) {
@@ -14,6 +14,8 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 		this._inherited(BetaJS.Dynamics.Dynamic, "constructor", options);
 		this.functions = this.__functions;
 		this._handlerInitialize(options);
+		if (options.create)
+			options.create.apply(this);
 	}
 		
 }], {

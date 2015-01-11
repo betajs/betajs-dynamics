@@ -5,7 +5,11 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 		
 	constructor: function (options) {
 		options = BetaJS.Objs.extend({
-			parent: null
+			functions: {},
+			data: {},
+			parent: null,
+			scopes: {},
+			bind: {}
 		}, options);
 		var parent = options.parent;
 		this.__manager = parent ? parent.__manager : this._auto_destroy(new BetaJS.Scopes.ScopeManager(this));
@@ -17,11 +21,18 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 		this.__properties.on("change", function (key, value, oldValue) {
 			this.trigger("change:" + key, value, oldValue);
 		}, this);
-		this.__functions = {};
+		this.__functions = options.functions;
 		this.__scopes = {};
-		this.__data = {};
+		this.__data = options.data;
 		if (parent)
 			parent.__add(this);
+		this.scopes = BetaJS.Objs.map(options.scopes, function (key) {
+			return this.scope(key);
+		}, this);
+		BetaJS.Objs.iter(options.bind, function (value, key) {
+			var i = value.indexOf(":");
+			this.bind(this.scope(value.substring(0, i)), key, {secondKey: value.substring(i + 1)});
+		}, this);
 	},
 	
 	destroy: function () {
@@ -145,6 +156,7 @@ BetaJS.Class.extend("BetaJS.Scopes.MultiScope", [
 		this._inherited(BetaJS.Scopes.MultiScope, "constructor");
 		this.__owner = owner;
 		this.__base = base;
+		this.__queryStr = query;
 		this.__query = this.__owner.__manager.query(this.__owner, query);
 		this.__query.on("add", function (scope) {
 			this.delegateEvents(null, scope);
@@ -157,6 +169,7 @@ BetaJS.Class.extend("BetaJS.Scopes.MultiScope", [
 		BetaJS.Objs.iter(this.__query.result(), function (scope) {
 			this.delegateEvents(null, scope);
 		}, this);
+		this.__freeze = false;
 	},
 	
 	destroy: function () {
@@ -195,14 +208,14 @@ BetaJS.Class.extend("BetaJS.Scopes.MultiScope", [
 		var result = null;
 		while (iter.hasNext()) {
 			var obj = iter.next();
-			var local = obj.call.apply(obj, BetaJS.Functions.getArguments(arguments, 1));
+			var local = obj.call.apply(obj, arguments);
 			result = result || local;
 		}
 		return result;		
 	},
 	
 	parent: function () {
-		return this.__owner.scope(this.__base, this.__query + "<");
+		return this.__owner.scope(this.__base, this.__queryStr + "<");
 	},
 	
 	root: function () {
@@ -210,15 +223,24 @@ BetaJS.Class.extend("BetaJS.Scopes.MultiScope", [
 	},
 	
 	children: function () {
-		return this.__owner.scope(this.__base, this.__query + ">");
+		return this.__owner.scope(this.__base, this.__queryStr + ">");
 	},
 	
 	scope: function (base, query) {
 		if (arguments.length < 2) 
-			return this.__owner.scope(this.__base, this.__query + query);
+			return this.__owner.scope(this.__base, this.__queryStr + query);
 		else
 			return this.__owner.scope(base, query);
-	}		
+	},
+	
+	materialize: function (returnFirst) {
+		return returnFirst ? this.iterator().next() : this.iterator().asArray();
+	},
+	
+	freeze: function () {
+		this.__freeze = true;
+		this.__query.off("add", null, this);
+	}
 	
 }]);
 
@@ -243,7 +265,7 @@ BetaJS.Class.extend("BetaJS.Scopes.ScopeManager", [
 	},
 	
 	nodeParent: function (node) {
-		return node.parent;
+		return node.__parent;
 	},
 	
 	nodeChildren: function (node) {

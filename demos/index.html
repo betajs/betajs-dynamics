@@ -6,10 +6,15 @@
 		<script src="../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
-	<style>
-	.a {background-color: blue}
-	.b {background-color: red}
-	</style>
+		<style>
+			.a {background-color: blue}
+			.b {background-color: red}
+		</style>
+		<script type="text/template" id="statusbar">
+			<div style="background: gray; border: 1px solid blue; margin: 10px; padding: 10px">
+				Status: {{status}} -- {{other}}
+			</div>
+		</script>
 		<script type="text/template" id="cute">
 			<div style="border: 1px solid green">
 				<p>I am as cute as a button</p>
@@ -23,6 +28,8 @@
 			</div>
 		</script>
 		<div id="go">
+			<ba-statusbar ba-status="{{=text}}">
+			</ba-statusbar>
 			<input type="text" value="{{=dir}}" />
 			<button ba-click="gogo()">Click me</button>
 			<p ba-class="{{{a: yes}}}">
@@ -31,6 +38,8 @@
 			<p ba-if="{{showing}}" class="{{superclass}}">
 				Yo: {{text + " -- " + text}}
 			</p>
+			<ba-statusbar>
+			</ba-statusbar>
 			<input type="text" class="{{superclass}}" value="{{=text}}" />
 			<ul ba-repeat="{{item :: items}}">
 				<li>{{item}}<ul ba-repeat="{{inner :: item}}">
@@ -46,10 +55,34 @@
 			</ul>
 		</div>
 		<script>
-			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.CuteHandler", {template: $("#cute").html()});
-			BetaJS.Dynamics.CuteHandler.register("ba-cute");
-			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.FoobarHandler", {template: $("#foobar").html()});
-			BetaJS.Dynamics.FoobarHandler.register("ba-foobar");
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.StatusBar", {
+				template: $("#statusbar").html(),
+				initial: {
+					data: {
+						label: "statusbb"
+					},
+					create: function () {
+					},
+					functions: {
+						message: function (text) {
+							this.set("status", text);
+							document.title = text;
+						}
+					},
+					scopes: {
+						my_parent: "<"
+					},
+					bind: {
+						other: "<:dir"
+					}
+				}
+			}).register("ba-statusbar");
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.CuteHandler", {
+				template: $("#cute").html()
+			}).register("ba-cute");
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.FoobarHandler", {
+				template: $("#foobar").html()
+			}).register("ba-foobar");
 		
 			var mainDynamic = new BetaJS.Dynamics.Dynamic({
 				element: $("#go").get(0),
@@ -70,6 +103,10 @@
 				this.set("yes", !this.get("yes"));
 			});
 			mainDynamic.set("text", "abc");
+			
+			var statusbar = mainDynamic.scope(">[label='statusbb']");
+			statusbar.freeze();
+			statusbar.call("message", "test test test");
 		</script>
 	</body>
 </html>

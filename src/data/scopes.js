@@ -9,7 +9,9 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 			data: {},
 			parent: null,
 			scopes: {},
-			bind: {}
+			bind: {},
+			attrs: {},
+			collections: {}
 		}, options);
 		var parent = options.parent;
 		this.__manager = parent ? parent.__manager : this._auto_destroy(new BetaJS.Scopes.ScopeManager(this));
@@ -24,6 +26,10 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 		this.__functions = options.functions;
 		this.__scopes = {};
 		this.__data = options.data;
+		this.setAll(options.attrs);
+		BetaJS.Objs.iter(options.collections, function (value, key) {
+			this.set(key, new BetaJS.Collections.Collection(value));
+		}, this);
 		if (parent)
 			parent.__add(this);
 		this.scopes = BetaJS.Objs.map(options.scopes, function (key) {

@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-01-10
+betajs-dynamics - v0.0.1 - 2015-01-17
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -105,7 +105,9 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 			data: {},
 			parent: null,
 			scopes: {},
-			bind: {}
+			bind: {},
+			attrs: {},
+			collections: {}
 		}, options);
 		var parent = options.parent;
 		this.__manager = parent ? parent.__manager : this._auto_destroy(new BetaJS.Scopes.ScopeManager(this));
@@ -120,6 +122,10 @@ BetaJS.Class.extend("BetaJS.Scopes.Scope", [
 		this.__functions = options.functions;
 		this.__scopes = {};
 		this.__data = options.data;
+		this.setAll(options.attrs);
+		BetaJS.Objs.iter(options.collections, function (value, key) {
+			this.set(key, new BetaJS.Collections.Collection(value));
+		}, this);
 		if (parent)
 			parent.__add(this);
 		this.scopes = BetaJS.Objs.map(options.scopes, function (key) {
@@ -414,15 +420,31 @@ BetaJS.Dynamics.HandlerMixin = {
 		this._parentHandler = options.parentHandler || null;
 		var template = options.template || this.template;
 		this.__element = options.element ? options.element : null;
-		if (template) {
-			if (this.__element)
-				BetaJS.$(this.__element).html(template);
-			else if (options.parentElement) {
-				BetaJS.$(options.parentElement).html(template);
-				this.__element = BetaJS.$(options.parentElement).find(">").get(0);
+		if (template)
+			this._handlerInitializeTemplate(template, options.parentElement);
+		else {
+			var templateUrl = options.templateUrl || this.templateUrl;
+			if (templateUrl) {
+				this.__deferActivate = true;
+				BetaJS.Browser.Loader.loadHtml(templateUrl, function (template) {
+					this.__deferActivate = false;
+					this._handlerInitializeTemplate(template, options.parentElement);
+					if (this.__deferedActivate)
+						this.activate();
+				}, this);
 			} else
-				this.__element = BetaJS.$(template).get(0);
+				this._handlerInitializeTemplate(template, options.parentElement);
 		}
+	},
+	
+	_handlerInitializeTemplate: function (template, parentElement) {
+		if (this.__element)
+			BetaJS.$(this.__element).html(template);
+		else if (parentElement) {
+			BetaJS.$(parentElement).html(template);
+			this.__element = BetaJS.$(parentElement).find(">").get(0);
+		} else
+			this.__element = BetaJS.$(template).get(0);
 	},
 	
 	element: function () {
@@ -430,6 +452,10 @@ BetaJS.Dynamics.HandlerMixin = {
 	},
 	
 	activate: function () {
+		if (this.__deferActivate) {
+			this.__deferedActivate = true;
+			return;
+		}			
 		this.__rootNode = new BetaJS.Dynamics.Node(this, null, this.__element);
 	}
 	
@@ -628,7 +654,10 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 	},
 	
 	__executeDyn: function (dyn) {
-		return BetaJS.Dynamics.Parser.executeCode(dyn, [this.properties().data(), this._locals, this._handler.functions]);
+		var funcs = BetaJS.Objs.map(this._handler.functions, function (f) {
+			return BetaJS.Functions.as_method(f, this._handler);
+		}, this);
+		return BetaJS.Dynamics.Parser.executeCode(dyn, [this.properties().data(), this._locals, funcs]);
 	},
 	
 	__updateAttr: function (attr) {
@@ -876,6 +905,21 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.RepeatPartial", {
 });
 
 BetaJS.Dynamics.RepeatPartial.register("ba-repeat");
+BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ReturnPartial", {
+	
+	constructor: function (node, args, value) {
+		this._inherited(BetaJS.Dynamics.ReturnPartial, "constructor", node, args, value);
+		var self = this;
+		this._node._$element.on("keypress", function (event) {
+			if (event.which === 13)
+				self._execute();
+		});        
+	}
+		
+});
+
+BetaJS.Dynamics.ReturnPartial.register("ba-return");
+
 BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ShowPartial", {
 	
 	_apply: function (value) {
@@ -913,6 +957,12 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 	register: function (key, registry) {
 		registry = registry || BetaJS.Dynamics.handlerRegistry;
 		registry.register(key, this);
+	},
+	
+	activate: function (options) {
+		var dyn = new this(options);
+		dyn.activate();
+		return dyn;
 	}
 
 });

@@ -19,15 +19,31 @@ BetaJS.Dynamics.HandlerMixin = {
 		this._parentHandler = options.parentHandler || null;
 		var template = options.template || this.template;
 		this.__element = options.element ? options.element : null;
-		if (template) {
-			if (this.__element)
-				BetaJS.$(this.__element).html(template);
-			else if (options.parentElement) {
-				BetaJS.$(options.parentElement).html(template);
-				this.__element = BetaJS.$(options.parentElement).find(">").get(0);
+		if (template)
+			this._handlerInitializeTemplate(template, options.parentElement);
+		else {
+			var templateUrl = options.templateUrl || this.templateUrl;
+			if (templateUrl) {
+				this.__deferActivate = true;
+				BetaJS.Browser.Loader.loadHtml(templateUrl, function (template) {
+					this.__deferActivate = false;
+					this._handlerInitializeTemplate(template, options.parentElement);
+					if (this.__deferedActivate)
+						this.activate();
+				}, this);
 			} else
-				this.__element = BetaJS.$(template).get(0);
+				this._handlerInitializeTemplate(template, options.parentElement);
 		}
+	},
+	
+	_handlerInitializeTemplate: function (template, parentElement) {
+		if (this.__element)
+			BetaJS.$(this.__element).html(template);
+		else if (parentElement) {
+			BetaJS.$(parentElement).html(template);
+			this.__element = BetaJS.$(parentElement).find(">").get(0);
+		} else
+			this.__element = BetaJS.$(template).get(0);
 	},
 	
 	element: function () {
@@ -35,6 +51,10 @@ BetaJS.Dynamics.HandlerMixin = {
 	},
 	
 	activate: function () {
+		if (this.__deferActivate) {
+			this.__deferedActivate = true;
+			return;
+		}			
 		this.__rootNode = new BetaJS.Dynamics.Node(this, null, this.__element);
 	}
 	

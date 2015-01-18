@@ -23,6 +23,12 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 	register: function (key, registry) {
 		registry = registry || BetaJS.Dynamics.handlerRegistry;
 		registry.register(key, this);
+	},
+	
+	activate: function (options) {
+		var dyn = new this(options);
+		dyn.activate();
+		return dyn;
 	}
 
 });

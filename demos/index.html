@@ -2,7 +2,7 @@
 	<head>
 		<script src="assets/jquery.js"></script>
 		<script src="assets/beta.js"></script>
-		<script>BetaJS.$ = $;</script>
+		<script src="assets/beta-browser.js"></script>
 		<script src="../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
@@ -10,11 +10,6 @@
 			.a {background-color: blue}
 			.b {background-color: red}
 		</style>
-		<script type="text/template" id="statusbar">
-			<div style="background: gray; border: 1px solid blue; margin: 10px; padding: 10px">
-				Status: {{status}} -- {{other}}
-			</div>
-		</script>
 		<script type="text/template" id="cute">
 			<div style="border: 1px solid green">
 				<p>I am as cute as a button</p>
@@ -56,7 +51,7 @@
 		</div>
 		<script>
 			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.StatusBar", {
-				template: $("#statusbar").html(),
+				templateUrl: "status_bar_template.html",
 				initial: {
 					data: {
 						label: "statusbb"

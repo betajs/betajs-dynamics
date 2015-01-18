@@ -106,7 +106,10 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 	},
 	
 	__executeDyn: function (dyn) {
-		return BetaJS.Dynamics.Parser.executeCode(dyn, [this.properties().data(), this._locals, this._handler.functions]);
+		var funcs = BetaJS.Objs.map(this._handler.functions, function (f) {
+			return BetaJS.Functions.as_method(f, this._handler);
+		}, this);
+		return BetaJS.Dynamics.Parser.executeCode(dyn, [this.properties().data(), this._locals, funcs]);
 	},
 	
 	__updateAttr: function (attr) {

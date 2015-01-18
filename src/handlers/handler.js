@@ -10,15 +10,16 @@ BetaJS.Dynamics.HandlerMixin = {
 	},
 	
 	__handlerDestruct: function () {
-		if (this.__rootNode)
-			this.__rootNode.destroy();
+		BetaJS.Objs.iter(this.__rootNodes, function (node) {
+			node.destroy();
+		});
 	},
 	
 	_handlerInitialize: function (options) {
 		options = options || {};
 		this._parentHandler = options.parentHandler || null;
 		var template = options.template || this.template;
-		this.__element = options.element ? options.element : null;
+		this.__element = options.element ? BetaJS.$(options.element) : null;
 		if (template)
 			this._handlerInitializeTemplate(template, options.parentElement);
 		else {
@@ -38,12 +39,12 @@ BetaJS.Dynamics.HandlerMixin = {
 	
 	_handlerInitializeTemplate: function (template, parentElement) {
 		if (this.__element)
-			BetaJS.$(this.__element).html(template);
+			this.__element.html(template);
 		else if (parentElement) {
 			BetaJS.$(parentElement).html(template);
-			this.__element = BetaJS.$(parentElement).find(">").get(0);
+			this.__element = BetaJS.$(parentElement).find(">");
 		} else
-			this.__element = BetaJS.$(template).get(0);
+			this.__element = BetaJS.$(template);
 	},
 	
 	element: function () {
@@ -55,7 +56,11 @@ BetaJS.Dynamics.HandlerMixin = {
 			this.__deferedActivate = true;
 			return;
 		}			
-		this.__rootNode = new BetaJS.Dynamics.Node(this, null, this.__element);
+		this.__rootNodes = [];
+		var self = this;
+		this.__element.each(function () {
+			self.__rootNodes.push(new BetaJS.Dynamics.Node(self, null, this));
+		});		
 	}
 	
 		

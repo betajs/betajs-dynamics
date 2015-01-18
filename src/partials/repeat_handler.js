@@ -31,6 +31,12 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.RepeatPartial", {
 			this.__collection.on("add", function (item) {
 				this.__collection_map[item.cid()] = this.__appendItem(item);
 			}, this);
+			this.__collection.on("remove", function (item) {
+				var ele = this.__collection_map[item.cid()].$element();
+				this.__collection_map[item.cid()].destroy();
+				delete this.__collection_map[item.cid()];
+				ele.remove();
+			}, this);
 		}
 	},
 	
@@ -50,9 +56,8 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.RepeatPartial", {
 		var element = this._node._$element.find(">:last").get(0);
 		var locals = {};
 		if (this._args)
-			locals[this._args] = value;
-		this._node._registerChild(element, locals);
-		return element;
+			locals[this._args] = value;		
+		return this._node._registerChild(element, locals);
 	}
 	
 });

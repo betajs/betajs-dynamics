@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-01-17
+betajs-dynamics - v0.0.1 - 2015-01-18
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -295,7 +295,7 @@ BetaJS.Class.extend("BetaJS.Scopes.MultiScope", [
 	
 	get: function (key) {
 		var iter = this.iterator();
-		return iter.hasNext() ? iter.next().get(key, value) : null;
+		return iter.hasNext() ? iter.next().get(key) : null;
 	},
 	
 	define: function (name, func) {
@@ -411,15 +411,16 @@ BetaJS.Dynamics.HandlerMixin = {
 	},
 	
 	__handlerDestruct: function () {
-		if (this.__rootNode)
-			this.__rootNode.destroy();
+		BetaJS.Objs.iter(this.__rootNodes, function (node) {
+			node.destroy();
+		});
 	},
 	
 	_handlerInitialize: function (options) {
 		options = options || {};
 		this._parentHandler = options.parentHandler || null;
 		var template = options.template || this.template;
-		this.__element = options.element ? options.element : null;
+		this.__element = options.element ? BetaJS.$(options.element) : null;
 		if (template)
 			this._handlerInitializeTemplate(template, options.parentElement);
 		else {
@@ -439,12 +440,12 @@ BetaJS.Dynamics.HandlerMixin = {
 	
 	_handlerInitializeTemplate: function (template, parentElement) {
 		if (this.__element)
-			BetaJS.$(this.__element).html(template);
+			this.__element.html(template);
 		else if (parentElement) {
 			BetaJS.$(parentElement).html(template);
-			this.__element = BetaJS.$(parentElement).find(">").get(0);
+			this.__element = BetaJS.$(parentElement).find(">");
 		} else
-			this.__element = BetaJS.$(template).get(0);
+			this.__element = BetaJS.$(template);
 	},
 	
 	element: function () {
@@ -456,7 +457,11 @@ BetaJS.Dynamics.HandlerMixin = {
 			this.__deferedActivate = true;
 			return;
 		}			
-		this.__rootNode = new BetaJS.Dynamics.Node(this, null, this.__element);
+		this.__rootNodes = [];
+		var self = this;
+		this.__element.each(function () {
+			self.__rootNodes.push(new BetaJS.Dynamics.Node(self, null, this));
+		});		
 	}
 	
 		
@@ -600,6 +605,14 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 		if (this._parent)
 			delete this._parent._children[BetaJS.Ids.objectId(this)];
 		this._inherited(BetaJS.Dynamics.Node, "destroy");
+	},
+	
+	element: function () {
+		return this._element;
+	},
+	
+	$element: function () {
+		return this._$element;
 	},
 	
 	__propGet: function (ns) {
@@ -878,6 +891,12 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.RepeatPartial", {
 			this.__collection.on("add", function (item) {
 				this.__collection_map[item.cid()] = this.__appendItem(item);
 			}, this);
+			this.__collection.on("remove", function (item) {
+				var ele = this.__collection_map[item.cid()].$element();
+				this.__collection_map[item.cid()].destroy();
+				delete this.__collection_map[item.cid()];
+				ele.remove();
+			}, this);
 		}
 	},
 	
@@ -897,9 +916,8 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.RepeatPartial", {
 		var element = this._node._$element.find(">:last").get(0);
 		var locals = {};
 		if (this._args)
-			locals[this._args] = value;
-		this._node._registerChild(element, locals);
-		return element;
+			locals[this._args] = value;		
+		return this._node._registerChild(element, locals);
 	}
 	
 });

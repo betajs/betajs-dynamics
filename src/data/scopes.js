@@ -199,7 +199,7 @@ BetaJS.Class.extend("BetaJS.Scopes.MultiScope", [
 	
 	get: function (key) {
 		var iter = this.iterator();
-		return iter.hasNext() ? iter.next().get(key, value) : null;
+		return iter.hasNext() ? iter.next().get(key) : null;
 	},
 	
 	define: function (name, func) {

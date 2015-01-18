@@ -54,6 +54,14 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 		this._inherited(BetaJS.Dynamics.Node, "destroy");
 	},
 	
+	element: function () {
+		return this._element;
+	},
+	
+	$element: function () {
+		return this._$element;
+	},
+	
 	__propGet: function (ns) {
 		var p = ns.indexOf(".");
 		var head = p >= 0 ? ns.substring(0, p) : ns;

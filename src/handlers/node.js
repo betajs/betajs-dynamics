@@ -157,7 +157,8 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 		this._tagHandler = BetaJS.Dynamics.handlerRegistry.create(tagv, {
 			parentElement: this._$element.get(0),
 			parentHandler: this._handler,
-			autobind: false
+			autobind: false,
+			tagName: tagv
 		});
 		this._$element.append(this._tagHandler.element());
 		for (var key in this._attrs) {
@@ -195,7 +196,8 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 		}
 		var registered = this.__registerTagHandler(); 
         if (!registered && this._expandChildren) {
-			this._$element.html(this._innerTemplate);
+        	if (this._restoreInnerTemplate)
+        		this._$element.html(this._innerTemplate);
 			if (this._element.nodeType == this._element.TEXT_NODE) {
 				this._dyn = BetaJS.Dynamics.Parser.parseText(this._element.textContent);
 				if (this._dyn) {
@@ -237,10 +239,12 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 	},
 	
 	deactivate: function () {
-		if (this._locked || !this._active)
+		if (!this._active)
+			return;
+		this._active = false;
+		if (this._locked)
 			return;
 		this._locked = true;
-		this._active = false;
 		for (var key in this._attrs) {
 			if (this._attrs[key].partial)
 				this._attrs[key].partial.deactivate();
@@ -254,6 +258,7 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 			this._dyn = null;
 		}
 		this._$element.html("");
+		this._restoreInnerTemplate = true;
 		this._locked = false;
 	},	
 		

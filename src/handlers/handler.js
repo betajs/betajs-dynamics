@@ -32,8 +32,8 @@ BetaJS.Dynamics.HandlerMixin = {
 					if (this.__deferedActivate)
 						this.activate();
 				}, this);
-			} else
-				this._handlerInitializeTemplate(template, options.parentElement);
+			} /*else
+				this._handlerInitializeTemplate(template, options.parentElement);*/
 		}
 	},
 	

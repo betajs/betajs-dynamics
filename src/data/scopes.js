@@ -232,11 +232,12 @@ BetaJS.Class.extend("BetaJS.Scopes.MultiScope", [
 		return this.__owner.scope(this.__base, this.__queryStr + ">");
 	},
 	
-	scope: function (base, query) {
-		if (arguments.length < 2) 
-			return this.__owner.scope(this.__base, this.__queryStr + query);
-		else
-			return this.__owner.scope(base, query);
+	scope: function (base, query) {		
+		if (arguments.length < 2) {
+			query = this.__queryStr + base;
+			base = this.__base;
+		} 
+		return this.__owner.scope(base, query);
 	},
 	
 	materialize: function (returnFirst) {

@@ -12,6 +12,10 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 			}
 		}
 		this._inherited(BetaJS.Dynamics.Dynamic, "constructor", options);
+		if (options.tagName) {
+			this._tagName = options.tagName;
+			this.data("tagname", this._tagName);
+		}
 		this.functions = this.__functions;
 		this._handlerInitialize(options);
 		if (options.create)
@@ -26,7 +30,7 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 	},
 	
 	activate: function (options) {
-		var dyn = new this(options);
+		var dyn = new this(options || {element: document.body});
 		dyn.activate();
 		return dyn;
 	}

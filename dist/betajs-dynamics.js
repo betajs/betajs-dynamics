@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-01-18
+betajs-dynamics - v0.0.1 - 2015-01-24
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -328,11 +328,12 @@ BetaJS.Class.extend("BetaJS.Scopes.MultiScope", [
 		return this.__owner.scope(this.__base, this.__queryStr + ">");
 	},
 	
-	scope: function (base, query) {
-		if (arguments.length < 2) 
-			return this.__owner.scope(this.__base, this.__queryStr + query);
-		else
-			return this.__owner.scope(base, query);
+	scope: function (base, query) {		
+		if (arguments.length < 2) {
+			query = this.__queryStr + base;
+			base = this.__base;
+		} 
+		return this.__owner.scope(base, query);
 	},
 	
 	materialize: function (returnFirst) {
@@ -433,8 +434,8 @@ BetaJS.Dynamics.HandlerMixin = {
 					if (this.__deferedActivate)
 						this.activate();
 				}, this);
-			} else
-				this._handlerInitializeTemplate(template, options.parentElement);
+			} /*else
+				this._handlerInitializeTemplate(template, options.parentElement);*/
 		}
 	},
 	
@@ -710,7 +711,8 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 		this._tagHandler = BetaJS.Dynamics.handlerRegistry.create(tagv, {
 			parentElement: this._$element.get(0),
 			parentHandler: this._handler,
-			autobind: false
+			autobind: false,
+			tagName: tagv
 		});
 		this._$element.append(this._tagHandler.element());
 		for (var key in this._attrs) {
@@ -748,7 +750,8 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 		}
 		var registered = this.__registerTagHandler(); 
         if (!registered && this._expandChildren) {
-			this._$element.html(this._innerTemplate);
+        	if (this._restoreInnerTemplate)
+        		this._$element.html(this._innerTemplate);
 			if (this._element.nodeType == this._element.TEXT_NODE) {
 				this._dyn = BetaJS.Dynamics.Parser.parseText(this._element.textContent);
 				if (this._dyn) {
@@ -790,10 +793,12 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 	},
 	
 	deactivate: function () {
-		if (this._locked || !this._active)
+		if (!this._active)
+			return;
+		this._active = false;
+		if (this._locked)
 			return;
 		this._locked = true;
-		this._active = false;
 		for (var key in this._attrs) {
 			if (this._attrs[key].partial)
 				this._attrs[key].partial.deactivate();
@@ -807,6 +812,7 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 			this._dyn = null;
 		}
 		this._$element.html("");
+		this._restoreInnerTemplate = true;
 		this._locked = false;
 	},	
 		
@@ -857,6 +863,17 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.IfPartial", {
 });
 
 BetaJS.Dynamics.IfPartial.register("ba-if");
+
+BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.IgnorePartial", {
+			
+	constructor: function (node, args, value) {
+		this._inherited(BetaJS.Dynamics.IgnorePartial, "constructor", node, args, value);
+		node.deactivate();
+	}
+	
+});
+
+BetaJS.Dynamics.IgnorePartial.register("ba-ignore");
 
 BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.RepeatPartial", {
 	
@@ -964,6 +981,10 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 			}
 		}
 		this._inherited(BetaJS.Dynamics.Dynamic, "constructor", options);
+		if (options.tagName) {
+			this._tagName = options.tagName;
+			this.data("tagname", this._tagName);
+		}
 		this.functions = this.__functions;
 		this._handlerInitialize(options);
 		if (options.create)
@@ -978,7 +999,7 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 	},
 	
 	activate: function (options) {
-		var dyn = new this(options);
+		var dyn = new this(options || {element: document.body});
 		dyn.activate();
 		return dyn;
 	}

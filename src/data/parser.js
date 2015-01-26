@@ -50,20 +50,68 @@ BetaJS.Dynamics.Parser = {
 		if (BetaJS.Types.is_string(code))
 			return code;
 		var data = {};
+		var has = function (scope, key) {
+			var keys = key ? key.split(".") : [];
+			for (var i = 0; i < keys.length; ++i) {
+		       if (!scope || !BetaJS.Types.is_object(scope))
+		    	   return false;
+		       if (BetaJS.Properties.Properties.is_instance_of(scope))
+		    	   scope = scope.data();
+		       scope = scope[keys[i]];
+		    }
+			return BetaJS.Types.is_defined(scope);
+		};
+		var read = function (scope, key) {
+			var keys = key ? key.split(".") : [];
+			for (var i = 0; i < keys.length; ++i) {
+		       if (!scope || !BetaJS.Types.is_object(scope))
+		    	   return null;
+		       if (BetaJS.Properties.Properties.is_instance_of(scope))
+		    	   scope = scope.data();
+		       scope = scope[keys[i]];
+		    }
+	       if (BetaJS.Properties.Properties.is_instance_of(scope))
+	    	   scope = scope.data();
+			return scope;
+		};
+		var write = function (scope, key, value) {
+			if (!key)
+				return;
+			var keys = key.split(".");
+			for (var i = 0; i < keys.length - 1; ++i) {
+		       if (BetaJS.Properties.Properties.is_instance_of(scope)) {		    	   
+		    	   scope.set(keys.splice(i).join("."), value);
+		    	   return;
+		       }
+			   if (!(keys[i] in scope) || !BetaJS.Types.is_object(scope[keys[i]]))
+					scope[keys[i]] = {};
+		       scope = scope[keys[i]];
+		    }
+	        if (BetaJS.Properties.Properties.is_instance_of(scope))
+	    	    scope.set(keys[keys.length - 1], value);
+	        else
+	        	scope[keys[keys.length - 1]] = value;
+		};
 		BetaJS.Objs.iter(code.dependencies, function (dep) {
-			dep = dep.indexOf(".") >= 0 ? dep.substring(0, dep.indexOf(".")) : dep;
 			for (var i = list.length - 1; i >= 0; --i) {
-				if (dep in list[i]) {
-					data[dep] = list[i][dep];
-					if (data[dep] && BetaJS.Properties.Properties.is_instance_of(data[dep]))
-						data[dep] = data[dep].data();
+				if (has(list[i], dep)) {
+					write(data, dep, read(list[i], dep));
 					break;
 				}
 			}
+			dep = (dep.split("."))[0];
 			if (!(dep in data) && !(dep in window))
-				data[dep] = null;
+				write(data, dep, null);
 		});
 		var result = code.func(data);
+		BetaJS.Objs.iter(code.dependencies, function (dep) {
+			for (var i = list.length - 1; i >= 0; --i) {
+				if (i === 0 || has(list[i], dep)) {
+					write(list[i], dep, read(data, dep));
+					break;
+				}
+			}
+		});
 		return result;
 	},
 	

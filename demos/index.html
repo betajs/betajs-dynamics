@@ -9,6 +9,7 @@
 		<style>
 			.a {background-color: blue}
 			.b {background-color: red}
+			.c {border: 10px solid green}
 		</style>
 		<script type="text/template" id="cute">
 			<div style="border: 1px solid green">
@@ -26,8 +27,9 @@
 			<ba-statusbar ba-status="{{=text}}">
 			</ba-statusbar>
 			<input type="text" value="{{=dir}}" />
-			<button ba-click="gogo()">Click me</button>
-			<p ba-class="{{{a: yes}}}">
+			<button ba-click="yes = !yes">Click me (direct code)</button>
+			<button ba-click="gogo()">Click me (method)</button>
+			<p ba-class="{{{a: yes, c: yo}}}">
 				This is the {{text}}.
 			</p>
 			<p ba-if="{{showing}}" class="{{superclass}}">
@@ -86,6 +88,7 @@
 				text: "Hello World",
 				showing: true,
 				yes: false,
+				yo: false,
 				dir: "foobar",
 				items: [[1,2],[2,3],[3,4]],
 				subs: new BetaJS.Collections.Collection({objects: [
@@ -95,7 +98,7 @@
 			});
 			mainDynamic.activate();
 			mainDynamic.define("gogo", function () {
-				this.set("yes", !this.get("yes"));
+				this.set("yo", !this.get("yo"));
 			});
 			mainDynamic.set("text", "abc");
 			

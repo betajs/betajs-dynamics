@@ -42,6 +42,7 @@
 				<li>{{item}}<ul ba-repeat="{{inner :: item}}">
 					<li>Go now: {{text}} -- {{item}} -- {{inner}} <input type="text" class="{{superclass}}" value="{{=text}}" /></li>
 				</ul></li>
+				<li>And even a second item: {{text}}</li>
 			</ul>
 			<ul ba-repeat="{{sub :: subs}}">
 				<li>test: {{sub.key}} <input type="text" value="{{=sub.key}}" /></li>

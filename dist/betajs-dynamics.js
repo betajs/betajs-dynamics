@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-01-25
+betajs-dynamics - v0.0.1 - 2015-01-29
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -957,10 +957,12 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.RepeatPartial", {
 				this.__collection_map[item.cid()] = this.__appendItem(item);
 			}, this);
 			this.__collection.on("remove", function (item) {
-				var ele = this.__collection_map[item.cid()].$element();
-				this.__collection_map[item.cid()].destroy();
+				BetaJS.Objs.iter(this.__collection_map[item.cid()], function (entry) {
+					var ele = entry.$element();
+					entry.destroy();
+					ele.remove();
+				}, this);
 				delete this.__collection_map[item.cid()];
-				ele.remove();
 			}, this);
 		}
 	},
@@ -977,12 +979,16 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.RepeatPartial", {
 	},
 	
 	__appendItem: function (value) {
-		this._node._$element.append(this._node._innerTemplate);			
-		var element = this._node._$element.find(">:last").get(0);
+		var elements = BetaJS.$(this._node._innerTemplate.trim()).appendTo(this._node._$element);			
 		var locals = {};
 		if (this._args)
-			locals[this._args] = value;		
-		return this._node._registerChild(element, locals);
+			locals[this._args] = value;	
+		var result = [];
+		var self = this;
+		elements.each(function () {
+			result.push(self._node._registerChild(this, locals));
+		});
+		return result;
 	}
 	
 });

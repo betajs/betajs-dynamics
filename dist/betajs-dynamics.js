@@ -104,8 +104,8 @@ BetaJS.Dynamics.Parser = {
 					break;
 				}
 			}
-			dep = (dep.split("."))[0];
-			if (!(dep in data) && !(dep in window))
+			var dep_head = (dep.split("."))[0];
+			if (!(dep_head in data) && !(dep_head in window))
 				write(data, dep, null);
 		});
 		var result = code.func(data);

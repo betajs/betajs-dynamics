@@ -31,10 +31,11 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 				this.__initializeAttr(element.attributes[i]);
 		}
 		this._locked = false;
-		if (this._active) {
-			this._active = false;
+		this._active = !this._active;
+		if (this._active)
+			this.deactivate();
+		else
 			this.activate();
-		}
 	},
 	
 	destroy: function () {

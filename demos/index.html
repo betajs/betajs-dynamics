@@ -29,10 +29,11 @@
 			<input type="text" value="{{=dir}}" />
 			<button ba-click="yes = !yes">Click me (direct code)</button>
 			<button ba-click="gogo()">Click me (method)</button>
+			<button ba-click="showing = !showing">If</button>
 			<p ba-class="{{{a: yes, c: yo}}}">
 				This is the {{text}}.
 			</p>
-			<p ba-if="{{showing}}" class="{{superclass}}">
+			<p ba-if="{{!showing}}" class="{{superclass}}">
 				Yo: {{text + " -- " + text}}
 			</p>
 			<ba-statusbar>

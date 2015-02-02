@@ -105,6 +105,7 @@ BetaJS.Class.extend("BetaJS.Dynamics.HandlerPartial", {
 	},
 	
 	change: function (value, oldValue) {
+		this._value = value;
 		this._change(value, oldValue);
 		this._apply(value, oldValue);
 	},

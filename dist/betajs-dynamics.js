@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-01-29
+betajs-dynamics - v0.0.1 - 2015-02-02
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -555,6 +555,7 @@ BetaJS.Class.extend("BetaJS.Dynamics.HandlerPartial", {
 	},
 	
 	change: function (value, oldValue) {
+		this._value = value;
 		this._change(value, oldValue);
 		this._apply(value, oldValue);
 	},
@@ -633,10 +634,11 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 				this.__initializeAttr(element.attributes[i]);
 		}
 		this._locked = false;
-		if (this._active) {
-			this._active = false;
+		this._active = !this._active;
+		if (this._active)
+			this.deactivate();
+		else
 			this.activate();
-		}
 	},
 	
 	destroy: function () {
@@ -900,6 +902,12 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ClickPartial", {
 BetaJS.Dynamics.ClickPartial.register("ba-click");
 
 BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.IfPartial", {
+	
+	constructor: function (node, args, value) {
+		this._inherited(BetaJS.Dynamics.IfPartial, "constructor", node, args, value);
+		if (!value)
+			node.deactivate();
+	},
 	
 	_apply: function (value) {
 		if (value)

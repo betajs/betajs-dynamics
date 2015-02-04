@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-02-02
+betajs-dynamics - v0.0.1 - 2015-02-04
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -629,6 +629,7 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 		this._locked = true;
 		this._attrs = {};
 		this._expandChildren = true;
+		this._touchedInner = false;
 		if (element.attributes) {
 			for (var i = 0; i < element.attributes.length; ++i)
 				this.__initializeAttr(element.attributes[i]);
@@ -802,6 +803,7 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
         if (!registered && this._expandChildren) {
         	if (this._restoreInnerTemplate)
         		this._$element.html(this._innerTemplate);
+        	this._touchedInner = true;
 			if (this._element.nodeType == this._element.TEXT_NODE) {
 				this._dyn = BetaJS.Dynamics.Parser.parseText(this._element.textContent);
 				if (this._dyn) {
@@ -861,7 +863,8 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 			this.__dynOff(this._dyn);
 			this._dyn = null;
 		}
-		this._$element.html("");
+		if (this._touchedInner)
+			this._$element.html("");
 		this._restoreInnerTemplate = true;
 		this._locked = false;
 	},	

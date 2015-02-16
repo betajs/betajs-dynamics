@@ -3,7 +3,7 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 	{
 	
 	constructor: function (options) {
-		options = BetaJS.Objs.extend(this.initial, options);
+		options = BetaJS.Objs.extend(BetaJS.Objs.clone(this.initial, 1), options);
 		if (!options.parent && options.parentHandler) {
 			var ph = options.parentHandler;
 			while (ph && !options.parent) {
@@ -27,6 +27,7 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 	register: function (key, registry) {
 		registry = registry || BetaJS.Dynamics.handlerRegistry;
 		registry.register(key, this);
+		return this;
 	},
 	
 	activate: function (options) {

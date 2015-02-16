@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-02-04
+betajs-dynamics - v0.0.1 - 2015-02-15
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -60,9 +60,10 @@ BetaJS.Dynamics.Parser = {
 			for (var i = 0; i < keys.length; ++i) {
 		       if (!scope || !BetaJS.Types.is_object(scope))
 		    	   return false;
+		       var alternative = {};
 		       if (BetaJS.Properties.Properties.is_instance_of(scope))
-		    	   scope = scope.data();
-		       scope = scope[keys[i]];
+		    	   alternative = scope.data();
+		       scope = scope[keys[i]] || alternative[keys[i]];
 		    }
 			return BetaJS.Types.is_defined(scope);
 		};
@@ -71,17 +72,18 @@ BetaJS.Dynamics.Parser = {
 			for (var i = 0; i < keys.length; ++i) {
 		       if (!scope || !BetaJS.Types.is_object(scope))
 		    	   return null;
+		       var alternative = {};
 		       if (BetaJS.Properties.Properties.is_instance_of(scope))
-		    	   scope = scope.data();
-		       scope = scope[keys[i]];
+		    	   alternative = scope.data();
+		       scope = scope[keys[i]] || alternative[keys[i]];
 		    }
-	       if (BetaJS.Properties.Properties.is_instance_of(scope))
-	    	   scope = scope.data();
+	       /*if (BetaJS.Properties.Properties.is_instance_of(scope))
+	    	   scope = scope.data();*/
 			return scope;
 		};
 		var write = function (scope, key, value) {
 			if (!key)
-				return;
+				return;			
 			var keys = key.split(".");
 			for (var i = 0; i < keys.length - 1; ++i) {
 		       if (BetaJS.Properties.Properties.is_instance_of(scope)) {		    	   

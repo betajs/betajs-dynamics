@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-02-15
+betajs-dynamics - v0.0.1 - 2015-02-16
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -877,6 +877,24 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 	
 }]);
 
+BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ShowPartial", {
+	
+	constructor: function (node, args, value) {
+		this._inherited(BetaJS.Dynamics.ShowPartial, "constructor", node, args, value);
+		if (!value)
+			node._$element.hide();
+	},
+	
+	_apply: function (value) {
+		if (value)
+			this._node._$element.show();
+		else
+			this._node._$element.hide();
+	}
+	
+});
+
+BetaJS.Dynamics.ShowPartial.register("ba-show");
 BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ClassPartial", {
 	
 	_apply: function (value) {
@@ -906,7 +924,7 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ClickPartial", {
 
 BetaJS.Dynamics.ClickPartial.register("ba-click");
 
-BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.IfPartial", {
+BetaJS.Dynamics.ShowPartial.extend("BetaJS.Dynamics.IfPartial", {
 	
 	constructor: function (node, args, value) {
 		this._inherited(BetaJS.Dynamics.IfPartial, "constructor", node, args, value);
@@ -915,6 +933,7 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.IfPartial", {
 	},
 	
 	_apply: function (value) {
+		this._inherited(BetaJS.Dynamics.IfPartial, "_apply", value);
 		if (value)
 			this._node.activate();
 		else
@@ -1022,18 +1041,6 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ReturnPartial", {
 
 BetaJS.Dynamics.ReturnPartial.register("ba-return");
 
-BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ShowPartial", {
-	
-	_apply: function (value) {
-		if (value)
-			this._node._$element.show();
-		else
-			this._node._$element.hide();
-	}
-	
-});
-
-BetaJS.Dynamics.ShowPartial.register("ba-show");
 BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 	BetaJS.Dynamics.HandlerMixin, 
 	{

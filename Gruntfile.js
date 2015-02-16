@@ -13,6 +13,7 @@ module.exports = function(grunt) {
 				src : [
 					'src/data/*.js',
 					'src/handlers/*.js',
+					'src/partials/show_handler.js',
 					'src/partials/*.js',
 					'src/dynamics/*.js'
 				]

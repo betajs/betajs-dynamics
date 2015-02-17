@@ -31,7 +31,7 @@
 			<button ba-click="gogo()">Click me (method)</button>
 			<button ba-click="showing = !showing">If</button>
 			<p ba-class="{{{a: yes, c: yo}}}">
-				This is the {{text}}.
+				This is the {{text}}. {{prop.tester}}, {{obj.tester}}, {{prop.foobar}}
 			</p>
 			<p ba-if="{{!showing}}" class="{{superclass}}">
 				Yo: {{text + " -- " + text}}
@@ -96,6 +96,8 @@
 			});
 			mainDynamic.setAll({
 				text: "Hello World",
+				prop: new BetaJS.Properties.Properties({tester: "propprop"}),
+				obj: {tester: "objobj"},
 				showing: true,
 				yes: false,
 				yo: false,
@@ -106,6 +108,7 @@
 					{ key: "def" }
 				]})
 			});
+			mainDynamic.get("prop").foobar = "yowza";
 			mainDynamic.activate();
 			mainDynamic.define("gogo", function () {
 				this.set("yo", !this.get("yo"));

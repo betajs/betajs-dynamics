@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-02-04
+betajs-dynamics - v0.0.1 - 2015-02-16
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -60,9 +60,10 @@ BetaJS.Dynamics.Parser = {
 			for (var i = 0; i < keys.length; ++i) {
 		       if (!scope || !BetaJS.Types.is_object(scope))
 		    	   return false;
+		       var alternative = {};
 		       if (BetaJS.Properties.Properties.is_instance_of(scope))
-		    	   scope = scope.data();
-		       scope = scope[keys[i]];
+		    	   alternative = scope.data();
+		       scope = scope[keys[i]] || alternative[keys[i]];
 		    }
 			return BetaJS.Types.is_defined(scope);
 		};
@@ -71,17 +72,18 @@ BetaJS.Dynamics.Parser = {
 			for (var i = 0; i < keys.length; ++i) {
 		       if (!scope || !BetaJS.Types.is_object(scope))
 		    	   return null;
+		       var alternative = {};
 		       if (BetaJS.Properties.Properties.is_instance_of(scope))
-		    	   scope = scope.data();
-		       scope = scope[keys[i]];
+		    	   alternative = scope.data();
+		       scope = scope[keys[i]] || alternative[keys[i]];
 		    }
-	       if (BetaJS.Properties.Properties.is_instance_of(scope))
-	    	   scope = scope.data();
+	       /*if (BetaJS.Properties.Properties.is_instance_of(scope))
+	    	   scope = scope.data();*/
 			return scope;
 		};
 		var write = function (scope, key, value) {
 			if (!key)
-				return;
+				return;			
 			var keys = key.split(".");
 			for (var i = 0; i < keys.length - 1; ++i) {
 		       if (BetaJS.Properties.Properties.is_instance_of(scope)) {		    	   
@@ -727,7 +729,7 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 	
 	__updateAttr: function (attr) {
 		var value = attr.dyn ? this.__executeDyn(attr.dyn) : attr.value;
-		if (value != attr.value) {
+		if (value != attr.value && !(!value && !attr.value)) {
 			var old = attr.value;
 			attr.value = value;
 			attr.domAttr.value = value;
@@ -875,6 +877,24 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 	
 }]);
 
+BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ShowPartial", {
+	
+	constructor: function (node, args, value) {
+		this._inherited(BetaJS.Dynamics.ShowPartial, "constructor", node, args, value);
+		if (!value)
+			node._$element.hide();
+	},
+	
+	_apply: function (value) {
+		if (value)
+			this._node._$element.show();
+		else
+			this._node._$element.hide();
+	}
+	
+});
+
+BetaJS.Dynamics.ShowPartial.register("ba-show");
 BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ClassPartial", {
 	
 	_apply: function (value) {
@@ -904,7 +924,7 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ClickPartial", {
 
 BetaJS.Dynamics.ClickPartial.register("ba-click");
 
-BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.IfPartial", {
+BetaJS.Dynamics.ShowPartial.extend("BetaJS.Dynamics.IfPartial", {
 	
 	constructor: function (node, args, value) {
 		this._inherited(BetaJS.Dynamics.IfPartial, "constructor", node, args, value);
@@ -913,6 +933,7 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.IfPartial", {
 	},
 	
 	_apply: function (value) {
+		this._inherited(BetaJS.Dynamics.IfPartial, "_apply", value);
 		if (value)
 			this._node.activate();
 		else
@@ -1020,24 +1041,12 @@ BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ReturnPartial", {
 
 BetaJS.Dynamics.ReturnPartial.register("ba-return");
 
-BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ShowPartial", {
-	
-	_apply: function (value) {
-		if (value)
-			this._node._$element.show();
-		else
-			this._node._$element.hide();
-	}
-	
-});
-
-BetaJS.Dynamics.ShowPartial.register("ba-show");
 BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 	BetaJS.Dynamics.HandlerMixin, 
 	{
 	
 	constructor: function (options) {
-		options = BetaJS.Objs.extend(this.initial, options);
+		options = BetaJS.Objs.extend(BetaJS.Objs.clone(this.initial, 1), options);
 		if (!options.parent && options.parentHandler) {
 			var ph = options.parentHandler;
 			while (ph && !options.parent) {
@@ -1061,6 +1070,7 @@ BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
 	register: function (key, registry) {
 		registry = registry || BetaJS.Dynamics.handlerRegistry;
 		registry.register(key, this);
+		return this;
 	},
 	
 	activate: function (options) {

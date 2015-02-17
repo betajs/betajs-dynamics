@@ -23,7 +23,7 @@
 				Foobarina: {{title}} {{other}}
 			</div>
 		</script>
-		<div id="go">
+		<go>
 			<ba-statusbar ba-status="{{=text}}">
 			</ba-statusbar>
 			<input type="text" value="{{=dir}}" />
@@ -41,6 +41,7 @@
 			<input type="text" class="{{superclass}}" value="{{=text}}" />
 			<ul ba-repeat="{{item :: items}}">
 				<li>{{item}}<ul ba-repeat="{{inner :: item}}">
+					<div ba-repeat="{{ite :: item}}"></div>
 					<li>Go now: {{text}} -- {{item}} -- {{inner}} <input type="text" class="{{superclass}}" value="{{=text}}" /></li>
 				</ul></li>
 				<li>And even a second item: {{text}}</li>
@@ -52,13 +53,16 @@
 				<ba-{{dir}} ba-title="{{=sub.key}}">
 				</ba-{{dir}}>
 			</ul>
-		</div>
+		</go>
 		<script>
 			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.StatusBar", {
-				templateUrl: "status_bar_template.html",
+				templateUrl: "assets/status_bar_template.html",
 				initial: {
 					data: {
 						label: "statusbb"
+					},
+					attrs: {
+						items: [1,2,3,4]
 					},
 					create: function () {
 					},
@@ -84,15 +88,19 @@
 			}).register("ba-foobar");
 		
 			var mainDynamic = new BetaJS.Dynamics.Dynamic({
-				element: $("#go").get(0),
+				element: $("go").get(0),
+				attrs: {
+//					items: [[1,2],[2,3],[3,4]]
+					items: [1,2,3,4]
+				}
 			});
 			mainDynamic.setAll({
 				text: "Hello World",
 				showing: true,
 				yes: false,
 				yo: false,
-				dir: "foobar",
-				items: [[1,2],[2,3],[3,4]],
+				dir: "foobar2",
+//				items: [[1,2],[2,3],[3,4]],
 				subs: new BetaJS.Collections.Collection({objects: [
 					{ key: "abc" },
 					{ key: "def" }

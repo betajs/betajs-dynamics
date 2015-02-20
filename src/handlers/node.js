@@ -65,11 +65,21 @@ BetaJS.Class.extend("BetaJS.Dynamics.Node", [
 	},
 	
 	__propGet: function (ns) {
+		/*
 		var p = ns.indexOf(".");
 		var head = p >= 0 ? ns.substring(0, p) : ns;
 		var tail = p >= 0 ? ns.substring(p + 1) : null;
 		if (tail && head in this._locals && BetaJS.Properties.Properties.is_instance_of(this._locals[head]))
 			return {props: this._locals[head], key: tail};
+		return {props: this.properties(), key: ns};*/
+		var list = [this.properties(), this._locals];
+		for (var i = list.length - 1; i >= 0; --i) {
+			if (BetaJS.Properties.Meshes.meshHas(list[i], ns)) {
+				var result = BetaJS.Properties.Meshes.meshInnerProps(list[i], ns);
+				if (result)
+					return result;
+			}
+		}
 		return {props: this.properties(), key: ns};
 	},
 	

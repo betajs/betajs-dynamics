@@ -36,7 +36,7 @@
 			<p ba-if="{{!showing}}" class="{{superclass}}">
 				Yo: {{text + " -- " + text}}
 			</p>
-			<ba-statusbar>
+			<ba-statusbar ba-status="{{=text}}">
 			</ba-statusbar>
 			<input type="text" class="{{superclass}}" value="{{=text}}" />
 			<ul ba-repeat="{{item :: items}}">

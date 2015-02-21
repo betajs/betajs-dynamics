@@ -10,6 +10,7 @@
 			.a {background-color: blue}
 			.b {background-color: red}
 			.c {border: 10px solid green}
+			.d {text-decoration: underline}
 		</style>
 		<script type="text/template" id="cute">
 			<div style="border: 1px solid green">
@@ -30,8 +31,8 @@
 			<button ba-click="yes = !yes">Click me (direct code)</button>
 			<button ba-click="gogo()">Click me (method)</button>
 			<button ba-click="showing = !showing">If</button>
-			<p ba-class="{{{a: yes, c: yo}}}">
-				This is the {{text}}. {{prop.tester}}, {{obj.tester}}, {{prop.foobar}}
+			<p ba-class="{{{a: yes, c: yo, d:prop.sub}}}">
+				This is the {{text}}. {{prop.tester}}, {{obj.tester}}, {{prop.foobar}}, {{prop.callme()}}
 			</p>
 			<p ba-if="{{!showing}}" class="{{superclass}}">
 				Yo: {{text + " -- " + text}}
@@ -108,6 +109,9 @@
 					{ key: "def" }
 				]})
 			});
+			mainDynamic.get("prop").callme = function () {
+				return "Called me?";
+			};
 			mainDynamic.get("prop").foobar = "yowza";
 			mainDynamic.activate();
 			mainDynamic.define("gogo", function () {

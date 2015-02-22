@@ -1,3 +1,8 @@
+<script type="text/template" id="test-input-value">
+	<input value="{{=text}}" />
+	<p>{{text}}</p>
+</script>
+
 <script type="text/template" id="test-repeat-array">
 	<ul ba-repeat="{{item :: items}}">
 		<li>{{item}}</li>
@@ -19,3 +24,8 @@
 <script type="text/template" id="test-click-direct-code">
 	<button ba-click="test=!test">Button</button>
 </script>
+
+<script type="text/template" id="test-class-change">
+	<button ba-class="{{{'a':a,'b':b.v,'c':c.v}}}">Button</button>
+</script>
+

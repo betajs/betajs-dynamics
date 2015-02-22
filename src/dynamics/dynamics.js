@@ -1,39 +1,51 @@
-BetaJS.Scopes.Scope.extend("BetaJS.Dynamics.Dynamic", [
-	BetaJS.Dynamics.HandlerMixin, 
-	{
-	
-	constructor: function (options) {
-		options = BetaJS.Objs.extend(BetaJS.Objs.clone(this.initial, 1), options);
-		if (!options.parent && options.parentHandler) {
-			var ph = options.parentHandler;
-			while (ph && !options.parent) {
-				options.parent = ph.instance_of(BetaJS.Dynamics.Dynamic) ? ph : null;
-				ph = ph._parentHandler;
-			}
-		}
-		this._inherited(BetaJS.Dynamics.Dynamic, "constructor", options);
-		if (options.tagName) {
-			this._tagName = options.tagName;
-			this.data("tagname", this._tagName);
-		}
-		this.functions = this.__functions;
-		this._handlerInitialize(options);
-		if (options.create)
-			options.create.apply(this);
-	}
-		
-}], {
-	
-	register: function (key, registry) {
-		registry = registry || BetaJS.Dynamics.handlerRegistry;
-		registry.register(key, this);
-		return this;
-	},
-	
-	activate: function (options) {
-		var dyn = new this(options || {element: document.body});
-		dyn.activate();
-		return dyn;
-	}
+Scoped.define("module:Dynamic", [
+   	    "module:Data.Scope",
+   	    "module:Handlers.HandlerMixin",
+   	    "base:Objs",
+   	    "module:Registries"
+   	], function (Scope, HandlerMixin, Objs, Registries, scoped) {
+	var Cls;
+	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
+   		return {
 
+		   	_notifications: {
+				_activate: "__createActivate"
+			},
+				
+			constructor: function (options) {
+				options = Objs.extend(Objs.clone(this.initial, 1), options);
+				if (!options.parent && options.parentHandler) {
+					var ph = options.parentHandler;
+					while (ph && !options.parent) {
+						options.parent = ph.instance_of(Cls) ? ph : null;
+						ph = ph._parentHandler;
+					}
+				}
+				inherited.constructor.call(this, options);
+				if (options.tagName) {
+					this._tagName = options.tagName;
+					this.data("tagname", this._tagName);
+				}
+				this.functions = this.__functions;
+				this._handlerInitialize(options);
+				this.__createActivate = options.create || function () {};
+			}
+				
+		};
+	}], {
+		
+		register: function (key, registry) {
+			registry = registry || Registries.handler;
+			registry.register(key, this);
+			return this;
+		},
+		
+		activate: function (options) {
+			var dyn = new this(options || {element: document.body});
+			dyn.activate();
+			return dyn;
+		}
+	
+	});
+	return Cls;
 });

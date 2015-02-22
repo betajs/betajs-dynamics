@@ -4,27 +4,55 @@ module.exports = function(grunt) {
 
 	grunt.initConfig({
 		pkg : grunt.file.readJSON('package.json'),
+		'revision-count': {
+		    options: {
+		      property: 'revisioncount',
+		      ref: 'HEAD'
+		    }
+		},
 		concat : {
 			options : {
 				banner : module.banner
 			},
-			dist : {
-				dest : 'dist/betajs-dynamics.js',
+			dist_raw : {
+				dest : 'dist/betajs-dynamics-raw.js',
 				src : [
+					'src/fragments/begin.js-fragment',
 					'src/data/*.js',
 					'src/handlers/*.js',
-					'src/partials/show_handler.js',
 					'src/partials/*.js',
-					'src/dynamics/*.js'
+					'src/dynamics/*.js',
+					'src/fragments/end.js-fragment',
 				]
 			},
+			dist_scoped: {
+				dest : 'dist/betajs-dynamics.js',
+				src : [
+				    'vendors/scoped.js',
+				    'dist/betajs-dynamics-noscoped.js'
+				]
+			}
 		},
+		preprocess : {
+			options: {
+			    context : {
+			    	MAJOR_VERSION: '<%= revisioncount %>',
+			    	MINOR_VERSION: (new Date()).getTime()
+			    }
+			},
+			dist : {
+			    src : 'dist/betajs-dynamics-raw.js',
+			    dest : 'dist/betajs-dynamics-noscoped.js'
+			}
+		},	
+		clean: ["dist/betajs-dynamics-raw.js"],
 		uglify : {
 			options : {
 				banner : module.banner
 			},
 			dist : {
 				files : {
+					'dist/betajs-dynamics-noscoped.min.js' : [ 'dist/betajs-dynamics-noscoped.js' ],					
 					'dist/betajs-dynamics.min.js' : [ 'dist/betajs-dynamics.js' ],					
 				}
 			}
@@ -47,8 +75,12 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-shell');	
+	grunt.loadNpmTasks('grunt-git-revision-count');
+	grunt.loadNpmTasks('grunt-preprocess');
+	grunt.loadNpmTasks('grunt-contrib-clean');	
+	
 
-	grunt.registerTask('default', ['newer:concat', 'newer:uglify']);
+	grunt.registerTask('default', ['revision-count', 'concat:dist_raw', 'preprocess', 'clean', 'concat:dist_scoped', 'uglify']);
 	grunt.registerTask('lint', ['shell:lint']);	
 	grunt.registerTask('check', ['lint']);
 

@@ -31,7 +31,7 @@
 			<button ba-click="yes = !yes">Click me (direct code)</button>
 			<button ba-click="gogo()">Click me (method)</button>
 			<button ba-click="showing = !showing">If</button>
-			<p ba-class="{{{a: yes, c: yo, d:prop.sub}}}">
+			<p ba-class="{{{'a': yes, 'c': yo, 'd':prop.sub}}}">
 				This is the {{text}}. {{prop.tester}}, {{obj.tester}}, {{prop.foobar}}, {{prop.callme()}}
 			</p>
 			<p ba-if="{{!showing}}" class="{{superclass}}">
@@ -40,6 +40,7 @@
 			<ba-statusbar ba-status="{{=text}}">
 			</ba-statusbar>
 			<input type="text" class="{{superclass}}" value="{{=text}}" />
+			{{text}}
 			<ul ba-repeat="{{item :: items}}">
 				<li>{{item}}<ul ba-repeat="{{inner :: item}}">
 					<div ba-repeat="{{ite :: item}}"></div>

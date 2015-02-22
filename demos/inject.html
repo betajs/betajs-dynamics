@@ -25,7 +25,7 @@
 					},
 					create: function () {
 						console.log("HI");
-						console.log(this.get(status));
+						console.log(this.get("status"));
 					}
 				}
 			}).register("ba-statusbar");
@@ -35,9 +35,7 @@
 			});
 			mainDynamic.setAll({
 				dir: "foobar2",
-				text: {
-					value: "Hello"
-				}
+				text: "Hallo"
 			});
 			mainDynamic.activate();
 

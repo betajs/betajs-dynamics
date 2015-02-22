@@ -1,14 +1,18 @@
-BetaJS.Dynamics.HandlerPartial.extend("BetaJS.Dynamics.ReturnPartial", {
-	
-	constructor: function (node, args, value) {
-		this._inherited(BetaJS.Dynamics.ReturnPartial, "constructor", node, args, value);
-		var self = this;
-		this._node._$element.on("keypress", function (event) {
-			if (event.which === 13)
-				self._execute();
-		});        
-	}
-		
+Scoped.define("module:Handlers.ReturnPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+ 		return {
+			
+ 			constructor: function (node, args, value) {
+ 				inherited.constructor.apply(this, arguments);
+ 				var self = this;
+ 				this._node._$element.on("keypress", function (event) {
+ 					if (event.which === 13)
+ 						self._execute();
+ 				});        
+ 			}
+ 		
+ 		};
+ 	});
+ 	Cls.register("ba-return");
+	return Cls;
 });
-
-BetaJS.Dynamics.ReturnPartial.register("ba-return");

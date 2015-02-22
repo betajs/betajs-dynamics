@@ -1,0 +1,16 @@
+(function () {
+
+var Scoped = this.subScope();
+
+Scoped.binding("module", "global:BetaJS.Dynamics");
+Scoped.binding("base", "global:BetaJS");
+Scoped.binding("browser", "global:BetaJS.Browser");
+
+Scoped.binding("jquery", "global:jQuery");
+
+Scoped.define("module:", function () {
+	return {
+		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
+		version: '/* @echo MAJOR_VERSION */./* @echo MINOR_VERSION */'
+	};
+});

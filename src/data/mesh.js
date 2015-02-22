@@ -139,6 +139,8 @@ Scoped.define("module:Data.Mesh", [
 			_watch: function (scope, expression, callback, context, force) {
 				if (!this.__watchers[expression]) {
 					var n = this._navigate(scope, expression);
+					if (force && !n.properties && Properties.is_instance_of(scope))
+						n.properties = scope;
 					if (!n.properties || (!force && n.tail))
 						return false;
 					var exp = n.head + (n.head && n.tail ? "." : "") + n.tail;

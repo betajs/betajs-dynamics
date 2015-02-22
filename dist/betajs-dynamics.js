@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-02-21
+betajs-dynamics - v0.0.1 - 2015-02-22
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -547,7 +547,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.1 - 2015-02-21
+betajs-dynamics - v0.0.1 - 2015-02-22
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -564,7 +564,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '22.1424579961167'
+		version: '23.1424628408750'
 	};
 });
 
@@ -709,6 +709,8 @@ Scoped.define("module:Data.Mesh", [
 			_watch: function (scope, expression, callback, context, force) {
 				if (!this.__watchers[expression]) {
 					var n = this._navigate(scope, expression);
+					if (force && !n.properties && Properties.is_instance_of(scope))
+						n.properties = scope;
 					if (!n.properties || (!force && n.tail))
 						return false;
 					var exp = n.head + (n.head && n.tail ? "." : "") + n.tail;

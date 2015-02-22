@@ -564,7 +564,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '21.1424567291387'
+		version: '22.1424579961167'
 	};
 });
 
@@ -610,17 +610,20 @@ Scoped.define("module:Data.Mesh", [
 			
 			call: function (expressions, callback) {
 				var data = {};
+				var exprs = [];
 				Objs.iter(expressions, function (expression) {
 					var value = this.read(expression, true);
-					if (value !== null || !(Strings.splitFirst(expression, ".").head in window))
+					if (value !== null || !(Strings.splitFirst(expression, ".").head in window)) {
+						exprs.push(expression);
 						data[expression] = value; 
+					}
 				}, this);
 				
 				var expanded = this.__expand(data);
 
 				var result = callback.call(this.__context, expanded);
 
-				var collapsed = this.__collapse(expanded, expressions);
+				var collapsed = this.__collapse(expanded, exprs);
 				for (var expression in collapsed) {
 					if (!(expression in data) || data[expression] != collapsed[expression])
 						this.write(expression, collapsed[expression]);
@@ -633,7 +636,7 @@ Scoped.define("module:Data.Mesh", [
 					var ret = this._read(this.__environment[i], expression);
 					if (ret) {
 						if (Types.is_function(ret.value))
-							return Functions.as_method(ret.value, ret.context || this.__context);
+							return Functions.as_method(ret.value, ret.context);
 						return ret.value;
 					}
 				}
@@ -682,7 +685,7 @@ Scoped.define("module:Data.Mesh", [
 					return null;
 				return {
 					value: n.current,
-					context: n.parent
+					context: n.parent == scope ? this.__context : n.parent
 				};
 			},
 			

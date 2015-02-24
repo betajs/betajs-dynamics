@@ -1,0 +1,44 @@
+<html>
+	<head>
+		<script src="../assets/jquery.js"></script>
+		<script src="../assets/beta.js"></script>
+		<script src="../assets/beta-browser.js"></script>
+		<script src="../../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+		<test>
+			<button ba-class="{{{'a':a,'b':b.v,'c':c.v}}}">Button</button>
+		</test>
+		<script>
+			var root = $("test");
+			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
+		
+			dynamic.set("a", false);
+			dynamic.set("b", {v: false});
+			dynamic.set("c", new BetaJS.Properties.Properties({v : false}));
+			dynamic.activate();
+			
+			var button = root.find("button");
+			
+			function test() {
+				QUnit.equal(button.hasClass("a"), false);
+				QUnit.equal(button.hasClass("b"), false);
+				QUnit.equal(button.hasClass("c"), false);
+				dynamic.set("a", true);
+				QUnit.equal(button.hasClass("a"), true);
+				QUnit.equal(button.hasClass("b"), false);
+				QUnit.equal(button.hasClass("c"), false);
+				dynamic.set("a", false);
+				QUnit.equal(button.hasClass("a"), false);
+				dynamic.set("b.v", true);
+				QUnit.equal(button.hasClass("a"), false);
+				QUnit.equal(button.hasClass("b"), true);
+				QUnit.equal(button.hasClass("c"), false);
+				dynamic.get("c").set("v", true);
+				QUnit.equal(button.hasClass("a"), false);
+				QUnit.equal(button.hasClass("b"), true);
+				QUnit.equal(button.hasClass("c"), true);
+			}			
+		</script>
+	</body>
+</html>

@@ -6,38 +6,133 @@
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
+		<style>
+			.a {background: red}
+			.b {background: green}
+			.c {background: blue}
+		</style>
+
 		<test>
-			<button ba-class="{{{'a':a,'b':b.v,'c':c.v}}}">Button</button>
+			<table>
+				<tr>
+					<td>
+						Type
+					</td>
+					<td>
+						Direct
+					</td>
+					<td>
+						JSON
+					</td>
+					<td>
+						Property
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Change
+					</td>
+					<td>
+						<button
+								id="a"
+								ba-click="a_click()"
+								ba-class="{{{'a':a}}}">
+							Change a
+						</button>
+					</td>
+					<td>
+						<button
+								id="b"
+								ba-click="b_click()"
+								ba-class="{{{'b':b.v}}}">
+							Change b
+						</button>
+					</td>
+					<td>
+						<button
+								id="c"
+								ba-click="c_click()"
+								ba-class="{{{'c':c.v}}}">
+							Change c
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Color
+					</td>
+					<td>
+						<div class="a">a</div>
+					</td>
+					<td>
+						<div class="b">b</div>
+					</td>
+					<td>
+						<div class="c">c</div>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Value
+					</td>
+					<td>
+						<div>{{a}}</div>
+					</td>
+					<td>
+						<div>{{b.v}}</div>
+					</td>
+					<td>
+						<div>{{c.v}}</div>
+					</td>
+				</tr>
+			</table>
 		</test>
 		<script>
 			var root = $("test");
-			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
+			var dynamic = new BetaJS.Dynamics.Dynamic({
+				element: root.get(0),
+				functions: {
+					a_click: function () {
+						this.set("a", true);
+					},
+					b_click: function () {
+						this.set("b.v", true);
+					},
+					c_click: function () {
+						this.get("c").set("v", true);
+					}
+				}
+			});
 		
 			dynamic.set("a", false);
 			dynamic.set("b", {v: false});
 			dynamic.set("c", new BetaJS.Properties.Properties({v : false}));
 			dynamic.activate();
 			
-			var button = root.find("button");
-			
+			var button_a = root.find("#a");
+			var button_b = root.find("#b");
+			var button_c = root.find("#c");
+
 			function test() {
-				QUnit.equal(button.hasClass("a"), false);
-				QUnit.equal(button.hasClass("b"), false);
-				QUnit.equal(button.hasClass("c"), false);
+				QUnit.equal(button_a.hasClass("a"), false);
+				QUnit.equal(button_b.hasClass("b"), false);
+				QUnit.equal(button_c.hasClass("c"), false);
 				dynamic.set("a", true);
-				QUnit.equal(button.hasClass("a"), true);
-				QUnit.equal(button.hasClass("b"), false);
-				QUnit.equal(button.hasClass("c"), false);
+				QUnit.equal(button_a.hasClass("a"), true);
+				QUnit.equal(button_b.hasClass("b"), false);
+				QUnit.equal(button_c.hasClass("c"), false);
 				dynamic.set("a", false);
-				QUnit.equal(button.hasClass("a"), false);
+				QUnit.equal(button_a.hasClass("a"), false);
+				QUnit.equal(button_b.hasClass("b"), false);
+				QUnit.equal(button_a.hasClass("c"), false);
 				dynamic.set("b.v", true);
-				QUnit.equal(button.hasClass("a"), false);
-				QUnit.equal(button.hasClass("b"), true);
-				QUnit.equal(button.hasClass("c"), false);
+				QUnit.equal(button_a.hasClass("a"), false);
+				QUnit.equal(button_b.hasClass("b"), true);
+				QUnit.equal(button_c.hasClass("c"), false);
 				dynamic.get("c").set("v", true);
-				QUnit.equal(button.hasClass("a"), false);
-				QUnit.equal(button.hasClass("b"), true);
-				QUnit.equal(button.hasClass("c"), true);
+				QUnit.equal(button_a.hasClass("a"), false);
+				QUnit.equal(button_b.hasClass("b"), true);
+				QUnit.equal(button_c.hasClass("c"), true);
 			}			
 		</script>
 	</body>

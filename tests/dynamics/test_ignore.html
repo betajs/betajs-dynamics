@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<script src="../assets/jquery.js"></script>
+		<script src="../assets/beta.js"></script>
+		<script src="../assets/beta-browser.js"></script>
+		<script src="../../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+		<test>
+			<div ba-ignore>
+				<p>{{inner}}</p>
+			</div>
+		</test>
+		<script>
+			var root = $("test");
+			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
+		
+			dynamic.activate();
+			
+			function test() {
+				QUnit.equal(root.find("p").html().trim(), "{{inner}}");
+			}			
+		</script>
+	</body>
+</html>

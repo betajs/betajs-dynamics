@@ -120,7 +120,7 @@ Scoped.define("module:Handlers.Node", [
 			
 			__updateAttr: function (attr) {
 				var value = attr.dyn ? this.__executeDyn(attr.dyn) : attr.value;
-				if (value != attr.value && !(!value && !attr.value)) {
+				if ((value != attr.value || Types.is_array(value)) && !(!value && !attr.value)) {
 					var old = attr.value;
 					attr.value = value;
 					attr.domAttr.value = value;

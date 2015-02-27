@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-02-22
+betajs-dynamics - v0.0.1 - 2015-02-27
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -547,7 +547,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.1 - 2015-02-22
+betajs-dynamics - v0.0.1 - 2015-02-27
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -564,7 +564,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '23.1424628408750'
+		version: '32.1425039861657'
 	};
 });
 
@@ -996,8 +996,8 @@ Scoped.define("module:Data.Scope", [
 				return this;
 			},
 			
-			set: function (key, value) {
-				this.__properties.set(key, value);
+			set: function (key, value, force) {
+				this.__properties.set(key, value, force);
 				return this;
 			},
 			
@@ -1463,7 +1463,7 @@ Scoped.define("module:Handlers.Node", [
 			
 			__updateAttr: function (attr) {
 				var value = attr.dyn ? this.__executeDyn(attr.dyn) : attr.value;
-				if (value != attr.value && !(!value && !attr.value)) {
+				if ((value != attr.value || Types.is_array(value)) && !(!value && !attr.value)) {
 					var old = attr.value;
 					attr.value = value;
 					attr.domAttr.value = value;

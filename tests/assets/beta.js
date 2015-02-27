@@ -1,10 +1,10 @@
 /*!
-betajs - v1.0.0 - 2015-02-19
+betajs - v1.0.0 - 2015-02-27
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
 /*!
-betajs-scoped - v0.0.1 - 2015-02-19
+betajs-scoped - v0.0.1 - 2015-02-21
 Copyright (c) Oliver Friedmann
 MIT Software License.
 */
@@ -121,11 +121,7 @@ var Helper = {
 };
 var Attach = {
 		
-	__namespace: "Scoped"
-		
-};
-
-Helper.extend(Attach, {
+	__namespace: "Scoped",
 	
 	upgrade: function (namespace) {
 		var current = Globals.get(namespace || Attach.__namespace);
@@ -150,7 +146,7 @@ Helper.extend(Attach, {
 		if (current == this)
 			return this;
 		Attach.__revert = current;
-		Globals.set(namespace, this);
+		Globals.set(Attach.__namespace, this);
 		return this;
 	},
 	
@@ -163,13 +159,14 @@ Helper.extend(Attach, {
 		return this;
 	},
 	
-	exports: function (object, forceExport) {
-		if (typeof module != "undefined" && "exports" in module && (forceExport || module.exports == this || !module.exports || Helper.isEmpty(module.exports)))
-			module.exports = object || this;
+	exports: function (mod, object, forceExport) {
+		mod = mod || (typeof module != "undefined" ? module : null);
+		if (typeof mod == "object" && mod && "exports" in mod && (forceExport || mod.exports == this || !mod.exports || Helper.isEmpty(mod.exports)))
+			mod.exports = object || this;
 		return this;
 	}	
 
-});
+};
 
 function newNamespace (options) {
 	
@@ -484,9 +481,10 @@ function newScope (parent, parentNamespace, rootNamespace, globalNamespace) {
 			var args = Helper.matchArgs(arguments, {
 				dependencies: "array",
 				hiddenDependencies: "array",
-				callback: true,
+				callback: "function",
 				context: "object"
 			});
+			args.callback = args.callback || function () {};
 			var dependencies = args.dependencies || [];
 			var allDependencies = dependencies.concat(args.hiddenDependencies || []);
 			var count = allDependencies.length;
@@ -533,7 +531,7 @@ var rootScope = newScope(null, rootNamespace, rootNamespace, globalNamespace);
 var Public = Helper.extend(rootScope, {
 		
 	guid: "4b6878ee-cb6a-46b3-94ac-27d91f58d666",
-	version: '3.1424370853283',
+	version: '5.1424568052349',
 		
 	upgrade: Attach.upgrade,
 	attach: Attach.attach,
@@ -547,7 +545,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs - v1.0.0 - 2015-02-19
+betajs - v1.0.0 - 2015-02-27
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -560,12 +558,12 @@ Scoped.binding("module", "global:BetaJS");
 Scoped.define("module:", function () {
 	return {
 		guid: "71366f7a-7da3-4e55-9a0b-ea0e4e2a9e79",
-		version: '334.1424371299924',
+		version: '337.1425039652217',
 	};
 });
 
 Scoped.require(["module:"], function (mod) {
-	this.exports(mod);
+	this.exports(typeof module != "undefined" ? module : null, mod);
 }, this);
 
 Scoped.define("module:Types", function () {
@@ -1387,7 +1385,7 @@ Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
 		 * @return remaining part of the string in question after the last occurrence of the sub string
 		 */
 		last_after : function(s, needle) {
-			return s.substring(s.lastIndexOf(needle) + needle.length, s.length);
+			return this.splitLast(s, needle).tail;
 		},
 		
 		first_after: function (s, needle) {
@@ -4085,7 +4083,7 @@ Scoped.define("module:Properties.PropertiesMixin", [
 		
 		__properties_guid: "ec816b66-7284-43b1-a945-0600c6abfde3",
 		
-		set: function (key, value) {
+		set: function (key, value, force) {
 			if (Types.is_object(value) && value && value.guid == this.__properties_guid) {
 				if (value.properties)
 					this.bind(key, value.properties, {secondKey: value.key});
@@ -4098,6 +4096,9 @@ Scoped.define("module:Properties.PropertiesMixin", [
 			if (oldValue !== value) {
 				Scopes.set(key, value, this.__properties.data);
 				this.__setChanged(key, value, oldValue);
+			} else if (force) {
+				this.trigger("change", key, value, oldValue);
+				this.trigger("change:" + key, value, oldValue);
 			}
 			return this;
 		},
@@ -4845,7 +4846,11 @@ Scoped.define("module:Classes.ClassRegistry", ["module:Class", "module:Types", "
 			create: function (key) {
 				var cons = Functions.newClassFunc(this.get(key));
 				return cons.apply(this, Functions.getArguments(arguments, 1));
-			}	
+			},
+			
+			classes: function () {
+				return this._classes;
+			}
 			
 		};
 	});

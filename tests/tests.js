@@ -3,7 +3,9 @@ $(document).ready(function () {
 		var democase = $(this);
 		democase.css("display", "none");
 		var src = democase.attr("src");
-		test(src, function () {
+		src += (src.indexOf("?") >= 0 ? "&" : "?") + "rev=" + BetaJS.Time.now();
+		var title = BetaJS.Strings.splitLast(BetaJS.Strings.splitFirst(src, ".html").head, "/").tail.replace(/_/g, " ");
+		test(title, function () {
 			stop();
 			BetaJS.Browser.Loader.loadHtml(src, function (content) {
 				var parsed = $(content);

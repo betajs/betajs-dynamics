@@ -151,8 +151,8 @@ Scoped.define("module:Data.Scope", [
 				return this;
 			},
 			
-			set: function (key, value) {
-				this.__properties.set(key, value);
+			set: function (key, value, force) {
+				this.__properties.set(key, value, force);
 				return this;
 			},
 			

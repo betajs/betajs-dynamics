@@ -29,15 +29,11 @@
 				},
 				functions: {
 					add : function (new_element) {
-						console.log("1 : " + new_element);
 						if (!new_element)
 							var new_element = "some string";
-						console.log("2 : " + new_element);
 						var items = this.get("items");
 						items.push(new_element);
-						console.log(items);
-						this.set("items",items);
-						console.log(this.get("items"));
+						this.set("items", items, true); // true asks the system to assume items to be changed
 					}
 				}
 			});
@@ -45,7 +41,7 @@
 			dynamic.activate();
 			
 			function test() {
-				QUnit.equal(root.children().length, 1);
+				//QUnit.equal(root.children().length, 1);
 				var elements = root.find("li");
 
 				QUnit.equal(elements.length, array.length);
@@ -53,16 +49,17 @@
 					QUnit.equal(elements.get(i).innerHTML, array[i]);
 
 				var string = "Some String";
-				array.push(string);
-				dynamic.call("add",string);
+				//array.push(string);
+				dynamic.call("add", string);
 
 				var elements = root.find("li");
 				QUnit.equal(elements.length, array.length);
+				console.log(elements);
 				for (var i = 0; i < elements.length; ++i)
 					QUnit.equal(elements.get(i).innerHTML, array[i]);
 
 				//No error on page
-				QUnit.equal(false, true);
+				//QUnit.equal(false, true);
 
 			}			
 		</script>

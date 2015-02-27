@@ -1,0 +1,70 @@
+<html>
+	<head>
+		<script src="../assets/jquery.js"></script>
+		<script src="../assets/beta.js"></script>
+		<script src="../assets/beta-browser.js"></script>
+		<script src="../../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+		<test>
+			<input value="{{=value}}" placeholder="placeholder">
+			<button ba-click="add(value)">Add to List</button>
+			<br>
+			<br>
+			<div>Value :  {{=value}}</div>
+			<br>
+			<ul ba-repeat="{{item :: items}}">
+				<li>{{item}}</li>
+			</ul>
+		</test>
+		<script>
+			var root = $("test");
+			var array = ['A','B','C'];
+			var dynamic = new BetaJS.Dynamics.Dynamic({
+				element: root.get(0),
+				attrs: {
+					items: array,
+					placeholder: "Enter new element here",
+					value: "some value"
+				},
+				functions: {
+					add : function (new_element) {
+						console.log("1 : " + new_element);
+						if (!new_element)
+							var new_element = "some string";
+						console.log("2 : " + new_element);
+						var items = this.get("items");
+						items.push(new_element);
+						console.log(items);
+						this.set("items",items);
+						console.log(this.get("items"));
+					}
+				}
+			});
+		
+			dynamic.activate();
+			
+			function test() {
+				QUnit.equal(root.children().length, 1);
+				var elements = root.find("li");
+
+				QUnit.equal(elements.length, array.length);
+				for (var i = 0; i < elements.length; ++i)
+					QUnit.equal(elements.get(i).innerHTML, array[i]);
+
+				var string = "Some String";
+				array.push(string);
+				dynamic.call("add",string);
+
+				var elements = root.find("li");
+				QUnit.equal(elements.length, array.length);
+				for (var i = 0; i < elements.length; ++i)
+					QUnit.equal(elements.get(i).innerHTML, array[i]);
+
+				//No error on page
+				QUnit.equal(false, true);
+
+			}			
+		</script>
+	</body>
+</html>

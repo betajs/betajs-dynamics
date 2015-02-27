@@ -7,23 +7,23 @@
 	</head>
 	<body>
 		<test>
-			<p id="test1">{{foo}}</p>
-			<p id="test2">{{prop.foo}}</p>
+			<p id="test1">{{value}}</p>
+			<p id="test2">{{prop.value}}</p>
 		</test>
 		<script>
 			var root = $("test");
 			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
 		
-			dynamic.set("foo", "test");
-			dynamic.set("prop", new BetaJS.Properties.Properties({ foo: "bar"}));
+			dynamic.set("value", "test");
+			dynamic.set("prop", new BetaJS.Properties.Properties({ value: "bar"}));
 			dynamic.activate();
 			
 			function test() {
 				QUnit.equal(root.find("#test1").html().trim(), "test");
 				QUnit.equal(root.find("#test2").html().trim(), "bar");
 				
-				dynamic.set("foo", "moo");
-				dynamic.get("prop").set("foo", "baz");
+				dynamic.set("value", "moo");
+				dynamic.get("prop").set("value", "baz");
 			
 				QUnit.equal(root.find("#test1").html().trim(), "moo");
 				QUnit.equal(root.find("#test2").html().trim(), "baz");

@@ -1,0 +1,39 @@
+<html>
+	<head>
+		<script src="../assets/jquery.js"></script>
+		<script src="../assets/beta.js"></script>
+		<script src="../assets/beta-browser.js"></script>
+		<script src="../../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+		<test>
+			<input value="{{=value}}">
+			<div>Value Outer : {{=value}}</div>
+			<ba-inner ba-inject="{{=value}}"></ba-inner>
+		</test>
+		<script>
+			var root = $("test");
+			var outer = new BetaJS.Dynamics.Dynamic({
+				element: root.get(0),
+				attrs: {
+					value: "some value"
+				}
+			});
+
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inject", {
+				template: 	"<div>Value inner : " +
+								"<span>{{=inject}}</span>" +
+							"</div>",
+			}).register("ba-inner");
+
+			outer.activate();
+
+			function test() {
+
+				outer.set("value", "Hello");
+				QUnit.equal(root.find("span").html().trim(), outer.get("value"));
+
+			}			
+		</script>
+	</body>
+</html>

@@ -1,0 +1,106 @@
+<html>
+	<head>
+		<script src="../assets/jquery.js"></script>
+		<script src="../assets/beta.js"></script>
+		<script src="../assets/beta-browser.js"></script>
+		<script src="../../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+
+		<test>
+
+			<input value="{{=value}}">
+			<div id="test">{{=value}}</div>
+
+			</br>
+
+			<ba-inner
+					ba-if="{{bool}}"
+					ba-inject="{{=value}}"
+					ba-internal_property="{{=internal_property}}"
+					ba-external_property="{{=external_property}}"
+					></ba-inner>
+
+			</br>
+
+			<button id="props" ba-click="change_props()">Change Property</button>
+
+		</test>
+
+		<script>
+
+			//Elements
+			var root = $("test");
+			var button = $("button");
+
+			//Messages
+			var external_message = "This is an External Property";
+			var internal_message = "This is an Internal Property";
+			var new_internal = "New Internal Property Value";
+
+
+//			var bool = new BetaJS.Properties.Properties({v : "This is an External Property"});
+			var bool = new BetaJS.Properties.Properties({v : {some: "blabla"}});
+			var external_property = new BetaJS.Properties.Properties({v : external_message});
+
+			var outer = new BetaJS.Dynamics.Dynamic({
+				element: root.get(0),
+				attrs: {
+					internal_property: new BetaJS.Properties.Properties({v : internal_message}),
+					value: "This is a String"
+				},
+				create: function () {
+					console.log(this.get("internal_property"));
+				},
+				functions: {
+					change_props : function (){
+						this.get("internal_property").set("v","New Internal Property Value");
+//						this.get("internal_property").set("v",null);
+//						external_property.set("v","New External Property Value");
+//						external_property.set("v",false);
+
+						console.log(outer.get("internal_property"));
+						console.log(this.get("value"));
+					}
+				}
+			});
+
+			var innertest = "Inner Test";
+
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inject", {
+				template: 	"<inner>Value inner : " +
+								"<div id='innertest'>" + innertest +"</div>" +
+								"<div>" +
+									"<span>String:</span>" +
+									"<span id='test2'>{{=inject}}</span>" +
+								"</div>" +
+								"<div>" +
+									"<span>Internal Property: </span>" +
+									"<span id='int'>{{=internal_property.v}}</span>" +
+								"</div>" +
+								"<div>" +
+									"<span>External Property: </span>" +
+									"<span id='ext'>{{=external_property.v}}</span>" +
+								"</div>" +
+							"</inner>"
+			}).register("ba-inner");
+
+			outer.activate();
+
+			function test() {
+
+				outer.set("value", "Hello");
+				QUnit.equal(root.find("#test").html().trim(), outer.get("value"));
+				QUnit.equal(root.find("#test2").html().trim(), outer.get("value"));
+//				QUnit.equal(root.find("#innertest").html().trim(), innertest);
+
+//				outer.call("change_props");
+				button.trigger( "click" );
+//				QUnit.equal(root.find("#int").html().trim(), new_internal);
+//				QUnit.equal(root.find("#int").html().trim(), new_internal);
+
+			}			
+		</script>
+
+	</body>
+</html>

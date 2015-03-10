@@ -109,6 +109,9 @@
 			var root = $("test");
 			var dynamic = new BetaJS.Dynamics.Dynamic({
 				element: root.get(0),
+				create: function () {
+					this.set("a", false);
+				},
 				functions: {
 					a_click: function () {
 						this.set("a", true);
@@ -126,7 +129,7 @@
 			});
 
 			//Values to be tested
-			dynamic.set("a", false);
+//			dynamic.set("a", false);
 			dynamic.set("b", {v: false});
 			dynamic.set("c", new BetaJS.Properties.Properties({v : false}));
 			var property = new BetaJS.Properties.Properties({v : false});

@@ -14,53 +14,58 @@
 
 			</br>
 
-			<ba-inner ba-inject="{{=value}}"
-					  ba-internal_property="{{=internal_property}}"
-					  ba-external_property="{{=external_property}}"
+			<ba-inner
+					ba-if="{{bool}}"
+					ba-inject="{{=value}}"
+					ba-internal_property="{{=internal_property}}"
+					ba-external_property="{{=external_property}}"
 					></ba-inner>
-			</br>
-
-			Property Array:
-			<div ba-repeat="{{prop :: property_array}}">
-				<div>Hi</div>
-				<div>{{prop.v}}</div>
-			</div>
 
 			</br>
 
-			Array:
-			{{=value}}
-			<ul ba-repeat="{{item :: array_items}}">
-				<li>Hi</li>
-				<li>{{item}}</li>
-			</ul>
+			<ba-inner
+					ba-if="{{internal_property.v}}"
+					ba-inject="{{=value}}"
+					ba-internal_property="{{=internal_property}}"
+					ba-external_property="{{=external_property}}"
+					></ba-inner>
 
-			</br>
+			<button id="props" ba-click="change_props()">Change Property</button>
 
-			<button ba-click="change_props()">Change Property</button>
+			<button id="trigger">Trigger click</button>
 
 		</test>
 
 		<script>
 			var root = $("test");
+
+			var prop_button = $("#props");
+			var trigger_button = $("#trigger");
+
+			trigger_button.on( "click", function() {
+				prop_button.trigger( "click" );
+			});
+
+//			var bool = new BetaJS.Properties.Properties({v : "This is an External Property"});
+			var bool = new BetaJS.Properties.Properties({v : {some: "blabla"}});
 			var external_property = new BetaJS.Properties.Properties({v : "This is an External Property"});
-			var external_property_array = [external_property];
 			var outer = new BetaJS.Dynamics.Dynamic({
 				element: root.get(0),
 				attrs: {
-					array_items: ["A","B","C"],
 					internal_property: new BetaJS.Properties.Properties({v : "This is an Internal Property"}),
-					property_array: external_property_array,
 					value: "This is a String"
 				},
 				create: function () {
-					console.log(this.get("property_array"));
-					this.set("external_property", external_property_array[0]);
+					console.log(this.get("internal_property"));
 				},
 				functions: {
 					change_props : function (){
 						this.get("internal_property").set("v","New Internal Property Value");
-						external_property.set("v","New External Property Value");
+						this.get("internal_property").set("v",null);
+//						external_property.set("v","New External Property Value");
+						external_property.set("v",false);
+						console.log(outer.get("internal_property"));
+						console.log(this.get("value"));
 					}
 				}
 			});
@@ -75,10 +80,14 @@
 
 			outer.activate();
 
+//			outer.call("change_props");
+//			outer.call("change_props");
+
 			function test() {
 
 				outer.set("value", "Hello");
 				QUnit.equal(root.find("span").html().trim(), outer.get("value"));
+
 
 			}			
 		</script>

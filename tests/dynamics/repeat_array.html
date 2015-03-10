@@ -7,21 +7,37 @@
 	</head>
 	<body>
 		<test>
-			<ul ba-repeat="{{item :: items}}">
+			<ul id="set" ba-repeat="{{item :: items}}">
+				<li>{{item}}</li>
+			</ul>
+			<ul id="attrs" ba-repeat="{{item :: array_items}}">
 				<li>{{item}}</li>
 			</ul>
 		</test>
 		<script>
 			var root = $("test");
-			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
-		
+
 			var array = ["A", "B", "C"];
+
+			var dynamic = new BetaJS.Dynamics.Dynamic({
+				element: root.get(0),
+				attrs: {
+					array_items: array
+				}
+			});
+
 			dynamic.set("items", array);
 			dynamic.activate();
 			
 			function test() {
-				QUnit.equal(root.children().length, 1);
-				var elements = root.find("li");
+				QUnit.equal(root.children().length, 2);
+
+				var elements = root.find("#set").find("li");
+				QUnit.equal(elements.length, array.length);
+				for (var i = 0; i < elements.length; ++i)
+					QUnit.equal(elements.get(i).innerHTML, array[i]);
+
+				var elements = root.find("#attrs").find("li");
 				QUnit.equal(elements.length, array.length);
 				for (var i = 0; i < elements.length; ++i)
 					QUnit.equal(elements.get(i).innerHTML, array[i]);

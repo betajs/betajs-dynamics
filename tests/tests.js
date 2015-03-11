@@ -17,7 +17,7 @@ $(document).ready(function () {
 					if (this.tagName == "SCRIPT")
 						code = $(this).html();
 				});
-				var f = new Function (code + "test();");
+				var f = new Function (code + "try {test();} catch (e) { QUnit.equal('Exception', e.toString()); }");
 				f();
 				start();
 			});

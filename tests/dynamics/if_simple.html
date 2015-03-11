@@ -28,6 +28,8 @@
 		</test>
 
 		<script>
+		
+			var global = window;
 
 			//Elements
 			var root = $("test");
@@ -40,7 +42,7 @@
 
 
 //			var bool = new BetaJS.Properties.Properties({v : "This is an External Property"});
-			var bool = new BetaJS.Properties.Properties({v : {some: "blabla"}});
+			global.bool = new BetaJS.Properties.Properties({v : {some: "blabla"}});
 			var external_property = new BetaJS.Properties.Properties({v : external_message});
 
 			var outer = new BetaJS.Dynamics.Dynamic({

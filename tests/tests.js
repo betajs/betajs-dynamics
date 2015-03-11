@@ -17,7 +17,7 @@ $(document).ready(function () {
 					if (this.tagName == "SCRIPT")
 						code = $(this).html();
 				});
-				var f = new Function (code + "try {test();} catch (e) { QUnit.equal('Exception', e.toString()); }");
+				var f = new Function (code + "try {test();} catch (e) { QUnit.ok(false, e.toString()); }");
 				var windowKeys = BetaJS.Objs.clone(window, 1);
 				f();
 				BetaJS.Objs.iter(window, function (value, key) {

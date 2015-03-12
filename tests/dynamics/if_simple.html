@@ -1,5 +1,7 @@
 <html>
 	<head>
+		<link rel="stylesheet" href="../assets/styles.css">
+
 		<script src="../assets/jquery.js"></script>
 		<script src="../assets/beta.js"></script>
 		<script src="../assets/beta-browser.js"></script>
@@ -9,21 +11,48 @@
 
 		<test>
 
-			<input value="{{=value}}">
-			<div id="test">{{=value}}</div>
+			<div>
+				</br>
+				<h3>Tests for ba-if</h3>
+				</br>
+			</div>
 
-			</br>
+			<div id="binding">
+				<h4>Test if BetaJS/QUnit is working & Test ba-if in Dynamic</h4>
+				<input value="{{=value}}">
+				<div id="showbinding" ba-if="{{showbinding}}">{{=value}}</div>
+				<div id="hidebinding" ba-if="{{!showbinding}}">-</div>
+				<button ba-click="change_showbinding()">Show/Hide</button>
+				</br>
+			</div>
 
-			<ba-inner
-					ba-if="{{bool}}"
+
+			<div id="global">
+				<h4>Test Global Propterties</h4>
+				<div>
+					<span>Value: </span>
+					<span id="globalvalue">{{bool.v}}</span>
+				</div>
+
+				</br>
+			</div>
+
+
+			<div>
+				<h4>Test if & Dynamic</h4>
+				<ba-inner
+					ba-if="{{bool.v}}"
 					ba-inject="{{=value}}"
 					ba-internal_property="{{=internal_property}}"
 					ba-external_property="{{=external_property}}"
 					></ba-inner>
 
-			</br>
+				</br>
 
-			<button id="props" ba-click="change_props()">Change Property</button>
+				<button id="props" ba-click="change_props()">Change Property</button>
+
+				</br>
+			</div>
 
 		</test>
 
@@ -39,27 +68,41 @@
 			var external_message = "This is an External Property";
 			var internal_message = "This is an Internal Property";
 			var new_internal = "New Internal Property Value";
+			var global_message = "This is a Global Property"
 
-
-//			var bool = new BetaJS.Properties.Properties({v : "This is an External Property"});
-			global.bool = new BetaJS.Properties.Properties({v : {some: "blabla"}});
+			//Properties
 			var external_property = new BetaJS.Properties.Properties({v : external_message});
+			global.bool = new BetaJS.Properties.Properties({v : global_message});
+
+			//Dynamics
+			var binding = new BetaJS.Dynamics.Dynamic({
+				element: root.find("#binding"),
+				attrs: {
+					value: "This is a String",
+					showbinding: true
+				},
+				functions: {
+					change_showbinding : function () {
+						//Introduce shorthand for this ?
+						// e.g. {{!=showbinding}}
+						this.set("showbinding",!this.get("showbinding"));
+					}
+				}
+			});
+			binding.activate();
 
 			var outer = new BetaJS.Dynamics.Dynamic({
 				element: root.get(0),
 				attrs: {
 					internal_property: new BetaJS.Properties.Properties({v : internal_message}),
-					value: "This is a String"
 				},
 				create: function () {
 					console.log(this.get("internal_property"));
 				},
 				functions: {
 					change_props : function (){
-						this.get("internal_property").set("v","New Internal Property Value");
-//						this.get("internal_property").set("v",null);
-//						external_property.set("v","New External Property Value");
-//						external_property.set("v",false);
+						this.get("internal_property").set("v",new_internal);
+						global.bool.set("v", false);
 
 						console.log(outer.get("internal_property"));
 						console.log(this.get("value"));
@@ -91,13 +134,23 @@
 
 			function test() {
 
-				outer.set("value", "Hello");
-				QUnit.equal(root.find("#test").html().trim(), outer.get("value"));
-				QUnit.equal(root.find("#test2").html().trim(), outer.get("value"));
+				QUnit.equal(root.children().length, 4);
+
+				//Binding
+				binding.set("value", "Hello");
+				QUnit.equal(root.find("#binding").find("div").html().trim(), binding.get("value"));
+				QUnit.equal($("#showbinding").css("display"),"block");
+				//Der failed leider, aber erst seitdem ich die Sachen aus var outer rausgenommen habe und in var binding gesteckt habe
+				QUnit.equal($("#hidebinding").css("display"),"none");
+
+				//Global Property
+				QUnit.equal($("#globalvalue").html().trim(),global_message);
+
+//				QUnit.equal(root.find("#test2").html().trim(), outer.get("value"));
 //				QUnit.equal(root.find("#innertest").html().trim(), innertest);
 
 //				outer.call("change_props");
-				button.trigger( "click" );
+//				button.trigger( "click" );
 //				QUnit.equal(root.find("#int").html().trim(), new_internal);
 //				QUnit.equal(root.find("#int").html().trim(), new_internal);
 

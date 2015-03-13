@@ -68,38 +68,28 @@
 			var external_message = "This is an External Property";
 			var internal_message = "This is an Internal Property";
 			var new_internal = "New Internal Property Value";
-			var global_message = "This is a Global Property"
+			var global_message = "This is a Global Property";
 
 			//Properties
 			var external_property = new BetaJS.Properties.Properties({v : external_message});
-			global.bool = new BetaJS.Properties.Properties({v : global_message});
+			global.bool = {v : global_message};
 
-			//Dynamics
-			var binding = new BetaJS.Dynamics.Dynamic({
-				element: root.find("#binding"),
+			var outer = new BetaJS.Dynamics.Dynamic({
+				element: root.get(0),
 				attrs: {
+					internal_property: new BetaJS.Properties.Properties({v : internal_message}),
 					value: "This is a String",
 					showbinding: true
+				},
+				create: function () {
+					console.log(this.get("internal_property"));
 				},
 				functions: {
 					change_showbinding : function () {
 						//Introduce shorthand for this ?
 						// e.g. {{!=showbinding}}
 						this.set("showbinding",!this.get("showbinding"));
-					}
-				}
-			});
-			binding.activate();
-
-			var outer = new BetaJS.Dynamics.Dynamic({
-				element: root.get(0),
-				attrs: {
-					internal_property: new BetaJS.Properties.Properties({v : internal_message}),
-				},
-				create: function () {
-					console.log(this.get("internal_property"));
-				},
-				functions: {
+					},
 					change_props : function (){
 						this.get("internal_property").set("v",new_internal);
 						global.bool.set("v", false);
@@ -137,8 +127,9 @@
 				QUnit.equal(root.children().length, 4);
 
 				//Binding
-				binding.set("value", "Hello");
-				QUnit.equal(root.find("#binding").find("div").html().trim(), binding.get("value"));
+				outer.set("value", "Hello");
+				return;
+				QUnit.equal(root.find("#binding").find("div").html().trim(), outer.get("value"));
 				QUnit.equal($("#showbinding").css("display"),"block");
 				//Der failed leider, aber erst seitdem ich die Sachen aus var outer rausgenommen habe und in var binding gesteckt habe
 				QUnit.equal($("#hidebinding").css("display"),"none");

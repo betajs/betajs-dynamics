@@ -1,23 +1,26 @@
 {
-  "name": "betajs-dynamics",
-  "version": "0.0.1",
-  "description": "BetaJS-Dynamics is a dynamic dom templating engine.",
-  "homepage": "http://betajs.com",
-  "contributors": [
-  	"Oliver Friedmann",
-  	"Victor Lingenthal"
-  ],
-  "license": "MIT",
-  "devDependencies": {
-    "grunt": "",
-    "grunt-contrib-jshint": "",
-    "grunt-contrib-nodeunit": "",
-    "grunt-contrib-concat": "",
-    "grunt-contrib-uglify": "",
-    "grunt-shell": "",
-    "grunt-newer": "",
-    "grunt-contrib-clean": "",
-    "grunt-preprocess": "",
-    "grunt-git-revision-count": ""
-  }
+	"name": "betajs-dynamics",
+	"version": "0.0.1",
+	"description": "BetaJS-Dynamics is a dynamic dom templating engine.",
+	"homepage": "http://betajs.com",
+	"contributors": ["Oliver Friedmann", "Victor Lingenthal"],
+	"license": "MIT",
+	"devDependencies": {
+		"grunt": "",
+		"grunt-contrib-jshint": "",
+		"grunt-contrib-nodeunit": "",
+		"grunt-contrib-concat": "",
+		"grunt-contrib-uglify": "",
+		"grunt-shell": "",
+		"grunt-newer": "",
+		"grunt-contrib-clean": "",
+		"grunt-preprocess": "",
+		"grunt-git-revision-count": "",
+		"grunt-closure-tools": "",
+		"grunt-wget": ""
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/betajs/betajs-dynamics.git"
+	}
 }

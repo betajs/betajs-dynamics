@@ -1,10 +1,10 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-02-27
+betajs-dynamics - v0.0.1 - 2015-03-19
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
 /*!
-betajs-scoped - v0.0.1 - 2015-02-19
+betajs-scoped - v0.0.1 - 2015-03-17
 Copyright (c) Oliver Friedmann
 MIT Software License.
 */
@@ -12,30 +12,18 @@ var Scoped = (function () {
 var Globals = {
 
 	get : function(key) {
-		try {
-			if (window)
-				return window[key];
-		} catch (e) {
-		}
-		try {
-			if (global)
-				return global[key];
-		} catch (e) {
-		}
+		if (typeof window !== "undefined")
+			return window[key];
+		if (typeof global !== "undefined")
+			return global[key];
 		return null;
 	},
 
 	set : function(key, value) {
-		try {
-			if (window)
-				window[key] = value;
-		} catch (e) {
-		}
-		try {
-			if (global)
-				global[key] = value;
-		} catch (e) {
-		}
+		if (typeof window !== "undefined")
+			window[key] = value;
+		if (typeof global !== "undefined")
+			global[key] = value;
 		return value;
 	},
 	
@@ -121,11 +109,7 @@ var Helper = {
 };
 var Attach = {
 		
-	__namespace: "Scoped"
-		
-};
-
-Helper.extend(Attach, {
+	__namespace: "Scoped",
 	
 	upgrade: function (namespace) {
 		var current = Globals.get(namespace || Attach.__namespace);
@@ -150,7 +134,7 @@ Helper.extend(Attach, {
 		if (current == this)
 			return this;
 		Attach.__revert = current;
-		Globals.set(namespace, this);
+		Globals.set(Attach.__namespace, this);
 		return this;
 	},
 	
@@ -163,13 +147,14 @@ Helper.extend(Attach, {
 		return this;
 	},
 	
-	exports: function (object, forceExport) {
-		if (typeof module != "undefined" && "exports" in module && (forceExport || module.exports == this || !module.exports || Helper.isEmpty(module.exports)))
-			module.exports = object || this;
+	exports: function (mod, object, forceExport) {
+		mod = mod || (typeof module != "undefined" ? module : null);
+		if (typeof mod == "object" && mod && "exports" in mod && (forceExport || mod.exports == this || !mod.exports || Helper.isEmpty(mod.exports)))
+			mod.exports = object || this;
 		return this;
 	}	
 
-});
+};
 
 function newNamespace (options) {
 	
@@ -291,10 +276,11 @@ function newNamespace (options) {
 				context: context
 			});
 			if (node.lazy.length > 0) {
-				var f = function () {
+				var f = function (node) {
 					if (node.lazy.length > 0) {
 						var lazy = node.lazy.shift();
 						lazy.callback.call(lazy.context || this, node.data);
+						f(node);
 					}
 				};
 				f(node);
@@ -454,6 +440,8 @@ function newScope (parent, parentNamespace, rootNamespace, globalNamespace) {
 				};
 			} else {
 				var binding = bindings[parts[0]];
+				if (!binding)
+					throw ("The namespace '" + parts[0] + "' has not been defined (yet).");
 				return {
 					namespace: binding.namespace,
 					path : binding.path && parts[1] ? binding.path + "." + parts[1] : (binding.path || parts[1])
@@ -484,9 +472,10 @@ function newScope (parent, parentNamespace, rootNamespace, globalNamespace) {
 			var args = Helper.matchArgs(arguments, {
 				dependencies: "array",
 				hiddenDependencies: "array",
-				callback: true,
+				callback: "function",
 				context: "object"
 			});
+			args.callback = args.callback || function () {};
 			var dependencies = args.dependencies || [];
 			var allDependencies = dependencies.concat(args.hiddenDependencies || []);
 			var count = allDependencies.length;
@@ -533,7 +522,7 @@ var rootScope = newScope(null, rootNamespace, rootNamespace, globalNamespace);
 var Public = Helper.extend(rootScope, {
 		
 	guid: "4b6878ee-cb6a-46b3-94ac-27d91f58d666",
-	version: '3.1424370853283',
+	version: '8.1426613087189',
 		
 	upgrade: Attach.upgrade,
 	attach: Attach.attach,
@@ -547,7 +536,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.1 - 2015-02-27
+betajs-dynamics - v0.0.1 - 2015-03-19
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -564,7 +553,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '32.1425039861657'
+		version: '40.1426800668807'
 	};
 });
 
@@ -1502,8 +1491,7 @@ Scoped.define("module:Handlers.Node", [
 					tagName: tagv
 				});
 				this._$element.append(this._tagHandler.element());
-				for (var key in this._attrs) {
-					var attr = this._attrs[key];
+				Objs.iter(this._attrs, function (attr, key) {
 					if (!attr.partial && key.indexOf("ba-") === 0) {
 						var innerKey = key.substring("ba-".length);
 						this._tagHandler.properties().set(innerKey, attr.value);
@@ -1521,7 +1509,7 @@ Scoped.define("module:Handlers.Node", [
 							}
 						}
 					}
-				}
+				}, this);
 				this._tagHandler.activate();
 				return true;
 			},

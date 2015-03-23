@@ -159,8 +159,7 @@ Scoped.define("module:Handlers.Node", [
 					tagName: tagv
 				});
 				this._$element.append(this._tagHandler.element());
-				for (var key in this._attrs) {
-					var attr = this._attrs[key];
+				Objs.iter(this._attrs, function (attr, key) {
 					if (!attr.partial && key.indexOf("ba-") === 0) {
 						var innerKey = key.substring("ba-".length);
 						this._tagHandler.properties().set(innerKey, attr.value);
@@ -178,7 +177,7 @@ Scoped.define("module:Handlers.Node", [
 							}
 						}
 					}
-				}
+				}, this);
 				this._tagHandler.activate();
 				return true;
 			},

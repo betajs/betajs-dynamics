@@ -1,8 +1,8 @@
 <html>
 	<head>
 		<script src="../assets/jquery.js"></script>
-		<script src="../assets/beta.js"></script>
-		<script src="../assets/beta-browser.js"></script>
+        <script src="../../vendors/beta.js"></script>
+        <script src="../../vendors/beta-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
@@ -67,18 +67,18 @@
 
 			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inject", {
 				template: 	"<div>Value inner : " +
-								"<div>String: {{=inject}}</div>" +
+								"<div id='injected'>{{=inject}}</div>" +
 								"<div>Internal Property: {{=internal_property.v}}</div>" +
 								"<div>External Property: {{=external_property.v}}</div>" +
 							"</div>"
 			}).register("ba-inner");
 
 			outer.activate();
-
+outer.set("value", "Hello");
 			function test() {
 
 				outer.set("value", "Hello");
-//				QUnit.equal(root.find("span").html().trim(), outer.get("value"));
+				QUnit.equal(root.find("#injected").html().trim(), outer.get("value"));
 
 			}			
 		</script>

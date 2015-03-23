@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-02-27
+betajs-dynamics - v0.0.1 - 2015-03-19
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '32.1425039861657'
+		version: '40.1426800668807'
 	};
 });
 
@@ -954,8 +954,7 @@ Scoped.define("module:Handlers.Node", [
 					tagName: tagv
 				});
 				this._$element.append(this._tagHandler.element());
-				for (var key in this._attrs) {
-					var attr = this._attrs[key];
+				Objs.iter(this._attrs, function (attr, key) {
 					if (!attr.partial && key.indexOf("ba-") === 0) {
 						var innerKey = key.substring("ba-".length);
 						this._tagHandler.properties().set(innerKey, attr.value);
@@ -973,7 +972,7 @@ Scoped.define("module:Handlers.Node", [
 							}
 						}
 					}
-				}
+				}, this);
 				this._tagHandler.activate();
 				return true;
 			},

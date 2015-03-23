@@ -7,26 +7,57 @@
 	</head>
 	<body>
 		<test>
-			<p id="test1">{{value}}</p>
-			<p id="test2">{{prop.value}}</p>
+			<div>
+				<span>Test 1: </span>
+				<span id="value1">{{value1}}</span>
+				<button ba-click="value1 = changed_value1">Change Value1</button>
+			</div>
+			<div>
+				<span>Test 2: </span>
+				<span id="value2">{{prop.value2}}</span>
+				<button ba-click="prop.value2 = changed_value2">Change Value2</button>
+			</div>
+			<div>
+				<span>Test 3: </span>
+				<span id="value3">{{prop.value3}}</span>
+				<button ba-click="prop.value3 = changed_value3">Change Value3</button>
+			</div>
 		</test>
 		<script>
 			var root = $("test");
 			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
-		
-			dynamic.set("value", "test");
-			dynamic.set("prop", new BetaJS.Properties.Properties({ value: "bar"}));
+
+			// Initial Values
+			var intial_value1 = "Initial Value 1";
+			var intial_value2 = "Initial Value 2";
+			var intial_value3 = "Initial Value 3";
+
+			// Changed Values
+			var changed_value1 = "Changed Value 1";
+			var changed_value2 = "Changed Value 2";
+			var changed_value3 = "Changed Value 3";
+
+			dynamic.set("value1", intial_value1);
+			dynamic.set("prop", new BetaJS.Properties.Properties({
+				value2: intial_value2,
+				value3: intial_value3
+			}));
 			dynamic.activate();
 			
 			function test() {
-				QUnit.equal(root.find("#test1").html().trim(), "test");
-				QUnit.equal(root.find("#test2").html().trim(), "bar");
-				
-				dynamic.set("value", "moo");
-				dynamic.get("prop").set("value", "baz");
-			
-				QUnit.equal(root.find("#test1").html().trim(), "moo");
-				QUnit.equal(root.find("#test2").html().trim(), "baz");
+				QUnit.equal(root.children().length, 3);
+
+				QUnit.equal(root.find("#value1").html().trim(), intial_value1);
+				dynamic.set("value1", changed_value1);
+				QUnit.equal(root.find("#value1").html().trim(), changed_value1);
+
+				QUnit.equal(root.find("#value2").html().trim(), intial_value2);
+				dynamic.get("prop").set("value2", changed_value2);
+				QUnit.equal(root.find("#value2").html().trim(), changed_value2);
+
+				QUnit.equal(root.find("#value3").html().trim(), intial_value3);
+				dynamic.set("prop.value3", changed_value3);
+				QUnit.equal(root.find("#value3").html().trim(), changed_value3);
 			}			
 		</script>
 	</body>

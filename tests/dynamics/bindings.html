@@ -1,0 +1,77 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../assets/styles.css">
+
+    <script src="../assets/jquery.js"></script>
+    <script src="../assets/beta.js"></script>
+    <script src="../assets/beta-browser.js"></script>
+    <script src="../../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+
+<test>
+
+    <div>
+        </br>
+        <h3>Tests for data bindings</h3>
+        </br>
+    </div>
+
+    <div id="binding">
+        <h4>Tests for special values</h4>
+
+        <div>
+            <span>True : </span>
+            <span id="true">{{value_true}}</span>
+        </div>
+
+        <div>
+            <span>True : </span>
+            <span id="false">{{value_false}}</span>
+        </div>
+
+        <div>
+            <span>Null : </span>
+            <span id="null">{{value_null}}</span>
+        </div>
+
+        <div>
+            <span>Undefined : </span>
+            <span id="undefined">{{value_undefined}}</span>
+        </div>
+
+        </br>
+    </div>
+
+</test>
+
+<script>
+
+    var root = $("test");
+
+    //Dynamics
+    var showbinding = new BetaJS.Dynamics.Dynamic({
+        element: root.find("#binding"),
+        attrs: {
+            value_true: true,
+            value_false: false,
+            value_null: null,
+            value_undefined: undefined
+        }
+    });
+    showbinding.activate();
+
+    function test() {
+        QUnit.equal(root.children().length, 2);
+
+        //Binding
+        QUnit.equal($("#true").html().trim(), "true");
+        QUnit.equal($("#false").html().trim(), "false");
+        QUnit.equal($("#null").html().trim(), "");
+        QUnit.equal($("#undefined").html().trim(), "");
+
+    }
+</script>
+
+</body>
+</html>

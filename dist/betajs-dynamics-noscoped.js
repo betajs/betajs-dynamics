@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-03-19
+betajs-dynamics - v0.0.1 - 2015-03-23
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '40.1426800668807'
+		version: '43.1427146055525'
 	};
 });
 
@@ -1000,7 +1000,7 @@ Scoped.define("module:Handlers.Node", [
 							});
 						}
 					}
-					this.__updateDyn();
+					this.__updateDyn(true);
 					for (var i = 0; i < this._element.childNodes.length; ++i)
 						this._registerChild(this._element.childNodes[i]);
 				}
@@ -1012,11 +1012,11 @@ Scoped.define("module:Handlers.Node", [
 				this._locked = false;
 			},
 			
-			__updateDyn: function () {
+			__updateDyn: function (force) {
 				if (!this._dyn)
 					return;
 				var value = this.__executeDyn(this._dyn);
-				if (value != this._dyn.value) {
+				if (force || value != this._dyn.value) {
 					this._dyn.value = value;
 					this._element.textContent = value;
 				}

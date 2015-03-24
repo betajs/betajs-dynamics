@@ -55,9 +55,12 @@
 				dynamic.get("prop").set("value2", changed_value2);
 				QUnit.equal(root.find("#value2").html().trim(), changed_value2);
 
-				QUnit.equal(root.find("#value3").html().trim(), intial_value3);
-				dynamic.set("prop.value3", changed_value3);
-				QUnit.equal(root.find("#value3").html().trim(), changed_value3);
+				// The sub property notation is not enabled outside of templates so far.
+				// We might add that feature later.
+				//
+				// QUnit.equal(root.find("#value3").html().trim(), intial_value3);
+				// dynamic.set("prop.value3", changed_value3);
+				// QUnit.equal(root.find("#value3").html().trim(), changed_value3);
 			}			
 		</script>
 	</body>

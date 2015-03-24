@@ -205,7 +205,7 @@ Scoped.define("module:Handlers.Node", [
 							});
 						}
 					}
-					this.__updateDyn();
+					this.__updateDyn(true);
 					for (var i = 0; i < this._element.childNodes.length; ++i)
 						this._registerChild(this._element.childNodes[i]);
 				}
@@ -217,11 +217,11 @@ Scoped.define("module:Handlers.Node", [
 				this._locked = false;
 			},
 			
-			__updateDyn: function () {
+			__updateDyn: function (force) {
 				if (!this._dyn)
 					return;
 				var value = this.__executeDyn(this._dyn);
-				if (value != this._dyn.value) {
+				if (force || value != this._dyn.value) {
 					this._dyn.value = value;
 					this._element.textContent = value;
 				}

@@ -25,23 +25,25 @@
 					.red {background: red}
 				</style>
 				<div>
-					<div>Expected Behaviour (Class/Background seperate): </div>
+					<h4>Expected Behaviour (Class/Background seperate): </h4>
+					<div>If: </div>
 					<div
 							ba-if="{{showbinding}}"
 							>{{=value}}</div>
 					<div
 							ba-if="{{!showbinding}}"
 							>Hide Binding</div>
+					</br>
+					<div>Background:</div>
 					<div
 							ba-class="{{{'green':showbinding}}}"
 							>{{=value}}</div>
 					<div
 							ba-class="{{{'red':!showbinding}}}"
 							>Hide Binding</div>
-					</br>
 				</div>
 				<div>
-					<div>Actual Behaviour</div>
+					<h4>Actual Behaviour</h4>
 					<div
 							id="showbinding"
 							ba-if="{{showbinding}}"

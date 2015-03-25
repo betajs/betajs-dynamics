@@ -21,8 +21,9 @@
 			</br>
 
 			Property Array:
-			<div ba-repeat="{{prop :: property_array}}">
-				<div>Hi</div>
+			<div
+					id="prop"
+					ba-repeat="{{prop :: property_array}}">
 				<div>{{prop.v}}</div>
 			</div>
 
@@ -30,8 +31,9 @@
 
 			Array:
 			{{=value}}
-			<ul ba-repeat="{{item :: array_items}}">
-				<li>Hi</li>
+			<ul
+					id="arr"
+					ba-repeat="{{item :: array_items}}">
 				<li>{{item}}</li>
 			</ul>
 
@@ -43,13 +45,40 @@
 
 		<script>
 			var root = $("test");
-			var external_property = new BetaJS.Properties.Properties({v : "This is an External Property"});
+
+			//Messages
+			var external_initial = "This is an External Property";
+			var external_changed = "New External Property Value";
+			var internal_initial = "This is an Internal Property";
+			var internal_changed = "New Internal Property Value";
+			var array_initial = ["A","B","C"];
+			var array_changed = ["D","E","F"];
+
+			// Which one is the preferred format JSON or simple variables?
+//			var messages = {
+//				external : {
+//					initial : "This is an External Property",
+//					changed : "New External Property Value"
+//				},
+//				internal : {
+//					initial : "This is an Internal Property",
+//					changed : "New Internal Property Value"
+//				},
+//				array : {
+//					initial : ["A","B","C"],
+//					changed : ["D","E","F"]
+//				}
+//			}
+
+			//Properties
+			var external_property = new BetaJS.Properties.Properties({v : external_initial});
 			var external_property_array = [external_property];
+
 			var outer = new BetaJS.Dynamics.Dynamic({
 				element: root.get(0),
 				attrs: {
 					array_items: ["A","B","C"],
-					internal_property: new BetaJS.Properties.Properties({v : "This is an Internal Property"}),
+					internal_property: new BetaJS.Properties.Properties({v : internal_initial}),
 					property_array: external_property_array,
 					value: "This is a String"
 				},
@@ -59,15 +88,16 @@
 				},
 				functions: {
 					change_props : function (){
-						this.get("internal_property").set("v","New Internal Property Value");
-						external_property.set("v","New External Property Value");
+						this.get("internal_property").set("v",internal_changed);
+						external_property.set("v",external_changed);
+						this.set("array_items",array_changed)
 					}
 				}
 			});
 
 			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inject", {
 				template: 	"<div>Value inner : " +
-								"<div id='injected'>{{=inject}}</div>" +
+								"<span id='injected'>{{=inject}}</span>" +
 								"<div>Internal Property: {{=internal_property.v}}</div>" +
 								"<div>External Property: {{=external_property.v}}</div>" +
 							"</div>"
@@ -77,10 +107,16 @@
 outer.set("value", "Hello");
 			function test() {
 
-				outer.set("value", "Hello");
 				QUnit.equal(root.find("#injected").html().trim(), outer.get("value"));
+				QUnit.equal(root.find("#prop :first-child").html().trim(), external_initial);
+				QUnit.equal(root.find("#arr :first-child").html().trim(), array_initial[0]);
 
-			}			
+				outer.call("change_props");
+				QUnit.equal(root.find("#injected").html().trim(), outer.get("value"));
+				QUnit.equal(root.find("#prop :first-child").html().trim(), external_changed);
+				QUnit.equal(root.find("#arr :first-child").html().trim(), array_changed[0]);
+
+			}
 		</script>
 
 	</body>

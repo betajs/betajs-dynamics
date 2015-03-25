@@ -1,0 +1,114 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="../assets/styles.css">
+
+		<script src="../assets/jquery.js"></script>
+        <script src="../../vendors/beta.js"></script>
+        <script src="../../vendors/beta-browser-noscoped.js"></script>
+		<script src="../../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+
+		<test>
+
+			<div>
+				</br>
+				<h3>Test for ba-if & ba-class</h3>
+				</br>
+			</div>
+
+			<div id="baifsimple">
+				<h4>Test ba-if simple</h4>
+				<input value="{{=value}}">
+				<style>
+					.green {background: green}
+					.red {background: red}
+				</style>
+				<div>
+					<div>Expected Behaviour (Class/Background seperate): </div>
+					<div
+							ba-if="{{showbinding}}"
+							>{{=value}}</div>
+					<div
+							ba-if="{{!showbinding}}"
+							>Hide Binding</div>
+					<div
+							ba-class="{{{'green':showbinding}}}"
+							>{{=value}}</div>
+					<div
+							ba-class="{{{'red':!showbinding}}}"
+							>Hide Binding</div>
+					</br>
+				</div>
+				<div>
+					<div>Actual Behaviour</div>
+					<div
+							id="showbinding"
+							ba-if="{{showbinding}}"
+							ba-class="{{{'green':showbinding}}}"
+							>{{=value}}</div>
+					<div
+							id="hidebinding"
+							ba-if="{{!showbinding}}"
+							ba-class="{{{'red':!showbinding}}}"
+							>Hide Binding</div>
+					</br>
+				</div>
+				<button
+						ba-click="change_showbinding()"
+						>Show/Hide</button>
+				</br>
+			</div>
+
+		</test>
+
+		<script>
+			var global = window;
+
+			//Elements
+			var root = $("test");
+
+			//Messages
+			var external_message = "This is an external Message";
+
+			//Properties
+			var external_property = new BetaJS.Properties.Properties({v : external_message});
+
+			//Dynamics
+			var showbinding = new BetaJS.Dynamics.Dynamic({
+				element: root.find("#baifsimple"),
+				attrs: {
+					value: "Show Binding",
+					showbinding: true
+				},
+				functions: {
+					change_showbinding : function () {
+						this.set("showbinding",!this.get("showbinding"));
+					}
+				}
+			});
+			showbinding.activate();
+
+
+			function test() {
+				QUnit.equal(root.children().length, 2);
+
+				//Initial values
+				showbinding.set("value", "Hello");
+				QUnit.equal($("#baifsimple").find("div").html().trim(), showbinding.get("value"));
+				QUnit.equal($("#showbinding").css("display"),"block");
+				QUnit.equal($("#hidebinding").css("display"),"none");
+				QUnit.equal($("#showbinding").css("background"),"rgb(0, 128, 0) none repeat scroll 0% 0% / auto padding-box border-box");
+				QUnit.equal($("#hidebinding").css("background"),"rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box");
+
+				//After change
+				showbinding.call("change_showbinding");
+				QUnit.equal($("#showbinding").css("display"),"none");
+				QUnit.equal($("#hidebinding").css("display"),"block");
+				QUnit.equal($("#showbinding").css("background"),"rgba(0, 0, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box");
+				QUnit.equal($("#hidebinding").css("background"),"rgb(255, 0, 0) none repeat scroll 0% 0% / auto padding-box border-box");
+			}
+		</script>
+
+	</body>
+</html>

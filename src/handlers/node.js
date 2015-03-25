@@ -87,7 +87,7 @@ Scoped.define("module:Handlers.Node", [
 				var self = this;
 				this._mesh.watch(dyn.dependencies, function () {
 					cb.apply(self);
-				}, this);
+				}, dyn);
 			},
 			
 			__initializeAttr: function (attr) {

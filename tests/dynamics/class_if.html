@@ -27,7 +27,7 @@
 				<div>
 					<h4>Expected Behaviour (Class/Background seperate): </h4>
 					<div>If: </div>
-					<div
+					<div id="inner"
 							ba-if="{{showbinding}}"
 							>{{=value}}</div>
 					<div
@@ -97,7 +97,7 @@
 
 				//Initial values
 				showbinding.set("value", "Hello");
-				QUnit.equal($("#baifsimple").find("div").html().trim(), showbinding.get("value"));
+				QUnit.equal($("#baifsimple").find("#inner").html().trim(), showbinding.get("value"));
 				QUnit.equal($("#showbinding").css("display"),"block");
 				QUnit.equal($("#hidebinding").css("display"),"none");
 				QUnit.equal($("#showbinding").css("background"),"rgb(0, 128, 0) none repeat scroll 0% 0% / auto padding-box border-box");

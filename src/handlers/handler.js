@@ -16,6 +16,9 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "jquery:", "browser:
 			});
 		},
 		
+		template: null,
+		templateUrl: null,
+		
 		_handlerInitialize: function (options) {
 			options = options || {};
 			this._parentHandler = options.parentHandler || null;

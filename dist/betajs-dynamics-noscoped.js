@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-03-25
+betajs-dynamics - v0.0.1 - 2015-03-26
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '47.1427308339698'
+		version: '48.1427413037692'
 	};
 });
 
@@ -288,6 +288,7 @@ Scoped.define("module:Parser", ["base:Types", "base:Objs", "base:JavaScript"], f
 				bidirectional: bidirectional,
 				args: args,
 				variable: bidirectional ? code : null,
+				/*jslint evil: true */
 				func: new Function ("obj", "with (obj) { return " + code + "; }"),
 				dependencies: Objs.keys(Objs.objectify(JavaScript.extractIdentifiers(code, true)))
 			};
@@ -645,6 +646,9 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "jquery:", "browser:
 				node.destroy();
 			});
 		},
+		
+		template: null,
+		templateUrl: null,
 		
 		_handlerInitialize: function (options) {
 			options = options || {};
@@ -1282,6 +1286,7 @@ Scoped.define("module:Dynamic", [
 			},
 				
 			constructor: function (options) {
+				this.initial = this.initial || {};
 				options = Objs.extend(Objs.clone(this.initial, 1), options);
 				if (!options.parent && options.parentHandler) {
 					var ph = options.parentHandler;

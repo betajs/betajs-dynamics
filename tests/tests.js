@@ -17,6 +17,7 @@ $(document).ready(function () {
 					if (this.tagName == "SCRIPT")
 						code = $(this).html();
 				});
+				/*jslint evil: true */
 				var f = new Function (code + "try {test();} catch (e) { QUnit.ok(false, e.toString()); }");
 				var windowKeys = BetaJS.Objs.clone(window, 1);
 				f();
@@ -26,6 +27,6 @@ $(document).ready(function () {
 				});
 				start();
 			});
-		})
+		});
 	});
 });

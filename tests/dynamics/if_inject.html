@@ -1,0 +1,154 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../assets/styles.css">
+
+    <script src="../assets/jquery.js"></script>
+    <script src="../../vendors/beta.js"></script>
+    <script src="../../vendors/beta-browser-noscoped.js"></script>
+    <script src="../../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+
+<test>
+
+    <div>
+        </br>
+        <h3>Tests for ba-if & Inject</h3>
+        </br>
+    </div>
+
+    <div id="outer">
+
+        <h4>Normal Array:</h4>
+
+        <div
+                id="normal_array"
+                ba-repeat="{{norm :: normal_array}}">
+            <div>Hi</div>
+            <div>{{norm}}</div>
+        </div>
+
+        <h4>Property Array:</h4>
+
+        <div
+                id="property_array"
+                ba-repeat="{{prop :: property_array}}">
+            <div>Hi</div>
+            <div>{{prop}}</div>
+        </div>
+
+        <h4>Middle</h4>
+
+        <ba-middle
+                ba-inject="{{{v:'haha'}}}"
+                ></ba-middle>
+
+        <h4>Middle & Array</h4>
+
+        <div
+                id="middle"
+                ba-repeat="{{prop :: property_array}}">
+            <div>{{prop.v}}</div>
+            <ba-middle
+                    ba-inject="{{prop}}"
+                    ></ba-middle>
+        </div>
+
+    </div>
+
+</test>
+
+<script>
+
+    //Elements
+    var root = $("test");
+
+    //Components
+    var internal_message = "This is an internal Message";
+
+    var outer = new BetaJS.Dynamics.Dynamic({
+        element: root.find("#outer"),
+        attrs: {
+                property_array : [
+                    new BetaJS.Properties.Properties({v : null}),
+                    new BetaJS.Properties.Properties({v : internal_message}),
+                    new BetaJS.Properties.Properties({v : null})
+                ],
+                normal_array : [
+                    "A",
+                    "B"
+                ]
+        }
+    });
+
+    BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Middle", {
+        template: 	"<middle> Middle {{someattr}}: " +
+                        "<div>inject: {{inject}}</div>" +
+                        "<div>inject.v: {{inject.v}}</div>" +
+                        "<ba-inner " +
+                            "ba-if='{{inject.v}}'" +
+                        "></ba-inner>" +
+                        "<button ba-click='change_array()'>Change Array</button>" +
+                    "</middle></br></br>",
+        attrs: {
+            someattr: "Some Attribute"
+        },
+        functions : {
+            change_array : function () {
+                console.log("Change Array");
+            }
+        }
+    }).register("ba-middle");
+
+    BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inner", {
+        template: 	"<inner> Inner " +
+                    "</inner></br>"
+    }).register("ba-inner");
+
+    outer.activate();
+
+//    var innertest = "Inner Test";
+//    BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inject", {
+//        template: 	"<inner>Value inner : " +
+//        "<div id='innertest'>" + innertest +"</div>" +
+//        "<div>" +
+//        "<span>String:</span>" +
+//        "<span id='test2'>{{=inject}}</span>" +
+//        "</div>" +
+//        "<div>" +
+//        "<span>Internal Property: </span>" +
+//        "<span id='int'>{{=internal_property.v}}</span>" +
+//        "</div>" +
+//        "<div>" +
+//        "<span>External Property: </span>" +
+//        "<span id='ext'>{{=external_property.v}}</span>" +
+//        "</div>" +
+//        "</inner>"
+//    }).register("ba-inner");
+
+
+    function test() {
+        QUnit.equal(root.children().length, 2);
+
+        //Arrays
+        QUnit.equal(
+                $("#normal_array").find("div").length,
+                2 * outer.get("normal_array").length
+        );
+        QUnit.equal(
+                $("#property_array").find("div").length,
+                2 * outer.get("property_array").length
+        );
+
+        //ba-repeat & Dynamic
+        QUnit.equal(
+                $("#middle").find("middle").length,
+                outer.get("property_array").length
+        );
+
+
+    }
+</script>
+
+</body>
+</html>

@@ -18,11 +18,17 @@
 			</div>
 
 			<div id="baifsimple">
-				<h4>Test ba-if simple</h4>
+				<h4 ba-if="{{false}}">Test ba-if simple</h4>
 				<input value="{{=value}}">
 				<div id="showbinding" ba-if="{{showbinding}}">{{=value}}</div>
 				<div id="hidebinding" ba-if="{{!showbinding}}">Hide Binding</div>
 				<button ba-click="change_showbinding()">Show/Hide</button>
+
+				<h4>Test ba-if Direct Values</h4>
+				<div id="direct_true" ba-if="{{true}}">True</div>
+				<div id="direct_false" ba-if="{{false}}">False</div>
+				<div id="direct_null" ba-if="{{null}}">Null</div>
+				<div id="direct_undefined" ba-if="{{undefined}}">Undefined</div>
 				</br>
 			</div>
 
@@ -76,20 +82,16 @@
 
 				</br>
 
-				<button id="bool" ba-click="change_bool()">Change Boolean</button>
+				<button id="bool" ba-click="showinject = !showinject">Change Boolean</button>
 
 				<h4>Test ba-if Property & Inject</h4>
 
 				<div>
-					<span>Test null: </span>
-					<span>{{testnull}}</span>
+					<span>Internal Property Value: </span>
+					<span>{{internal_property.v}}</span>
 				</div>
 
-				<div>
-					<span>Null: </span>
-					<span>{{false}}</span>
-				</div>
-
+				<h5>Dynamic to be injected:</h5>
 
 				<ba-inner
 						ba-if="{{internal_property.v}}"
@@ -136,9 +138,6 @@
 				},
 				functions: {
 					change_showbinding : function () {
-						// TODO: Oliver?:
-						//Introduce shorthand for this ?
-						// e.g. {{!=showbinding}}
 						this.set("showbinding",!this.get("showbinding"));
 					}
 				}
@@ -186,7 +185,6 @@
 				element: root.find("#inject"),
 				attrs: {
 					showinject: true,
-					testnull: null,
 					internal_property: new BetaJS.Properties.Properties({v : internal_message}),
 				},
 				functions: {
@@ -195,13 +193,13 @@
 					},
 					change_props : function (){
 						console.log(this.get("internal_property").get("v"));
+						this.get("internal_property").set("v",null);
+						console.log(this.get("internal_property").get("v"));
 
-						this.get("internal_property");
-//						console.log(this.get("internal_property").set("v",null));
 //						this.get("internal_property").set("v",null);
-						console.log("hi");
 
 //						console.log(this.get("internal_property"));
+
 					}
 				}
 			});
@@ -242,6 +240,12 @@
 				showbinding.call("change_showbinding");
 				QUnit.equal($("#showbinding").css("display"),"block");
 				QUnit.equal($("#hidebinding").css("display"),"none");
+
+				//Direct
+				QUnit.equal($("#direct_true").css("display"),"block");
+				QUnit.equal($("#direct_false").css("display"),"none");
+				QUnit.equal($("#direct_null").css("display"),"none");
+				QUnit.equal($("#direct_undefined").css("display"),"none");
 
 				//Special
 				QUnit.equal($("#null").css("display"),"block");

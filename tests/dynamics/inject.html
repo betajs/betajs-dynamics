@@ -95,18 +95,37 @@
 				}
 			});
 
-			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inject", {
+			var test_value = "Test Value";
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inner", {
+				attrs: {
+					attr_test : test_value
+				},
 				template: 	"<div>Value inner : " +
+								"<div>" +
+									"<span>Attribute Test: </span>" +
+									//Strangely without the id it displays differently
+									"<span id='attr_test'>{{attr_test}}</span>" +
+								"</div>" +
+								"<button ba-click='testf()'>Click me to test functions</button>" +
 								"<span id='injected'>{{=inject}}</span>" +
 								"<div>Internal Property: {{=internal_property.v}}</div>" +
 								"<div>External Property: {{=external_property.v}}</div>" +
-							"</div>"
+							"</div>",
+				functions: {
+					testf : function () {
+						console.log("Test");
+					}
+				}
 			}).register("ba-inner");
 
 			outer.activate();
 outer.set("value", "Hello");
 			function test() {
 
+				//Attribute Test
+				QUnit.equal(root.find("#attr_test").html().trim(), test_value);
+
+				//Others
 				QUnit.equal(root.find("#injected").html().trim(), outer.get("value"));
 				QUnit.equal(root.find("#prop :first-child").html().trim(), external_initial);
 				QUnit.equal(root.find("#arr :first-child").html().trim(), array_initial[0]);

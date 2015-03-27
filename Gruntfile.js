@@ -20,7 +20,7 @@ module.exports = function(grunt) {
 						src : [ 'src/fragments/begin.js-fragment',
 								'src/data/*.js', 'src/handlers/*.js',
 								'src/partials/*.js', 'src/dynamics/*.js',
-								'src/fragments/end.js-fragment', ]
+								'src/fragments/end.js-fragment' ]
 					},
 					dist_scoped : {
 						dest : 'dist/betajs-dynamics.js',
@@ -49,36 +49,27 @@ module.exports = function(grunt) {
 					dist : {
 						files : {
 							'dist/betajs-dynamics-noscoped.min.js' : [ 'dist/betajs-dynamics-noscoped.js' ],
-							'dist/betajs-dynamics.min.js' : [ 'dist/betajs-dynamics.js' ],
+							'dist/betajs-dynamics.min.js' : [ 'dist/betajs-dynamics.js' ]
 						}
 					}
 				},
-				shell : {
-					lint : {
-						command : "jsl +recurse --process ./src/*.js",
-						options : {
-							stdout : true,
-							stderr : true,
-						},
-						src : [ "src/*/*.js" ]
+				jshint : {
+					options: {
+						es5: false,
+						es3: true
 					},
-					lintfinal : {
-						command : "jsl --process ./dist/betajs-dynamics.js",
-						options : {
-							stdout : true,
-							stderr : true,
-						},
-						src : [ "src/*/*.js" ]
-					}
+					source : [ "./src/**/*.js"],
+					dist : [ "./dist/betajs-dynamics-noscoped.js", "./dist/betajs-dynamics.js" ],
+					gruntfile : [ "./Gruntfile.js" ],
+					tests: [ "./tests/tests.js" ]
 				},
 				closureCompiler : {
 					options : {
-						compilerFile : process.env.CLOSURE_PATH
-								+ "/compiler.jar",
+						compilerFile : process.env.CLOSURE_PATH + "/compiler.jar",
 						compilerOpts : {
 							compilation_level : 'ADVANCED_OPTIMIZATIONS',
 							warning_level : 'verbose',
-							externs : [ "./src/fragments/closure.js-fragment" ]
+							externs : [ "./src/fragments/closure.js-fragment", "./vendors/jquery-1.9.closure-extern.js" ]
 						}
 					},
 					dist : {
@@ -97,25 +88,27 @@ module.exports = function(grunt) {
 							"./vendors/scoped.js" : "https://raw.githubusercontent.com/betajs/betajs-scoped/master/dist/scoped.js",
 							"./vendors/beta.js" : "https://raw.githubusercontent.com/betajs/betajs/master/dist/beta.js",
 							"./vendors/beta-browser-noscoped.js" : "https://raw.githubusercontent.com/betajs/betajs-browser/master/dist/beta-browser-noscoped.js",
+							"./vendors/jquery-1.9.closure-extern.js" : "https://raw.githubusercontent.com/google/closure-compiler/master/contrib/externs/jquery-1.9.js"
 						}
 					}
 				}
 			});
 
-	grunt.loadNpmTasks('grunt-newer');
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-git-revision-count');
 	grunt.loadNpmTasks('grunt-preprocess');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-wget');
 	grunt.loadNpmTasks('grunt-closure-tools');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-node-qunit');
 	grunt.loadNpmTasks('grunt-jsdoc');
 
 	grunt.registerTask('default', [ 'revision-count', 'concat:dist_raw',
 			'preprocess', 'clean', 'concat:dist_scoped', 'uglify' ]);
-	grunt.registerTask('lint', [ 'shell:lint', 'shell:lintfinal' ]);
+	grunt.registerTask('lint', [ 'jshint:source', 'jshint:dist',
+	                 			 'jshint:gruntfile', "jshint:tests" ]);
 	grunt.registerTask('check', [ 'lint' ]);
 	grunt.registerTask('dependencies', [ 'wget:dependencies' ]);
 	grunt.registerTask('closure', [ 'closureCompiler', 'clean' ]);

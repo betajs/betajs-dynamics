@@ -61,6 +61,7 @@ Scoped.define("module:Parser", ["base:Types", "base:Objs", "base:JavaScript"], f
 				bidirectional: bidirectional,
 				args: args,
 				variable: bidirectional ? code : null,
+				/*jslint evil: true */
 				func: new Function ("obj", "with (obj) { return " + code + "; }"),
 				dependencies: Objs.keys(Objs.objectify(JavaScript.extractIdentifiers(code, true)))
 			};

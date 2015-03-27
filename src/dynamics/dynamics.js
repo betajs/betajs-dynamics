@@ -13,6 +13,7 @@ Scoped.define("module:Dynamic", [
 			},
 				
 			constructor: function (options) {
+				this.initial = this.initial || {};
 				options = Objs.extend(Objs.clone(this.initial, 1), options);
 				if (!options.parent && options.parentHandler) {
 					var ph = options.parentHandler;

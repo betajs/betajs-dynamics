@@ -97,9 +97,6 @@
 
 			var test_value = "Test Value";
 			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inner", {
-				attrs: {
-					attr_test : test_value
-				},
 				template: 	"<div>Value inner : " +
 								"<div>" +
 									"<span>Attribute Test: </span>" +
@@ -111,9 +108,14 @@
 								"<div>Internal Property: {{=internal_property.v}}</div>" +
 								"<div>External Property: {{=external_property.v}}</div>" +
 							"</div>",
-				functions: {
-					testf : function () {
-						console.log("Test");
+				initial: {
+					attrs: {
+						attr_test : test_value
+					},
+					functions: {
+						testf : function () {
+							console.log("Test");
+						}
 					}
 				}
 			}).register("ba-inner");

@@ -65,13 +65,14 @@
 
     //Components
     var internal_message = "This is an internal Message";
+    var internal_property = new BetaJS.Properties.Properties({v : internal_message});
 
     var outer = new BetaJS.Dynamics.Dynamic({
         element: root.find("#outer"),
         attrs: {
                 property_array : [
                     new BetaJS.Properties.Properties({v : null}),
-                    new BetaJS.Properties.Properties({v : internal_message}),
+                    new BetaJS.Properties.Properties({v : internal_property}),
                     new BetaJS.Properties.Properties({v : null})
                 ],
                 normal_array : [
@@ -85,23 +86,35 @@
         template: 	"<middle> Middle {{someattr}}: " +
                         "<div>inject: {{inject}}</div>" +
                         "<div>inject.v: {{inject.v}}</div>" +
+                        "<div>inject.v.v: {{inject.v.v}}</div>" +
                         "<ba-inner " +
                             "ba-if='{{inject.v}}'" +
+                            "ba-inject='{{inject.v}}'" +
                         "></ba-inner>" +
                         "<button ba-click='change_array()'>Change Array</button>" +
                     "</middle></br></br>",
-        attrs: {
-            someattr: "Some Attribute"
-        },
-        functions : {
-            change_array : function () {
-                console.log("Change Array");
+        initial: {
+            attrs: {
+                someattr: "Some Attribute"
+            },
+            functions : {
+                change_array : function () {
+                    console.log("Change Array");
+                    var array0 = outer.get("property_array")[0];;
+                    var array1 = outer.get("property_array")[1];;
+                    console.log("Array 0 Value: " + array0.get("v"));
+                    console.log("Array 1 Value: " + array1.get("v"));
+                    array0.set("v",internal_property);
+                    array1.set("v",null);
+                    console.log("Array 0 Value: " + array0.get("v"));
+                    console.log("Array 1 Value: " + array1.get("v"));
+                }
             }
         }
     }).register("ba-middle");
 
     BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inner", {
-        template: 	"<inner> Inner " +
+        template: 	"<inner> Inner: {{inject.v}}" +
                     "</inner></br>"
     }).register("ba-inner");
 

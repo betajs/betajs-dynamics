@@ -45,10 +45,11 @@
 
         <h4>Middle & Array</h4>
 
+        <button ba-click='change_array()'>Change Array</button>
+
         <div
                 id="middle"
                 ba-repeat="{{prop :: property_array}}">
-            <div>{{prop.v}}</div>
             <ba-middle
                     ba-inject="{{prop}}"
                     ></ba-middle>
@@ -65,20 +66,45 @@
 
     //Components
     var internal_message = "This is an internal Message";
-    var internal_property = new BetaJS.Properties.Properties({v : internal_message});
+    var internal_property0 = new BetaJS.Properties.Properties({v : null});
+    var internal_property1 = new BetaJS.Properties.Properties({v : internal_message});
+    var internal_property2 = new BetaJS.Properties.Properties({v : null});
 
     var outer = new BetaJS.Dynamics.Dynamic({
         element: root.find("#outer"),
         attrs: {
                 property_array : [
-                    new BetaJS.Properties.Properties({v : null}),
-                    new BetaJS.Properties.Properties({v : internal_property}),
-                    new BetaJS.Properties.Properties({v : null})
+                    new BetaJS.Properties.Properties({v : internal_property0}),
+                    new BetaJS.Properties.Properties({v : internal_property1}),
+                    new BetaJS.Properties.Properties({v : internal_property2})
                 ],
                 normal_array : [
                     "A",
                     "B"
                 ]
+        },
+        functions : {
+            change_array : function () {
+                console.log("Change Array");
+                var array0 = outer.get("property_array")[0];
+                var array1 = outer.get("property_array")[1];
+//                    TODO: Victor write tests for inner (its working at the moment
+//                    var prop0 = array0.get("v");
+//                    var prop1 = array1.get("v");
+
+                console.log("Array 0 Value: ");
+                console.log(array0.get("v"));
+                console.log("Array 1 Value: ");
+                console.log(array1.get("v"));
+
+                array0.set("v",internal_property1);
+                array1.set("v",null);
+
+                console.log("Array 0 Value: ");
+                console.log(array0.get("v"));
+                console.log("Array 1 Value: ");
+                console.log(array1.get("v"));
+            }
         }
     });
 
@@ -91,24 +117,10 @@
                             "ba-if='{{inject.v}}'" +
                             "ba-inject='{{inject.v}}'" +
                         "></ba-inner>" +
-                        "<button ba-click='change_array()'>Change Array</button>" +
                     "</middle></br></br>",
         initial: {
             attrs: {
                 someattr: "Some Attribute"
-            },
-            functions : {
-                change_array : function () {
-                    console.log("Change Array");
-                    var array0 = outer.get("property_array")[0];;
-                    var array1 = outer.get("property_array")[1];;
-                    console.log("Array 0 Value: " + array0.get("v"));
-                    console.log("Array 1 Value: " + array1.get("v"));
-                    array0.set("v",internal_property);
-                    array1.set("v",null);
-                    console.log("Array 0 Value: " + array0.get("v"));
-                    console.log("Array 1 Value: " + array1.get("v"));
-                }
             }
         }
     }).register("ba-middle");
@@ -154,11 +166,28 @@
         );
 
         //ba-repeat & Dynamic
+
         QUnit.equal(
-                $("#middle").find("middle").length,
-                outer.get("property_array").length
+                $($("#middle inner")[0]).html().trim(),
+                "Inner: null"
         );
 
+        QUnit.equal(
+                $($("#middle inner")[1]).html().trim(),
+                "Inner: This is an internal Message"
+        );
+
+        outer.call("change_array");
+
+        QUnit.equal(
+                $($("#middle inner")[0]).html().trim(),
+                "Inner: This is an internal Message"
+        );
+
+        QUnit.equal(
+                $($("#middle inner")[1]).html().trim(),
+                "Inner: null"
+        );
 
     }
 </script>

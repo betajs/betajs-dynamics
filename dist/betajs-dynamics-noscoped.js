@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-03-26
+betajs-dynamics - v0.0.1 - 2015-03-30
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '48.1427413037692'
+		version: '53.1427768655178'
 	};
 });
 
@@ -41,49 +41,106 @@ Scoped.define("module:Data.Mesh", [
 			},
 			
 			destroy: function () {
-				this.unwatch(Objs.keys(this.__watchers));
+				Objs.iter(this.__watchers, this.__destroyWatcher, this);
 				inherited.destroy.call(this);
 			},
 			
 			watch: function (expressions, callback, context) {
 				Objs.iter(expressions, function (expression) {
-					for (var i = this.__environment.length - 1; i >= 0; --i) {
-						if (this._watch(this.__environment[i], expression, callback, context, i === 0))
-							break;
-					}
+					var watcher = this.__createWatcher(expression);
+					watcher.cbs[Ids.objectId(context)] = {
+						callback: callback,
+						context: context
+					};
 				}, this);
 			},
 			
 			unwatch: function (expressions, context) {
 				Objs.iter(expressions, function (expression) {
-					this._unwatch(expression, context);
-				}, this);
-			},
-			
-			call: function (expressions, callback) {
-				var data = {};
-				var exprs = [];
-				Objs.iter(expressions, function (expression) {
-					var value = this.read(expression, true);
-					if (value !== null || !(Strings.splitFirst(expression, ".").head in window)) {
-						exprs.push(expression);
-						data[expression] = value; 
+					var watcher = this.__createWatcher(expression, true);
+					if (watcher) {
+						delete watcher.cbs[Ids.objectId(context)];
+						this.__destroyWatcher(watcher, true);
 					}
 				}, this);
-				
-				var expanded = this.__expand(data);
-
-				var result = callback.call(this.__context, expanded);
-
-				var collapsed = this.__collapse(expanded, exprs);
-				for (var expression in collapsed) {
-					if (!(expression in data) || data[expression] != collapsed[expression])
-						this.write(expression, collapsed[expression]);
-				}
-				return result;
+			},						
+			
+			__destroyWatcher: function (watcher, weak) {
+				if (Types.is_string(watcher))
+					watcher = this.__watchers[watcher];
+				if (!watcher || (weak && !(Types.is_empty(watcher.cbs) && Types.is_empty(watcher.children))))
+					return;
+				Objs.iter(watcher.children, this.__destroyWatcher, this);
+				this.__unbindWatcher(watcher);
+				if (watcher.parent)
+					delete watcher.parent.children[watcher.key];
+				delete this.__watchers[watcher.expression];
+				if (watcher.parent && Types.is_empty(watcher.parent.cbs) && Types.is_empty(watcher.parent.children))
+					this.__destroyWatcher(watcher.parent);
 			},
 			
-			read: function (expression, convertFunction) {
+			__createWatcher: function (expression, weak) {
+				var watcher = this.__watchers[expression];
+				if (watcher || weak)
+					return watcher;
+				var split = Strings.splitLast(expression, ".");
+				var parent = split.head ? this.__createWatcher(split.head) : null;
+				watcher = {
+					cbs: {},
+					parent: parent,
+					key: split.tail,
+					expression: expression,
+					children: {},
+					properties: null,
+					propertiesPrefix: null
+				};
+				if (parent)
+					parent.children[split.tail] = watcher;
+				this.__watchers[expression] = watcher;
+				this.__bindWatcher(watcher);
+				return watcher;
+			},
+			
+			__unbindWatcher: function (watcher) {
+				if (watcher.properties)
+					watcher.properties.off(null, null, watcher);
+				Objs.iter(watcher.children, this.__unbindWatcher, this);
+			},
+			
+			__bindWatcher: function (watcher) {
+				var n = null;
+				for (var i = this.__environment.length - 1; i >= 0; --i) {
+					var force = i === 0;
+					var scope = this.__environment[i];
+					n = this._navigate(scope, watcher.expression);
+					if (force && !n.properties && Properties.is_instance_of(scope))
+						n.properties = scope;
+					if (n.properties && (force || !n.tail))
+						break;
+					n = null;
+				}
+				watcher.properties = n.properties;
+				var exp = n.head + (n.head && n.tail ? "." : "") + n.tail;
+				watcher.propertiesPrefix = exp;
+				watcher.properties.on("change:" + watcher.propertiesPrefix, function (value) {
+					Objs.iter(watcher.children, this.__unbindWatcher, this);
+					Objs.iter(watcher.children, this.__bindWatcher, this);
+					watcher.value = value;
+					Objs.iter(watcher.cbs, function (cb) {
+						cb.callback.apply(cb.context);
+					}, this);
+				}, this);
+				var value = watcher.properties.get(exp);
+				if (value != watcher.value) {
+					watcher.value = value;
+					Objs.iter(watcher.cbs, function (cb) {
+						cb.callback.apply(cb.context);
+					}, this);
+				}
+				Objs.iter(watcher.children, this.__bindWatcher, this);
+			},
+			
+			read: function (expression) {
 				for (var i = this.__environment.length - 1; i >= 0; --i) {
 					var ret = this._read(this.__environment[i], expression);
 					if (ret) {
@@ -100,6 +157,29 @@ Scoped.define("module:Data.Mesh", [
 					if (this._write(this.__environment[i], expression, value, i === 0))
 						break;
 				}
+			},
+			
+			call: function (expressions, callback) {
+				var data = {};
+				var exprs = [];
+				Objs.iter(expressions, function (expression) {
+					var value = this.read(expression);
+					if (value !== null || !(Strings.splitFirst(expression, ".").head in window)) {
+						exprs.push(expression);
+						data[expression] = value; 
+					}
+				}, this);
+				
+				var expanded = this.__expand(data);
+
+				var result = callback.call(this.__context, expanded);
+
+				var collapsed = this.__collapse(expanded, exprs);
+				for (var expression in collapsed) {
+					if (!(expression in data) || data[expression] != collapsed[expression])
+						this.write(expression, collapsed[expression]);
+				}
+				return result;
 			},
 			
 			_sub_navigate: function (properties, head, tail, parent, current) {
@@ -155,43 +235,6 @@ Scoped.define("module:Data.Mesh", [
 						current = current[tail[i]];
 					}
 					current[tail[tail.length - 1]] = value;
-				}
-			},
-			
-			_watch: function (scope, expression, callback, context, force) {
-				if (!this.__watchers[expression]) {
-					var n = this._navigate(scope, expression);
-					if (force && !n.properties && Properties.is_instance_of(scope))
-						n.properties = scope;
-					if (!n.properties || (!force && n.tail))
-						return false;
-					var exp = n.head + (n.head && n.tail ? "." : "") + n.tail;
-					this.__watchers[expression] = {
-						props: n.properties,
-						exp: exp,
-						cbs: {}
-					};
-					n.properties.on("change:" + exp, function (tt) {
-						Objs.iter(this.__watchers[expression].cbs, function (value) {
-							value.callback.call(value.context);
-						}, this);
-					}, this);
-				}
-				this.__watchers[expression].cbs[Ids.objectId(context)] = {
-					callback: callback,
-					context: context
-				};
-				return true;
-			},
-			
-			_unwatch: function (expression, context) {
-				if (!this.__watchers[expression])
-					return;
-				if (context)
-					delete this.__watchers[expression].cbs[Ids.objectId(context)];
-				if (!context || Types.is_empty(this.__watchers[expression].cbs)) {
-					this.__watchers[expression].props.off("change:" + this.__watchers[expression].exp, null, this);
-					delete this.__watchers[expression];
 				}
 			},
 			

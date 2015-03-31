@@ -61,7 +61,7 @@ module.exports = function(grunt) {
 					source : [ "./src/**/*.js"],
 					dist : [ "./dist/betajs-dynamics-noscoped.js", "./dist/betajs-dynamics.js" ],
 					gruntfile : [ "./Gruntfile.js" ],
-					tests: [ "./tests/tests.js" ]
+					tests: [ "./tests/demotests/*.js", "./tests/data/*.js" ]
 				},
 				closureCompiler : {
 					options : {

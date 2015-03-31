@@ -85,25 +85,11 @@
         },
         functions : {
             change_array : function () {
-                console.log("Change Array");
                 var array0 = outer.get("property_array")[0];
                 var array1 = outer.get("property_array")[1];
-//                    TODO: Victor write tests for inner (its working at the moment
-//                    var prop0 = array0.get("v");
-//                    var prop1 = array1.get("v");
-
-                console.log("Array 0 Value: ");
-                console.log(array0.get("v"));
-                console.log("Array 1 Value: ");
-                console.log(array1.get("v"));
 
                 array0.set("v",internal_property1);
                 array1.set("v",null);
-
-                console.log("Array 0 Value: ");
-                console.log(array0.get("v"));
-                console.log("Array 1 Value: ");
-                console.log(array1.get("v"));
             }
         }
     });
@@ -131,26 +117,6 @@
     }).register("ba-inner");
 
     outer.activate();
-
-//    var innertest = "Inner Test";
-//    BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inject", {
-//        template: 	"<inner>Value inner : " +
-//        "<div id='innertest'>" + innertest +"</div>" +
-//        "<div>" +
-//        "<span>String:</span>" +
-//        "<span id='test2'>{{=inject}}</span>" +
-//        "</div>" +
-//        "<div>" +
-//        "<span>Internal Property: </span>" +
-//        "<span id='int'>{{=internal_property.v}}</span>" +
-//        "</div>" +
-//        "<div>" +
-//        "<span>External Property: </span>" +
-//        "<span id='ext'>{{=external_property.v}}</span>" +
-//        "</div>" +
-//        "</inner>"
-//    }).register("ba-inner");
-
 
     function test() {
         QUnit.equal(root.children().length, 2);
@@ -185,8 +151,8 @@
         );
 
         QUnit.equal(
-                $($("#middle inner")[1]).html().trim(),
-                "Inner: null"
+                $($("#middle inner")[1]).parent().css('display'),
+                "none"
         );
 
     }

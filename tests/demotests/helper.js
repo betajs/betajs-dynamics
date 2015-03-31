@@ -5,7 +5,7 @@ $(document).ready(function () {
 		var src = democase.attr("src");
 		src += (src.indexOf("?") >= 0 ? "&" : "?") + "rev=" + BetaJS.Time.now();
 		var title = BetaJS.Strings.splitLast(BetaJS.Strings.splitFirst(src, ".html").head, "/").tail.replace(/_/g, " ");
-		test(title, function () {
+		test("demotest : " + title, function () {
 			stop();
 			BetaJS.Browser.Loader.loadHtml(src, function (content) {
 				var parsed = $(content);

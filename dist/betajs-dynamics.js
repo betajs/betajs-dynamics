@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-03-30
+betajs-dynamics - v0.0.1 - 2015-03-31
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -537,7 +537,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.1 - 2015-03-30
+betajs-dynamics - v0.0.1 - 2015-03-31
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '53.1427768655178'
+		version: '54.1427831410591'
 	};
 });
 
@@ -1137,7 +1137,7 @@ Scoped.define("module:Data.MultiScope", [
 			},
 			
 			destroy: function () {
-				Objs.iterate(this.__query.result(), function (scope) {
+				Objs.iter(this.__query.result(), function (scope) {
 					scope.off(null, null, this);
 				}, this);
 				this.__query.destroy();

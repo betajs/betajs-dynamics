@@ -258,7 +258,7 @@ Scoped.define("module:Data.MultiScope", [
 			},
 			
 			destroy: function () {
-				Objs.iterate(this.__query.result(), function (scope) {
+				Objs.iter(this.__query.result(), function (scope) {
 					scope.off(null, null, this);
 				}, this);
 				this.__query.destroy();

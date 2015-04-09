@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '55.1428547198578'
+		version: '57.1428550559272'
 	};
 });
 
@@ -1325,7 +1325,7 @@ Scoped.define("module:Handlers.Partial", [
  	return Class.extend({scoped: scoped}, function (inherited) {
  		return {
 			
-			constructor: function (node, args, value) {
+			constructor: function (node, args, value, postfix) {
 				inherited.constructor.call(this);
 				this._node = node;
 				this._args = args;
@@ -1479,8 +1479,9 @@ Scoped.define("module:Handlers.Node", [
 				};
 				this._attrs[attr.name] = obj;
 				this.__updateAttr(obj);
-				if (Registries.partial.get(obj.name))
-					obj.partial = Registries.partial.create(obj.name, this, obj.dyn ? obj.dyn.args : {}, obj.value);
+				var splt = obj.name.split(":");
+				if (Registries.partial.get(splt[0]))
+					obj.partial = Registries.partial.create(splt[0], this, obj.dyn ? obj.dyn.args : {}, obj.value, splt[1]);
 				if (obj.dyn) {
 					this.__dynOn(obj.dyn, function () {
 						this.__updateAttr(obj);
@@ -1736,12 +1737,11 @@ Scoped.define("module:Handlers.EventPartial", ["module:Handlers.Partial"], funct
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
- 			constructor: function (node, args, value) {
+ 			constructor: function (node, args, value, postfix) {
  				inherited.constructor.apply(this, arguments);
  				var self = this;
- 				var data = value.split(":");
- 				this._node._$element.on(data[0].trim(), function () {
- 					self._execute(data[1].trim());
+ 				this._node._$element.on(postfix, function () {
+ 					self._execute(value.trim());
  				});
  			}
  		

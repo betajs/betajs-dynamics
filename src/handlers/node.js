@@ -99,8 +99,9 @@ Scoped.define("module:Handlers.Node", [
 				};
 				this._attrs[attr.name] = obj;
 				this.__updateAttr(obj);
-				if (Registries.partial.get(obj.name))
-					obj.partial = Registries.partial.create(obj.name, this, obj.dyn ? obj.dyn.args : {}, obj.value);
+				var splt = obj.name.split(":");
+				if (Registries.partial.get(splt[0]))
+					obj.partial = Registries.partial.create(splt[0], this, obj.dyn ? obj.dyn.args : {}, obj.value, splt[1]);
 				if (obj.dyn) {
 					this.__dynOn(obj.dyn, function () {
 						this.__updateAttr(obj);

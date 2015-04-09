@@ -2,12 +2,11 @@ Scoped.define("module:Handlers.EventPartial", ["module:Handlers.Partial"], funct
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
- 			constructor: function (node, args, value) {
+ 			constructor: function (node, args, value, postfix) {
  				inherited.constructor.apply(this, arguments);
  				var self = this;
- 				var data = value.split(":");
- 				this._node._$element.on(data[0].trim(), function () {
- 					self._execute(data[1].trim());
+ 				this._node._$element.on(postfix, function () {
+ 					self._execute(value.trim());
  				});
  			}
  		

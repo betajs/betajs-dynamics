@@ -113,7 +113,7 @@ Scoped.define("module:Handlers.Partial", [
  	return Class.extend({scoped: scoped}, function (inherited) {
  		return {
 			
-			constructor: function (node, args, value) {
+			constructor: function (node, args, value, postfix) {
 				inherited.constructor.call(this);
 				this._node = node;
 				this._args = args;

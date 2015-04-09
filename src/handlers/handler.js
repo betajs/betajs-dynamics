@@ -150,8 +150,8 @@ Scoped.define("module:Handlers.Partial", [
 			
 			_apply: function (value, oldValue) {},
 			
-			_execute: function () {
-				var dyn = Parser.parseCode(this._value);
+			_execute: function (code) {
+				var dyn = Parser.parseCode(code || this._value);
 				this._node.__executeDyn(dyn);
 			}
 			

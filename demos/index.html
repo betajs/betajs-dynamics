@@ -28,7 +28,7 @@
 			<ba-statusbar ba-status="{{=text}}">
 			</ba-statusbar>
 			<input type="text" value="{{=dir}}" />
-			<button ba-click="yes = !yes">Click me (direct code)</button>
+			<button ba-click="yes = !yes" ba-on="mouseover:alert('hover')">Click me (direct code)</button>
 			<button ba-click="gogo()">Click me (method)</button>
 			<button ba-click="showing = !showing">If</button>
 			<p ba-class="{{{'a': yes, 'c': yo, 'd':prop.sub}}}">

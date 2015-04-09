@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-03-31
+betajs-dynamics - v0.0.1 - 2015-04-08
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '54.1427831410591'
+		version: '55.1428547198578'
 	};
 });
 
@@ -824,8 +824,8 @@ Scoped.define("module:Handlers.Partial", [
 			
 			_apply: function (value, oldValue) {},
 			
-			_execute: function () {
-				var dyn = Parser.parseCode(this._value);
+			_execute: function (code) {
+				var dyn = Parser.parseCode(code || this._value);
 				this._node.__executeDyn(dyn);
 			}
 			
@@ -1191,6 +1191,25 @@ Scoped.define("module:Handlers.IgnorePartial", ["module:Handlers.Partial"], func
  		};
  	});
  	Cls.register("ba-ignore");
+	return Cls;
+});
+
+Scoped.define("module:Handlers.EventPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+ 		return {
+			
+ 			constructor: function (node, args, value) {
+ 				inherited.constructor.apply(this, arguments);
+ 				var self = this;
+ 				var data = value.split(":");
+ 				this._node._$element.on(data[0].trim(), function () {
+ 					self._execute(data[1].trim());
+ 				});
+ 			}
+ 		
+ 		};
+ 	});
+ 	Cls.register("ba-on");
 	return Cls;
 });
 

@@ -51,6 +51,7 @@
                 id="middle"
                 ba-repeat="{{prop :: property_array}}">
             <ba-middle
+                    ba-if="{{prop.v}}"
                     ba-inject="{{prop}}"
                     ></ba-middle>
         </div>
@@ -74,9 +75,9 @@
         element: root.find("#outer"),
         attrs: {
                 property_array : [
-                    new BetaJS.Properties.Properties({v : internal_property0}),
+                    new BetaJS.Properties.Properties({v : null}),
                     new BetaJS.Properties.Properties({v : internal_property1}),
-                    new BetaJS.Properties.Properties({v : internal_property2})
+                    new BetaJS.Properties.Properties({v : null})
                 ],
                 normal_array : [
                     "A",

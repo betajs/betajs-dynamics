@@ -1,0 +1,56 @@
+<html>
+	<head>
+		<script src="../assets/jquery.js"></script>
+        <script src="../../vendors/beta.js"></script>
+        <script src="../../vendors/beta-browser-noscoped.js"></script>
+		<script src="../../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+		<test>
+			<button
+					onmouseleave="leave()"
+					ba-on="mouseover:mouseover()"
+					ba-on="mouseleave:mouseleave()"
+					>Mouseover</button>
+
+			<script>
+				function leave() {
+					console.log('Mouseleave');
+				}
+			</script>
+			<div>Value: {{test}}</div>
+		</test>
+		<script>
+			var root = $("test");
+			var dynamic = new BetaJS.Dynamics.Dynamic({
+				element: root.get(0),
+				functions: {
+					mouseover : function () {
+						console.log('Mouseover');
+						this.set('test',true);
+					},
+					mouseleave : function () {
+						console.log('Mouseleave');
+						this.set('test',false);
+					}
+				}
+			});
+		
+			dynamic.set("test", false);
+			dynamic.activate();
+			
+			function test() {
+				QUnit.equal(dynamic.get("test"), false);
+			
+				root.find("button").mouseover();
+			
+				QUnit.equal(dynamic.get("test"), true);
+
+				root.find("button").mouseleave();
+
+				QUnit.equal(dynamic.get("test"), false);
+			
+			}
+		</script>
+	</body>
+</html>

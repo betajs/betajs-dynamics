@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-04-08
+betajs-dynamics - v0.0.1 - 2015-04-16
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -537,7 +537,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.1 - 2015-04-08
+betajs-dynamics - v0.0.1 - 2015-04-16
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '57.1428550559272'
+		version: '58.1429221784160'
 	};
 });
 
@@ -579,7 +579,9 @@ Scoped.define("module:Data.Mesh", [
 			},
 			
 			destroy: function () {
-				Objs.iter(this.__watchers, this.__destroyWatcher, this);
+				Objs.iter(this.__watchers, function (watcher) {
+					this.__destroyWatcher(watcher);
+				}, this);
 				inherited.destroy.call(this);
 			},
 			
@@ -1002,7 +1004,6 @@ Scoped.define("module:Data.Scope", [
 				this.__properties.destroy();
 				if (this.__parent)
 					this.__parent.__remove(this);
-				this.trigger("destroy");
 				inherited.destroy.call(this);
 			},
 			
@@ -1214,8 +1215,8 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "jquery:", "browser:
 	return {		
 		
 		_notifications: {
-			_construct: "__handlerConstruct",
-			_destruct: "__handlerDestruct"
+			construct: "__handlerConstruct",
+			destroy: "__handlerDestruct"
 		},
 		
 		__handlerConstruct: function () {
@@ -1441,7 +1442,7 @@ Scoped.define("module:Handlers.Node", [
 						this.__dynOff(attr.dyn);
 				}, this);
 				this._removeChildren();
-				if (this._tagHandler)
+				if (this._tagHandler && !this._tagHandler.destroyed())
 					this._tagHandler.destroy();
 				if (this._dyn)
 					this.properties().off(null, null, this._dyn);

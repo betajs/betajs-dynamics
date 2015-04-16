@@ -134,6 +134,7 @@
 
         //ba-repeat & Dynamic
 
+        /*  -- there are not three instances of middle in there but one, because of the if
         QUnit.equal(
                 $($("#middle inner")[0]).html().trim(),
                 "Inner: null"
@@ -141,6 +142,11 @@
 
         QUnit.equal(
                 $($("#middle inner")[1]).html().trim(),
+                "Inner: This is an internal Message"
+        );
+        */
+        QUnit.equal(
+                $($("#middle inner")[0]).html().trim(),
                 "Inner: This is an internal Message"
         );
 
@@ -152,7 +158,7 @@
         );
 
         QUnit.equal(
-                $($("#middle inner")[1]).parent().css('display'),
+                $($("#middle ba-middle")[1]).css('display'),
                 "none"
         );
 

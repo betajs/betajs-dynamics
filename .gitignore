@@ -3,3 +3,5 @@
 .DS_Store
 .sass-cache
 node_modules
+browserstack.json
+BrowserStackLocal

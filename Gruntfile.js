@@ -40,8 +40,11 @@ module.exports = function(grunt) {
 						dest : 'dist/betajs-dynamics-noscoped.js'
 					}
 				},
-				clean : [ "dist/betajs-dynamics-raw.js",
-						"dist/betajs-dynamics-closure.js" ],
+				clean : {
+					raw:"dist/betajs-dynamics-raw.js",
+					closure:"dist/betajs-dynamics-closure.js",
+					browserstack : [ "./browserstack.json", "BrowserStackLocal" ]
+				},
 				uglify : {
 					options : {
 						banner : module.banner
@@ -91,9 +94,73 @@ module.exports = function(grunt) {
 							"./vendors/jquery-1.9.closure-extern.js" : "https://raw.githubusercontent.com/google/closure-compiler/master/contrib/externs/jquery-1.9.js"
 						}
 					}
+				},
+				shell : {
+					tests: {
+						command: "open tests/tests.html"
+					},
+					browserstack : {
+						command : 'browserstack-runner',
+						options : {
+							stdout : true,
+							stderr : true
+						}
+					}
+				},
+				template : {
+					"browserstack-desktop" : {
+						options : {
+							data: {
+								data: {
+									"test_path" : "tests/tests.html",
+									"test_framework" : "qunit",
+									"timeout": 10 * 60,
+									"browsers": [
+						              	'firefox_latest',
+									    'firefox_4',
+						                'chrome_latest',
+							            'chrome_14',
+						                'safari_latest',
+							            'safari_4',
+						                'opera_latest', 
+									    'opera_12_15',
+						                'ie_11',
+						                'ie_10',
+						                'ie_9',
+						                'ie_8',
+						                'ie_7',
+						                'ie_6'
+						            ]
+								}
+							}
+						},
+						files : {
+							"browserstack.json" : ["json.tpl"]
+						}
+					},
+					"browserstack-mobile" : {
+						options : {
+							data: {
+								data: {
+									"test_path" : "tests/tests.html",
+									"test_framework" : "qunit",
+									"timeout": 10 * 60,
+									"browsers": [
+									    {"os": "ios", "os_version": "8.0"}, 
+									    {"os": "ios", "os_version": "7.0"},
+									    {"os": "android", "os_version": "4.4"},
+									    {"os": "android", "os_version": "4.0"}
+						            ]
+								}
+							}
+						},
+						files : {
+							"browserstack.json" : ["json.tpl"]
+						}
+					}			
 				}
 			});
-
+	
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-git-revision-count');
@@ -104,13 +171,18 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-node-qunit');
 	grunt.loadNpmTasks('grunt-jsdoc');
+	grunt.loadNpmTasks('grunt-shell');
+	grunt.loadNpmTasks('grunt-template');	
 
 	grunt.registerTask('default', [ 'revision-count', 'concat:dist_raw',
-			'preprocess', 'clean', 'concat:dist_scoped', 'uglify' ]);
+			'preprocess', 'clean:raw', 'concat:dist_scoped', 'uglify' ]);
+	grunt.registerTask('qunit', [ 'shell:tests' ]);
 	grunt.registerTask('lint', [ 'jshint:source', 'jshint:dist',
 	                 			 'jshint:gruntfile', "jshint:tests" ]);
-	grunt.registerTask('check', [ 'lint' ]);
+	grunt.registerTask('check', [ 'lint', 'qunit' ]);
 	grunt.registerTask('dependencies', [ 'wget:dependencies' ]);
-	grunt.registerTask('closure', [ 'closureCompiler', 'clean' ]);
+	grunt.registerTask('closure', [ 'closureCompiler', 'clean:raw' ]);
+	grunt.registerTask('browserstack-desktop', [ 'template:browserstack-desktop', 'shell:browserstack', 'clean:browserstack' ]);
+	grunt.registerTask('browserstack-mobile', [ 'template:browserstack-mobile', 'shell:browserstack', 'clean:browserstack' ]);
 
 };

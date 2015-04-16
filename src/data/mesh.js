@@ -19,7 +19,9 @@ Scoped.define("module:Data.Mesh", [
 			},
 			
 			destroy: function () {
-				Objs.iter(this.__watchers, this.__destroyWatcher, this);
+				Objs.iter(this.__watchers, function (watcher) {
+					this.__destroyWatcher(watcher);
+				}, this);
 				inherited.destroy.call(this);
 			},
 			

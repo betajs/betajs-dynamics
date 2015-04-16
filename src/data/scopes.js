@@ -123,7 +123,6 @@ Scoped.define("module:Data.Scope", [
 				this.__properties.destroy();
 				if (this.__parent)
 					this.__parent.__remove(this);
-				this.trigger("destroy");
 				inherited.destroy.call(this);
 			},
 			

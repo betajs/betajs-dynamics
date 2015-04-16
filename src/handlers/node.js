@@ -61,7 +61,7 @@ Scoped.define("module:Handlers.Node", [
 						this.__dynOff(attr.dyn);
 				}, this);
 				this._removeChildren();
-				if (this._tagHandler)
+				if (this._tagHandler && !this._tagHandler.destroyed())
 					this._tagHandler.destroy();
 				if (this._dyn)
 					this.properties().off(null, null, this._dyn);

@@ -2,8 +2,8 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "jquery:", "browser:
 	return {		
 		
 		_notifications: {
-			_construct: "__handlerConstruct",
-			_destruct: "__handlerDestruct"
+			construct: "__handlerConstruct",
+			destroy: "__handlerDestruct"
 		},
 		
 		__handlerConstruct: function () {

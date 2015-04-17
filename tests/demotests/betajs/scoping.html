@@ -1,0 +1,77 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="../../assets/styles.css">
+
+		<script src="../../assets/jquery.js"></script>
+        <script src="../../../vendors/beta.js"></script>
+        <script src="../../../vendors/beta-browser-noscoped.js"></script>
+		<script src="../../../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+
+		<test>
+
+			<div>
+				</br>
+				<h3>Tutorial/Tests for BetaJS Scoping</h3>
+				</br>
+			</div>
+
+			<div id="outer">
+				<h4>This is the Outer Scope</h4>
+				<input>
+				<ba-middle></ba-middle>
+			</div>
+
+		</test>
+
+		<script>
+			//Elements
+			var root = $("test");
+
+			//Dynamics
+			var outer = new BetaJS.Dynamics.Dynamic({
+				element: root.find("#outer"),
+				attrs: {
+					value: "Show Binding",
+					showbinding: true
+				},
+				functions: {
+					change_showbinding : function () {
+						this.set("showbinding",!this.get("showbinding"));
+					}
+				}
+			});
+
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Middle", {
+				template: 	"<middle> Middle {{someattr}}: " +
+				"<div>inject: {{inject}}</div>" +
+				"<div>inject.v: {{inject.v}}</div>" +
+				"<div>inject.v.v: {{inject.v.v}}</div>" +
+				"<ba-inner " +
+				"ba-if='{{inject.v}}'" +
+				"ba-inject='{{inject.v}}'" +
+				"></ba-inner>" +
+				"</middle></br></br>",
+				initial: {
+					attrs: {
+						someattr: "Some Attribute"
+					}
+				}
+			}).register("ba-middle");
+
+			outer.activate();
+
+			var dynamics = {
+				outer : outer,
+				middle : outer.(">[tagname='ba-middle']")
+			}
+
+			function test() {
+				QUnit.equal(root.children().length, 2);
+			}
+
+		</script>
+
+	</body>
+</html>

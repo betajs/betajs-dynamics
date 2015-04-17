@@ -126,10 +126,10 @@ module.exports = function(grunt) {
 									    'opera_12_15',
 						                'ie_11',
 						                'ie_10',
-						                'ie_9',
+						                'ie_9'/*,						                
 						                'ie_8',
 						                'ie_7',
-						                'ie_6'
+						                'ie_6'*/
 						            ]
 								}
 							}

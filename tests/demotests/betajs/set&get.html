@@ -17,100 +17,58 @@
 			</div>
 
 			<div id="set_get_basic">
-				<h3>- How to Set/Get a property</h3>
-				<h4>Use with BetaJS:</h4>
 
-				<div>Initialize a Property:</div>
+				<div id="test_binding">{{test}}</div>
 
-<pre>
-<code>
-	var property = new BetaJS.Properties.Properties(),
-</code>
-</pre>
-				<div>Initialize a Property with an intial value:</div>
-<pre>
-<code>
-	var property = new BetaJS.Properties.Properties({
-		string_initial: 'Value of a String set Initially'
-	}),
-</code>
-</pre>
-				<div>Set a new property value or overwrite and existing value:</div>
-<pre>
-<code>
-	property.set('string_later','Value of a String set Later');
-</code>
-</pre>
-
-				<div>Get a property value</div>
-<pre>
-<code>
-	property.get('string_initial')
-</code>
-</pre>
-	<h4>Example</h4>
-<pre>
-<code>
-	var property = new BetaJS.Properties.Properties({
-		string_initial: 'Value of a String set Initially'
-	}),
-	property.set('string_later','Value of a String set Later');
-
-	console.log(property.get('string_initial'));
-	console.log(property.get('string_later'));
-
-	property.set('string_initial','Overwrite Existing String Value');
-	console.log(property.get('string_initial'));
-</code>
-</pre>
-				<div>Result (Console):</div>
-<pre>
-<samp>
-	'Value of a String set Initially'
-	'Value of a String set Later'
-	'Overwrite Existing String Value'
-</samp>
-</pre>
-				<h4>Use in BetaJS Dynamic:</h4>
-
-<pre>
-<code ba-ignore>
-	&lt;div&gt;{{test}}&lt;/div&gt;
-	&lt;div&gt;{{property.string_later}}&lt;/div&gt;
-</code>
-</pre>
-
-				<div>{{test}}</div>
-				<div>{{property.string_later}}</div>
+				<div id="attr">{{some_attr}}</div>
+				<div id="value">{{value}}</div>
+				<div id="prop_value">{{prop.value}}</div>
+				<div id="prop_initialize">{{prop.property.string_initialize}}</div>
+				<div id="prop_later">{{prop.property.string_later}}</div>
+				<div id="value_a">{{value_a}}</div>
+				<div id="value_b">{{value_b}}</div>
 
 			</div>
-
 
 		</test>
 
 		<script>
 			//Elements
 			var root = $("test");
+			var testvalue = 'Test Value'
+			var intial_value = 'Value of initial String';
+			var changed_value = 'Value of changed String';
+			var another_value = 'Value of another String';
+
+			var value_a = 'This is value_a';
+			var value_b = 'This is value_b';
+
+			var property = new BetaJS.Properties.Properties({string_initialize: intial_value});
 
 			//Dynamics
 			var showbinding = new BetaJS.Dynamics.Dynamic({
-				element: root.find("#set_get_basic"),
+				element: root.find('#set_get_basic'),
 				attrs: {
-					value: "Show Binding",
+					some_attr: intial_value,
 					showbinding: true,
-					test: "Test Value"
+					test: testvalue
 				},
 				create : function () {
-					var property = new BetaJS.Properties.Properties({string_initial: 'Value of a String set Initially'});
-					property.set('string_later','Value of a String Set Later');
-					property.get('string_initial');
-//					property.get('string_later');
-					this.set("property",property)
-					property.set('string_later','Changed String Set Later');
+
+					property.set('string_later', intial_value);
+					this.set("value", intial_value);
+					this.set("prop.value", intial_value);
+					this.set("prop.property",property);
+
+					this.set({
+						value_a: value_a,
+						value_b: value_b
+					});
+
 				},
 				functions: {
 					change_showbinding : function () {
-						this.set("showbinding",!this.get("showbinding"));
+						this.set('showbinding',!this.get('showbinding'));
 					}
 				}
 			});
@@ -118,6 +76,33 @@
 
 			function test() {
 				QUnit.equal(root.children().length, 2);
+
+				QUnit.equal($('#test_binding').html().trim(), testvalue);
+
+				QUnit.equal($('#attr').html().trim(), intial_value);
+				QUnit.equal($('#value').html().trim(), intial_value);
+				QUnit.equal($('#prop_value').html().trim(), intial_value);
+				QUnit.equal($('#prop_initialize').html().trim(), intial_value);
+				QUnit.equal($('#prop_later').html().trim(), intial_value);
+
+				showbinding.set('some_attr',changed_value);
+				showbinding.set('value',changed_value);
+				showbinding.set('prop.value',changed_value);
+				property.set('string_initialize',changed_value);
+				property.set('string_later',changed_value);
+
+				QUnit.equal($('#attr').html().trim(), changed_value);
+				QUnit.equal($('#value').html().trim(), changed_value);
+				QUnit.equal($('#prop_value').html().trim(), changed_value);
+				QUnit.equal($('#prop_initialize').html().trim(), changed_value);
+				QUnit.equal($('#prop_later').html().trim(), changed_value);
+
+				showbinding.get('prop').set('value',another_value);
+
+				QUnit.equal($('#prop_value').html().trim(), another_value);
+				QUnit.equal($('#value_a').html().trim(), value_a);
+				QUnit.equal($('#value_b').html().trim(), value_b);
+
 			}
 
 		</script>

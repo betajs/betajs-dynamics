@@ -24,6 +24,7 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "jquery:", "browser:
 			this._parentHandler = options.parentHandler || null;
 			var template = options.template || this.template;
 			this.__element = options.element ? $(options.element) : null;
+			this.initialContent = this.__element ? this.__element.html() : $(options.parentElement).html();
 			if (template)
 				this._handlerInitializeTemplate(template, options.parentElement);
 			else {

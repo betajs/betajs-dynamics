@@ -7,25 +7,40 @@
 	</head>
 	<body>
 		<test>
-			<input value="{{=text}}" />
-			<p>{{text}}</p>
+			<div id="string1">
+				<div>String 1</div>
+				<input value="{{=string1}}" /></br>
+				<p>{{string1}}</p>
+			</div>
+			<div id="string2">
+				<div>String 2</div>
+				<input value="{{=string2}}" />
+				<p>{{string2}}</p>
+			</div>
 		</test>
 		<script>
 			var root = $("test");
-			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
+			var original_string = "Original String";
+
+			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root });
 		
-			dynamic.set("text", "foobar");
+			dynamic.set("string1", original_string);
 			dynamic.activate();
 			
 			function test() {
-				QUnit.equal(root.find("p").html().trim(), "foobar");
+				var changed_string = "Changed String";
+
+				QUnit.equal(root.find("#string1 p").html().trim(), original_string);
+				QUnit.equal(root.find("#string2 p").html().trim(), "");
 				
-				root.find("input").val("test");
+				root.find("input").val(changed_string);
 				root.find("input").keypress();
 				
-				QUnit.equal(dynamic.get("text"), "test");
-				QUnit.equal(root.find("p").html().trim(), "test");
-			}			
+				QUnit.equal(dynamic.get("string1"), changed_string);
+				QUnit.equal(root.find("#string1 p").html().trim(), changed_string);
+
+				QUnit.equal(root.find("#string2 p").html().trim(), changed_string);
+			}
 		</script>
 	</body>
 </html>

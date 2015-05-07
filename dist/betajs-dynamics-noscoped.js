@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-05-06
+betajs-dynamics - v0.0.1 - 2015-05-07
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '68.1430942921059'
+		version: '71.1431038226905'
 	};
 });
 
@@ -201,8 +201,15 @@ Scoped.define("module:Data.Mesh", [
 						return this._sub_navigate(current, splt.head, splt.tail, current, current.get(splt.head));
 					else if (splt.head in current)
 						return this._sub_navigate(properties, hd, splt.tail, current, current[splt.head]);
-					else
-						return base;
+					else {
+						return {
+							properties: current,
+							head: head,
+							tail: tail,
+							parent: parent,
+							current: null
+						};
+					}
 				} else if (splt.head in current)
 					return this._sub_navigate(properties, hd, splt.tail, current, current[splt.head]);
 				else 
@@ -226,7 +233,7 @@ Scoped.define("module:Data.Mesh", [
 			_write: function (scope, expression, value, force) {
 				var n = this._navigate(scope, expression);
 				if (n.tail && !force)
-					return;
+					return false;
 				var tail = n.tail.split(".");
 				if (n.properties)
 					n.properties.set(n.head + (n.head && n.tail ? "." : "") + n.tail, value);
@@ -238,6 +245,7 @@ Scoped.define("module:Data.Mesh", [
 					}
 					current[tail[tail.length - 1]] = value;
 				}
+				return true;
 			},
 			
 			__expand: function (obj) {
@@ -457,6 +465,7 @@ Scoped.define("module:Data.Scope", [
 			},
 			
 			destroy: function () {
+				this.trigger("destroy");
 				Objs.iter(this.__scopes, function (scope) {
 					scope.destroy();
 				});
@@ -1204,9 +1213,15 @@ Scoped.define("module:Handlers.EventPartial", ["module:Handlers.Partial"], funct
  			constructor: function (node, args, value, postfix) {
  				inherited.constructor.apply(this, arguments);
  				var self = this;
- 				this._node._$element.on(postfix, function () {
+ 				this.__postfix = postfix;
+ 				this._node._$element.on(postfix + "." + this.cid(), function () {
  					self._execute(value.trim());
  				});
+ 			},
+ 			
+ 			destroy: function () {
+ 				this._node._$element.off(this.__postfix + "." + this.cid());
+ 				inherited.destroy.call(this);
  			}
  		
  		};

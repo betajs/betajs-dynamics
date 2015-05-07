@@ -5,9 +5,15 @@ Scoped.define("module:Handlers.EventPartial", ["module:Handlers.Partial"], funct
  			constructor: function (node, args, value, postfix) {
  				inherited.constructor.apply(this, arguments);
  				var self = this;
- 				this._node._$element.on(postfix, function () {
+ 				this.__postfix = postfix;
+ 				this._node._$element.on(postfix + "." + this.cid(), function () {
  					self._execute(value.trim());
  				});
+ 			},
+ 			
+ 			destroy: function () {
+ 				this._node._$element.off(this.__postfix + "." + this.cid());
+ 				inherited.destroy.call(this);
  			}
  		
  		};

@@ -114,6 +114,7 @@ Scoped.define("module:Data.Scope", [
 			},
 			
 			destroy: function () {
+				this.trigger("destroy");
 				Objs.iter(this.__scopes, function (scope) {
 					scope.destroy();
 				});

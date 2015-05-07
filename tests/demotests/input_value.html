@@ -7,12 +7,12 @@
 	</head>
 	<body>
 		<test>
-			<div id="string1">
+			<div id="s1">
 				<div>String 1</div>
 				<input value="{{=string1}}" /></br>
 				<p>{{string1}}</p>
 			</div>
-			<div id="string2">
+			<div id="s2">
 				<div>String 2</div>
 				<input value="{{=string2}}" />
 				<p>{{string2}}</p>
@@ -27,19 +27,20 @@
 			dynamic.set("string1", original_string);
 			dynamic.activate();
 			
+			
 			function test() {
 				var changed_string = "Changed String";
 
-				QUnit.equal(root.find("#string1 p").html().trim(), original_string);
-				QUnit.equal(root.find("#string2 p").html().trim(), "");
+				QUnit.equal(root.find("#s1 p").html().trim(), original_string);
+				QUnit.equal(root.find("#s2 p").html().trim(), "");
 				
 				root.find("input").val(changed_string);
 				root.find("input").keypress();
 				
 				QUnit.equal(dynamic.get("string1"), changed_string);
-				QUnit.equal(root.find("#string1 p").html().trim(), changed_string);
+				QUnit.equal(root.find("#s1 p").html().trim(), changed_string);
 
-				QUnit.equal(root.find("#string2 p").html().trim(), changed_string);
+				QUnit.equal(root.find("#s2 p").html().trim(), changed_string);
 			}
 		</script>
 	</body>

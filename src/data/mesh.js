@@ -179,8 +179,15 @@ Scoped.define("module:Data.Mesh", [
 						return this._sub_navigate(current, splt.head, splt.tail, current, current.get(splt.head));
 					else if (splt.head in current)
 						return this._sub_navigate(properties, hd, splt.tail, current, current[splt.head]);
-					else
-						return base;
+					else {
+						return {
+							properties: current,
+							head: head,
+							tail: tail,
+							parent: parent,
+							current: null
+						};
+					}
 				} else if (splt.head in current)
 					return this._sub_navigate(properties, hd, splt.tail, current, current[splt.head]);
 				else 
@@ -204,7 +211,7 @@ Scoped.define("module:Data.Mesh", [
 			_write: function (scope, expression, value, force) {
 				var n = this._navigate(scope, expression);
 				if (n.tail && !force)
-					return;
+					return false;
 				var tail = n.tail.split(".");
 				if (n.properties)
 					n.properties.set(n.head + (n.head && n.tail ? "." : "") + n.tail, value);
@@ -216,6 +223,7 @@ Scoped.define("module:Data.Mesh", [
 					}
 					current[tail[tail.length - 1]] = value;
 				}
+				return true;
 			},
 			
 			__expand: function (obj) {

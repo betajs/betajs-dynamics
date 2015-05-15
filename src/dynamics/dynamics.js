@@ -2,8 +2,9 @@ Scoped.define("module:Dynamic", [
    	    "module:Data.Scope",
    	    "module:Handlers.HandlerMixin",
    	    "base:Objs",
+   	    "base:Strings",
    	    "module:Registries"
-   	], function (Scope, HandlerMixin, Objs, Registries, scoped) {
+   	], function (Scope, HandlerMixin, Objs, Strings, Registries, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -35,8 +36,14 @@ Scoped.define("module:Dynamic", [
 		};
 	}], {
 		
+		canonicName: function () {
+			return Strings.last_after(this.classname, ".").toLowerCase();
+		},
+		
 		register: function (key, registry) {
 			registry = registry || Registries.handler;
+			if (!key)
+				key = "ba-" + this.canonicName();
 			registry.register(key, this);
 			return this;
 		},

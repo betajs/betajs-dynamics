@@ -1,5 +1,5 @@
 /*!
-betajs - v1.0.0 - 2015-04-16
+betajs - v1.0.0 - 2015-05-15
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -537,7 +537,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs - v1.0.0 - 2015-04-16
+betajs - v1.0.0 - 2015-05-15
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -550,7 +550,7 @@ Scoped.binding("module", "global:BetaJS");
 Scoped.define("module:", function () {
 	return {
 		guid: "71366f7a-7da3-4e55-9a0b-ea0e4e2a9e79",
-		version: '355.1429230918532'
+		version: '369.1431722054265'
 	};
 });
 
@@ -927,6 +927,16 @@ Scoped.define("module:Tokens", function() {
 });
 Scoped.define("module:Objs", ["module:Types"], function (Types) {
 	return {
+		
+		ithKey: function (obj, i) {
+			i = i || 0;
+			for (var key in obj) {
+				if (i <= 0)
+					return key;
+				i--;
+			}
+			return null;
+		},
 		
 		count: function (obj) {
 			if (Types.is_array(obj))
@@ -1459,6 +1469,12 @@ Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
 				head: i >= 0 ? s.substring(0, i) : "",
 				tail: i >= 0 ? s.substring(i + delimiter.length) : s
 			};
+		},
+		
+		replaceAll: function (s, sub, wth) {
+			while (s.indexOf(sub) >= 0)
+				s = s.replace(sub, wth);
+			return s;
 		},
 	
 		/** Trims all trailing and leading whitespace and removes block indentations
@@ -2201,6 +2217,8 @@ Scoped.define("module:Promise", ["module:Types", "module:Functions", "module:Asy
 				return this;
 			};
 			promise.end = function () {
+				if (this.__ended)
+					return this;
 				this.__ended = true;
 				this.results();
 				return this;
@@ -2282,6 +2300,8 @@ Scoped.extend("module:Promise.Promise.prototype", ["module:Promise", "module:Fun
 		},
 		
 		callback: function (f, context, options, type) {
+			if ("end" in this)
+				this.end();
 			var record = {
 				type: type || "callback",
 				func: f,
@@ -3327,7 +3347,7 @@ Scoped.define("module:Iterators.LazyIterator", ["module:Iterators.Iterator"], fu
 			__touch: function () {
 				if (!this.__initialized)
 					this._initialize();
-				this.__initiliazed = true;
+				this.__initialized = true;
 				if (!this.__has_current && !this.__finished)
 					this._next();
 			},
@@ -3339,6 +3359,7 @@ Scoped.define("module:Iterators.LazyIterator", ["module:Iterators.Iterator"], fu
 			
 			next: function () {
 				this.__touch();
+				this.__has_current = false;
 				return this.__current;
 			}
 	
@@ -3355,9 +3376,9 @@ Scoped.define("module:Iterators.SortedOrIterator", [
 		return {
 	
 			constructor: function (iterators, compare) {
-				inherited.constructor.call(this);
 				this.__iterators = iterators;
 				this.__map = TreeMap.empty(compare);
+				inherited.constructor.call(this);
 			},
 			
 			__process: function (iter) {
@@ -3372,18 +3393,96 @@ Scoped.define("module:Iterators.SortedOrIterator", [
 			},
 			
 			_initialize: function () {
-				Objs.iterate(this.__iterators, this.__process, this);
+				Objs.iter(this.__iterators, this.__process, this);
 				if (TreeMap.is_empty(this.__map))
 					this._finished();
 			},
 			
 			_next: function () {
 				var ret = TreeMap.take_min(this.__map);
+				this._current(ret[0].key);
 				this.__map = ret[1];
 				Objs.iter(ret[0].value, this.__process, this);
-				return ret[0].key;
+				if (TreeMap.is_empty(this.__map))
+					this._finished();
 			}
 	
+		};
+	});
+});
+
+
+
+Scoped.define("module:Iterators.PartiallySortedIterator", ["module:Iterators.Iterator"], function (Iterator, scoped) {
+	return Iterator.extend({scoped: scoped}, function (inherited) {
+		return {
+
+			constructor: function (iterator, compare, partial_same) {
+				inherited.constructor.call(this);
+				this.__compare = compare;
+				this.__partial_same = partial_same;
+				this.__iterator = iterator;
+				this.__head = [];
+				this.__tail = [];
+			},
+			
+			__cache: function () {
+				if (this.__head.length > 0 || !this.__iterator.hasNext())
+					return;
+				this.__head = this.__tail;
+				this.__tail = [];
+				if (this.__head.length === 0)
+					this.__head.push(this.__iterator.next());
+				while (this.__iterator.hasNext()) {
+					var n = this.__iterator.next();
+					if (!this.__partial_same(this.__head[0], n)) {
+						this.__tail.push(n);
+						break;
+					}
+				}
+				this.__head.sort(this.__compare);
+			},
+			
+			hasNext: function () {
+				this.__cache();
+				return this.__head.length > 0;
+			},
+			
+			next: function () {
+				this.__cache();
+				return this.__head.shift();
+			}
+			
+		};
+	});		
+});
+
+
+Scoped.define("module:Iterators.LazyMultiArrayIterator", ["module:Iterators.LazyIterator"], function (Iterator, scoped) {
+	return Iterator.extend({scoped: scoped}, function (inherited) {
+		return {
+			
+			constructor: function (next_callback, next_context) {
+				inherited.constructor.call(this);
+				this.__next_callback = next_callback;
+				this.__next_context = next_context;
+				this.__array = null;
+				this.__i = 0;
+			},
+			
+			_next: function () {
+				if (this.__array === null || this.__i >= this.__array.length) {
+					this.__array = this.__next_callback.apply(this.__next_context);
+					this.__i = 0;
+				}
+				if (this.__array !== null) {
+					var ret = this.__array[this.__i];
+					this.__i++;
+					return ret;
+				} else
+					this._finished();
+			}
+			
 		};
 	});
 });
@@ -3962,6 +4061,9 @@ Scoped.define("module:Properties.PropertiesMixin", [
 					// flat organization
 					bindings: {}
 				};
+				Objs.iter(this.materializes, function (key) {
+					this.materializeAttr(key);
+				}, this);
 			},
 			"destroy": function () {
 				Objs.iter(this.__properties.bindings, function (value, key) {
@@ -3982,6 +4084,8 @@ Scoped.define("module:Properties.PropertiesMixin", [
 				}, this);
 			}
 		},
+		
+		materializes: [],
 		
 		get: function (key) {
 			return Scopes.get(key, this.__properties.data);
@@ -4017,6 +4121,14 @@ Scoped.define("module:Properties.PropertiesMixin", [
 		
 		getAll: function () {
 			return Objs.clone(this.__properties.data, 1);
+		},
+		
+		materializeAttr: function (attr) {
+			this[attr] = function (value) {
+				if (arguments.length === 0)
+					return this.get(attr);
+				this.set(attr, value);
+			};
 		},
 		
 		__registerWatcher: function (key, event) {
@@ -4188,8 +4300,8 @@ Scoped.define("module:Properties.PropertiesMixin", [
 					binding.properties.set(binding.key, this.get(key));
 			}
 			binding.properties.on("destroy", function () {
-				this.unbind();
-			}, this);
+				this.unbind(key);
+			}, binding);
 			return this;
 		},
 		
@@ -4308,15 +4420,21 @@ Scoped.define("module:Properties.PropertiesMixin", [
 
 Scoped.define("module:Properties.Properties", [
 	    "module:Class",
+	    "module:Objs",
 	    "module:Events.EventsMixin",
 	    "module:Properties.PropertiesMixin"
-	], function (Class, EventsMixin, PropertiesMixin, scoped) {
+	], function (Class, Objs, EventsMixin, PropertiesMixin, scoped) {
 	return Class.extend({scoped: scoped}, [EventsMixin, PropertiesMixin, function (inherited) {
 		return {
-			constructor: function (obj) {
+			constructor: function (obj, materializes) {
 				inherited.constructor.call(this);
 				if (obj)
 					this.setAll(obj);
+				if (materializes) {
+					Objs.iter(materializes, function (key) {
+						this.materializeAttr(key);
+					}, this);
+				}
 			}
 		};
 	}]);
@@ -5278,18 +5396,25 @@ Scoped.define("module:Collections.FilteredCollection", [
 				delete options.objects;
 				options.compare = options.compare || parent.get_compare();
 				inherited.constructor.call(this, options);
-				if ("filter" in options)
-					this.filter = options.filter;
+				this.__parent.on("add", this.add, this);
+				this.__parent.on("remove", this.remove, this);
+				this.setFilter(options.filter, options.context);
+			},
+			
+			filter: function (object) {
+				return !this.__filter || this.__filter.call(this.__filterContext || this, object);
+			},
+			
+			setFilter: function (filterFunction, filterContext) {
+				this.__filterContext = filterContext;
+				this.__filter = filterFunction;
+				this.iterate(function (obj) {
+					inherited.remove.call(this, obj);
+				}, this);
 				this.__parent.iterate(function (object) {
 					this.add(object);
 					return true;
 				}, this);
-				this.__parent.on("add", this.add, this);
-				this.__parent.on("remove", this.remove, this);
-			},
-			
-			filter: function (object) {
-				return true;
 			},
 			
 			_object_changed: function (object, key, value) {

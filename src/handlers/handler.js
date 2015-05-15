@@ -1,4 +1,4 @@
-Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "jquery:", "browser:Loader", "module:Handlers.Node"], function (Objs, $, Loader, Node) {
+Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jquery:", "browser:Loader", "module:Handlers.Node"], function (Objs, Strings, $, Loader, Node) {
 	return {		
 		
 		_notifications: {
@@ -30,6 +30,7 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "jquery:", "browser:
 			else {
 				var templateUrl = options.templateUrl || this.templateUrl;
 				if (templateUrl) {
+					templateUrl = Strings.replaceAll(templateUrl, "%", Strings.last_after(this.cls.classname, ".").toLowerCase());
 					this.__deferActivate = true;
 					Loader.loadHtml(templateUrl, function (template) {
 						this.__deferActivate = false;

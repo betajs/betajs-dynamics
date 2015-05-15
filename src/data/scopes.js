@@ -98,7 +98,7 @@ Scoped.define("module:Data.Scope", [
 				this.__functions = options.functions;
 				this.__scopes = {};
 				this.__data = options.data;
-				this.setAll(options.attrs);
+				this.setAll(Types.is_function(options.attrs) ? options.attrs() : options.attrs);
 				Objs.iter(options.collections, function (value, key) {
 					this.set(key, new Collection(value));
 				}, this);

@@ -115,6 +115,10 @@ Scoped.define("module:Handlers.Node", [
 				}
 			},
 			
+			mesh: function () {
+				return this._mesh;
+			},
+			
 			__executeDyn: function (dyn) {
 				return Types.is_object(dyn) ? this._mesh.call(dyn.dependencies, dyn.func) : dyn;
 			},
@@ -127,7 +131,7 @@ Scoped.define("module:Handlers.Node", [
 					attr.domAttr.value = value;
 					if (attr.partial)
 						attr.partial.change(value, old);
-					if (attr.name == "value") {
+					if (attr.name === "value" && this._element.value !== value) {
 						this._element.value = value;
 					}
 					this.trigger("change-attr:" + attr.name, value, old);

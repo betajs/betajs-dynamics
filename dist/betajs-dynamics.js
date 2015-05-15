@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-05-07
+betajs-dynamics - v0.0.1 - 2015-05-15
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -537,7 +537,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.1 - 2015-05-07
+betajs-dynamics - v0.0.1 - 2015-05-15
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '71.1431038226905'
+		version: '72.1431722135441'
 	};
 });
 
@@ -987,7 +987,7 @@ Scoped.define("module:Data.Scope", [
 				this.__functions = options.functions;
 				this.__scopes = {};
 				this.__data = options.data;
-				this.setAll(options.attrs);
+				this.setAll(Types.is_function(options.attrs) ? options.attrs() : options.attrs);
 				Objs.iter(options.collections, function (value, key) {
 					this.set(key, new Collection(value));
 				}, this);
@@ -1220,7 +1220,7 @@ Scoped.define("module:Data.MultiScope", [
 		};
 	}]);
 });
-Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "jquery:", "browser:Loader", "module:Handlers.Node"], function (Objs, $, Loader, Node) {
+Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jquery:", "browser:Loader", "module:Handlers.Node"], function (Objs, Strings, $, Loader, Node) {
 	return {		
 		
 		_notifications: {
@@ -1252,6 +1252,7 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "jquery:", "browser:
 			else {
 				var templateUrl = options.templateUrl || this.templateUrl;
 				if (templateUrl) {
+					templateUrl = Strings.replaceAll(templateUrl, "%", Strings.last_after(this.cls.classname, ".").toLowerCase());
 					this.__deferActivate = true;
 					Loader.loadHtml(templateUrl, function (template) {
 						this.__deferActivate = false;
@@ -1506,6 +1507,10 @@ Scoped.define("module:Handlers.Node", [
 				}
 			},
 			
+			mesh: function () {
+				return this._mesh;
+			},
+			
 			__executeDyn: function (dyn) {
 				return Types.is_object(dyn) ? this._mesh.call(dyn.dependencies, dyn.func) : dyn;
 			},
@@ -1518,7 +1523,7 @@ Scoped.define("module:Handlers.Node", [
 					attr.domAttr.value = value;
 					if (attr.partial)
 						attr.partial.change(value, old);
-					if (attr.name == "value") {
+					if (attr.name === "value" && this._element.value !== value) {
 						this._element.value = value;
 					}
 					this.trigger("change-attr:" + attr.name, value, old);
@@ -1670,6 +1675,19 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry"], function (Cla
 	};
 });
 
+Scoped.define("module:Handlers.AttrsPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, {
+		
+		_apply: function (value) {
+			for (var key in value)
+				this._node.properties().set(key, value[key]);
+		}
+
+ 	});
+ 	Cls.register("ba-attrs");
+	return Cls;
+});
+
 Scoped.define("module:Handlers.ClassPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
  	var Cls = Partial.extend({scoped: scoped}, {
 		
@@ -1769,15 +1787,44 @@ Scoped.define("module:Handlers.EventPartial", ["module:Handlers.Partial"], funct
 });
 
 Scoped.define("module:Handlers.RepeatPartial", [
-        "module:Handlers.Partial", "base:Collections.Collection", "base:Objs", "jquery:"
-	], function (Partial, Collection, Objs, $, scoped) {
+        "module:Handlers.Partial",
+        "base:Collections.Collection",
+        "base:Collections.FilteredCollection",
+        "base:Objs",
+        "jquery:",
+        "module:Parser",
+        "base:Properties.Properties"
+	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, scoped) {
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
+ 				this.__registered = false;
+ 				args = args.split("~");
+ 				this.__repeatArg = args[0].trim();
+ 				if (args.length > 1) {
+ 					this.__repeatFilter = Parser.parseCode(args[1].trim());
+ 					var self = this;
+ 					node.mesh().watch(this.__repeatFilter.dependencies, function () {
+ 						if (self._active && self.__registered) {
+ 							if (self.__filteredCollection)
+ 								self.__filteredCollection.setFilter(self.__filterFunc, self);
+ 							else
+ 								self.__register(self._value);
+ 						}
+ 					}, this.__repeatFilter);
+ 				}
  				node._expandChildren = false;
  				node._$element.html("");
+ 			},
+ 			
+ 			destroy: function () {
+ 				if (this.__filteredCollection)
+ 					this.__filteredCollection.destroy();
+ 				if (this.__repeatFilter)
+ 					node.mesh().unwatch(this.__repeatFilter.dependencies, this.__repeatFilter);
+ 				inherited.destroy.call(this);
  			},
  			
  			_activate: function () {		
@@ -1792,12 +1839,31 @@ Scoped.define("module:Handlers.RepeatPartial", [
  				this.__register(value);
  			},
  			
+ 			__filterFunc: function (prop) {
+				var filter = this.__repeatFilter;
+				if (!filter)
+					return true;
+ 				return this._node.mesh().call(filter.dependencies, function (obj) {
+					return filter.func.call(this, Objs.extend(obj, Properties.is_instance_of(prop) ? prop.data() : prop));
+				});
+ 			},
+ 			
  			__register: function (value) {
  				this.__unregister();
  				if (!Collection.is_instance_of(value)) {
- 					Objs.iter(value, this.__appendItem, this);
+ 					Objs.iter(value, function (prop) {
+ 						if (this.__filterFunc(prop))
+ 							this.__appendItem(prop);
+ 					}, this);
  				} else {
  					this.__collection = value;
+ 					if (this.__repeatFilter) {
+ 						this.__filteredCollection = new FilteredCollection(this.__collection, {
+ 							filter: this.__filterFunc,
+ 							context: this
+ 						});
+ 						this.__collection = this.__filteredCollection;
+ 					}
  					this.__collection_map = {};
  					this.__collection.iterate(function (item) {
  						this.__collection_map[item.cid()] = this.__appendItem(item);
@@ -1814,9 +1880,11 @@ Scoped.define("module:Handlers.RepeatPartial", [
  						delete this.__collection_map[item.cid()];
  					}, this);
  				}
+ 				this.__registered = true;
  			},
  			
  			__unregister: function () {
+ 				this.__registered = false;
  				var $element = this._node._$element;
  				this._node._removeChildren();
  				$element.html("");
@@ -1825,13 +1893,15 @@ Scoped.define("module:Handlers.RepeatPartial", [
  					this.__collection = null;
  					this.__collection_map = null;
  				}
+				if (this.__filteredCollection)
+					this.__filteredCollection.destroy();
  			},
  			
  			__appendItem: function (value) {
  				var elements = $(this._node._innerTemplate.trim()).appendTo(this._node._$element);			
  				var locals = {};
- 				if (this._args)
- 					locals[this._args] = value;	
+ 				if (this.__repeatArg)
+ 					locals[this.__repeatArg] = value;	
  				var result = [];
  				var self = this;
  				elements.each(function () {
@@ -1888,12 +1958,35 @@ Scoped.define("module:Handlers.ShowPartial", ["module:Handlers.Partial"], functi
 	return Cls;
 });
 
+Scoped.define("module:Handlers.TemplateUrlPartial", ["module:Handlers.Partial", "browser:Loader"], function (Partial, Loader, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {		
+ 		return {
+
+			constructor: function (node, args, value) {
+				inherited.constructor.apply(this, arguments);
+				node._expandChildren = false;
+				node._$element.html("");
+				Loader.loadHtml(value, function (template) {
+					node._$element.html(template);
+					node._$element.children().each(function () {
+	 					node._registerChild(this);
+	 				});
+				}, this);
+			}
+
+ 		};
+ 	});
+ 	Cls.register("ba-template-url");
+	return Cls;
+});
+
 Scoped.define("module:Dynamic", [
    	    "module:Data.Scope",
    	    "module:Handlers.HandlerMixin",
    	    "base:Objs",
+   	    "base:Strings",
    	    "module:Registries"
-   	], function (Scope, HandlerMixin, Objs, Registries, scoped) {
+   	], function (Scope, HandlerMixin, Objs, Strings, Registries, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -1925,8 +2018,14 @@ Scoped.define("module:Dynamic", [
 		};
 	}], {
 		
+		canonicName: function () {
+			return Strings.last_after(this.classname, ".").toLowerCase();
+		},
+		
 		register: function (key, registry) {
 			registry = registry || Registries.handler;
+			if (!key)
+				key = "ba-" + this.canonicName();
 			registry.register(key, this);
 			return this;
 		},

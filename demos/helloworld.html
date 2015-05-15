@@ -1,24 +1,23 @@
 <html>
 <head>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-	<script src="../vendors/beta.js"></script>
-	<script src="../vendors/beta-browser-noscoped.js"></script>
-	<script src="../dist/betajs-dynamics.js"></script>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script src="../vendors/beta.js"></script>
+<script src="../vendors/beta-browser-noscoped.js"></script>
+<script src="../dist/betajs-dynamics.js"></script>
 </head>
 <body>
 
-<div id="helloworld">{{replaced_value}}</div>
+	<div id="helloworld">{{replaced_value}}</div>
 
-<script>
+	<script>
+		dynamic = new BetaJS.Dynamics.Dynamic({
+			element : $("#helloworld")
+		});
 
-	dynamic = new BetaJS.Dynamics.Dynamic({
-		element: $("#helloworld")
-	});
-
-	dynamic.set("replaced_value", "Hello World");
-	dynamic.activate();
-
-</script>
+		dynamic.set("replaced_value", "Hello World");
+		dynamic.activate();
+	</script>
 
 </body>
 </html>

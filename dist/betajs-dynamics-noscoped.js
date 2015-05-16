@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-05-15
+betajs-dynamics - v0.0.1 - 2015-05-16
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '72.1431722135441'
+		version: '73.1431797947069'
 	};
 });
 
@@ -751,8 +751,11 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 			var self = this;
 			this.__element.each(function () {
 				self.__rootNodes.push(new Node(self, null, this));
-			});		
-		}
+			});
+			this._afterActivate(this.__element);
+		},
+		
+		_afterActivate: function (element) {}
 					
 	};
 });
@@ -1417,6 +1420,24 @@ Scoped.define("module:Handlers.ShowPartial", ["module:Handlers.Partial"], functi
  		};
  	});
  	Cls.register("ba-show");
+	return Cls;
+});
+
+Scoped.define("module:Handlers.TapPartial", ["module:Handlers.Partial", "browser:Info"], function (Partial, Info, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+ 		return {
+			
+ 			constructor: function (node, args, value) {
+ 				inherited.constructor.apply(this, arguments);
+ 				var self = this;
+ 				this._node._$element.on(Info.isMobile() ? "touchstart" : "click", function () {
+ 					self._execute();
+ 				});
+ 			}
+ 		
+ 		};
+ 	});
+ 	Cls.register("ba-tap");
 	return Cls;
 });
 

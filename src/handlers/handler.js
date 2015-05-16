@@ -67,8 +67,11 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 			var self = this;
 			this.__element.each(function () {
 				self.__rootNodes.push(new Node(self, null, this));
-			});		
-		}
+			});
+			this._afterActivate(this.__element);
+		},
+		
+		_afterActivate: function (element) {}
 					
 	};
 });

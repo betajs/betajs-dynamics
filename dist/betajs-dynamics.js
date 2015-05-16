@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '73.1431797947069'
+		version: '74.1431800518859'
 	};
 });
 
@@ -1247,6 +1247,7 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 			var template = options.template || this.template;
 			this.__element = options.element ? $(options.element) : null;
 			this.initialContent = this.__element ? this.__element.html() : $(options.parentElement).html();
+			this.__activeElement = this.__element ? this.__element : $(options.parentElement);
 			if (template)
 				this._handlerInitializeTemplate(template, options.parentElement);
 			else {
@@ -1266,13 +1267,17 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 		},
 		
 		_handlerInitializeTemplate: function (template, parentElement) {
-			if (this.__element)
+			if (this.__element) {
 				this.__element.html(template);
-			else if (parentElement) {
+				this.__activeElement = this.__element;
+			} else if (parentElement) {
 				$(parentElement).html(template);
 				this.__element = $(parentElement).find(">");
-			} else
+				this.__activeElement = $(parentElement);
+			} else {
 				this.__element = $(template);
+				this.__activeElement = this.__element.parent();
+			}
 		},
 		
 		element: function () {
@@ -1290,10 +1295,10 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 			this.__element.each(function () {
 				self.__rootNodes.push(new Node(self, null, this));
 			});
-			this._afterActivate(this.__element);
+			this._afterActivate(this.__activeElement);
 		},
 		
-		_afterActivate: function (element) {}
+		_afterActivate: function (activeElement) {}
 					
 	};
 });

@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-05-16
+betajs-dynamics - v0.0.1 - 2015-05-19
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -537,7 +537,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.1 - 2015-05-16
+betajs-dynamics - v0.0.1 - 2015-05-19
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '74.1431800518859'
+		version: '75.1432055166213'
 	};
 });
 
@@ -1402,13 +1402,14 @@ Scoped.define("module:Handlers.Node", [
 	    "base:Class",
 	    "base:Events.EventsMixin",
 	    "base:Ids",
+	    "browser:Dom",
 	    "module:Parser",
 	    "jquery:",
 	    "module:Data.Mesh",
 	    "base:Objs",
 	    "base:Types",
 	    "module:Registries"
-	], function (Class, EventsMixin, Ids, Parser, $, Mesh, Objs, Types, Registries, scoped) {
+	], function (Class, EventsMixin, Ids, Dom, Parser, $, Mesh, Objs, Types, Registries, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, [EventsMixin, function (inherited) {
 		return {
@@ -1557,6 +1558,7 @@ Scoped.define("module:Handlers.Node", [
 				var tagv = this.__tagValue();
 				if (!Registries.handler.get(tagv))
 					return false;
+				this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
 				this._tagHandler = Registries.handler.create(tagv, {
 					parentElement: this._$element.get(0),
 					parentHandler: this._handler,

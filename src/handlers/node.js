@@ -2,13 +2,14 @@ Scoped.define("module:Handlers.Node", [
 	    "base:Class",
 	    "base:Events.EventsMixin",
 	    "base:Ids",
+	    "browser:Dom",
 	    "module:Parser",
 	    "jquery:",
 	    "module:Data.Mesh",
 	    "base:Objs",
 	    "base:Types",
 	    "module:Registries"
-	], function (Class, EventsMixin, Ids, Parser, $, Mesh, Objs, Types, Registries, scoped) {
+	], function (Class, EventsMixin, Ids, Dom, Parser, $, Mesh, Objs, Types, Registries, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, [EventsMixin, function (inherited) {
 		return {
@@ -157,6 +158,7 @@ Scoped.define("module:Handlers.Node", [
 				var tagv = this.__tagValue();
 				if (!Registries.handler.get(tagv))
 					return false;
+				this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
 				this._tagHandler = Registries.handler.create(tagv, {
 					parentElement: this._$element.get(0),
 					parentHandler: this._handler,

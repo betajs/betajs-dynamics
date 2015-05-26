@@ -110,7 +110,13 @@ Scoped.define("module:Handlers.RepeatPartial", [
  			},
  			
  			__appendItem: function (value) {
- 				var elements = $(this._node._innerTemplate.trim()).appendTo(this._node._$element);			
+ 				var elements;
+ 				var template = this._node._innerTemplate.trim();
+ 				try {
+ 					elements = $(template).appendTo(this._node._$element);
+ 				} catch (e) {
+ 					elements = $(document.createTextNode(template)).appendTo(this._node._$element);
+ 				}
  				var locals = {};
  				if (this.__repeatArg)
  					locals[this.__repeatArg] = value;	

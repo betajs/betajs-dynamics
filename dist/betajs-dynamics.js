@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-05-19
+betajs-dynamics - v0.0.1 - 2015-05-26
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -537,7 +537,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.1 - 2015-05-19
+betajs-dynamics - v0.0.1 - 2015-05-26
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '75.1432055166213'
+		version: '78.1432665240211'
 	};
 });
 
@@ -1908,7 +1908,13 @@ Scoped.define("module:Handlers.RepeatPartial", [
  			},
  			
  			__appendItem: function (value) {
- 				var elements = $(this._node._innerTemplate.trim()).appendTo(this._node._$element);			
+ 				var elements;
+ 				var template = this._node._innerTemplate.trim();
+ 				try {
+ 					elements = $(template).appendTo(this._node._$element);
+ 				} catch (e) {
+ 					elements = $(document.createTextNode(template)).appendTo(this._node._$element);
+ 				}
  				var locals = {};
  				if (this.__repeatArg)
  					locals[this.__repeatArg] = value;	

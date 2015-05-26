@@ -27,6 +27,9 @@
 			</div>
 		</script>
 		<go ba-attrs="{{{filter:'a'}}}">
+			<div ba-repeat="{{sub :: [1,2,3]}}">
+				{{sub}}
+			</div>
 			<ba-statusbar ba-status="{{=text}}">
 			</ba-statusbar>
 			<input type="text" value="{{=dir}}" />

@@ -1,5 +1,5 @@
 /*!
-betajs - v1.0.0 - 2015-05-15
+betajs - v1.0.0 - 2015-05-26
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -537,7 +537,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs - v1.0.0 - 2015-05-15
+betajs - v1.0.0 - 2015-05-26
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -550,7 +550,7 @@ Scoped.binding("module", "global:BetaJS");
 Scoped.define("module:", function () {
 	return {
 		guid: "71366f7a-7da3-4e55-9a0b-ea0e4e2a9e79",
-		version: '369.1431722054265'
+		version: '373.1432614864223'
 	};
 });
 
@@ -2519,7 +2519,11 @@ Scoped.define("module:Class", ["module:Types", "module:Objs", "module:Functions"
 	
 		// Add External Statics
 		Objs.iter(statics, function (stat) {
-			Objs.extend(result, Types.is_function(stat) ? stat(parent) : stat);
+			stat = Types.is_function(stat) ? stat(parent) : stat;
+			var extender = result._extender;
+			Objs.extend(result, stat);
+			if (stat._extender)
+				result._extender = Objs.extend(Objs.clone(extender, 1), stat._extender);
 		});
 		
 		
@@ -2574,7 +2578,9 @@ Scoped.define("module:Class", ["module:Types", "module:Objs", "module:Functions"
 			Objs.extend(result.__notifications, parent.__notifications, 1);		
 	
 		Objs.iter(objects, function (object) {
-			Objs.extend(result.prototype, object);
+			for (var objkey in object)
+				result.prototype[objkey] = result._extender && objkey in result._extender ? result._extender[objkey](result.prototype[objkey], object[objkey]) : object[objkey]; 
+			//Objs.extend(result.prototype, object);
 	
 			// Note: Required for Internet Explorer
 			if ("constructor" in object)
@@ -2627,6 +2633,21 @@ Scoped.define("module:Class", ["module:Types", "module:Objs", "module:Functions"
 			return obj && this.is_class_instance(obj) && obj.instance_of(this);
 		},
 		
+		define: function (parent, current) {
+			var args = Functions.getArguments(arguments, 2);
+			if (Types.is_object(parent)) {
+				return Scoped.define(current, [], function (scoped) {
+					args.unshift({scoped: scoped});
+					return parent.extend.apply(parent, args);
+				});
+			} else {
+				return Scoped.define(current, [parent], function (parent, scoped) {
+					args.unshift({scoped: scoped});
+					return parent.extend.apply(parent, args);
+				});
+			}
+		},
+		
 		// Legacy Methods
 	
 		_inherited: function (cls, func) {
@@ -2671,6 +2692,11 @@ Scoped.define("module:Class", ["module:Types", "module:Objs", "module:Functions"
 		return this.destroy === this.__destroyedDestroy;
 	};
 	
+	Class.prototype.weakDestroy = function () {
+		if (!this.destroyed())
+			this.destroy();
+	};
+
 	Class.prototype.__destroyedDestroy = function () {
 		throw ("Trying to destroy destroyed object " + this.cid() + ": " + this.cls.classname + ".");
 	};
@@ -2994,7 +3020,11 @@ Scoped.define("module:Parser.Lexer", ["module:Class", "module:Types", "module:Ob
 });
 
 
-Scoped.define("module:Timers.Timer", ["module:Class", "module:Objs"], function (Class, Objs, scoped) {
+Scoped.define("module:Timers.Timer", [
+    "module:Class",
+    "module:Objs",
+    "module:Time"
+], function (Class, Objs, Time, scoped) {
 	return Class.extend({scoped: scoped}, function (inherited) {
 		return {
 			
@@ -3004,6 +3034,7 @@ Scoped.define("module:Timers.Timer", ["module:Class", "module:Objs"], function (
 			 * func fire (optional): will be fired
 			 * object context (optional): for fire
 			 * bool start (optional, default true): should it start immediately
+			 * bool real_time (default false)
 			 * 
 			 */
 			constructor: function (options) {
@@ -3013,7 +3044,8 @@ Scoped.define("module:Timers.Timer", ["module:Class", "module:Objs"], function (
 					start: true,
 					fire: null,
 					context: this,
-					destroy_on_fire: false
+					destroy_on_fire: false,
+					real_time: false
 				}, options);
 				this.__delay = options.delay;
 				this.__destroy_on_fire = options.destroy_on_fire;
@@ -3021,6 +3053,7 @@ Scoped.define("module:Timers.Timer", ["module:Class", "module:Objs"], function (
 				this.__fire = options.fire;
 				this.__context = options.context;
 				this.__started = false;
+				this.__real_time = options.real_time;
 				if (options.start)
 					this.start();
 			},
@@ -3033,8 +3066,16 @@ Scoped.define("module:Timers.Timer", ["module:Class", "module:Objs"], function (
 			fire: function () {
 				if (this.__once)
 					this.__started = false;
-				if (this.__fire)
-					this.__fire.apply(this.__context, [this]);
+				if (this.__fire) {
+					this.__fire.call(this.__context, this);
+					this.__fire_count++;
+					if (this.__real_time && !this.__destroy_on_fire && !this.__once) {
+						while ((this.__fire_count + 1) * this.__delay <= Time.now() - this.__start_time) {
+							this.__fire.call(this.__context, this);
+							this.__fire_count++;
+						}
+					}
+				}
 				if (this.__destroy_on_fire)
 					this.destroy();
 			},
@@ -3053,6 +3094,9 @@ Scoped.define("module:Timers.Timer", ["module:Class", "module:Objs"], function (
 				if (this.__started)
 					return;
 				var self = this;
+				if (this.__real_time)
+					this.__start_time = Time.now();
+				this.__fire_count = 0;
 				if (this.__once)
 					this.__timer = setTimeout(function () {
 						self.fire();
@@ -5921,6 +5965,8 @@ Scoped.define("module:States.State", [
                              		    	
 		    _locals: [],
 		    _persistents: [],
+		    _globals: [],
+		    _defaults: {},
 		    
 		    _white_list: null,
 		
@@ -5934,13 +5980,15 @@ Scoped.define("module:States.State", [
 		        this._transitioning = false;
 		        this.__next_state = null;
 		        this.__suspended = 0;
-		        args = args || {};
+		        args = Objs.extend(Objs.clone(args || {}, 1), this._defaults);
 		        this._locals = Types.is_function(this._locals) ? this._locals() : this._locals;
 		        for (var i = 0; i < this._locals.length; ++i)
 		            this["_" + this._locals[i]] = args[this._locals[i]];
 		        this._persistents = Types.is_function(this._persistents) ? this._persistents() : this._persistents;
 		        for (i = 0; i < this._persistents.length; ++i)
 		            this["_" + this._persistents[i]] = args[this._persistents[i]];
+		        for (i = 0; i < this._globals.length; ++i)
+		        	host.set(this._globals[i], args[this._globals[i]]);
 		    },
 		
 		    state_name: function () {
@@ -6042,6 +6090,17 @@ Scoped.define("module:States.State", [
 		    }
 		    
  		};
+ 	}, {
+ 		
+ 		_extender: {
+ 			_defaults: function (base, overwrite) {
+ 				return Objs.extend(Objs.clone(base, 1), overwrite);
+ 			},
+ 			_globals: function (base, overwrite) {
+ 				return (base || []).concat(overwrite || []);
+ 			}
+ 		}
+ 		
  	});
 });
 
@@ -6373,7 +6432,7 @@ Scoped.define("module:RMI.Server", [
 			
 			unregisterInstance: function (instance) {
 				delete this.__instances[Ids.objectId(instance)];
-				instance.destroy();
+				instance.weakDestroy();
 			},
 			
 			registerClient: function (channel) {
@@ -6511,6 +6570,8 @@ Scoped.define("module:RMI.Client", [
 				this.__instances[Ids.objectId(instance, instance_name)] = instance;
 				var self = this;
 				instance.__send = function (message, data) {
+					if (!self.__channel)
+						return;
 					data = Objs.map(data, self._serializeValue, self);
 					return self.__channel.send(instance_name + ":" + message, data).mapSuccess(function (result) {
 						return this._unserializeValue(result);
@@ -6523,8 +6584,7 @@ Scoped.define("module:RMI.Client", [
 				var instance_name = Ids.objectId(instance);
 				if (!this.__instances[instance_name])
 					return;
-				instance.off(null, null, this);
-				instance.destroy();
+				instance.weakDestroy();
 				delete this.__instances[instance_name];
 			}
 			

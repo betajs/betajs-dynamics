@@ -1,0 +1,86 @@
+<html>
+	<head>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="http://cdn.rawgit.com/cowboy/jquery-hashchange/master/jquery.ba-hashchange.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.1.1/es5-shim.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/json2/20140204/json2.js"></script>
+        <script src="../../vendors/beta.js"></script>
+        <script src="../../vendors/beta-browser-noscoped.js"></script>
+		<script src="../../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+		<a href="#/about">About</a>
+		<a href="#/main/simple">Main/Simple</a>
+		<a href="#/main/advanced/1">Main/Advanced/1</a>
+		<a href="#/main/advanced/2">Main/Advanced/2</a>
+		<a href="#/main/advanced/3">Main/Advanced/3</a>
+		<ba-{{route.page}} ba-route='{{route}}'>
+		</ba-{{route.page}}>
+	
+		<script>
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.About", {
+				template: "<h1>About</h1>"
+			}).register();
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Main", {
+				template: "<h1>Main</h1><ba-{{route.sub}} ba-route='{{route}}'></ba-{{route.sub}}>"
+			}).register();
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Simple", {
+				template: "<h2>Simple</h2>"
+			}).register();
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Advanced", {
+				template: "<h2>Advanced</h2><h3>{{route.number}}</h3>"
+			}).register();
+			router = new BetaJS.Browser.Router({
+				routes: {
+					"/about": {
+						state: "About"
+					},
+					"/main/simple": {
+						state: "Simple"
+					},
+					"/main/advanced/([0-9]+)": {
+						state: "Advanced",
+						mapping: ["number"]
+					}
+				}
+			});
+			router.hashRoute = new BetaJS.Browser.HashRouteBinder(router);
+			router.stateHost = new BetaJS.States.Host();
+			router.stateRoute = new BetaJS.Browser.StateRouteBinder(router, router.stateHost);
+			
+			router.stateHost.register("Base", {
+				_globals: ["page"]
+			});
+			router.stateHost.register("About", "Base", {
+				_defaults: {"page": "about"}
+			});
+			router.stateHost.register("Main", "Base", {
+				_globals: ["sub"],
+				_defaults: {"page": "main"}
+			});
+			router.stateHost.register("Simple", "Main", {
+				_defaults: {
+					"sub": "simple"
+				}
+			});
+			router.stateHost.register("Advanced", "Main", {
+				_globals: ["number"],
+				_defaults: {
+					"sub": "advanced"
+				}
+			});
+			
+			var mainDynamic = new BetaJS.Dynamics.Dynamic({
+				element: $("body").get(0)
+			});
+			router.stateHost.on("start", function () {
+				mainDynamic.set("route", router.stateHost.getAll());
+			}),
+			router.stateHost.initialize("About");
+			mainDynamic.activate();
+						
+			
+
+		</script>
+	</body>
+</html>

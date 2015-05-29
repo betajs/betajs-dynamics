@@ -46,20 +46,27 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 		
 		_handlerInitializeTemplate: function (template, parentElement) {
 			var elements;
+			var is_text = false;
 			try {
-				elements = $(template);
+				elements = $(template.trim());
 			} catch (e) {
 				elements = $(document.createTextNode(template.trim()));
+				is_text = true;
 			}
 			if (this.__element) {
-				this.__element.html(elements);
+				this.__element.html(template);
 				this.__activeElement = this.__element;
 			} else if (parentElement) {
-				$(parentElement).html(elements);
-				this.__element = elements;
+				if (is_text) {
+					$(parentElement).html(elements);
+					this.__element = elements;
+				} else {
+					$(parentElement).html(template);
+					this.__element = $(parentElement).find(">");
+				}
 				this.__activeElement = $(parentElement);
 			} else {
-				this.__element = template;
+				this.__element = elements;
 				this.__activeElement = this.__element.parent();
 			}
 		},

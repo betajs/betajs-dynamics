@@ -148,7 +148,7 @@ Scoped.define("module:Data.Mesh", [
 				this._write(this.__defaults.write || this.__environment[0], expression, value, true);
 			},
 			
-			call: function (expressions, callback) {
+			call: function (expressions, callback, readonly) {
 				var data = {};
 				var exprs = [];
 				Objs.iter(expressions, function (expression) {
@@ -162,11 +162,12 @@ Scoped.define("module:Data.Mesh", [
 				var expanded = this.__expand(data);
 
 				var result = callback.call(this.__context, expanded);
-
-				var collapsed = this.__collapse(expanded, exprs);
-				for (var expression in collapsed) {
-					if (!(expression in data) || data[expression] != collapsed[expression])
-						this.write(expression, collapsed[expression]);
+				if (!readonly) {
+					var collapsed = this.__collapse(expanded, exprs);
+					for (var expression in collapsed) {
+						if (!(expression in data) || data[expression] != collapsed[expression])
+							this.write(expression, collapsed[expression]);
+					}
 				}
 				return result;
 			},

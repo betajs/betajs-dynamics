@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '79.1432918448097'
+		version: '80.1432929153164'
 	};
 });
 
@@ -708,7 +708,7 @@ Scoped.define("module:Data.Mesh", [
 				this._write(this.__defaults.write || this.__environment[0], expression, value, true);
 			},
 			
-			call: function (expressions, callback) {
+			call: function (expressions, callback, readonly) {
 				var data = {};
 				var exprs = [];
 				Objs.iter(expressions, function (expression) {
@@ -722,11 +722,12 @@ Scoped.define("module:Data.Mesh", [
 				var expanded = this.__expand(data);
 
 				var result = callback.call(this.__context, expanded);
-
-				var collapsed = this.__collapse(expanded, exprs);
-				for (var expression in collapsed) {
-					if (!(expression in data) || data[expression] != collapsed[expression])
-						this.write(expression, collapsed[expression]);
+				if (!readonly) {
+					var collapsed = this.__collapse(expanded, exprs);
+					for (var expression in collapsed) {
+						if (!(expression in data) || data[expression] != collapsed[expression])
+							this.write(expression, collapsed[expression]);
+					}
 				}
 				return result;
 			},
@@ -1069,7 +1070,16 @@ Scoped.define("module:Data.Scope", [
 			},
 			
 			call: function (name) {
-				return this.__functions[name].apply(this, Functions.getArguments(arguments, 1));		
+				var args = Functions.getArguments(arguments, 1);
+				try {					
+					return this.__functions[name].apply(this, args);
+				} catch (e) {
+					return this.handle_call_exception(name, args, e);
+				}
+			},
+			
+			handle_call_exception: function (name, args, e) {
+				throw e;
 			},
 			
 			parent: function () {
@@ -1277,20 +1287,27 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 		
 		_handlerInitializeTemplate: function (template, parentElement) {
 			var elements;
+			var is_text = false;
 			try {
-				elements = $(template);
+				elements = $(template.trim());
 			} catch (e) {
 				elements = $(document.createTextNode(template.trim()));
+				is_text = true;
 			}
 			if (this.__element) {
-				this.__element.html(elements);
+				this.__element.html(template);
 				this.__activeElement = this.__element;
 			} else if (parentElement) {
-				$(parentElement).html(elements);
-				this.__element = elements;
+				if (is_text) {
+					$(parentElement).html(elements);
+					this.__element = elements;
+				} else {
+					$(parentElement).html(template);
+					this.__element = $(parentElement).find(">");
+				}
 				this.__activeElement = $(parentElement);
 			} else {
-				this.__element = template;
+				this.__element = elements;
 				this.__activeElement = this.__element.parent();
 			}
 		},
@@ -1874,7 +1891,7 @@ Scoped.define("module:Handlers.RepeatPartial", [
 					return true;
  				return this._node.mesh().call(filter.dependencies, function (obj) {
 					return filter.func.call(this, Objs.extend(obj, Properties.is_instance_of(prop) ? prop.data() : prop));
-				});
+				}, true);
  			},
  			
  			__register: function (value) {
@@ -2066,6 +2083,11 @@ Scoped.define("module:Dynamic", [
 				this.functions = this.__functions;
 				this._handlerInitialize(options);
 				this.__createActivate = options.create || function () {};
+			},
+			
+			handle_call_exception: function (name, args, e) {
+				console.log("Dynamics Exception in '" + this.cls.classname + "' calling method '" + name + "' : " + e);
+				return null;
 			}
 				
 		};

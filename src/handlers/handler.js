@@ -45,15 +45,21 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 		},
 		
 		_handlerInitializeTemplate: function (template, parentElement) {
+			var elements;
+			try {
+				elements = $(template);
+			} catch (e) {
+				elements = $(document.createTextNode(template.trim()));
+			}
 			if (this.__element) {
-				this.__element.html(template);
+				this.__element.html(elements);
 				this.__activeElement = this.__element;
 			} else if (parentElement) {
-				$(parentElement).html(template);
-				this.__element = $(parentElement).find(">");
+				$(parentElement).html(elements);
+				this.__element = elements;
 				this.__activeElement = $(parentElement);
 			} else {
-				this.__element = $(template);
+				this.__element = template;
 				this.__activeElement = this.__element.parent();
 			}
 		},
@@ -69,7 +75,7 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 			}		
 			this._notify("_activate");
 			this.__rootNodes = [];
-			var self = this;
+			var self = this;			
 			this.__element.each(function () {
 				self.__rootNodes.push(new Node(self, null, this));
 			});

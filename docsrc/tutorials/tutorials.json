@@ -1,12 +1,68 @@
 {
 
-    "helloworld": {
-       "title": "Hello World",
-      "children" : {
-        "dynamics_basics" : {
-            "title" : "Dynamics Basics"
-        }
+  "helloworld": {
+    "title": "Hello World",
+    "dependencies" : ["betajs:dynamics_basics","betajs:properties", "extern:HTML", "external:","external:Javascript"],
+    "children" : {
+      "some_child" : {
+        "title" : "Some Child"
       }
     }
+  },
+
+  "blueprint": {
+    "title": "Blueprint"
+  },
+
+  "dynamics_basics" : {
+    "title": "Dynamics Basics"
+  },
+
+  "complete_reference" : {
+    "title": "Dynamics Basics"
+  },
+
+  "templates" : {
+    "title": "Templates"
+  },
+
+  "element" : {
+    "title": "Element"
+  },
+
+  "initial" : {
+    "children" : {
+      "attributes" : {},
+      "create" : {},
+      "funtions" : {},
+      "binding" : {},
+      "scopes" : {}
+    }
+  },
+
+  "_afterActivate" : {
+
+  },
+
+  "html_binding": {
+
+  },
+
+  "html_attributes": {
+    "children" : {
+      "ba-click" : {},
+      "ba-tap" : {},
+      "ba-class" : {},
+      "ba-show" : {},
+      "ba-if" : {},
+      "ba-ignore" : {},
+      "ba-repeat" : {},
+      "ba-attrs" : {},
+      "ba-on" : {},
+      "ba-return" : {},
+      "ba-template-url" : {},
+      "ba-*" : {}
+    }
+  }
 
 }

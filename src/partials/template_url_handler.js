@@ -1,4 +1,7 @@
-Scoped.define("module:Handlers.TemplateUrlPartial", ["module:Handlers.Partial", "browser:Loader"], function (Partial, Loader, scoped) {
+
+Scoped.define("module:Handlers.TemplateUrlPartial",
+	["module:Handlers.Partial", "browser:Loader"], function (Partial, Loader, scoped) {
+
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {		
  		return {
 
@@ -18,4 +21,5 @@ Scoped.define("module:Handlers.TemplateUrlPartial", ["module:Handlers.Partial", 
  	});
  	Cls.register("ba-template-url");
 	return Cls;
+
 });

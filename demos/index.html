@@ -26,12 +26,17 @@
 				Foobarina: {{title}} {{other}}
 			</div>
 		</script>
+		<script type="text/template" id="texttext">
+				TextText: {{title}} {{other}}
+		</script>
 		<go ba-attrs="{{{filter:'a'}}}">
 			<div ba-repeat="{{sub :: [1,2,3]}}">
 				{{sub}}
 			</div>
 			<ba-statusbar ba-status="{{=text}}">
 			</ba-statusbar>
+			<ba-texttext ba-title="Tester" ba-other="Foobar">
+			</ba-texttext>
 			<input type="text" value="{{=dir}}" />
 			<button ba-tap="yes = !yes" ba-on:mouseover="alert('hover')">Click me (direct code)</button>
 			<button ba-click="gogo()">Click me (method)</button>
@@ -97,6 +102,9 @@
 			}).register();
 			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Foobar", {
 				template: $("#foobar").html()
+			}).register();
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Texttext", {
+				template: $("#texttext").html()
 			}).register();
 		
 			var mainDynamic = new BetaJS.Dynamics.Dynamic({

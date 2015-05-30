@@ -171,7 +171,16 @@ Scoped.define("module:Data.Scope", [
 			},
 			
 			call: function (name) {
-				return this.__functions[name].apply(this, Functions.getArguments(arguments, 1));		
+				var args = Functions.getArguments(arguments, 1);
+				try {					
+					return this.__functions[name].apply(this, args);
+				} catch (e) {
+					return this.handle_call_exception(name, args, e);
+				}
+			},
+			
+			handle_call_exception: function (name, args, e) {
+				throw e;
 			},
 			
 			parent: function () {

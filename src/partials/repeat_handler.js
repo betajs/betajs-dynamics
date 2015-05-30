@@ -57,7 +57,7 @@ Scoped.define("module:Handlers.RepeatPartial", [
 					return true;
  				return this._node.mesh().call(filter.dependencies, function (obj) {
 					return filter.func.call(this, Objs.extend(obj, Properties.is_instance_of(prop) ? prop.data() : prop));
-				});
+				}, true);
  			},
  			
  			__register: function (value) {

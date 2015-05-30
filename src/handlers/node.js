@@ -40,7 +40,11 @@ Scoped.define("module:Handlers.Node", [
 				this._expandChildren = true;
 				this._touchedInner = false;
 				
-				this._mesh = new Mesh([this.properties(), this._locals, this._handler.functions], this._handler);
+				this._mesh = new Mesh([window, this.properties(), this._locals, this._handler.functions], this._handler, {
+					read: this.properties(),
+					write: this.properties(),
+					watch: this.properties()
+				});
 								
 				if (element.attributes) {
 					for (var i = 0; i < element.attributes.length; ++i)

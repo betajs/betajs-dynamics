@@ -57,7 +57,7 @@ Scoped.define("module:Handlers.RepeatPartial", [
 					return true;
  				return this._node.mesh().call(filter.dependencies, function (obj) {
 					return filter.func.call(this, Objs.extend(obj, Properties.is_instance_of(prop) ? prop.data() : prop));
-				});
+				}, true);
  			},
  			
  			__register: function (value) {
@@ -110,7 +110,13 @@ Scoped.define("module:Handlers.RepeatPartial", [
  			},
  			
  			__appendItem: function (value) {
- 				var elements = $(this._node._innerTemplate.trim()).appendTo(this._node._$element);			
+ 				var elements;
+ 				var template = this._node._innerTemplate.trim();
+ 				try {
+ 					elements = $(template).appendTo(this._node._$element);
+ 				} catch (e) {
+ 					elements = $(document.createTextNode(template)).appendTo(this._node._$element);
+ 				}
  				var locals = {};
  				if (this.__repeatArg)
  					locals[this.__repeatArg] = value;	

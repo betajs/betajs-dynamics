@@ -14,24 +14,16 @@
 		<a href="#/main/advanced/1">Main/Advanced/1</a>
 		<a href="#/main/advanced/2">Main/Advanced/2</a>
 		<a href="#/main/advanced/3">Main/Advanced/3</a>
+<<<<<<< HEAD
 		<a href="#/polymorphic/about">Polymorphic About</a>
 		<a href="#/polymorphic/simple">Polymorphic Simple</a>
 		<ba-{{route.page}} ba-route='{{route}}'>
+=======
+		<ba-{{route.page}}>
+>>>>>>> c19fb8071fc194adfe2a1945ceb1ea8052f3aa48
 		</ba-{{route.page}}>
-	
-		<script>
-			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.About", {
-				template: "<h1>About</h1>"
-			}).register();
-			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Main", {
-				template: "<h1>Main</h1><ba-{{route.sub}} ba-route='{{route}}'></ba-{{route.sub}}>"
-			}).register();
-			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Simple", {
-				template: "<h2>Simple</h2>"
-			}).register();
-			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Advanced", {
-				template: "<h2>Advanced</h2><h3>{{route.number}}</h3>"
-			}).register();
+		
+		<script ba-ignore>
 			router = new BetaJS.Browser.Router({
 				routes: {
 					"/about": {
@@ -77,14 +69,33 @@
 					"sub": "advanced"
 				}
 			});
+			router.stateHost.initialize("About");
+
+			var route = router.stateHost;
+			
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.About", {
+				template: "<h1>About</h1>"
+			}).register();
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Main", {
+				template: "<h1>Main</h1><ba-{{route.sub}} ba-route='{{route}}'></ba-{{route.sub}}>"
+			}).register();
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Simple", {
+				template: "<h2>Simple {{foobar}}</h2>",
+				initial: {
+					create: function () {
+						state.get("page")
+						this.set("foobar", router.stateHost.get("page"));
+					}
+				}
+			}).register();
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Advanced", {
+				template: "<h2>Advanced</h2><h3>{{route.number}}</h3>"
+			}).register();
+
 			
 			var mainDynamic = new BetaJS.Dynamics.Dynamic({
-				element: $("body").get(0)
-			});
-			router.stateHost.on("start", function () {
-				mainDynamic.set("route", router.stateHost.getAll());
-			}),
-			router.stateHost.initialize("About");
+				element: $("body").get(0)				
+			}); 
 			mainDynamic.activate();
 						
 			

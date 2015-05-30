@@ -31,6 +31,11 @@ Scoped.define("module:Dynamic", [
 				this.functions = this.__functions;
 				this._handlerInitialize(options);
 				this.__createActivate = options.create || function () {};
+			},
+			
+			handle_call_exception: function (name, args, e) {
+				console.log("Dynamics Exception in '" + this.cls.classname + "' calling method '" + name + "' : " + e);
+				return null;
 			}
 				
 		};

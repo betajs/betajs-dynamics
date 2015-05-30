@@ -11,9 +11,10 @@ Scoped.define("module:Data.Mesh", [
 	return Class.extend({scoped: scoped}, [EventsMixin, function (inherited) {
 		return {
 
-			constructor: function (environment, context) {
+			constructor: function (environment, context, defaults) {
 				inherited.constructor.call(this);
 				this.__environment = environment;
+				this.__defaults = defaults;
 				this.__context = context;
 				this.__watchers = {};
 			},
@@ -90,15 +91,22 @@ Scoped.define("module:Data.Mesh", [
 			__bindWatcher: function (watcher) {
 				var n = null;
 				for (var i = this.__environment.length - 1; i >= 0; --i) {
-					var force = i === 0;
 					var scope = this.__environment[i];
 					n = this._navigate(scope, watcher.expression);
-					if (force && !n.properties && Properties.is_instance_of(scope))
-						n.properties = scope;
-					if (n.properties && (force || !n.tail))
+					if (n.properties && !n.tail)
 						break;
 					n = null;
 				}
+				if (n === null) {
+					var defScope = this.__defaults.watch || this.__environment[0];
+					n = this._navigate(defScope, watcher.expression);
+					if (!n.properties && Properties.is_instance_of(defScope))
+						n.properties = defScope;
+					if (!n.properties)
+						n = null;
+				}
+				if (n === null)
+					return;
 				watcher.properties = n.properties;
 				var exp = n.head + (n.head && n.tail ? "." : "") + n.tail;
 				watcher.propertiesPrefix = exp;
@@ -121,7 +129,7 @@ Scoped.define("module:Data.Mesh", [
 			},
 			
 			read: function (expression) {
-				for (var i = this.__environment.length - 1; i >= 0; --i) {
+				for (var i = this.__environment.length - 1; i >=0; --i) {
 					var ret = this._read(this.__environment[i], expression);
 					if (ret) {
 						if (Types.is_function(ret.value))
@@ -134,12 +142,13 @@ Scoped.define("module:Data.Mesh", [
 			
 			write: function (expression, value) {
 				for (var i = this.__environment.length - 1; i >= 0; --i) {
-					if (this._write(this.__environment[i], expression, value, i === 0))
-						break;
+					if (this._write(this.__environment[i], expression, value, false))
+						return;
 				}
+				this._write(this.__defaults.write || this.__environment[0], expression, value, true);
 			},
 			
-			call: function (expressions, callback) {
+			call: function (expressions, callback, readonly) {
 				var data = {};
 				var exprs = [];
 				Objs.iter(expressions, function (expression) {
@@ -153,11 +162,12 @@ Scoped.define("module:Data.Mesh", [
 				var expanded = this.__expand(data);
 
 				var result = callback.call(this.__context, expanded);
-
-				var collapsed = this.__collapse(expanded, exprs);
-				for (var expression in collapsed) {
-					if (!(expression in data) || data[expression] != collapsed[expression])
-						this.write(expression, collapsed[expression]);
+				if (!readonly) {
+					var collapsed = this.__collapse(expanded, exprs);
+					for (var expression in collapsed) {
+						if (!(expression in data) || data[expression] != collapsed[expression])
+							this.write(expression, collapsed[expression]);
+					}
 				}
 				return result;
 			},
@@ -182,9 +192,9 @@ Scoped.define("module:Data.Mesh", [
 					else {
 						return {
 							properties: current,
-							head: head,
-							tail: tail,
-							parent: parent,
+							head: splt.head,
+							tail: splt.tail,
+							parent: current,
 							current: null
 						};
 					}
@@ -232,7 +242,7 @@ Scoped.define("module:Data.Mesh", [
 					var current = result;
 					var keys = key.split(".");
 					for (var i = 0; i < keys.length - 1; ++i) {
-						if (!(keys[i] in current) || !Types.is_object(current[keys[i]]))
+						if (!(keys[i] in current) || !Types.is_object(current[keys[i]]) || current[keys[i]] === null)
 							current[keys[i]] = {};
 						current = current[keys[i]];
 					}

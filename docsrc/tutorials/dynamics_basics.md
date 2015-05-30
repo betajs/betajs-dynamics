@@ -1,44 +1,12 @@
 ## BetaJS Dynamics Basics
 
 
-```html
-
-<!DOCTYPE html>
-<html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title>Hello World</title>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-        <script src="vendors/beta.js"></script>
-        <script src="vendors/beta-browser-noscoped.js"></script>
-	<script src="vendors/betajs-dynamics.js"></script>
-</head>
-<body>
-
-	<div id="helloworld">{{replaced_value}}</div>
-
-	<script>
-
-		dynamic = new BetaJS.Dynamics.Dynamic({
-			element: $("#helloworld")
-		});
-
-		dynamic.set("replaced_value", "Hello World");
-		dynamic.activate();
-
-	</script>
-
-</body>
-</html>
-
-```
-
 #### Now lets go briefly trough the individual parts:
 
 
 ```html
 
-<div id="helloworld">{{replaced_value}}</div>
+	<div id="helloworld"> {{replaced_value}} </div>
 
 ```
 
@@ -46,9 +14,9 @@ Inside {{}} ist an attribute property that we can control from other parts of th
 
 ```js
 
-dynamic = new BetaJS.Dynamics.Dynamic({
-	element: $("#helloworld")
-});
+	dynamic = new BetaJS.Dynamics.Dynamic({
+		element: $("#helloworld")
+	});
 
 ```
 
@@ -65,7 +33,7 @@ An example on how to use this is the next line:
 
 ```js
 
-dynamic.set("replaced_value", "Hello World");
+	dynamic.set("replaced_value", "Hello World");
 
 ```
 
@@ -80,7 +48,7 @@ the HTML view will update itself automatically.
 
 ```js
 
-dynamic.activate();
+	dynamic.activate();
 
 ```
 

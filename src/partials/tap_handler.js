@@ -1,3 +1,4 @@
+
 Scoped.define("module:Handlers.TapPartial", ["module:Handlers.Partial", "browser:Info"], function (Partial, Info, scoped) {
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {

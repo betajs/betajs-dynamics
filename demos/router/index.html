@@ -14,6 +14,8 @@
 		<a href="#/main/advanced/1">Main/Advanced/1</a>
 		<a href="#/main/advanced/2">Main/Advanced/2</a>
 		<a href="#/main/advanced/3">Main/Advanced/3</a>
+		<a href="#/polymorphic/about">Polymorphic About</a>
+		<a href="#/polymorphic/simple">Polymorphic Simple</a>
 		<ba-{{route.page}} ba-route='{{route}}'>
 		</ba-{{route.page}}>
 	
@@ -41,6 +43,12 @@
 					"/main/advanced/([0-9]+)": {
 						state: "Advanced",
 						mapping: ["number"]
+					},
+					"/polymorphic/(about|simple)": {
+						states: ["About", "Simple"],
+						state: function (args) {
+							return BetaJS.Strings.capitalize(args[0]);
+						}
 					}
 				}
 			});

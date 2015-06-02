@@ -1,3 +1,4 @@
+
 $(document).ready(function () {
 	$("democase").each(function () {
 		var democase = $(this);

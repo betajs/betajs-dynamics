@@ -21,7 +21,7 @@ used Dynamic functionalities. On the specifics how they work please refer to the
 				some_function : () {}
 			}
 		},
-
+t.s
 		_afterActivate : function (element) {
 			console.log('This message is displayed after the dynamic is activated');
 			//element passes you the element where the Dynamic is active on as a Jquery Object/Element

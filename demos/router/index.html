@@ -16,7 +16,7 @@
 		<a href="#/main/advanced/3">Main/Advanced/3</a>
 		<ba-{{route.page}}>
 		</ba-{{route.page}}>
-		
+		git
 		<script ba-ignore>
 			router = new BetaJS.Browser.Router({
 				routes: {
@@ -71,8 +71,9 @@
 				template: "<h2>Simple {{foobar}}</h2>",
 				initial: {
 					create: function () {
-						state.get("page")
-						this.set("foobar", router.stateHost.get("page"));
+						route.get("page");
+						this.set("foobar", "Foobar working");
+//						this.set("foobar", router.stateHost.get("page"));
 					}
 				}
 			}).register();

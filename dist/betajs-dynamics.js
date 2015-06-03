@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-05-29
+betajs-dynamics - v0.0.1 - 2015-06-03
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -537,7 +537,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.1 - 2015-05-29
+betajs-dynamics - v0.0.1 - 2015-06-03
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '81.1432929640180'
+		version: '87.1433361952438'
 	};
 });
 
@@ -999,7 +999,7 @@ Scoped.define("module:Data.Scope", [
 				this.__data = options.data;
 				this.setAll(Types.is_function(options.attrs) ? options.attrs() : options.attrs);
 				Objs.iter(options.collections, function (value, key) {
-					this.set(key, new Collection(value));
+					this.set(key, new Collection({objects: value}));
 				}, this);
 				if (parent)
 					parent.__add(this);
@@ -1528,11 +1528,13 @@ Scoped.define("module:Handlers.Node", [
 			},
 			
 			__initializeAttr: function (attr) {
+				var isEvent = attr.name.indexOf("on") === 0;
 				var obj = {
 					name: attr.name,
 					value: attr.value,
 					domAttr: attr,
-					dyn: Parser.parseText(attr.value)
+					dyn: Parser.parseText(attr.value),
+					updatable: !isEvent
 				};
 				this._attrs[attr.name] = obj;
 				this.__updateAttr(obj);
@@ -1549,6 +1551,12 @@ Scoped.define("module:Handlers.Node", [
 							self._mesh.write(obj.dyn.variable, self._element.value);
 						});
 					}
+					if (isEvent) {
+						obj.domAttr.value = '';
+						this._$element.on(obj.name.substring(2), function () {
+							self.__executeDyn(obj.dyn);
+						});
+					}
 				}
 			},
 			
@@ -1561,6 +1569,8 @@ Scoped.define("module:Handlers.Node", [
 			},
 			
 			__updateAttr: function (attr) {
+				if (!attr.updatable)
+					return;
 				var value = attr.dyn ? this.__executeDyn(attr.dyn) : attr.value;
 				if ((value != attr.value || Types.is_array(value)) && !(!value && !attr.value)) {
 					var old = attr.value;
@@ -1832,6 +1842,142 @@ Scoped.define("module:Handlers.EventPartial", ["module:Handlers.Partial"], funct
 	return Cls;
 });
 
+Scoped.define("module:Handlers.RepeatElementPartial", [
+        "module:Handlers.Partial",
+        "base:Collections.Collection",
+        "base:Collections.FilteredCollection",
+        "base:Objs",
+        "jquery:",
+        "module:Parser",
+        "base:Properties.Properties"
+	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+ 		return {
+			
+ 			constructor: function (node, args, value) {
+ 				inherited.constructor.apply(this, arguments);
+ 				this.__registered = false;
+ 				args = args.split("~");
+ 				this.__repeatArg = args[0].trim();
+ 				if (args.length > 1) {
+ 					this.__repeatFilter = Parser.parseCode(args[1].trim());
+ 					var self = this;
+ 					node.mesh().watch(this.__repeatFilter.dependencies, function () {
+ 						if (self._active && self.__registered) {
+ 							if (self.__filteredCollection)
+ 								self.__filteredCollection.setFilter(self.__filterFunc, self);
+ 							else
+ 								self.__register(self._value);
+ 						}
+ 					}, this.__repeatFilter);
+ 				}
+ 				this.__filteredTemplate = $(node._template).removeAttr("ba-repeat-element").get(0).outerHTML;
+ 				node._expandChildren = false;
+ 				node._$element.html("");
+ 			},
+ 			
+ 			destroy: function () {
+ 				this.__unregister();
+ 				if (this.__filteredCollection)
+ 					this.__filteredCollection.destroy();
+ 				if (this.__repeatFilter)
+ 					node.mesh().unwatch(this.__repeatFilter.dependencies, this.__repeatFilter);
+ 				inherited.destroy.call(this);
+ 			},
+ 		
+ 			_activate: function () {		
+ 				this._node._$element.hide();
+ 				this.__register(this._value);
+ 			},
+ 			
+ 			_deactivate: function () {
+ 				this.__unregister();
+ 			},
+
+ 			_change: function (value, oldValue) {
+ 				this.__register(value);
+ 			},
+ 			
+ 			__filterFunc: function (prop) {
+				var filter = this.__repeatFilter;
+				if (!filter)
+					return true;
+ 				return this._node.mesh().call(filter.dependencies, function (obj) {
+					return filter.func.call(this, Objs.extend(obj, Properties.is_instance_of(prop) ? prop.data() : prop));
+				}, true);
+ 			},
+ 			
+ 			__register: function (value) {
+ 				this.__unregister();
+ 				if (!Collection.is_instance_of(value)) {
+ 					for (var i = value.length - 1; i >= 0; i--) {
+ 						var prop = value[i];
+ 						if (this.__filterFunc(prop))
+ 							this.__appendItem(prop);
+ 					}
+ 				} else {
+ 					this.__collection = value;
+ 					if (this.__repeatFilter) {
+ 						this.__filteredCollection = new FilteredCollection(this.__collection, {
+ 							filter: this.__filterFunc,
+ 							context: this
+ 						});
+ 						this.__collection = this.__filteredCollection;
+ 					}
+ 					this.__collection_map = {};
+ 					var itemArr = this.__collection.iterator().asArray();
+ 					for (var k = itemArr.length - 1; j >= 0; j--) {
+ 						var item = itemArr[j];
+ 						this.__collection_map[item.cid()] = this.__appendItem(item);
+ 					}
+ 					this.__collection.on("add", function (item) {
+ 						this.__collection_map[item.cid()] = this.__appendItem(item);
+ 					}, this);
+ 					this.__collection.on("remove", function (item) {
+ 						Objs.iter(this.__collection_map[item.cid()], function (entry) {
+ 							var ele = entry.$element();
+ 							entry.destroy();
+ 							ele.remove();
+ 						}, this);
+ 						delete this.__collection_map[item.cid()];
+ 					}, this);
+ 				}
+ 				this.__registered = true;
+ 			},
+ 			
+ 			__unregister: function () {
+ 				this.__registered = false;
+ 				Objs.iter(this.__collection_map, function (entry) {
+					var ele = entry.$element();
+					entry.destroy();
+					ele.remove();
+				}, this);
+ 				if (this.__collection) {
+ 					this.__collection.off(null, null, this);
+ 					this.__collection = null;
+ 					this.__collection_map = null;
+ 				}
+				if (this.__filteredCollection)
+					this.__filteredCollection.destroy();
+ 			},
+ 			
+ 			__appendItem: function (value) {
+ 				var template = this.__filteredTemplate.trim();
+				var element = $(template).get(0);
+				this._node._$element.after(element);
+ 				var locals = {};
+ 				if (this.__repeatArg)
+ 					locals[this.__repeatArg] = value;	
+ 				var result = this._node._parent._registerChild(element, locals);
+ 				return [result];
+ 			}
+
+ 		};
+ 	});
+ 	Cls.register("ba-repeat-element");
+	return Cls;
+});
+
 Scoped.define("module:Handlers.RepeatPartial", [
         "module:Handlers.Partial",
         "base:Collections.Collection",
@@ -2010,6 +2156,7 @@ Scoped.define("module:Handlers.ShowPartial", ["module:Handlers.Partial"], functi
 	return Cls;
 });
 
+
 Scoped.define("module:Handlers.TapPartial", ["module:Handlers.Partial", "browser:Info"], function (Partial, Info, scoped) {
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
@@ -2028,7 +2175,10 @@ Scoped.define("module:Handlers.TapPartial", ["module:Handlers.Partial", "browser
 	return Cls;
 });
 
-Scoped.define("module:Handlers.TemplateUrlPartial", ["module:Handlers.Partial", "browser:Loader"], function (Partial, Loader, scoped) {
+
+Scoped.define("module:Handlers.TemplateUrlPartial",
+	["module:Handlers.Partial", "browser:Loader"], function (Partial, Loader, scoped) {
+
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {		
  		return {
 
@@ -2048,6 +2198,7 @@ Scoped.define("module:Handlers.TemplateUrlPartial", ["module:Handlers.Partial", 
  	});
  	Cls.register("ba-template-url");
 	return Cls;
+
 });
 
 Scoped.define("module:Dynamic", [

@@ -96,11 +96,13 @@ Scoped.define("module:Handlers.Node", [
 			},
 			
 			__initializeAttr: function (attr) {
+				var isEvent = attr.name.indexOf("on") === 0;
 				var obj = {
 					name: attr.name,
 					value: attr.value,
 					domAttr: attr,
-					dyn: Parser.parseText(attr.value)
+					dyn: Parser.parseText(attr.value),
+					updatable: !isEvent
 				};
 				this._attrs[attr.name] = obj;
 				this.__updateAttr(obj);
@@ -117,6 +119,12 @@ Scoped.define("module:Handlers.Node", [
 							self._mesh.write(obj.dyn.variable, self._element.value);
 						});
 					}
+					if (isEvent) {
+						obj.domAttr.value = '';
+						this._$element.on(obj.name.substring(2), function () {
+							self.__executeDyn(obj.dyn);
+						});
+					}
 				}
 			},
 			
@@ -129,6 +137,8 @@ Scoped.define("module:Handlers.Node", [
 			},
 			
 			__updateAttr: function (attr) {
+				if (!attr.updatable)
+					return;
 				var value = attr.dyn ? this.__executeDyn(attr.dyn) : attr.value;
 				if ((value != attr.value || Types.is_array(value)) && !(!value && !attr.value)) {
 					var old = attr.value;

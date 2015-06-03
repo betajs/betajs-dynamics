@@ -1,3 +1,4 @@
+
 Scoped.define("module:Handlers.EventPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {

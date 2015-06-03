@@ -18,7 +18,7 @@
 		<a href="#/polymorphic/simple">Polymorphic Simple</a>
 		<ba-{{route.page}}>
 		</ba-{{route.page}}>
-		
+		git
 		<script ba-ignore>
 			router = new BetaJS.Browser.Router({
 				routes: {
@@ -79,6 +79,9 @@
 				template: "<h2>Simple {{foobar}}</h2>",
 				initial: {
 					create: function () {
+						route.get("page");
+						this.set("foobar", "Foobar working");
+//						this.set("foobar", router.stateHost.get("page"));
 						this.set("foobar", router.stateHost.get("page"));
 					}
 				}

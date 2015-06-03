@@ -13,3 +13,16 @@ They can not both be combined.
 	});
 
 ```
+
+#### Convenience method for template names:
+
+If you are using
+
+```js
+
+	dynamic = new BetaJS.Dynamics.Dynamic({
+		templateUrl : "templates/template.html", 		//This contains the relative file path to an external template
+		template : "<div>Internal Template</div>"
+	});
+
+```

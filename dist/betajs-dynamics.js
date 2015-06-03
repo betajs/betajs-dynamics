@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '92.1433362013714'
+		version: '93.1433364519118'
 	};
 });
 
@@ -1554,6 +1554,7 @@ Scoped.define("module:Handlers.Node", [
 					if (isEvent) {
 						obj.domAttr.value = '';
 						this._$element.on(obj.name.substring(2), function () {
+							self._locals.event = arguments;
 							self.__executeDyn(obj.dyn);
 						});
 					}
@@ -1927,7 +1928,7 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
  					}
  					this.__collection_map = {};
  					var itemArr = this.__collection.iterator().asArray();
- 					for (var k = itemArr.length - 1; j >= 0; j--) {
+ 					for (var j = itemArr.length - 1; j >= 0; j--) {
  						var item = itemArr[j];
  						this.__collection_map[item.cid()] = this.__appendItem(item);
  					}

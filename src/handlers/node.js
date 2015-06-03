@@ -122,6 +122,7 @@ Scoped.define("module:Handlers.Node", [
 					if (isEvent) {
 						obj.domAttr.value = '';
 						this._$element.on(obj.name.substring(2), function () {
+							self._locals.event = arguments;
 							self.__executeDyn(obj.dyn);
 						});
 					}

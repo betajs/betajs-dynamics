@@ -67,6 +67,7 @@
 				</ba-{{dir}}>
 			</ul>
 			<div ba-attrs="{{{status: 'x', other: 'y'}}}" ba-template-url="statusbar.html"></div>
+			<input onkeypress="{{keypress(event)}}" />
 		</go>
 		<script>
 			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.StatusBar", {
@@ -135,6 +136,9 @@
 			mainDynamic.activate();
 			mainDynamic.define("gogo", function () {
 				this.set("yo", !this.get("yo"));
+			});
+			mainDynamic.define("keypress", function (event) {
+				console.log("Keypress", event);
 			});
 			mainDynamic.set("text", "abc");
 			

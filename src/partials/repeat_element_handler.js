@@ -82,7 +82,7 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
  					}
  					this.__collection_map = {};
  					var itemArr = this.__collection.iterator().asArray();
- 					for (var k = itemArr.length - 1; j >= 0; j--) {
+ 					for (var j = itemArr.length - 1; j >= 0; j--) {
  						var item = itemArr[j];
  						this.__collection_map[item.cid()] = this.__appendItem(item);
  					}

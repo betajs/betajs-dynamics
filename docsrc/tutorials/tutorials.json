@@ -1,25 +1,32 @@
 {
 
-  "helloworld": {
-    "title": "Hello World",
-    "dependencies" : ["betajs:dynamics_basics","betajs:properties", "extern:HTML", "external:","external:Javascript"],
+  "introduction": {
+    "title": "Introduction",
     "children" : {
-      "some_child" : {
-        "title" : "Some Child"
+      "helloworld": {
+        "title": "Hello World",
+        "dependencies" : ["betajs:dynamics_basics","betajs:properties", "extern:HTML", "external:","external:Javascript"]
+      },
+      "dynamics_basics" : {
+        "title": "Dynamics Basics"
       }
     }
   },
 
   "blueprint": {
-    "title": "Blueprint"
+    "title": "Blueprint",
+    "children" : {
+      "blueprint_js": {
+        "title": "JS"
+      },
+      "blueprint_html" : {
+        "title": "HTML"
+      }
+    }
   },
 
-  "dynamics_basics" : {
-    "title": "Dynamics Basics"
-  },
-
-  "complete_reference" : {
-    "title": "Dynamics Basics"
+  "initialize" : {
+    "title": "Initializing Dynamics"
   },
 
   "templates" : {

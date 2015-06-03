@@ -229,7 +229,8 @@ Scoped.define("module:Handlers.Node", [
 					}
 					this.__updateDyn(true);
 					for (var i = 0; i < this._element.childNodes.length; ++i)
-						this._registerChild(this._element.childNodes[i]);
+						if (!this._element.childNodes[i]["ba-handled"])
+							this._registerChild(this._element.childNodes[i]);
 				}
 				this._$element.css("display", "");
 				for (var key in this._attrs) {

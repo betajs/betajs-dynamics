@@ -12,13 +12,21 @@
 </head>
 <body>
 	<go>
+	{{external}}
 	<div ba-repeat="{{sub :: [1,2,3]}}">
 		<p>{{sub}}</p>
 	</div>
 	<div ba-repeat-element="{{sub :: [1,2,3]}}" style="color: {{sub}}">
 		{{sub}}</div>
-	<div ba-repeat-element="{{suber :: items}}" style="color: {{suber.x}}">
+	<div ba-repeat="{{suber :: items}}" style="color: {{suber.x}}">
+	<div  ba-tap="external = suber.x">
 		{{suber.x}}
+		</div>
+	</div>
+	<div ba-repeat-element="{{suber :: items}}" style="color: {{suber.x}}">
+	<div ba-tap="external = suber.x">
+		{{suber.x}}
+		</div>
 	</div>
 	</go>
 	<script>
@@ -30,6 +38,9 @@
 					}, {
 						x : "red"
 					} ]
+				},
+				attrs: {
+					external: "test"
 				}
 		});
 		mainDynamic.activate();

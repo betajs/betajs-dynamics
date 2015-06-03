@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '93.1433364519118'
+		version: '94.1433371926551'
 	};
 });
 
@@ -1661,7 +1661,8 @@ Scoped.define("module:Handlers.Node", [
 					}
 					this.__updateDyn(true);
 					for (var i = 0; i < this._element.childNodes.length; ++i)
-						this._registerChild(this._element.childNodes[i]);
+						if (!this._element.childNodes[i]["ba-handled"])
+							this._registerChild(this._element.childNodes[i]);
 				}
 				this._$element.css("display", "");
 				for (var key in this._attrs) {
@@ -1887,7 +1888,7 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
  				inherited.destroy.call(this);
  			},
  		
- 			_activate: function () {		
+ 			_activate: function () {
  				this._node._$element.hide();
  				this.__register(this._value);
  			},
@@ -1969,7 +1970,8 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
 				this._node._$element.after(element);
  				var locals = {};
  				if (this.__repeatArg)
- 					locals[this.__repeatArg] = value;	
+ 					locals[this.__repeatArg] = value;
+ 				element["ba-handled"] = true;
  				var result = this._node._parent._registerChild(element, locals);
  				return [result];
  			}

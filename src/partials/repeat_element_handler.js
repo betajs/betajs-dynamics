@@ -41,7 +41,7 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
  				inherited.destroy.call(this);
  			},
  		
- 			_activate: function () {		
+ 			_activate: function () {
  				this._node._$element.hide();
  				this.__register(this._value);
  			},
@@ -123,7 +123,8 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
 				this._node._$element.after(element);
  				var locals = {};
  				if (this.__repeatArg)
- 					locals[this.__repeatArg] = value;	
+ 					locals[this.__repeatArg] = value;
+ 				element["ba-handled"] = true;
  				var result = this._node._parent._registerChild(element, locals);
  				return [result];
  			}

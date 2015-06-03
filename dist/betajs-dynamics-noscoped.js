@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '94.1433371926551'
+		version: '95.1433372432497'
 	};
 });
 
@@ -1399,11 +1399,12 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
  						this.__collection_map[item.cid()] = this.__appendItem(item);
  					}, this);
  					this.__collection.on("remove", function (item) {
- 						Objs.iter(this.__collection_map[item.cid()], function (entry) {
- 							var ele = entry.$element();
- 							entry.destroy();
- 							ele.remove();
- 						}, this);
+ 						var entry = this.__collection_map[item.cid()];
+ 						if (!entry.destroyed()) {
+							var ele = entry.$element();
+							entry.destroy();
+							ele.remove();
+ 						}
  						delete this.__collection_map[item.cid()];
  					}, this);
  				}
@@ -1435,7 +1436,7 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
  					locals[this.__repeatArg] = value;
  				element["ba-handled"] = true;
  				var result = this._node._parent._registerChild(element, locals);
- 				return [result];
+ 				return result;
  			}
 
  		};

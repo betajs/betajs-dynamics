@@ -33,6 +33,10 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 				if (templateUrl) {
 					templateUrl = Strings.replaceAll(templateUrl, "%", Strings.last_after(this.cls.classname, ".").toLowerCase());
 					this.__deferActivate = true;
+					if (this.__element)
+						this.__element.html("");
+					else if (options.parentElement)
+						$(options.parentElement).html("");
 					Loader.loadHtml(templateUrl, function (template) {
 						this.__deferActivate = false;
 						this._handlerInitializeTemplate(template, options.parentElement);

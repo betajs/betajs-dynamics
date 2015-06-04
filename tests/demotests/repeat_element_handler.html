@@ -1,0 +1,38 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../assets/styles.css">
+
+    <script src="../assets/jquery.js"></script>
+    <script src="../assets/beta.js"></script>
+    <script src="../assets/beta-browser.js"></script>
+    <script src="../../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+
+<test>
+	<div ba-repeat-element="{{item :: [1,2,3,4,5]}}">
+		{{item}}
+	</div>
+	<ba-repeatdyn>
+	</ba-repeatdyn>
+</test>
+
+<script>
+	BetaJS.Dynamics.Dynamic.extend(null, {
+		template: '<div ba-repeat-element="{{item :: [1,2,3,4,5]}}">{{item}}</div>'
+	}).register("ba-repeatdyn");
+
+    var root = $("test");
+
+    var dynamic = new BetaJS.Dynamics.Dynamic({
+        element: root
+    });
+    dynamic.activate();
+
+    function test() {
+        QUnit.ok(root.children().length >= 5);
+    }
+</script>
+
+</body>
+</html>

@@ -126,7 +126,7 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
  				if (this.__repeatArg)
  					locals[this.__repeatArg] = value;
  				element["ba-handled"] = true;
- 				var result = this._node._parent._registerChild(element, locals);
+ 				var result = this._node._registerChild(element, locals);
  				return result;
  			}
 

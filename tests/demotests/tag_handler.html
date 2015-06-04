@@ -1,0 +1,39 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../assets/styles.css">
+
+    <script src="../assets/jquery.js"></script>
+    <script src="../assets/beta.js"></script>
+    <script src="../assets/beta-browser.js"></script>
+    <script src="../../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+
+<test>
+	<ba-{{handler}}>
+	</ba-{{handler}}>
+</test>
+
+<script>
+
+    var root = $("test");
+
+    var dynamic = new BetaJS.Dynamics.Dynamic({
+        element: root,
+        attrs: {
+            handler: "test"
+        }
+    });
+    dynamic.activate();
+
+    function test() {
+        QUnit.equal(!!root.find("ba-test").get(0), true);
+        QUnit.equal(!!root.find("ba-foo").get(0), false);
+        dynamic.set("handler", "foo");
+        QUnit.equal(!!root.find("ba-test").get(0), false);
+        QUnit.equal(!!root.find("ba-foo").get(0), true);
+    }
+</script>
+
+</body>
+</html>

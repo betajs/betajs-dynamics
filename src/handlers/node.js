@@ -171,9 +171,12 @@ Scoped.define("module:Handlers.Node", [
 			__registerTagHandler: function () {
 				this.__unregisterTagHandler();
 				var tagv = this.__tagValue();
+				if (!tagv)
+					return;
+				if (this._dynTag)
+					this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
 				if (!Registries.handler.get(tagv))
 					return false;
-				this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
 				this._tagHandler = Registries.handler.create(tagv, {
 					parentElement: this._$element.get(0),
 					parentHandler: this._handler,

@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-06-03
+betajs-dynamics - v0.0.1 - 2015-06-04
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '95.1433372432497'
+		version: '96.1433454095779'
 	};
 });
 
@@ -736,6 +736,10 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 				if (templateUrl) {
 					templateUrl = Strings.replaceAll(templateUrl, "%", Strings.last_after(this.cls.classname, ".").toLowerCase());
 					this.__deferActivate = true;
+					if (this.__element)
+						this.__element.html("");
+					else if (options.parentElement)
+						$(options.parentElement).html("");
 					Loader.loadHtml(templateUrl, function (template) {
 						this.__deferActivate = false;
 						this._handlerInitializeTemplate(template, options.parentElement);
@@ -1065,9 +1069,12 @@ Scoped.define("module:Handlers.Node", [
 			__registerTagHandler: function () {
 				this.__unregisterTagHandler();
 				var tagv = this.__tagValue();
+				if (!tagv)
+					return;
+				if (this._dynTag)
+					this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
 				if (!Registries.handler.get(tagv))
 					return false;
-				this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
 				this._tagHandler = Registries.handler.create(tagv, {
 					parentElement: this._$element.get(0),
 					parentHandler: this._handler,
@@ -1435,7 +1442,7 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
  				if (this.__repeatArg)
  					locals[this.__repeatArg] = value;
  				element["ba-handled"] = true;
- 				var result = this._node._parent._registerChild(element, locals);
+ 				var result = this._node._registerChild(element, locals);
  				return result;
  			}
 

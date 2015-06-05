@@ -10,7 +10,7 @@
 <body>
 
 <test>
-	<ba-{{handler}}>
+	<ba-{{handler}} ba-click="clicker++">
 	</ba-{{handler}}>
 	<ba-{{replacer}}>
 		{{inner}}
@@ -26,7 +26,8 @@
         attrs: {
             handler: "test",
             replacer: "foobar",
-            inner: "content"
+            inner: "content",
+            clicker: 1
         }
     });
     dynamic.activate();
@@ -37,6 +38,8 @@
         dynamic.set("handler", "foo");
         QUnit.equal(!!root.find("ba-test").get(0), false);
         QUnit.equal(!!root.find("ba-foo").get(0), true);
+        root.find("ba-foo").click();
+        QUnit.equal(dynamic.get("clicker"), 2);
         
         QUnit.equal(!!root.find("ba-foobar").get(0), true);
         QUnit.equal(root.find("ba-foobar").html().trim(), "content");

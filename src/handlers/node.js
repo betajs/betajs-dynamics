@@ -45,11 +45,9 @@ Scoped.define("module:Handlers.Node", [
 					write: this.properties(),
 					watch: this.properties()
 				});
+				
+				this._initializeAttrs();
 								
-				if (element.attributes) {
-					for (var i = 0; i < element.attributes.length; ++i)
-						this.__initializeAttr(element.attributes[i]);
-				}
 				this._locked = false;
 				this._active = !this._active;
 				if (this._active)
@@ -58,13 +56,25 @@ Scoped.define("module:Handlers.Node", [
 					this.activate();
 			},
 			
-			destroy: function () {
+			_initializeAttrs: function () {
+				if (this._element.attributes) {
+					for (var i = 0; i < this._element.attributes.length; ++i)
+						this.__initializeAttr(this._element.attributes[i]);
+				}
+			},
+			
+			_finalizeAttrs: function () {
 				Objs.iter(this._attrs, function (attr) {
 					if (attr.partial)
 						attr.partial.destroy();
 					if (attr.dyn)
 						this.__dynOff(attr.dyn);
 				}, this);
+				this._attrs = {};
+			},
+			
+			destroy: function () {
+				this._finalizeAttrs();
 				this._removeChildren();
 				if (this._tagHandler && !this._tagHandler.destroyed())
 					this._tagHandler.destroy();
@@ -174,8 +184,10 @@ Scoped.define("module:Handlers.Node", [
 				if (!tagv)
 					return;
 				if (this._dynTag && this._$element.get(0).tagName.toLowerCase() != tagv.toLowerCase()) {
+					this._finalizeAttrs();
 					this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
 					this._element = this._$element.get(0);
+					this._initializeAttrs();
 				}
 				if (!Registries.handler.get(tagv))
 					return false;

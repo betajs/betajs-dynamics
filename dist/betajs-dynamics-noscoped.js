@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '98.1433523397136'
+		version: '99.1433529433785'
 	};
 });
 
@@ -1071,8 +1071,10 @@ Scoped.define("module:Handlers.Node", [
 				var tagv = this.__tagValue();
 				if (!tagv)
 					return;
-				if (this._dynTag)
+				if (this._dynTag && this._$element.get(0).tagName.toLowerCase() != tagv.toLowerCase()) {
 					this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
+					this._element = this._$element.get(0);
+				}
 				if (!Registries.handler.get(tagv))
 					return false;
 				this._tagHandler = Registries.handler.create(tagv, {
@@ -1115,7 +1117,7 @@ Scoped.define("module:Handlers.Node", [
 						this.__registerTagHandler();
 					});
 				}
-				var registered = this.__registerTagHandler(); 
+				var registered = this.__registerTagHandler();
 		        if (!registered && this._expandChildren) {
 		        	if (this._restoreInnerTemplate)
 		        		this._$element.html(this._innerTemplate);

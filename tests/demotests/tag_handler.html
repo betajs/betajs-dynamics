@@ -12,6 +12,9 @@
 <test>
 	<ba-{{handler}}>
 	</ba-{{handler}}>
+	<ba-{{replacer}}>
+		{{inner}}
+	</ba-{{replacer}}>
 </test>
 
 <script>
@@ -21,7 +24,9 @@
     var dynamic = new BetaJS.Dynamics.Dynamic({
         element: root,
         attrs: {
-            handler: "test"
+            handler: "test",
+            replacer: "foobar",
+            inner: "content"
         }
     });
     dynamic.activate();
@@ -32,6 +37,9 @@
         dynamic.set("handler", "foo");
         QUnit.equal(!!root.find("ba-test").get(0), false);
         QUnit.equal(!!root.find("ba-foo").get(0), true);
+        
+        QUnit.equal(!!root.find("ba-foobar").get(0), true);
+        QUnit.equal(root.find("ba-foobar").html().trim(), "content");
     }
 </script>
 

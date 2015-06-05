@@ -1,5 +1,8 @@
 module.banner = '/*!\n<%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\nCopyright (c) <%= pkg.contributors %>\n<%= pkg.license %> Software License.\n*/\n';
 
+var Routes = {};
+Routes.port = '8711';
+
 module.exports = function(grunt) {
 
 	grunt
@@ -96,9 +99,6 @@ module.exports = function(grunt) {
 					}
 				},
 				shell : {
-					tests: {
-						command: "open tests/tests.html"
-					},
 					browserstack : {
 						command : 'browserstack-runner',
 						options : {
@@ -119,6 +119,18 @@ module.exports = function(grunt) {
 						}
 					}
 				},
+        connect: {
+          server: {
+            options: {
+              port: Routes.port,
+              base: '.',
+              keepalive: true,
+              open: {
+                target: 'http://localhost:' + Routes.port + '/tests/tests.html'
+              }
+            }
+          }
+        },
 				template : {
 					"readme" : {
 						options : {
@@ -193,13 +205,14 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-closure-tools');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-node-qunit');
+  grunt.loadNpmTasks('grunt-contrib-connect');
 	grunt.loadNpmTasks('grunt-jsdoc');
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-template');	
 
 	grunt.registerTask('default', [ 'revision-count', 'concat:dist_raw',
 			'preprocess', 'clean:raw', 'concat:dist_scoped', 'uglify' ]);
-	grunt.registerTask('qunit', [ 'shell:tests' ]);
+	grunt.registerTask('qunit', [ 'connect' ]);
 	grunt.registerTask('lint', [ 'jshint:source', 'jshint:dist',
 	                 			 'jshint:gruntfile', "jshint:tests" ]);
 	grunt.registerTask('check', [ 'lint', 'qunit' ]);

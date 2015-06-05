@@ -4,7 +4,8 @@ Scoped.define("module:Handlers.ClickPartial", ["module:Handlers.Partial"], funct
    *
    * @description
    * The ba-click partial allows the specification of custom on clicked
-   * behavior.
+   * behavior. By default, the click propagation is prevented. Should you want
+   * the click to propagate, use the `onclick` Html tag.
    *
    * @param {expression} baClick Expression to evaluate upon click. If click is
    * within the scope of another directive, the Expression can be an exposed method of
@@ -25,7 +26,8 @@ Scoped.define("module:Handlers.ClickPartial", ["module:Handlers.Partial"], funct
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
  				var self = this;
- 				this._node._$element.on("click", function () {
+ 				this._node._$element.on("click", function (e) {
+          e.stopPropagation();
  					self._execute();
  				});
  			}

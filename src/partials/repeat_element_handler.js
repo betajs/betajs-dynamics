@@ -7,6 +7,26 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
         "module:Parser",
         "base:Properties.Properties"
 	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, scoped) {
+  /**
+   * @name ba-repeat-element
+   *
+   * @description
+   * Instantiate entire Html element (both element and the html is closes)
+   * once for each instance in the collection.
+   * Differs from ba-repeat, in that while ba-repeat instantiates just the
+   * inner Html contents of the given element for each instance in the
+   * collection, ba-repeat-element instantiates the Html element and the inner
+   * Html contents. See examples.
+   * 
+   * @param {object} instance Object representing a single element in the
+   * collection. Updated as collection is iterated through.
+   *
+   * @param {object} collection Object representing multiple elements, each of
+   * which will be instantiated.
+   *
+   * @example <p ba-repeat-element="{{ i :: [1,2,3] }}">{{i}}</p>
+   * // Evalues to <p>1</p><p>2</p><p>3</p>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			

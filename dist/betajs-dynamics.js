@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '97.1433528565520'
+		version: '98.1433533057408'
 	};
 });
 
@@ -1741,6 +1741,19 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry"], function (Cla
 });
 
 Scoped.define("module:Handlers.AttrsPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-attrs
+   *
+   * @description
+   * The ba-attrs partial allows the specification of an object that will
+   * provide attributes accessible within the element containing the ba-attrs
+   * html attribute.
+   *
+   * @param {object} baAttrs Object containing individual attributes.
+   *
+   * @example <div ba-attrs="{{{test: 'hi'}}}">{{test}}</div>
+   * // Evaluates to <div ba-attrs="{{{test: 'hi'}}}">hi</div>
+   */
  	var Cls = Partial.extend({scoped: scoped}, {
 		
 		_apply: function (value) {
@@ -1754,6 +1767,21 @@ Scoped.define("module:Handlers.AttrsPartial", ["module:Handlers.Partial"], funct
 });
 
 Scoped.define("module:Handlers.ClassPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-class
+   *
+   * @description
+   * Dynamically set the HTML class of the given element based on the evaluation
+   * of expressions.
+   *
+   * @param {object} baClass Object where keys are Html classes and values are
+   * expressions. If the expression evaluates to true, the class is included on
+   * the Html element. If the expression evaluates to false, the class is not
+   * included.
+   *
+   * @example <div ba-class="{{'first': true, 'second': 1 === 2}}></div>"
+   * // Evaluates to <div class="first"></div>
+   */
  	var Cls = Partial.extend({scoped: scoped}, {
 		
 		_apply: function (value) {
@@ -1771,6 +1799,26 @@ Scoped.define("module:Handlers.ClassPartial", ["module:Handlers.Partial"], funct
 });
 
 Scoped.define("module:Handlers.ClickPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-click
+   *
+   * @description
+   * The ba-click partial allows the specification of custom on clicked
+   * behavior.
+   *
+   * @param {expression} baClick Expression to evaluate upon click. If click is
+   * within the scope of another directive, the Expression can be an exposed method of
+   * the parent directive.
+   *
+   * @example <button ba-click="showing = !showing">
+   * // Expression is evaluated (ex. showing now equals inverse) on click.
+   *
+   * @example <button ba-click="exposedMethod()">
+   * // Calls parentDirective.call("exposedMethod") on click.
+   *
+   * @example <button ba-click="exposedMethod(arg)">
+   * // Calls parentDirective.call("exposedMethod", arg) on click.
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -1789,6 +1837,25 @@ Scoped.define("module:Handlers.ClickPartial", ["module:Handlers.Partial"], funct
 });
 
 Scoped.define("module:Handlers.IfPartial", ["module:Handlers.ShowPartial"], function (Partial, scoped) {
+  /**
+   * @name ba-if
+   *
+   * @description
+   * The ba-if partial controls rendering of internal Html based on the truth
+   * value of a given expression. It differs from ba-show in that ba-show
+   * renders internal Html, but hides it, while ba-if will not render the
+   * internal Html at all.
+   *
+   * @param {expression} baIf Expression to evaluate for truth. If true,
+   * internal html will be rendered. If false, internal html will not be
+   * rendered.
+   *
+   * @example <div ba-if="1 === 1"><h1>Hi</h1><div>
+   * // Evaluated to <div ba-if="1 === 1"><h1>Hi</h1></div>
+   *
+   * @example <div ba-if="1 === 2"></h1>Hi</h1></div>
+   * // Evaluated to <div ba-if="1 === 2"></div>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -1813,6 +1880,18 @@ Scoped.define("module:Handlers.IfPartial", ["module:Handlers.ShowPartial"], func
 });
 
 Scoped.define("module:Handlers.IgnorePartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-ignore
+   *
+   * @description
+   * The ba-ignore partial instructs the BetaJS Dynamics process to not process
+   * anything of the inner Html within the given element implementing the
+   * ba-ignore partial. The ba-ignore partial is often used to stop the
+   * processing of an inline script tag.
+   *
+   * @example <div ba-attrs="{{{test: 'hi'}}}"><p ba-ignore>{{test}}</p></div>
+   * // Renders <div ...><p ba-ignore>{{test}}</p></div>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -1829,6 +1908,25 @@ Scoped.define("module:Handlers.IgnorePartial", ["module:Handlers.Partial"], func
 
 
 Scoped.define("module:Handlers.EventPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-on
+   *
+   * @description
+   * The ba-on partial executes the given expression when triggered by the
+   * specified Dom event on the given Html element. For a complete list of Dom
+   * events, see {@link http://www.w3schools.com/jsref/dom_obj_event.asp}
+   *
+   * @postfix {event} event The event triggering the expression is specified as
+   * a post fix of the ba-on directive. See the examples.
+   *
+   * @param {expression} baOn Expression to evaluate upon the occurence of the
+   * event. If within the scope of another directive, the expression can be an
+   * exposed method of the parent directive (see ba-click documentation for
+   * greater detail).
+   *
+   * @example <button ba-on:mouseover="alert('Hi')">Hi</button>
+   * // Will alert('Hi') when the mouseover event occurs on the button.
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -1861,6 +1959,26 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
         "module:Parser",
         "base:Properties.Properties"
 	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, scoped) {
+  /**
+   * @name ba-repeat-element
+   *
+   * @description
+   * Instantiate entire Html element (both element and the html is closes)
+   * once for each instance in the collection.
+   * Differs from ba-repeat, in that while ba-repeat instantiates just the
+   * inner Html contents of the given element for each instance in the
+   * collection, ba-repeat-element instantiates the Html element and the inner
+   * Html contents. See examples.
+   * 
+   * @param {object} instance Object representing a single element in the
+   * collection. Updated as collection is iterated through.
+   *
+   * @param {object} collection Object representing multiple elements, each of
+   * which will be instantiated.
+   *
+   * @example <p ba-repeat-element="{{ i :: [1,2,3] }}">{{i}}</p>
+   * // Evalues to <p>1</p><p>2</p><p>3</p>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -1999,6 +2117,22 @@ Scoped.define("module:Handlers.RepeatPartial", [
         "module:Parser",
         "base:Properties.Properties"
 	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, scoped) {
+  /**
+   * @name ba-repeat
+   *
+   * @description
+   * Instantiate once for each instance in the collection. Render only the inner html
+   * of the element for each instance.
+   *
+   * @param {object} instance Object representing a single element in the
+   * collection. Updated as collection is iterated through.
+   *
+   * @param {object} collection Object representing multiple elements, each of
+   * which will be instantiated.
+   *
+   * @example <ul ba-repeat-element="{{ i :: [1,2] }}"><li>{{i}}</li></ul>
+   * // Evaluates to <ul><li>1</li><li>2</li></ul>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -2127,6 +2261,20 @@ Scoped.define("module:Handlers.RepeatPartial", [
 });
 
 Scoped.define("module:Handlers.ReturnPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-return
+   *
+   * @description
+   * The ba-return partial allows the specification of custom behavior when the
+   * `return` key is pressed.
+   *
+   * @param {expression} baReturn Expression to evaluate upon return key being
+   * pressed. See ba-click for greater description as they are very similar.
+   *
+   * @example <input ba-return="processText()"></input>
+   * // Calls parentDirective.processText() when return key is pressed within
+   * the input field.
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -2146,6 +2294,22 @@ Scoped.define("module:Handlers.ReturnPartial", ["module:Handlers.Partial"], func
 });
 
 Scoped.define("module:Handlers.ShowPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-show
+   *
+   * @description
+   * The ba-show partials controls showing the internal Html on the Dom based on
+   * the truth value of the given expression.
+   *
+   * @param {expression} baShow Expression to evaluate for truth. If true,
+   * internal html will be displayed. If false, internal html will not be
+   * displayed.
+   *
+   * @example <p ba-show="1 === 1">Hi</p>
+   * // Evalues to <p>Hi</p>
+   * @example <p ba-show="1 === 2">Hi</p>
+   * // Evalues to <p style="display: none;">Hi</p>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -2170,6 +2334,19 @@ Scoped.define("module:Handlers.ShowPartial", ["module:Handlers.Partial"], functi
 
 
 Scoped.define("module:Handlers.TapPartial", ["module:Handlers.Partial", "browser:Info"], function (Partial, Info, scoped) {
+  /**
+   * @name ba-tap
+   *
+   * @description
+   * The ba-tao partial allows the specification of custom on tap behavior. Tap
+   * is particularly useful for handling mobile events.
+   *
+   * @param {expression} baTap Expression to evaluate upon tap. See ba-click
+   * documentation for more details as they are very similar.
+   *
+   * @example <button ba-tap="someMethod()">Tap</button>
+   * // Calls parentDirective.call("someMethod") on tap.
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -2191,6 +2368,17 @@ Scoped.define("module:Handlers.TapPartial", ["module:Handlers.Partial", "browser
 Scoped.define("module:Handlers.TemplateUrlPartial",
 	["module:Handlers.Partial", "browser:Loader"], function (Partial, Loader, scoped) {
 
+  /**
+   * @name ba-template-url
+   *
+   * @description
+   * Specify the template url for internal html.
+   *
+   * @param {string} templateUrl The template url.
+   *
+   * @example <div ba-template-url="my-template.html"></div>
+   * // Evaluates to <div ...>CONTENTS OF MY-TEMPLATE.HTML</div>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {		
  		return {
 

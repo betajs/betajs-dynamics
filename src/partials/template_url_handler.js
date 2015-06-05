@@ -2,6 +2,17 @@
 Scoped.define("module:Handlers.TemplateUrlPartial",
 	["module:Handlers.Partial", "browser:Loader"], function (Partial, Loader, scoped) {
 
+  /**
+   * @name ba-template-url
+   *
+   * @description
+   * Specify the template url for internal html.
+   *
+   * @param {string} templateUrl The template url.
+   *
+   * @example <div ba-template-url="my-template.html"></div>
+   * // Evaluates to <div ...>CONTENTS OF MY-TEMPLATE.HTML</div>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {		
  		return {
 

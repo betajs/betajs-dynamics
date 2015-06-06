@@ -9,12 +9,20 @@
 		<test>
 			<button ba-click="test=!test">Button</button>
 			<div>Value: {{test}}</div>
-		</test>
+
+      <!--- test that clicks do not propagate -->
+      <div id="outer" ba-click="outer=true">
+        <div id="inner" ba-click="inner=true">
+        </div>
+      </div>
+    </test>
 		<script>
 			var root = $("test");
 			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
 		
 			dynamic.set("test", false);
+      dynamic.set("outer", false);
+      dynamic.set("inner", false);
 			dynamic.activate();
 			
 			function test() {
@@ -27,6 +35,12 @@
 				root.find("button").click();
 			
 				QUnit.equal(dynamic.get("test"), false);
+
+        QUnit.equal(dynamic.get("outer"), false);
+        QUnit.equal(dynamic.get("inner"), false);
+        root.find("div#inner").click();
+        QUnit.equal(dynamic.get("outer"), false, "outer should be false");
+        QUnit.equal(dynamic.get("inner"), true, "inner should be true");
 			}			
 		</script>
 	</body>

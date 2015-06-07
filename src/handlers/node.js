@@ -8,8 +8,9 @@ Scoped.define("module:Handlers.Node", [
 	    "module:Data.Mesh",
 	    "base:Objs",
 	    "base:Types",
-	    "module:Registries"
-	], function (Class, EventsMixin, Ids, Dom, Parser, $, Mesh, Objs, Types, Registries, scoped) {
+	    "module:Registries",
+	    "module:Handlers.Attr"
+	], function (Class, EventsMixin, Ids, Dom, Parser, $, Mesh, Objs, Types, Registries, Attr, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, [EventsMixin, function (inherited) {
 		return {
@@ -46,8 +47,10 @@ Scoped.define("module:Handlers.Node", [
 					watch: this.properties()
 				});
 				
-				this._initializeAttrs();
-								
+				if (this._element.attributes)
+					for (var i = 0; i < this._element.attributes.length; ++i)
+						this._registerAttr(this._element.attributes[i]);
+
 				this._locked = false;
 				this._active = !this._active;
 				if (this._active)
@@ -56,25 +59,10 @@ Scoped.define("module:Handlers.Node", [
 					this.activate();
 			},
 			
-			_initializeAttrs: function () {
-				if (this._element.attributes) {
-					for (var i = 0; i < this._element.attributes.length; ++i)
-						this.__initializeAttr(this._element.attributes[i]);
-				}
-			},
-			
-			_finalizeAttrs: function () {
-				Objs.iter(this._attrs, function (attr) {
-					if (attr.partial)
-						attr.partial.destroy();
-					if (attr.dyn)
-						this.__dynOff(attr.dyn);
-				}, this);
-				this._attrs = {};
-			},
-			
 			destroy: function () {
-				this._finalizeAttrs();
+				Objs.iter(this._attrs, function (attr) {
+					attr.destroy();
+				});
 				this._removeChildren();
 				if (this._tagHandler && !this._tagHandler.destroyed())
 					this._tagHandler.destroy();
@@ -84,6 +72,13 @@ Scoped.define("module:Handlers.Node", [
 					delete this._parent._children[Ids.objectId(this)];
 				this._mesh.destroy();
 				inherited.destroy.call(this);
+			},
+			
+			_registerAttr: function (attribute) {
+				if (attribute.name in this._attrs)
+					this._attrs[attribute.name].updateAttribute(attribute);
+				else
+					this._attrs[attribute.name] = new Attr(this, attribute);
 			},
 			
 			element: function () {
@@ -105,63 +100,12 @@ Scoped.define("module:Handlers.Node", [
 				}, dyn);
 			},
 			
-			__initializeAttr: function (attr) {
-				var isEvent = attr.name.indexOf("on") === 0;
-				var obj = {
-					name: attr.name,
-					value: attr.value,
-					domAttr: attr,
-					dyn: Parser.parseText(attr.value),
-					updatable: !isEvent
-				};
-				this._attrs[attr.name] = obj;
-				this.__updateAttr(obj);
-				var splt = obj.name.split(":");
-				if (Registries.partial.get(splt[0]))
-					obj.partial = Registries.partial.create(splt[0], this, obj.dyn ? obj.dyn.args : {}, obj.value, splt[1]);
-				if (obj.dyn) {
-					this.__dynOn(obj.dyn, function () {
-						this.__updateAttr(obj);
-					});
-					var self = this;
-					if (obj.dyn.bidirectional && obj.name == "value") {
-						this._$element.on("change keyup keypress keydown blur focus update", function () {
-							self._mesh.write(obj.dyn.variable, self._element.value);
-						});
-					}
-					if (isEvent) {
-						obj.domAttr.value = '';
-						this._$element.on(obj.name.substring(2), function () {
-							self._locals.event = arguments;
-							self.__executeDyn(obj.dyn);
-						});
-					}
-				}
-			},
-			
 			mesh: function () {
 				return this._mesh;
 			},
 			
 			__executeDyn: function (dyn) {
 				return Types.is_object(dyn) ? this._mesh.call(dyn.dependencies, dyn.func) : dyn;
-			},
-			
-			__updateAttr: function (attr) {
-				if (!attr.updatable)
-					return;
-				var value = attr.dyn ? this.__executeDyn(attr.dyn) : attr.value;
-				if ((value != attr.value || Types.is_array(value)) && !(!value && !attr.value)) {
-					var old = attr.value;
-					attr.value = value;
-					attr.domAttr.value = value;
-					if (attr.partial)
-						attr.partial.change(value, old);
-					if (attr.name === "value" && this._element.value !== value) {
-						this._element.value = value;
-					}
-					this.trigger("change-attr:" + attr.name, value, old);
-				}
 			},
 			
 			__tagValue: function () {
@@ -172,6 +116,9 @@ Scoped.define("module:Handlers.Node", [
 			
 			__unregisterTagHandler: function () {
 				if (this._tagHandler) {
+					Objs.iter(this._attrs, function (attr) {
+						attr.unbindTagHandler(this._tagHandler);
+					}, this);
 					this.off(null, null, this._tagHandler);
 					this._tagHandler.destroy();
 					this._tagHandler = null;
@@ -184,10 +131,11 @@ Scoped.define("module:Handlers.Node", [
 				if (!tagv)
 					return;
 				if (this._dynTag && this._$element.get(0).tagName.toLowerCase() != tagv.toLowerCase()) {
-					this._finalizeAttrs();
 					this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
 					this._element = this._$element.get(0);
-					this._initializeAttrs();
+					Objs.iter(this._attrs, function (attr) {
+						attr.updateElement(this._element);
+					}, this);
 				}
 				if (!Registries.handler.get(tagv))
 					return false;
@@ -198,24 +146,8 @@ Scoped.define("module:Handlers.Node", [
 					tagName: tagv
 				});
 				this._$element.append(this._tagHandler.element());
-				Objs.iter(this._attrs, function (attr, key) {
-					if (!attr.partial && key.indexOf("ba-") === 0) {
-						var innerKey = key.substring("ba-".length);
-						this._tagHandler.properties().set(innerKey, attr.value);
-						if (attr.dyn) {
-							var self = this;
-							this.on("change-attr:" + key, function (value) {
-								self._tagHandler.properties().set(innerKey, value);
-							}, this._tagHandler);
-							if (attr.dyn.bidirectional) {
-								//var prop = this.__propGet(attr.dyn.variable);
-								this._tagHandler.properties().on("change:" + innerKey, function (value) {
-									//prop.props.set(prop.key, value);
-									self._mesh.write(attr.dyn.variable, value);
-								}, this);							
-							}
-						}
-					}
+				Objs.iter(this._attrs, function (attr) {
+					attr.bindTagHandler(this._tagHandler);
 				}, this);
 				this._tagHandler.activate();
 				return true;
@@ -250,10 +182,9 @@ Scoped.define("module:Handlers.Node", [
 							this._registerChild(this._element.childNodes[i]);
 				}
 				this._$element.css("display", "");
-				for (var key in this._attrs) {
-					if (this._attrs[key].partial) 
-						this._attrs[key].partial.activate();
-				}
+				Objs.iter(this._attrs, function (attr) {
+					attr.activate();
+				});
 				this._locked = false;
 			},
 			
@@ -284,10 +215,9 @@ Scoped.define("module:Handlers.Node", [
 				if (this._locked)
 					return;
 				this._locked = true;
-				for (var key in this._attrs) {
-					if (this._attrs[key].partial)
-						this._attrs[key].partial.deactivate();
-				}
+				Objs.iter(this._attrs, function (attr) {
+					attr.deactivate();
+				});
 				this._removeChildren();
 				if (this._dynTag)
 					this.__dynOff(this._dynTag);
@@ -305,6 +235,7 @@ Scoped.define("module:Handlers.Node", [
 			properties: function () {
 				return this._handler.properties();
 			}
+			
 		};
 	}]);
 	return Cls;

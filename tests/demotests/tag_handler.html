@@ -15,10 +15,16 @@
 	<ba-{{replacer}}>
 		{{inner}}
 	</ba-{{replacer}}>
+	<ba-{{component}} ba-arg="{{arg}}">
+	</ba-{{component}}>
 </test>
 
 <script>
 
+	BetaJS.Dynamics.Dynamic.extend(null, {
+		template: '<inserted>{{arg}}</inserted>'
+	}).register("ba-taghandlertest");
+	
     var root = $("test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
@@ -27,7 +33,9 @@
             handler: "test",
             replacer: "foobar",
             inner: "content",
-            clicker: 1
+            clicker: 1,
+            component: "wait",
+            arg: "wait"
         }
     });
     dynamic.activate();
@@ -43,6 +51,12 @@
         
         QUnit.equal(!!root.find("ba-foobar").get(0), true);
         QUnit.equal(root.find("ba-foobar").html().trim(), "content");
+        
+        QUnit.equal(!!root.find("inserted").get(0), false);
+        dynamic.set("component", "taghandlertest");
+        QUnit.equal(!!root.find("inserted").get(0), true);
+        dynamic.set("arg", "foobar");
+        QUnit.equal(root.find("inserted").html().trim(), "foobar");
     }
 </script>
 

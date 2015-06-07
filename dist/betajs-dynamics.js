@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '107.1433707907684'
+		version: '108.1433709374981'
 	};
 });
 
@@ -1096,6 +1096,10 @@ Scoped.define("module:Data.Scope", [
 			
 			properties: function () {
 				return this.__properties;
+			},
+			
+			compute: function (key, callback, dependencies) {
+				this.properties().compute(key, callback, this, dependencies);
 			},
 			
 			scope: function (base, query) {

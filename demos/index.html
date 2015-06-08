@@ -59,7 +59,7 @@
 				<li>And even a second item: {{text}}</li>
 			</ul>
 			<input type="text" placeholder="Filter" value="{{=filter}}" />
-			<ul ba-repeat="{{sub ~ key.indexOf(filter) >= 0 :: subs}}">
+			<ul ba-repeat="{{sub ~ sub.key.indexOf(filter) >= 0 :: subs}}">
 				<li>test: {{sub.key}} <input type="text" value="{{=sub.key}}" /></li>
 			</ul>
 			<ul ba-repeat="{{sub :: subs}}">

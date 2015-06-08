@@ -1,5 +1,5 @@
 Scoped.define("module:Partials.RepeatElementPartial", [
-        "module:Partials.AbstractRepeatPartial",
+        "module:Partials.RepeatPartial",
         "base:Collections.Collection",
         "base:Collections.FilteredCollection",
         "base:Objs",

@@ -145,7 +145,7 @@ Scoped.define("module:Handlers.Node", [
 					autobind: false,
 					tagName: tagv
 				});
-				this._$element.append(this._tagHandler.element());
+				//this._$element.append(this._tagHandler.element());
 				Objs.iter(this._attrs, function (attr) {
 					attr.bindTagHandler(this._tagHandler);
 				}, this);

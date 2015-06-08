@@ -7,7 +7,7 @@
 	</head>
 	<body>
 		<test>
-			<ul ba-repeat="{{item ~ item.test >= comp :: items}}">
+			<ul ba-repeat="{{item :: items}}">
 				<li>{{item.test}}</li>
 			</ul>
 		</test>
@@ -16,40 +16,30 @@
 
 			var dynamic = new BetaJS.Dynamics.Dynamic({
 				element: root.get(0),
-				attrs: {
-					comp: 'A'
-				},
 				collections: {
 					items: [{test: "A"}, {test: "B"}, {test: "C"}, {test: "D"}]
 				}
+			});
+			var coll = dynamic.get("items");
+			coll.set_compare(function (x, y) {
+				return x.get("test") < y.get("test") ? 1 : -1;
 			});
 
 			dynamic.activate();
 			
 			function test() {
 				var list = root.find("ul");
-				var coll = dynamic.get("items");
-				var knownChildren = function () {
-					var knownCount = 0;
+				var order = function () {
+					var s = '';
 					list.children().each(function () {
-						if (this.known)
-							knownCount++;
-						this.known = true;					
+						s += $(this).html().trim();
 					});
-					return knownCount;
-				};
-				QUnit.equal(list.children().length, 4);
-				QUnit.equal(knownChildren(), 0);
+					return s;
+				}
+				QUnit.equal(order(), "DCBA");
 				coll.add({test: "E"});
-				QUnit.equal(list.children().length, 5);
-				QUnit.equal(knownChildren(), 4);
-				coll.remove(coll.getByIndex(0));
-				QUnit.equal(list.children().length, 4);
-				QUnit.equal(knownChildren(), 4);
-				dynamic.set('comp', "C");
-				QUnit.equal(list.children().length, 3);
-				QUnit.equal(knownChildren(), 3);
-								
+				QUnit.equal(order(), "EDCBA");
+				
 			}			
 		</script>
 	</body>

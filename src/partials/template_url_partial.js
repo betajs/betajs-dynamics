@@ -1,5 +1,5 @@
 
-Scoped.define("module:Handlers.TemplateUrlPartial",
+Scoped.define("module:Partials.TemplateUrlPartial",
 	["module:Handlers.Partial", "browser:Loader"], function (Partial, Loader, scoped) {
 
   /**

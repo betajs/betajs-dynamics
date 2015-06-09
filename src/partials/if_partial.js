@@ -10,13 +10,14 @@ Scoped.define("module:Partials.IfPartial", ["module:Partials.ShowPartial"], func
    *
    * @param {expression} baIf Expression to evaluate for truth. If true,
    * internal html will be rendered. If false, internal html will not be
-   * rendered.
+   * rendered. Note, if the expression should be evaluted, it must be wrapped in
+   * {{}}. See the examples below.
    *
-   * @example <div ba-if="1 === 1"><h1>Hi</h1><div>
-   * // Evaluated to <div ba-if="1 === 1"><h1>Hi</h1></div>
+   * @example <div ba-if="{{1 === 1}}"><h1>Hi</h1><div>
+   * // Evaluated to <div><h1>Hi</h1></div>
    *
-   * @example <div ba-if="1 === 2"></h1>Hi</h1></div>
-   * // Evaluated to <div ba-if="1 === 2"></div>
+   * @example <div ba-if="{{1 === 2}}"></h1>Hi</h1></div>
+   * // Evaluated to <div></div>
    */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {

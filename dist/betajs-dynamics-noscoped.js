@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-06-08
+betajs-dynamics - v0.0.1 - 2015-06-10
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '111.1433802311191'
+		version: '117.1433978297228'
 	};
 });
 
@@ -764,8 +764,12 @@ Scoped.define("module:Handlers.Attr", [
 					if (this._isEvent) {
 						this._attribute.value = '';
 						this._$element.on(this._attrName.substring(2), function () {
-							self._node._locals.event = arguments;
+              // Ensures the domEvent does not continue to
+              // overshadow another variable after the __executeDyn call ends.
+              var oldDomEvent = self._node._locals.domEvent;
+							self._node._locals.domEvent = arguments;
 							self._node.__executeDyn(self._dyn);
+              self._node._locals.domEvent = oldDomEvent;
 						});
 					}
 				}

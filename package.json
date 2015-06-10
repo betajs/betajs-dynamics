@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
 	"name": "betajs-dynamics",
 	"version": "0.0.1",
 	"description": "BetaJS-Dynamics is a dynamic DOM templating engine.",
@@ -114,5 +113,4 @@
       "betajs-dynamics-noscoped.min.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics-noscoped.min.js"
     }
   }
->>>>>>> e2dcf49b7f66101d066c43c0847c843b3e63f9d6
 }

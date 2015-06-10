@@ -6,6 +6,10 @@ BetaJS-Dynamics is a dynamic dom templating engine.
 ## Status
 Active, In Development
 
+## Testing
+Linting and tests can be run with `grunt check`. This command serves the
+`tests.html` file on a local server. This reduces cross origin request errors
+for `file:///`.
 
 ## Links
 | Resource   | URL |
@@ -64,5 +68,6 @@ Active, In Development
 ## License
 
 MIT
+
 
 

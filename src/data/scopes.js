@@ -199,6 +199,10 @@ Scoped.define("module:Data.Scope", [
 				return this.__properties;
 			},
 			
+			compute: function (key, callback, dependencies) {
+				this.properties().compute(key, callback, this, dependencies);
+			},
+			
 			scope: function (base, query) {
 				if (arguments.length < 2) {
 					query = base;

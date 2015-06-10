@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-06-04
+betajs-dynamics - v0.0.1 - 2015-06-08
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '96.1433454095779'
+		version: '111.1433802311191'
 	};
 });
 
@@ -560,6 +560,10 @@ Scoped.define("module:Data.Scope", [
 				return this.__properties;
 			},
 			
+			compute: function (key, callback, dependencies) {
+				this.properties().compute(key, callback, this, dependencies);
+			},
+			
 			scope: function (base, query) {
 				if (arguments.length < 2) {
 					query = base;
@@ -701,6 +705,124 @@ Scoped.define("module:Data.MultiScope", [
 		};
 	}]);
 });
+Scoped.define("module:Handlers.Attr", [
+	    "base:Class",
+	    "module:Parser",
+	    "jquery:",
+	    "base:Types",
+	    "module:Registries"
+	], function (Class, Parser, $, Types, Registries, scoped) {
+	var Cls;
+	Cls = Class.extend({scoped: scoped}, function (inherited) {
+		return {
+			
+			constructor: function (node, attribute) {
+				inherited.constructor.call(this);
+				this._node = node;
+				this._tagHandler = null;
+				this._attrName = attribute.name;
+				this._isEvent = this._attrName.indexOf("on") === 0;
+				this._updatable = !this._isEvent;
+				this._attrOriginalValue = attribute.value;
+				this._attrValue = attribute.value;
+				this._dyn = Parser.parseText(this._attrValue);
+				if (this._dyn) {
+					var self = this;
+					node.mesh().watch(this._dyn.dependencies, function () {
+						self.__updateAttr();
+					}, this);
+				}
+				this.updateElement(node.element(), attribute);
+			},
+			
+			destroy: function () {
+				if (this._partial)
+					this._partial.destroy();
+				if (this._dyn)
+					this._node.mesh().unwatch(this._dyn.dependencies, this);
+				inherited.destroy.call(this);
+			},
+			
+			updateElement: function (element, attribute) {
+				this._element = element;
+				this._$element = $(element);
+				attribute = attribute || element.attributes[this._attrName];
+				this._attribute = attribute;
+				this.__updateAttr();
+				var splt = this._attrName.split(":");
+				if (this._partial)
+					this._partial.destroy();
+				if (Registries.partial.get(splt[0]))
+					this._partial = Registries.partial.create(splt[0], this._node, this._dyn ? this._dyn.args : {}, this._attrValue, splt[1]);
+				if (this._dyn) {
+					var self = this;
+					if (this._dyn.bidirectional && this._attrName == "value") {
+						this._$element.on("change keyup keypress keydown blur focus update", function () {
+							self._node.mesh().write(self._dyn.variable, self._element.value);
+						});
+					}
+					if (this._isEvent) {
+						this._attribute.value = '';
+						this._$element.on(this._attrName.substring(2), function () {
+							self._node._locals.event = arguments;
+							self._node.__executeDyn(self._dyn);
+						});
+					}
+				}
+			},
+			
+			__updateAttr: function () {
+				if (!this._updatable)
+					return;
+				var value = this._dyn ? this._node.__executeDyn(this._dyn) : this._attrValue;
+				if ((value != this._attrValue || Types.is_array(value)) && !(!value && !this._attrValue)) {
+					var old = this._attrValue;
+					this._attrValue = value;
+					this._attribute.value = value;
+					if (this._partial)
+						this._partial.change(value, old);
+					if (this._attrName === "value" && this._element.value !== value)
+						this._element.value = value;
+					if (this._tagHandler && this._dyn)
+						this._tagHandler.properties().set(this._attrName.substring("ba-".length), value);
+				}
+			},
+
+			bindTagHandler: function (handler) {
+				this.unbindTagHandler();
+				this._tagHandler = handler;
+				if (!this._partial && this._attrName.indexOf("ba-") === 0) {
+					var innerKey = this._attrName.substring("ba-".length);
+					this._tagHandler.properties().set(innerKey, this._attrValue);
+					if (this._dyn && this._dyn.bidirectional) {
+						this._tagHandler.properties().on("change:" + innerKey, function (value) {
+							this._node.mesh().write(this._dyn.variable, value);
+						}, this);							
+					}
+				}
+			},
+			
+			unbindTagHandler: function (handler) {
+				if (this._tagHandler)
+					this._tagHandler.properties().off(null, null, this);
+				this._tagHandler = null;
+			},
+			
+			activate: function () {
+				if (this._partial)
+					this._partial.activate();
+			},
+			
+			deactivate: function () {
+				if (this._partial)
+					this._partial.deactivate();
+			}
+			
+		};
+	});
+	return Cls;
+});
+
 Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jquery:", "browser:Loader", "module:Handlers.Node"], function (Objs, Strings, $, Loader, Node) {
 	return {		
 		
@@ -906,8 +1028,9 @@ Scoped.define("module:Handlers.Node", [
 	    "module:Data.Mesh",
 	    "base:Objs",
 	    "base:Types",
-	    "module:Registries"
-	], function (Class, EventsMixin, Ids, Dom, Parser, $, Mesh, Objs, Types, Registries, scoped) {
+	    "module:Registries",
+	    "module:Handlers.Attr"
+	], function (Class, EventsMixin, Ids, Dom, Parser, $, Mesh, Objs, Types, Registries, Attr, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, [EventsMixin, function (inherited) {
 		return {
@@ -943,11 +1066,11 @@ Scoped.define("module:Handlers.Node", [
 					write: this.properties(),
 					watch: this.properties()
 				});
-								
-				if (element.attributes) {
-					for (var i = 0; i < element.attributes.length; ++i)
-						this.__initializeAttr(element.attributes[i]);
-				}
+				
+				if (this._element.attributes)
+					for (var i = 0; i < this._element.attributes.length; ++i)
+						this._registerAttr(this._element.attributes[i]);
+
 				this._locked = false;
 				this._active = !this._active;
 				if (this._active)
@@ -958,11 +1081,8 @@ Scoped.define("module:Handlers.Node", [
 			
 			destroy: function () {
 				Objs.iter(this._attrs, function (attr) {
-					if (attr.partial)
-						attr.partial.destroy();
-					if (attr.dyn)
-						this.__dynOff(attr.dyn);
-				}, this);
+					attr.destroy();
+				});
 				this._removeChildren();
 				if (this._tagHandler && !this._tagHandler.destroyed())
 					this._tagHandler.destroy();
@@ -972,6 +1092,13 @@ Scoped.define("module:Handlers.Node", [
 					delete this._parent._children[Ids.objectId(this)];
 				this._mesh.destroy();
 				inherited.destroy.call(this);
+			},
+			
+			_registerAttr: function (attribute) {
+				if (attribute.name in this._attrs)
+					this._attrs[attribute.name].updateAttribute(attribute);
+				else
+					this._attrs[attribute.name] = new Attr(this, attribute);
 			},
 			
 			element: function () {
@@ -993,63 +1120,12 @@ Scoped.define("module:Handlers.Node", [
 				}, dyn);
 			},
 			
-			__initializeAttr: function (attr) {
-				var isEvent = attr.name.indexOf("on") === 0;
-				var obj = {
-					name: attr.name,
-					value: attr.value,
-					domAttr: attr,
-					dyn: Parser.parseText(attr.value),
-					updatable: !isEvent
-				};
-				this._attrs[attr.name] = obj;
-				this.__updateAttr(obj);
-				var splt = obj.name.split(":");
-				if (Registries.partial.get(splt[0]))
-					obj.partial = Registries.partial.create(splt[0], this, obj.dyn ? obj.dyn.args : {}, obj.value, splt[1]);
-				if (obj.dyn) {
-					this.__dynOn(obj.dyn, function () {
-						this.__updateAttr(obj);
-					});
-					var self = this;
-					if (obj.dyn.bidirectional && obj.name == "value") {
-						this._$element.on("change keyup keypress keydown blur focus update", function () {
-							self._mesh.write(obj.dyn.variable, self._element.value);
-						});
-					}
-					if (isEvent) {
-						obj.domAttr.value = '';
-						this._$element.on(obj.name.substring(2), function () {
-							self._locals.event = arguments;
-							self.__executeDyn(obj.dyn);
-						});
-					}
-				}
-			},
-			
 			mesh: function () {
 				return this._mesh;
 			},
 			
 			__executeDyn: function (dyn) {
 				return Types.is_object(dyn) ? this._mesh.call(dyn.dependencies, dyn.func) : dyn;
-			},
-			
-			__updateAttr: function (attr) {
-				if (!attr.updatable)
-					return;
-				var value = attr.dyn ? this.__executeDyn(attr.dyn) : attr.value;
-				if ((value != attr.value || Types.is_array(value)) && !(!value && !attr.value)) {
-					var old = attr.value;
-					attr.value = value;
-					attr.domAttr.value = value;
-					if (attr.partial)
-						attr.partial.change(value, old);
-					if (attr.name === "value" && this._element.value !== value) {
-						this._element.value = value;
-					}
-					this.trigger("change-attr:" + attr.name, value, old);
-				}
 			},
 			
 			__tagValue: function () {
@@ -1060,6 +1136,9 @@ Scoped.define("module:Handlers.Node", [
 			
 			__unregisterTagHandler: function () {
 				if (this._tagHandler) {
+					Objs.iter(this._attrs, function (attr) {
+						attr.unbindTagHandler(this._tagHandler);
+					}, this);
 					this.off(null, null, this._tagHandler);
 					this._tagHandler.destroy();
 					this._tagHandler = null;
@@ -1071,8 +1150,13 @@ Scoped.define("module:Handlers.Node", [
 				var tagv = this.__tagValue();
 				if (!tagv)
 					return;
-				if (this._dynTag)
+				if (this._dynTag && this._$element.get(0).tagName.toLowerCase() != tagv.toLowerCase()) {
 					this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
+					this._element = this._$element.get(0);
+					Objs.iter(this._attrs, function (attr) {
+						attr.updateElement(this._element);
+					}, this);
+				}
 				if (!Registries.handler.get(tagv))
 					return false;
 				this._tagHandler = Registries.handler.create(tagv, {
@@ -1081,25 +1165,9 @@ Scoped.define("module:Handlers.Node", [
 					autobind: false,
 					tagName: tagv
 				});
-				this._$element.append(this._tagHandler.element());
-				Objs.iter(this._attrs, function (attr, key) {
-					if (!attr.partial && key.indexOf("ba-") === 0) {
-						var innerKey = key.substring("ba-".length);
-						this._tagHandler.properties().set(innerKey, attr.value);
-						if (attr.dyn) {
-							var self = this;
-							this.on("change-attr:" + key, function (value) {
-								self._tagHandler.properties().set(innerKey, value);
-							}, this._tagHandler);
-							if (attr.dyn.bidirectional) {
-								//var prop = this.__propGet(attr.dyn.variable);
-								this._tagHandler.properties().on("change:" + innerKey, function (value) {
-									//prop.props.set(prop.key, value);
-									self._mesh.write(attr.dyn.variable, value);
-								}, this);							
-							}
-						}
-					}
+				//this._$element.append(this._tagHandler.element());
+				Objs.iter(this._attrs, function (attr) {
+					attr.bindTagHandler(this._tagHandler);
 				}, this);
 				this._tagHandler.activate();
 				return true;
@@ -1115,7 +1183,7 @@ Scoped.define("module:Handlers.Node", [
 						this.__registerTagHandler();
 					});
 				}
-				var registered = this.__registerTagHandler(); 
+				var registered = this.__registerTagHandler();
 		        if (!registered && this._expandChildren) {
 		        	if (this._restoreInnerTemplate)
 		        		this._$element.html(this._innerTemplate);
@@ -1134,10 +1202,9 @@ Scoped.define("module:Handlers.Node", [
 							this._registerChild(this._element.childNodes[i]);
 				}
 				this._$element.css("display", "");
-				for (var key in this._attrs) {
-					if (this._attrs[key].partial) 
-						this._attrs[key].partial.activate();
-				}
+				Objs.iter(this._attrs, function (attr) {
+					attr.activate();
+				});
 				this._locked = false;
 			},
 			
@@ -1168,10 +1235,9 @@ Scoped.define("module:Handlers.Node", [
 				if (this._locked)
 					return;
 				this._locked = true;
-				for (var key in this._attrs) {
-					if (this._attrs[key].partial)
-						this._attrs[key].partial.deactivate();
-				}
+				Objs.iter(this._attrs, function (attr) {
+					attr.deactivate();
+				});
 				this._removeChildren();
 				if (this._dynTag)
 					this.__dynOff(this._dynTag);
@@ -1189,6 +1255,7 @@ Scoped.define("module:Handlers.Node", [
 			properties: function () {
 				return this._handler.properties();
 			}
+			
 		};
 	}]);
 	return Cls;
@@ -1202,7 +1269,20 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry"], function (Cla
 	};
 });
 
-Scoped.define("module:Handlers.AttrsPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-attrs
+   *
+   * @description
+   * The ba-attrs partial allows the specification of an object that will
+   * provide attributes accessible within the element containing the ba-attrs
+   * html attribute.
+   *
+   * @param {object} baAttrs Object containing individual attributes.
+   *
+   * @example <div ba-attrs="{{{test: 'hi'}}}">{{test}}</div>
+   * // Evaluates to <div ba-attrs="{{{test: 'hi'}}}">hi</div>
+   */
  	var Cls = Partial.extend({scoped: scoped}, {
 		
 		_apply: function (value) {
@@ -1215,7 +1295,22 @@ Scoped.define("module:Handlers.AttrsPartial", ["module:Handlers.Partial"], funct
 	return Cls;
 });
 
-Scoped.define("module:Handlers.ClassPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.ClassPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-class
+   *
+   * @description
+   * Dynamically set the HTML class of the given element based on the evaluation
+   * of expressions.
+   *
+   * @param {object} baClass Object where keys are Html classes and values are
+   * expressions. If the expression evaluates to true, the class is included on
+   * the Html element. If the expression evaluates to false, the class is not
+   * included.
+   *
+   * @example <div ba-class="{{{'first': true, 'second': 1 === 2}}}></div>"
+   * // Evaluates to <div class="first"></div>
+   */
  	var Cls = Partial.extend({scoped: scoped}, {
 		
 		_apply: function (value) {
@@ -1232,14 +1327,36 @@ Scoped.define("module:Handlers.ClassPartial", ["module:Handlers.Partial"], funct
 	return Cls;
 });
 
-Scoped.define("module:Handlers.ClickPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.ClickPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-click
+   *
+   * @description
+   * The ba-click partial allows the specification of custom on clicked
+   * behavior. By default, the click propagation is prevented. Should you want
+   * the click to propagate, use the `onclick` Html tag.
+   *
+   * @param {expression} baClick Expression to evaluate upon click. If click is
+   * within the scope of another directive, the Expression can be an exposed method of
+   * the parent directive.
+   *
+   * @example <button ba-click="showing = !showing">
+   * // Expression is evaluated (ex. showing now equals inverse) on click.
+   *
+   * @example <button ba-click="exposedMethod()">
+   * // Calls parentDirective.call("exposedMethod") on click.
+   *
+   * @example <button ba-click="exposedMethod(arg)">
+   * // Calls parentDirective.call("exposedMethod", arg) on click.
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
  				var self = this;
- 				this._node._$element.on("click", function () {
+ 				this._node._$element.on("click", function (e) {
+          e.stopPropagation();
  					self._execute();
  				});
  			}
@@ -1250,7 +1367,27 @@ Scoped.define("module:Handlers.ClickPartial", ["module:Handlers.Partial"], funct
 	return Cls;
 });
 
-Scoped.define("module:Handlers.IfPartial", ["module:Handlers.ShowPartial"], function (Partial, scoped) {
+Scoped.define("module:Partials.IfPartial", ["module:Partials.ShowPartial"], function (Partial, scoped) {
+  /**
+   * @name ba-if
+   *
+   * @description
+   * The ba-if partial controls rendering of internal Html based on the truth
+   * value of a given expression. It differs from ba-show in that ba-show
+   * renders internal Html, but hides it, while ba-if will not render the
+   * internal Html at all.
+   *
+   * @param {expression} baIf Expression to evaluate for truth. If true,
+   * internal html will be rendered. If false, internal html will not be
+   * rendered. Note, if the expression should be evaluted, it must be wrapped in
+   * {{}}. See the examples below.
+   *
+   * @example <div ba-if="{{1 === 1}}"><h1>Hi</h1><div>
+   * // Evaluated to <div><h1>Hi</h1></div>
+   *
+   * @example <div ba-if="{{1 === 2}}"></h1>Hi</h1></div>
+   * // Evaluated to <div></div>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -1274,7 +1411,19 @@ Scoped.define("module:Handlers.IfPartial", ["module:Handlers.ShowPartial"], func
 	return Cls;
 });
 
-Scoped.define("module:Handlers.IgnorePartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.IgnorePartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-ignore
+   *
+   * @description
+   * The ba-ignore partial instructs the BetaJS Dynamics process to not process
+   * anything of the inner Html within the given element implementing the
+   * ba-ignore partial. The ba-ignore partial is often used to stop the
+   * processing of an inline script tag.
+   *
+   * @example <div ba-attrs="{{{test: 'hi'}}}"><p ba-ignore>{{test}}</p></div>
+   * // Renders <div ...><p ba-ignore>{{test}}</p></div>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -1290,7 +1439,26 @@ Scoped.define("module:Handlers.IgnorePartial", ["module:Handlers.Partial"], func
 });
 
 
-Scoped.define("module:Handlers.EventPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.EventPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-on
+   *
+   * @description
+   * The ba-on partial executes the given expression when triggered by the
+   * specified Dom event on the given Html element. For a complete list of Dom
+   * events, see {@link http://www.w3schools.com/jsref/dom_obj_event.asp}
+   *
+   * @postfix {event} event The event triggering the expression is specified as
+   * a post fix of the ba-on directive. See the examples.
+   *
+   * @param {expression} baOn Expression to evaluate upon the occurence of the
+   * event. If within the scope of another directive, the expression can be an
+   * exposed method of the parent directive (see ba-click documentation for
+   * greater detail).
+   *
+   * @example <button ba-on:mouseover="alert('Hi')">Hi</button>
+   * // Will alert('Hi') when the mouseover event occurs on the button.
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -1314,8 +1482,8 @@ Scoped.define("module:Handlers.EventPartial", ["module:Handlers.Partial"], funct
 	return Cls;
 });
 
-Scoped.define("module:Handlers.RepeatElementPartial", [
-        "module:Handlers.Partial",
+Scoped.define("module:Partials.RepeatElementPartial", [
+        "module:Partials.RepeatPartial",
         "base:Collections.Collection",
         "base:Collections.FilteredCollection",
         "base:Objs",
@@ -1323,127 +1491,45 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
         "module:Parser",
         "base:Properties.Properties"
 	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, scoped) {
+  /**
+   * @name ba-repeat-element
+   *
+   * @description
+   * Instantiate entire Html element (both element and the html is closes)
+   * once for each instance in the collection.
+   * Differs from ba-repeat, in that while ba-repeat instantiates just the
+   * inner Html contents of the given element for each instance in the
+   * collection, ba-repeat-element instantiates the Html element and the inner
+   * Html contents. See examples.
+   * 
+   * @param {object} instance Object representing a single element in the
+   * collection. Updated as collection is iterated through.
+   *
+   * @param {object} collection Object representing multiple elements, each of
+   * which will be instantiated.
+   *
+   * @example <p ba-repeat-element="{{ i :: [1,2,3] }}">{{i}}</p>
+   * // Evalues to <p>1</p><p>2</p><p>3</p>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
- 				this.__registered = false;
- 				args = args.split("~");
- 				this.__repeatArg = args[0].trim();
- 				if (args.length > 1) {
- 					this.__repeatFilter = Parser.parseCode(args[1].trim());
- 					var self = this;
- 					node.mesh().watch(this.__repeatFilter.dependencies, function () {
- 						if (self._active && self.__registered) {
- 							if (self.__filteredCollection)
- 								self.__filteredCollection.setFilter(self.__filterFunc, self);
- 							else
- 								self.__register(self._value);
- 						}
- 					}, this.__repeatFilter);
- 				}
  				this.__filteredTemplate = $(node._template).removeAttr("ba-repeat-element").get(0).outerHTML;
- 				node._expandChildren = false;
- 				node._$element.html("");
  			},
  			
- 			destroy: function () {
- 				this.__unregister();
- 				if (this.__filteredCollection)
- 					this.__filteredCollection.destroy();
- 				if (this.__repeatFilter)
- 					node.mesh().unwatch(this.__repeatFilter.dependencies, this.__repeatFilter);
- 				inherited.destroy.call(this);
- 			},
- 		
  			_activate: function () {
  				this._node._$element.hide();
- 				this.__register(this._value);
+ 				inherited._activate.call(this);
  			},
  			
- 			_deactivate: function () {
- 				this.__unregister();
- 			},
-
- 			_change: function (value, oldValue) {
- 				this.__register(value);
- 			},
- 			
- 			__filterFunc: function (prop) {
-				var filter = this.__repeatFilter;
-				if (!filter)
-					return true;
- 				return this._node.mesh().call(filter.dependencies, function (obj) {
-					return filter.func.call(this, Objs.extend(obj, Properties.is_instance_of(prop) ? prop.data() : prop));
-				}, true);
- 			},
- 			
- 			__register: function (value) {
- 				this.__unregister();
- 				if (!Collection.is_instance_of(value)) {
- 					for (var i = value.length - 1; i >= 0; i--) {
- 						var prop = value[i];
- 						if (this.__filterFunc(prop))
- 							this.__appendItem(prop);
- 					}
- 				} else {
- 					this.__collection = value;
- 					if (this.__repeatFilter) {
- 						this.__filteredCollection = new FilteredCollection(this.__collection, {
- 							filter: this.__filterFunc,
- 							context: this
- 						});
- 						this.__collection = this.__filteredCollection;
- 					}
- 					this.__collection_map = {};
- 					var itemArr = this.__collection.iterator().asArray();
- 					for (var j = itemArr.length - 1; j >= 0; j--) {
- 						var item = itemArr[j];
- 						this.__collection_map[item.cid()] = this.__appendItem(item);
- 					}
- 					this.__collection.on("add", function (item) {
- 						this.__collection_map[item.cid()] = this.__appendItem(item);
- 					}, this);
- 					this.__collection.on("remove", function (item) {
- 						var entry = this.__collection_map[item.cid()];
- 						if (!entry.destroyed()) {
-							var ele = entry.$element();
-							entry.destroy();
-							ele.remove();
- 						}
- 						delete this.__collection_map[item.cid()];
- 					}, this);
- 				}
- 				this.__registered = true;
- 			},
- 			
- 			__unregister: function () {
- 				this.__registered = false;
- 				Objs.iter(this.__collection_map, function (entry) {
-					var ele = entry.$element();
-					entry.destroy();
-					ele.remove();
-				}, this);
- 				if (this.__collection) {
- 					this.__collection.off(null, null, this);
- 					this.__collection = null;
- 					this.__collection_map = null;
- 				}
-				if (this.__filteredCollection)
-					this.__filteredCollection.destroy();
- 			},
- 			
- 			__appendItem: function (value) {
+ 			_newItemElements: function () {
  				var template = this.__filteredTemplate.trim();
 				var element = $(template).get(0);
 				this._node._$element.after(element);
- 				var locals = {};
- 				if (this.__repeatArg)
- 					locals[this.__repeatArg] = value;
  				element["ba-handled"] = true;
- 				var result = this._node._registerChild(element, locals);
- 				return result;
+ 				return $(element);
  			}
 
  		};
@@ -1452,16 +1538,33 @@ Scoped.define("module:Handlers.RepeatElementPartial", [
 	return Cls;
 });
 
-Scoped.define("module:Handlers.RepeatPartial", [
+Scoped.define("module:Partials.RepeatPartial", [
         "module:Handlers.Partial",
+        "base:Properties.Properties",
         "base:Collections.Collection",
         "base:Collections.FilteredCollection",
         "base:Objs",
         "jquery:",
-        "module:Parser",
-        "base:Properties.Properties"
-	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, scoped) {
- 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+        "module:Parser"
+	], function (Partial, Properties, Collection, FilteredCollection, Objs, $, Parser, scoped) {
+	  /**
+	   * @name ba-repeat
+	   *
+	   * @description
+	   * Instantiate once for each instance in the collection. Render only the inner html
+	   * of the element for each instance.
+	   *
+	   * @param {object} instance Object representing a single element in the
+	   * collection. Updated as collection is iterated through.
+	   *
+	   * @param {object} collection Object representing multiple elements, each of
+	   * which will be instantiated.
+	   *
+	   * @example <ul ba-repeat-element="{{ i :: [1,2] }}"><li>{{i}}</li></ul>
+	   * // Evaluates to <ul><li>1</li><li>2</li></ul>
+	   */
+
+	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
  			constructor: function (node, args, value) {
@@ -1469,36 +1572,38 @@ Scoped.define("module:Handlers.RepeatPartial", [
  				this.__registered = false;
  				args = args.split("~");
  				this.__repeatArg = args[0].trim();
+ 				this._destroyCollection = false;
+ 				this._destroyValueCollection = false;
  				if (args.length > 1) {
  					this.__repeatFilter = Parser.parseCode(args[1].trim());
  					var self = this;
  					node.mesh().watch(this.__repeatFilter.dependencies, function () {
- 						if (self._active && self.__registered) {
- 							if (self.__filteredCollection)
- 								self.__filteredCollection.setFilter(self.__filterFunc, self);
- 							else
- 								self.__register(self._value);
- 						}
+ 						self.__filterChanged();
  					}, this.__repeatFilter);
  				}
  				node._expandChildren = false;
  				node._$element.html("");
  			},
- 			
+
  			destroy: function () {
- 				if (this.__filteredCollection)
- 					this.__filteredCollection.destroy();
+ 				this.__unregister();
  				if (this.__repeatFilter)
  					node.mesh().unwatch(this.__repeatFilter.dependencies, this.__repeatFilter);
  				inherited.destroy.call(this);
  			},
  			
  			_activate: function () {		
- 				this.__register(this._value);
+ 				this.__register();
  			},
  			
  			_deactivate: function () {
  				this.__unregister();
+ 			},
+ 			
+ 			__filterChanged: function () {
+ 				if (!this._active)
+ 					return;
+				this._collection.setFilter(this.__filterFunc, this);
  			},
  			
  			_change: function (value, oldValue) {
@@ -1509,61 +1614,120 @@ Scoped.define("module:Handlers.RepeatPartial", [
 				var filter = this.__repeatFilter;
 				if (!filter)
 					return true;
+				var self = this;
  				return this._node.mesh().call(filter.dependencies, function (obj) {
-					return filter.func.call(this, Objs.extend(obj, Properties.is_instance_of(prop) ? prop.data() : prop));
+ 					obj[self.__repeatArg] = self._isArray ? prop.get("value") : prop.data();
+					return filter.func.call(this, obj);
 				}, true);
  			},
  			
- 			__register: function (value) {
+ 			__register: function () {
  				this.__unregister();
- 				if (!Collection.is_instance_of(value)) {
- 					Objs.iter(value, function (prop) {
- 						if (this.__filterFunc(prop))
- 							this.__appendItem(prop);
- 					}, this);
- 				} else {
- 					this.__collection = value;
- 					if (this.__repeatFilter) {
- 						this.__filteredCollection = new FilteredCollection(this.__collection, {
- 							filter: this.__filterFunc,
- 							context: this
- 						});
- 						this.__collection = this.__filteredCollection;
- 					}
- 					this.__collection_map = {};
- 					this.__collection.iterate(function (item) {
- 						this.__collection_map[item.cid()] = this.__appendItem(item);
- 					}, this);
- 					this.__collection.on("add", function (item) {
- 						this.__collection_map[item.cid()] = this.__appendItem(item);
- 					}, this);
- 					this.__collection.on("remove", function (item) {
- 						Objs.iter(this.__collection_map[item.cid()], function (entry) {
- 							var ele = entry.$element();
- 							entry.destroy();
- 							ele.remove();
- 						}, this);
- 						delete this.__collection_map[item.cid()];
- 					}, this);
- 				}
- 				this.__registered = true;
+ 				this._isArray = !Collection.is_instance_of(this._value);
+ 				this._destroyValueCollection = !Collection.is_instance_of(this._value);
+ 				this._valueCollection = this._destroyValueCollection ? new Collection({
+ 					objects: Objs.map(this._value, function (val) {
+ 						return new Properties({value: val});
+ 					})}) : this._value;
+ 				this._destroyCollection = !!this.__repeatFilter;
+				this._collection = this._destroyCollection ? new FilteredCollection(this._valueCollection, {
+					filter: this.__filterFunc,
+					context: this
+				}) : this._valueCollection;
+				this._collectionChildren = {};
+				this._collection.iterate(this.__addItem, this);
+				this._collection.on("add", this.__addItem, this);
+				this._collection.on("remove", this.__removeItem, this);
+				this._collection.on("reindexed", function (item) {
+					if (this._collection.count() < 2)
+						return;
+					var idx = this._collection.getIndex(item);
+					if (idx === 0)
+						this._prependItem(this._collection.getByIndex(1), item);
+					else
+						this._appendItem(this._collection.getByIndex(idx - 1), item);
+				}, this);
  			},
  			
  			__unregister: function () {
- 				this.__registered = false;
+ 				if (!this._collection)
+ 					return;
+ 				this._collection.iterate(this.__removeItem, this);
  				var $element = this._node._$element;
  				this._node._removeChildren();
  				$element.html("");
- 				if (this.__collection) {
- 					this.__collection.off(null, null, this);
- 					this.__collection = null;
- 					this.__collection_map = null;
- 				}
-				if (this.__filteredCollection)
-					this.__filteredCollection.destroy();
+ 				this._collection.off(null, null, this);
+ 				this._valueCollection.off(null, null, this);
+ 				if (this._destroyCollection)
+ 					this._collection.destroy();
+ 				if (this._destroyValueCollection)
+ 					this._valueCollection.destroy();
+ 				this._valueCollection = null;
+ 				this._collection = null;
  			},
  			
- 			__appendItem: function (value) {
+ 			__addItem: function (item) {
+ 				if (this._collectionChildren[item.cid()])
+ 					return;
+ 				var locals = {};
+ 				if (this.__repeatArg)
+ 					locals[this.__repeatArg] = this._isArray ? item.get("value") : item;
+ 				var result = [];
+ 				var self = this;
+ 				var elements = this._newItemElements();
+ 				var elementArr = [];
+ 				elements.each(function () {
+ 					result.push(self._node._registerChild(this, locals));
+ 					elementArr.push($(this));
+ 				});
+ 				this._collectionChildren[item.cid()] = {
+					item: item,
+					nodes: result,
+					elements: elementArr
+				};
+ 				var idx = this._collection.getIndex(item);
+ 				if (idx < this._collection.count() - 1)
+ 					this._prependItem(this._collection.getByIndex(idx + 1), item);
+ 			},
+ 			
+ 			__removeItem: function (item) {
+ 				if (!this._collectionChildren[item.cid()])
+ 					return;
+				Objs.iter(this._collectionChildren[item.cid()].nodes, function (node) {
+					var ele = node.$element();
+					node.destroy();
+					ele.remove();
+				}, this);
+				delete this._collectionChildren[item.cid()];
+ 			},
+ 			
+ 			_itemData: function (item) {
+ 				return this._collectionChildren[item.cid()];
+ 			},
+ 			
+ 			_prependItem: function (base, item) {
+ 				var baseData = this._itemData(base);
+ 				var itemData = this._itemData(item);
+ 				if (!baseData || !itemData)
+ 					return;
+ 				Objs.iter(itemData.elements, function (element) {
+ 					element.insertBefore(baseData.elements[0]);
+ 				});
+ 			},
+ 			
+ 			_appendItem: function (base, item) {
+ 				var baseData = this._itemData(base);
+ 				var itemData = this._itemData(item);
+ 				if (!baseData || !itemData)
+ 					return;
+ 				var current = baseData.elements[baseData.elements.length - 1];
+ 				Objs.iter(itemData.elements, function (element) {
+ 					current.after(element);
+ 					current = element;
+ 				});
+ 			},
+ 			
+ 			_newItemElements: function () {
  				var elements;
  				var template = this._node._innerTemplate.trim();
  				try {
@@ -1571,24 +1735,30 @@ Scoped.define("module:Handlers.RepeatPartial", [
  				} catch (e) {
  					elements = $(document.createTextNode(template)).appendTo(this._node._$element);
  				}
- 				var locals = {};
- 				if (this.__repeatArg)
- 					locals[this.__repeatArg] = value;	
- 				var result = [];
- 				var self = this;
- 				elements.each(function () {
- 					result.push(self._node._registerChild(this, locals));
- 				});
- 				return result;
+ 				return elements;
  			}
- 		
+ 			
  		};
  	});
  	Cls.register("ba-repeat");
 	return Cls;
 });
 
-Scoped.define("module:Handlers.ReturnPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.ReturnPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-return
+   *
+   * @description
+   * The ba-return partial allows the specification of custom behavior when the
+   * `return` key is pressed.
+   *
+   * @param {expression} baReturn Expression to evaluate upon return key being
+   * pressed. See ba-click for greater description as they are very similar.
+   *
+   * @example <input ba-return="processText()"></input>
+   * // Calls parentDirective.processText() when return key is pressed within
+   * the input field.
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -1607,7 +1777,24 @@ Scoped.define("module:Handlers.ReturnPartial", ["module:Handlers.Partial"], func
 	return Cls;
 });
 
-Scoped.define("module:Handlers.ShowPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.ShowPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  /**
+   * @name ba-show
+   *
+   * @description
+   * The ba-show partials controls showing the internal Html on the Dom based on
+   * the truth value of the given expression.
+   *
+   * @param {expression} baShow Expression to evaluate for truth. If true,
+   * internal html will be displayed. If false, internal html will not be
+   * displayed. Expression must be wrapped in {{}} so it will be evaluated, as
+   * seen below.
+   *
+   * @example <p ba-show="{{1 === 1}}">Hi</p>
+   * // Evalues to <p>Hi</p>
+   * @example <p ba-show="{{1 === 2}}">Hi</p>
+   * // Evalues to <p style="display: none;">Hi</p>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -1631,7 +1818,20 @@ Scoped.define("module:Handlers.ShowPartial", ["module:Handlers.Partial"], functi
 });
 
 
-Scoped.define("module:Handlers.TapPartial", ["module:Handlers.Partial", "browser:Info"], function (Partial, Info, scoped) {
+Scoped.define("module:Partials.TapPartial", ["module:Handlers.Partial", "browser:Info"], function (Partial, Info, scoped) {
+  /**
+   * @name ba-tap
+   *
+   * @description
+   * The ba-tao partial allows the specification of custom on tap behavior. Tap
+   * is particularly useful for handling mobile events.
+   *
+   * @param {expression} baTap Expression to evaluate upon tap. See ba-click
+   * documentation for more details as they are very similar.
+   *
+   * @example <button ba-tap="someMethod()">Tap</button>
+   * // Calls parentDirective.call("someMethod") on tap.
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -1650,9 +1850,20 @@ Scoped.define("module:Handlers.TapPartial", ["module:Handlers.Partial", "browser
 });
 
 
-Scoped.define("module:Handlers.TemplateUrlPartial",
+Scoped.define("module:Partials.TemplateUrlPartial",
 	["module:Handlers.Partial", "browser:Loader"], function (Partial, Loader, scoped) {
 
+  /**
+   * @name ba-template-url
+   *
+   * @description
+   * Specify the template url for internal html.
+   *
+   * @param {string} templateUrl The template url.
+   *
+   * @example <div ba-template-url="my-template.html"></div>
+   * // Evaluates to <div ...>CONTENTS OF MY-TEMPLATE.HTML</div>
+   */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {		
  		return {
 

@@ -10,7 +10,7 @@
 <body>
 
 <test>
-	<div ba-repeat-element="{{item :: [1,2,3,4,5]}}">
+	<div ba-repeat-element="{{item :: items}}">
 		{{item}}
 	</div>
 	<ba-repeatdyn>
@@ -25,12 +25,17 @@
     var root = $("test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
-        element: root
+        element: root,
+       	attrs: {
+       		items: [1,2,3,4,5]
+       	}
     });
     dynamic.activate();
 
     function test() {
         QUnit.ok(root.children().length >= 5);
+        dynamic.set("items", [6]);
+        QUnit.ok(root.children().length < 5);
     }
 </script>
 

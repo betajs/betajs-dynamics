@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
 	"name": "betajs-dynamics",
 	"version": "0.0.1",
 	"description": "BetaJS-Dynamics is a dynamic DOM templating engine.",
@@ -54,4 +55,64 @@
 			"betajs-dynamics-noscoped.min.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics-noscoped.min.js"
 		}
 	}
+=======
+  "name": "betajs-dynamics",
+  "version": "0.0.1",
+  "description": "BetaJS-Dynamics is a dynamic dom templating engine.",
+  "homepage": "http://betajs.com",
+  "contributors": [
+    "Oliver Friedmann",
+    "Victor Lingenthal"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "",
+    "grunt-closure-tools": "",
+    "grunt-contrib-clean": "",
+    "grunt-contrib-concat": "",
+    "grunt-contrib-connect": "^0.10.1",
+    "grunt-contrib-jshint": "",
+    "grunt-contrib-nodeunit": "",
+    "grunt-contrib-uglify": "",
+    "grunt-git-revision-count": "",
+    "grunt-jsdoc": "",
+    "grunt-node-qunit": "",
+    "grunt-preprocess": "",
+    "grunt-shell": "",
+    "grunt-template": "",
+    "grunt-wget": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/betajs/betajs-dynamics.git"
+  },
+  "meta": {
+    "status": "Active, In Development",
+    "weakDependencies": {
+      "betajs-scoped": "https://github.com/betajs/betajs-scoped"
+    },
+    "dependencies": {
+      "betajs": "https://github.com/betajs/betajs",
+      "betajs-browser": "https://github.com/betajs/betajs-browser"
+    },
+    "compatability": {
+      "Firefox": "4 - Latest",
+      "Chrome": "14 - Latest",
+      "Safari": "4 - Latest",
+      "Opera": "12 - Latest",
+      "Internet Explorer": "9 - Latest",
+      "iOS": "7.0 - Latest",
+      "Android": "4.0 - Latest"
+    },
+    "tests": {
+      "Test Suite": "http://rawgit.com/betajs/betajs-dynamics/master/tests/tests.html"
+    },
+    "cdn": {
+      "betajs-dynamics.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics.js",
+      "betajs-dynamics.min.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics.min.js",
+      "betajs-dynamics-noscoped.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics-noscoped.js",
+      "betajs-dynamics-noscoped.min.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics-noscoped.min.js"
+    }
+  }
+>>>>>>> e2dcf49b7f66101d066c43c0847c843b3e63f9d6
 }

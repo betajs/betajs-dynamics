@@ -1,0 +1,1206 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'install' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.33
+4 verbose readDependencies using package.json deps
+5 verbose install where, deps [ '/Users/victor/Development/betajs/betajs-dynamics',
+5 verbose install   [ 'grunt',
+5 verbose install     'grunt-contrib-jshint',
+5 verbose install     'grunt-contrib-nodeunit',
+5 verbose install     'grunt-contrib-concat',
+5 verbose install     'grunt-contrib-uglify',
+5 verbose install     'grunt-contrib-clean',
+5 verbose install     'grunt-preprocess',
+5 verbose install     'grunt-git-revision-count',
+5 verbose install     'grunt-closure-tools',
+5 verbose install     'grunt-node-qunit',
+5 verbose install     'grunt-wget',
+5 verbose install     'grunt-jsdoc',
+5 verbose install     'grunt-shell',
+5 verbose install     'grunt-template' ] ]
+6 info preinstall betajs-dynamics@0.0.1
+7 verbose readDependencies using package.json deps
+8 verbose cache add [ 'grunt-contrib-jshint@', null ]
+9 verbose cache add name=undefined spec="grunt-contrib-jshint@" args=["grunt-contrib-jshint@",null]
+10 verbose parsed url { protocol: null,
+10 verbose parsed url   slashes: null,
+10 verbose parsed url   auth: null,
+10 verbose parsed url   host: null,
+10 verbose parsed url   port: null,
+10 verbose parsed url   hostname: null,
+10 verbose parsed url   hash: null,
+10 verbose parsed url   search: null,
+10 verbose parsed url   query: null,
+10 verbose parsed url   pathname: 'grunt-contrib-jshint@',
+10 verbose parsed url   path: 'grunt-contrib-jshint@',
+10 verbose parsed url   href: 'grunt-contrib-jshint@' }
+11 verbose cache add [ 'grunt-contrib-nodeunit@', null ]
+12 verbose cache add name=undefined spec="grunt-contrib-nodeunit@" args=["grunt-contrib-nodeunit@",null]
+13 verbose parsed url { protocol: null,
+13 verbose parsed url   slashes: null,
+13 verbose parsed url   auth: null,
+13 verbose parsed url   host: null,
+13 verbose parsed url   port: null,
+13 verbose parsed url   hostname: null,
+13 verbose parsed url   hash: null,
+13 verbose parsed url   search: null,
+13 verbose parsed url   query: null,
+13 verbose parsed url   pathname: 'grunt-contrib-nodeunit@',
+13 verbose parsed url   path: 'grunt-contrib-nodeunit@',
+13 verbose parsed url   href: 'grunt-contrib-nodeunit@' }
+14 verbose cache add [ 'grunt-contrib-concat@', null ]
+15 verbose cache add name=undefined spec="grunt-contrib-concat@" args=["grunt-contrib-concat@",null]
+16 verbose parsed url { protocol: null,
+16 verbose parsed url   slashes: null,
+16 verbose parsed url   auth: null,
+16 verbose parsed url   host: null,
+16 verbose parsed url   port: null,
+16 verbose parsed url   hostname: null,
+16 verbose parsed url   hash: null,
+16 verbose parsed url   search: null,
+16 verbose parsed url   query: null,
+16 verbose parsed url   pathname: 'grunt-contrib-concat@',
+16 verbose parsed url   path: 'grunt-contrib-concat@',
+16 verbose parsed url   href: 'grunt-contrib-concat@' }
+17 verbose cache add [ 'grunt-contrib-uglify@', null ]
+18 verbose cache add name=undefined spec="grunt-contrib-uglify@" args=["grunt-contrib-uglify@",null]
+19 verbose parsed url { protocol: null,
+19 verbose parsed url   slashes: null,
+19 verbose parsed url   auth: null,
+19 verbose parsed url   host: null,
+19 verbose parsed url   port: null,
+19 verbose parsed url   hostname: null,
+19 verbose parsed url   hash: null,
+19 verbose parsed url   search: null,
+19 verbose parsed url   query: null,
+19 verbose parsed url   pathname: 'grunt-contrib-uglify@',
+19 verbose parsed url   path: 'grunt-contrib-uglify@',
+19 verbose parsed url   href: 'grunt-contrib-uglify@' }
+20 verbose cache add name="grunt-contrib-jshint" spec="" args=["grunt-contrib-jshint",""]
+21 verbose parsed url { protocol: null,
+21 verbose parsed url   slashes: null,
+21 verbose parsed url   auth: null,
+21 verbose parsed url   host: null,
+21 verbose parsed url   port: null,
+21 verbose parsed url   hostname: null,
+21 verbose parsed url   hash: null,
+21 verbose parsed url   search: null,
+21 verbose parsed url   query: null,
+21 verbose parsed url   pathname: null,
+21 verbose parsed url   path: null,
+21 verbose parsed url   href: '' }
+22 verbose addNamed [ 'grunt-contrib-jshint', '' ]
+23 verbose addNamed [ null, '*' ]
+24 verbose cache add name="grunt-contrib-nodeunit" spec="" args=["grunt-contrib-nodeunit",""]
+25 verbose parsed url { protocol: null,
+25 verbose parsed url   slashes: null,
+25 verbose parsed url   auth: null,
+25 verbose parsed url   host: null,
+25 verbose parsed url   port: null,
+25 verbose parsed url   hostname: null,
+25 verbose parsed url   hash: null,
+25 verbose parsed url   search: null,
+25 verbose parsed url   query: null,
+25 verbose parsed url   pathname: null,
+25 verbose parsed url   path: null,
+25 verbose parsed url   href: '' }
+26 verbose addNamed [ 'grunt-contrib-nodeunit', '' ]
+27 verbose addNamed [ null, '*' ]
+28 verbose cache add name="grunt-contrib-concat" spec="" args=["grunt-contrib-concat",""]
+29 verbose parsed url { protocol: null,
+29 verbose parsed url   slashes: null,
+29 verbose parsed url   auth: null,
+29 verbose parsed url   host: null,
+29 verbose parsed url   port: null,
+29 verbose parsed url   hostname: null,
+29 verbose parsed url   hash: null,
+29 verbose parsed url   search: null,
+29 verbose parsed url   query: null,
+29 verbose parsed url   pathname: null,
+29 verbose parsed url   path: null,
+29 verbose parsed url   href: '' }
+30 verbose addNamed [ 'grunt-contrib-concat', '' ]
+31 verbose addNamed [ null, '*' ]
+32 verbose cache add [ 'grunt-contrib-clean@', null ]
+33 verbose cache add name=undefined spec="grunt-contrib-clean@" args=["grunt-contrib-clean@",null]
+34 verbose parsed url { protocol: null,
+34 verbose parsed url   slashes: null,
+34 verbose parsed url   auth: null,
+34 verbose parsed url   host: null,
+34 verbose parsed url   port: null,
+34 verbose parsed url   hostname: null,
+34 verbose parsed url   hash: null,
+34 verbose parsed url   search: null,
+34 verbose parsed url   query: null,
+34 verbose parsed url   pathname: 'grunt-contrib-clean@',
+34 verbose parsed url   path: 'grunt-contrib-clean@',
+34 verbose parsed url   href: 'grunt-contrib-clean@' }
+35 verbose cache add name="grunt-contrib-uglify" spec="" args=["grunt-contrib-uglify",""]
+36 verbose parsed url { protocol: null,
+36 verbose parsed url   slashes: null,
+36 verbose parsed url   auth: null,
+36 verbose parsed url   host: null,
+36 verbose parsed url   port: null,
+36 verbose parsed url   hostname: null,
+36 verbose parsed url   hash: null,
+36 verbose parsed url   search: null,
+36 verbose parsed url   query: null,
+36 verbose parsed url   pathname: null,
+36 verbose parsed url   path: null,
+36 verbose parsed url   href: '' }
+37 verbose addNamed [ 'grunt-contrib-uglify', '' ]
+38 verbose addNamed [ null, '*' ]
+39 silly lockFile c28ce841-grunt-contrib-jshint grunt-contrib-jshint@
+40 verbose lock grunt-contrib-jshint@ /Users/victor/.npm/c28ce841-grunt-contrib-jshint.lock
+41 silly lockFile 6e65465f-grunt-contrib-nodeunit grunt-contrib-nodeunit@
+42 verbose lock grunt-contrib-nodeunit@ /Users/victor/.npm/6e65465f-grunt-contrib-nodeunit.lock
+43 silly lockFile 9f2aab3b-grunt-contrib-concat grunt-contrib-concat@
+44 verbose lock grunt-contrib-concat@ /Users/victor/.npm/9f2aab3b-grunt-contrib-concat.lock
+45 silly lockFile 1f4692e4-grunt-contrib-uglify grunt-contrib-uglify@
+46 verbose lock grunt-contrib-uglify@ /Users/victor/.npm/1f4692e4-grunt-contrib-uglify.lock
+47 verbose cache add [ 'grunt-preprocess@', null ]
+48 verbose cache add name=undefined spec="grunt-preprocess@" args=["grunt-preprocess@",null]
+49 verbose parsed url { protocol: null,
+49 verbose parsed url   slashes: null,
+49 verbose parsed url   auth: null,
+49 verbose parsed url   host: null,
+49 verbose parsed url   port: null,
+49 verbose parsed url   hostname: null,
+49 verbose parsed url   hash: null,
+49 verbose parsed url   search: null,
+49 verbose parsed url   query: null,
+49 verbose parsed url   pathname: 'grunt-preprocess@',
+49 verbose parsed url   path: 'grunt-preprocess@',
+49 verbose parsed url   href: 'grunt-preprocess@' }
+50 verbose cache add [ 'grunt-git-revision-count@', null ]
+51 verbose cache add name=undefined spec="grunt-git-revision-count@" args=["grunt-git-revision-count@",null]
+52 verbose parsed url { protocol: null,
+52 verbose parsed url   slashes: null,
+52 verbose parsed url   auth: null,
+52 verbose parsed url   host: null,
+52 verbose parsed url   port: null,
+52 verbose parsed url   hostname: null,
+52 verbose parsed url   hash: null,
+52 verbose parsed url   search: null,
+52 verbose parsed url   query: null,
+52 verbose parsed url   pathname: 'grunt-git-revision-count@',
+52 verbose parsed url   path: 'grunt-git-revision-count@',
+52 verbose parsed url   href: 'grunt-git-revision-count@' }
+53 verbose cache add name="grunt-contrib-clean" spec="" args=["grunt-contrib-clean",""]
+54 verbose parsed url { protocol: null,
+54 verbose parsed url   slashes: null,
+54 verbose parsed url   auth: null,
+54 verbose parsed url   host: null,
+54 verbose parsed url   port: null,
+54 verbose parsed url   hostname: null,
+54 verbose parsed url   hash: null,
+54 verbose parsed url   search: null,
+54 verbose parsed url   query: null,
+54 verbose parsed url   pathname: null,
+54 verbose parsed url   path: null,
+54 verbose parsed url   href: '' }
+55 verbose addNamed [ 'grunt-contrib-clean', '' ]
+56 verbose addNamed [ null, '*' ]
+57 silly lockFile 8bff91c3-grunt-contrib-clean grunt-contrib-clean@
+58 verbose lock grunt-contrib-clean@ /Users/victor/.npm/8bff91c3-grunt-contrib-clean.lock
+59 verbose cache add [ 'grunt-closure-tools@', null ]
+60 verbose cache add name=undefined spec="grunt-closure-tools@" args=["grunt-closure-tools@",null]
+61 verbose parsed url { protocol: null,
+61 verbose parsed url   slashes: null,
+61 verbose parsed url   auth: null,
+61 verbose parsed url   host: null,
+61 verbose parsed url   port: null,
+61 verbose parsed url   hostname: null,
+61 verbose parsed url   hash: null,
+61 verbose parsed url   search: null,
+61 verbose parsed url   query: null,
+61 verbose parsed url   pathname: 'grunt-closure-tools@',
+61 verbose parsed url   path: 'grunt-closure-tools@',
+61 verbose parsed url   href: 'grunt-closure-tools@' }
+62 verbose cache add name="grunt-preprocess" spec="" args=["grunt-preprocess",""]
+63 verbose parsed url { protocol: null,
+63 verbose parsed url   slashes: null,
+63 verbose parsed url   auth: null,
+63 verbose parsed url   host: null,
+63 verbose parsed url   port: null,
+63 verbose parsed url   hostname: null,
+63 verbose parsed url   hash: null,
+63 verbose parsed url   search: null,
+63 verbose parsed url   query: null,
+63 verbose parsed url   pathname: null,
+63 verbose parsed url   path: null,
+63 verbose parsed url   href: '' }
+64 verbose addNamed [ 'grunt-preprocess', '' ]
+65 verbose addNamed [ null, '*' ]
+66 silly lockFile 01c0bc23-grunt-preprocess grunt-preprocess@
+67 verbose lock grunt-preprocess@ /Users/victor/.npm/01c0bc23-grunt-preprocess.lock
+68 verbose cache add name="grunt-git-revision-count" spec="" args=["grunt-git-revision-count",""]
+69 verbose parsed url { protocol: null,
+69 verbose parsed url   slashes: null,
+69 verbose parsed url   auth: null,
+69 verbose parsed url   host: null,
+69 verbose parsed url   port: null,
+69 verbose parsed url   hostname: null,
+69 verbose parsed url   hash: null,
+69 verbose parsed url   search: null,
+69 verbose parsed url   query: null,
+69 verbose parsed url   pathname: null,
+69 verbose parsed url   path: null,
+69 verbose parsed url   href: '' }
+70 verbose addNamed [ 'grunt-git-revision-count', '' ]
+71 verbose addNamed [ null, '*' ]
+72 silly lockFile 18489407-grunt-git-revision-count grunt-git-revision-count@
+73 verbose lock grunt-git-revision-count@ /Users/victor/.npm/18489407-grunt-git-revision-count.lock
+74 verbose cache add [ 'grunt-node-qunit@', null ]
+75 verbose cache add name=undefined spec="grunt-node-qunit@" args=["grunt-node-qunit@",null]
+76 verbose parsed url { protocol: null,
+76 verbose parsed url   slashes: null,
+76 verbose parsed url   auth: null,
+76 verbose parsed url   host: null,
+76 verbose parsed url   port: null,
+76 verbose parsed url   hostname: null,
+76 verbose parsed url   hash: null,
+76 verbose parsed url   search: null,
+76 verbose parsed url   query: null,
+76 verbose parsed url   pathname: 'grunt-node-qunit@',
+76 verbose parsed url   path: 'grunt-node-qunit@',
+76 verbose parsed url   href: 'grunt-node-qunit@' }
+77 verbose cache add [ 'grunt-wget@', null ]
+78 verbose cache add name=undefined spec="grunt-wget@" args=["grunt-wget@",null]
+79 verbose parsed url { protocol: null,
+79 verbose parsed url   slashes: null,
+79 verbose parsed url   auth: null,
+79 verbose parsed url   host: null,
+79 verbose parsed url   port: null,
+79 verbose parsed url   hostname: null,
+79 verbose parsed url   hash: null,
+79 verbose parsed url   search: null,
+79 verbose parsed url   query: null,
+79 verbose parsed url   pathname: 'grunt-wget@',
+79 verbose parsed url   path: 'grunt-wget@',
+79 verbose parsed url   href: 'grunt-wget@' }
+80 verbose cache add [ 'grunt-jsdoc@beta', null ]
+81 verbose cache add name=undefined spec="grunt-jsdoc@beta" args=["grunt-jsdoc@beta",null]
+82 verbose parsed url { protocol: null,
+82 verbose parsed url   slashes: null,
+82 verbose parsed url   auth: null,
+82 verbose parsed url   host: null,
+82 verbose parsed url   port: null,
+82 verbose parsed url   hostname: null,
+82 verbose parsed url   hash: null,
+82 verbose parsed url   search: null,
+82 verbose parsed url   query: null,
+82 verbose parsed url   pathname: 'grunt-jsdoc@beta',
+82 verbose parsed url   path: 'grunt-jsdoc@beta',
+82 verbose parsed url   href: 'grunt-jsdoc@beta' }
+83 verbose cache add name="grunt-closure-tools" spec="" args=["grunt-closure-tools",""]
+84 verbose parsed url { protocol: null,
+84 verbose parsed url   slashes: null,
+84 verbose parsed url   auth: null,
+84 verbose parsed url   host: null,
+84 verbose parsed url   port: null,
+84 verbose parsed url   hostname: null,
+84 verbose parsed url   hash: null,
+84 verbose parsed url   search: null,
+84 verbose parsed url   query: null,
+84 verbose parsed url   pathname: null,
+84 verbose parsed url   path: null,
+84 verbose parsed url   href: '' }
+85 verbose addNamed [ 'grunt-closure-tools', '' ]
+86 verbose addNamed [ null, '*' ]
+87 silly lockFile 867f52d1-grunt-closure-tools grunt-closure-tools@
+88 verbose lock grunt-closure-tools@ /Users/victor/.npm/867f52d1-grunt-closure-tools.lock
+89 silly addNameRange { name: 'grunt-contrib-jshint', range: '*', hasData: false }
+90 silly addNameRange { name: 'grunt-contrib-nodeunit', range: '*', hasData: false }
+91 silly addNameRange { name: 'grunt-contrib-uglify', range: '*', hasData: false }
+92 verbose cache add name="grunt-node-qunit" spec="" args=["grunt-node-qunit",""]
+93 verbose parsed url { protocol: null,
+93 verbose parsed url   slashes: null,
+93 verbose parsed url   auth: null,
+93 verbose parsed url   host: null,
+93 verbose parsed url   port: null,
+93 verbose parsed url   hostname: null,
+93 verbose parsed url   hash: null,
+93 verbose parsed url   search: null,
+93 verbose parsed url   query: null,
+93 verbose parsed url   pathname: null,
+93 verbose parsed url   path: null,
+93 verbose parsed url   href: '' }
+94 verbose addNamed [ 'grunt-node-qunit', '' ]
+95 verbose addNamed [ null, '*' ]
+96 silly lockFile 3c65f2f4-grunt-node-qunit grunt-node-qunit@
+97 verbose lock grunt-node-qunit@ /Users/victor/.npm/3c65f2f4-grunt-node-qunit.lock
+98 verbose cache add name="grunt-wget" spec="" args=["grunt-wget",""]
+99 verbose parsed url { protocol: null,
+99 verbose parsed url   slashes: null,
+99 verbose parsed url   auth: null,
+99 verbose parsed url   host: null,
+99 verbose parsed url   port: null,
+99 verbose parsed url   hostname: null,
+99 verbose parsed url   hash: null,
+99 verbose parsed url   search: null,
+99 verbose parsed url   query: null,
+99 verbose parsed url   pathname: null,
+99 verbose parsed url   path: null,
+99 verbose parsed url   href: '' }
+100 verbose addNamed [ 'grunt-wget', '' ]
+101 verbose addNamed [ null, '*' ]
+102 silly lockFile c5d0fddf-grunt-wget grunt-wget@
+103 verbose lock grunt-wget@ /Users/victor/.npm/c5d0fddf-grunt-wget.lock
+104 verbose cache add [ 'grunt-shell@', null ]
+105 verbose cache add name=undefined spec="grunt-shell@" args=["grunt-shell@",null]
+106 verbose parsed url { protocol: null,
+106 verbose parsed url   slashes: null,
+106 verbose parsed url   auth: null,
+106 verbose parsed url   host: null,
+106 verbose parsed url   port: null,
+106 verbose parsed url   hostname: null,
+106 verbose parsed url   hash: null,
+106 verbose parsed url   search: null,
+106 verbose parsed url   query: null,
+106 verbose parsed url   pathname: 'grunt-shell@',
+106 verbose parsed url   path: 'grunt-shell@',
+106 verbose parsed url   href: 'grunt-shell@' }
+107 verbose cache add [ 'grunt-template@', null ]
+108 verbose cache add name=undefined spec="grunt-template@" args=["grunt-template@",null]
+109 verbose parsed url { protocol: null,
+109 verbose parsed url   slashes: null,
+109 verbose parsed url   auth: null,
+109 verbose parsed url   host: null,
+109 verbose parsed url   port: null,
+109 verbose parsed url   hostname: null,
+109 verbose parsed url   hash: null,
+109 verbose parsed url   search: null,
+109 verbose parsed url   query: null,
+109 verbose parsed url   pathname: 'grunt-template@',
+109 verbose parsed url   path: 'grunt-template@',
+109 verbose parsed url   href: 'grunt-template@' }
+110 verbose cache add [ 'grunt@', null ]
+111 verbose cache add name=undefined spec="grunt@" args=["grunt@",null]
+112 verbose parsed url { protocol: null,
+112 verbose parsed url   slashes: null,
+112 verbose parsed url   auth: null,
+112 verbose parsed url   host: null,
+112 verbose parsed url   port: null,
+112 verbose parsed url   hostname: null,
+112 verbose parsed url   hash: null,
+112 verbose parsed url   search: null,
+112 verbose parsed url   query: null,
+112 verbose parsed url   pathname: 'grunt@',
+112 verbose parsed url   path: 'grunt@',
+112 verbose parsed url   href: 'grunt@' }
+113 verbose cache add name="grunt-jsdoc" spec="beta" args=["grunt-jsdoc","beta"]
+114 verbose parsed url { protocol: null,
+114 verbose parsed url   slashes: null,
+114 verbose parsed url   auth: null,
+114 verbose parsed url   host: null,
+114 verbose parsed url   port: null,
+114 verbose parsed url   hostname: null,
+114 verbose parsed url   hash: null,
+114 verbose parsed url   search: null,
+114 verbose parsed url   query: null,
+114 verbose parsed url   pathname: 'beta',
+114 verbose parsed url   path: 'beta',
+114 verbose parsed url   href: 'beta' }
+115 verbose addNamed [ 'grunt-jsdoc', 'beta' ]
+116 verbose addNamed [ null, null ]
+117 silly lockFile 184cca73-grunt-jsdoc-beta grunt-jsdoc@beta
+118 verbose lock grunt-jsdoc@beta /Users/victor/.npm/184cca73-grunt-jsdoc-beta.lock
+119 silly addNameRange { name: 'grunt-contrib-concat', range: '*', hasData: false }
+120 silly addNameRange { name: 'grunt-contrib-clean', range: '*', hasData: false }
+121 silly addNameRange { name: 'grunt-preprocess', range: '*', hasData: false }
+122 silly addNameRange { name: 'grunt-git-revision-count', range: '*', hasData: false }
+123 verbose cache add name="grunt-shell" spec="" args=["grunt-shell",""]
+124 verbose parsed url { protocol: null,
+124 verbose parsed url   slashes: null,
+124 verbose parsed url   auth: null,
+124 verbose parsed url   host: null,
+124 verbose parsed url   port: null,
+124 verbose parsed url   hostname: null,
+124 verbose parsed url   hash: null,
+124 verbose parsed url   search: null,
+124 verbose parsed url   query: null,
+124 verbose parsed url   pathname: null,
+124 verbose parsed url   path: null,
+124 verbose parsed url   href: '' }
+125 verbose addNamed [ 'grunt-shell', '' ]
+126 verbose addNamed [ null, '*' ]
+127 silly lockFile 9b13ef1a-grunt-shell grunt-shell@
+128 verbose lock grunt-shell@ /Users/victor/.npm/9b13ef1a-grunt-shell.lock
+129 verbose cache add name="grunt-template" spec="" args=["grunt-template",""]
+130 verbose parsed url { protocol: null,
+130 verbose parsed url   slashes: null,
+130 verbose parsed url   auth: null,
+130 verbose parsed url   host: null,
+130 verbose parsed url   port: null,
+130 verbose parsed url   hostname: null,
+130 verbose parsed url   hash: null,
+130 verbose parsed url   search: null,
+130 verbose parsed url   query: null,
+130 verbose parsed url   pathname: null,
+130 verbose parsed url   path: null,
+130 verbose parsed url   href: '' }
+131 verbose addNamed [ 'grunt-template', '' ]
+132 verbose addNamed [ null, '*' ]
+133 silly lockFile ca2ceda5-grunt-template grunt-template@
+134 verbose lock grunt-template@ /Users/victor/.npm/ca2ceda5-grunt-template.lock
+135 verbose cache add name="grunt" spec="" args=["grunt",""]
+136 verbose parsed url { protocol: null,
+136 verbose parsed url   slashes: null,
+136 verbose parsed url   auth: null,
+136 verbose parsed url   host: null,
+136 verbose parsed url   port: null,
+136 verbose parsed url   hostname: null,
+136 verbose parsed url   hash: null,
+136 verbose parsed url   search: null,
+136 verbose parsed url   query: null,
+136 verbose parsed url   pathname: null,
+136 verbose parsed url   path: null,
+136 verbose parsed url   href: '' }
+137 verbose addNamed [ 'grunt', '' ]
+138 verbose addNamed [ null, '*' ]
+139 silly lockFile 55f1ff24-grunt grunt@
+140 verbose lock grunt@ /Users/victor/.npm/55f1ff24-grunt.lock
+141 silly addNameRange { name: 'grunt-closure-tools', range: '*', hasData: false }
+142 silly addNameRange { name: 'grunt-node-qunit', range: '*', hasData: false }
+143 silly addNameRange { name: 'grunt-wget', range: '*', hasData: false }
+144 info addNameTag [ 'grunt-jsdoc', 'beta' ]
+145 silly addNameRange { name: 'grunt-shell', range: '*', hasData: false }
+146 silly addNameRange { name: 'grunt-template', range: '*', hasData: false }
+147 silly addNameRange { name: 'grunt', range: '*', hasData: false }
+148 verbose request where is /grunt-contrib-nodeunit
+149 verbose request registry https://registry.npmjs.org/
+150 verbose request id 55b5c18d4b22175a
+151 verbose url raw /grunt-contrib-nodeunit
+152 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-contrib-nodeunit' ]
+153 verbose url resolved https://registry.npmjs.org/grunt-contrib-nodeunit
+154 verbose request where is https://registry.npmjs.org/grunt-contrib-nodeunit
+155 info trying registry request attempt 1 at 01:42:35
+156 verbose etag "2176G8IUVHRCYW51V2YOZIEF2"
+157 http GET https://registry.npmjs.org/grunt-contrib-nodeunit
+158 verbose request where is /grunt-contrib-jshint
+159 verbose request registry https://registry.npmjs.org/
+160 verbose url raw /grunt-contrib-jshint
+161 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-contrib-jshint' ]
+162 verbose url resolved https://registry.npmjs.org/grunt-contrib-jshint
+163 verbose request where is https://registry.npmjs.org/grunt-contrib-jshint
+164 info trying registry request attempt 1 at 01:42:35
+165 verbose etag "27GT5HY6TZQHW59TS3JN6Q0AS"
+166 http GET https://registry.npmjs.org/grunt-contrib-jshint
+167 verbose request where is /grunt-contrib-uglify
+168 verbose request registry https://registry.npmjs.org/
+169 verbose url raw /grunt-contrib-uglify
+170 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-contrib-uglify' ]
+171 verbose url resolved https://registry.npmjs.org/grunt-contrib-uglify
+172 verbose request where is https://registry.npmjs.org/grunt-contrib-uglify
+173 info trying registry request attempt 1 at 01:42:35
+174 verbose etag "DGBINNHCV2CH4JZ1V5UG62FDS"
+175 http GET https://registry.npmjs.org/grunt-contrib-uglify
+176 verbose request where is /grunt-contrib-concat
+177 verbose request registry https://registry.npmjs.org/
+178 verbose url raw /grunt-contrib-concat
+179 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-contrib-concat' ]
+180 verbose url resolved https://registry.npmjs.org/grunt-contrib-concat
+181 verbose request where is https://registry.npmjs.org/grunt-contrib-concat
+182 info trying registry request attempt 1 at 01:42:35
+183 verbose etag "CTLWQBD0HAPX7055V7ICM92DS"
+184 http GET https://registry.npmjs.org/grunt-contrib-concat
+185 verbose request where is /grunt-contrib-clean
+186 verbose request registry https://registry.npmjs.org/
+187 verbose url raw /grunt-contrib-clean
+188 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-contrib-clean' ]
+189 verbose url resolved https://registry.npmjs.org/grunt-contrib-clean
+190 verbose request where is https://registry.npmjs.org/grunt-contrib-clean
+191 info trying registry request attempt 1 at 01:42:35
+192 verbose etag "5EHZIP1JCM5GJ00N02L5Y8SOS"
+193 http GET https://registry.npmjs.org/grunt-contrib-clean
+194 verbose request where is /grunt-git-revision-count
+195 verbose request registry https://registry.npmjs.org/
+196 verbose url raw /grunt-git-revision-count
+197 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-git-revision-count' ]
+198 verbose url resolved https://registry.npmjs.org/grunt-git-revision-count
+199 verbose request where is https://registry.npmjs.org/grunt-git-revision-count
+200 info trying registry request attempt 1 at 01:42:36
+201 verbose etag "1HPZXIV7Q49QHM0OCKV1GVNIM"
+202 http GET https://registry.npmjs.org/grunt-git-revision-count
+203 verbose request where is /grunt-preprocess
+204 verbose request registry https://registry.npmjs.org/
+205 verbose url raw /grunt-preprocess
+206 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-preprocess' ]
+207 verbose url resolved https://registry.npmjs.org/grunt-preprocess
+208 verbose request where is https://registry.npmjs.org/grunt-preprocess
+209 info trying registry request attempt 1 at 01:42:36
+210 verbose etag "669BQ82OXGAZG40PC5C4W2CDA"
+211 http GET https://registry.npmjs.org/grunt-preprocess
+212 verbose request where is /grunt-closure-tools
+213 verbose request registry https://registry.npmjs.org/
+214 verbose url raw /grunt-closure-tools
+215 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-closure-tools' ]
+216 verbose url resolved https://registry.npmjs.org/grunt-closure-tools
+217 verbose request where is https://registry.npmjs.org/grunt-closure-tools
+218 info trying registry request attempt 1 at 01:42:36
+219 verbose etag "BKURXPYOP1AA9Y7SQAJZIO5UG"
+220 http GET https://registry.npmjs.org/grunt-closure-tools
+221 verbose request where is /grunt-node-qunit
+222 verbose request registry https://registry.npmjs.org/
+223 verbose url raw /grunt-node-qunit
+224 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-node-qunit' ]
+225 verbose url resolved https://registry.npmjs.org/grunt-node-qunit
+226 verbose request where is https://registry.npmjs.org/grunt-node-qunit
+227 info trying registry request attempt 1 at 01:42:36
+228 verbose etag "1OOU747LHTEUFUS8M9ZZOB09T"
+229 http GET https://registry.npmjs.org/grunt-node-qunit
+230 verbose request where is /grunt-wget
+231 verbose request registry https://registry.npmjs.org/
+232 verbose url raw /grunt-wget
+233 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-wget' ]
+234 verbose url resolved https://registry.npmjs.org/grunt-wget
+235 verbose request where is https://registry.npmjs.org/grunt-wget
+236 info trying registry request attempt 1 at 01:42:36
+237 verbose etag "49TDSJZV663LIPF0VWG4J2YCH"
+238 http GET https://registry.npmjs.org/grunt-wget
+239 verbose request where is /grunt-jsdoc
+240 verbose request registry https://registry.npmjs.org/
+241 verbose url raw /grunt-jsdoc
+242 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-jsdoc' ]
+243 verbose url resolved https://registry.npmjs.org/grunt-jsdoc
+244 verbose request where is https://registry.npmjs.org/grunt-jsdoc
+245 info trying registry request attempt 1 at 01:42:36
+246 verbose etag "1ODIA0QR7ZPFOF4KTAKUGWAA"
+247 http GET https://registry.npmjs.org/grunt-jsdoc
+248 verbose request where is /grunt-template
+249 verbose request registry https://registry.npmjs.org/
+250 verbose url raw /grunt-template
+251 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-template' ]
+252 verbose url resolved https://registry.npmjs.org/grunt-template
+253 verbose request where is https://registry.npmjs.org/grunt-template
+254 info trying registry request attempt 1 at 01:42:36
+255 verbose etag "65BCHW3MJ5V2MVSJBGS2CQTF"
+256 http GET https://registry.npmjs.org/grunt-template
+257 verbose request where is /grunt-shell
+258 verbose request registry https://registry.npmjs.org/
+259 verbose url raw /grunt-shell
+260 verbose url resolving [ 'https://registry.npmjs.org/', './grunt-shell' ]
+261 verbose url resolved https://registry.npmjs.org/grunt-shell
+262 verbose request where is https://registry.npmjs.org/grunt-shell
+263 info trying registry request attempt 1 at 01:42:36
+264 verbose etag "EQM234DFO0VWFFO6TMMDUSMX9"
+265 http GET https://registry.npmjs.org/grunt-shell
+266 verbose request where is /grunt
+267 verbose request registry https://registry.npmjs.org/
+268 verbose url raw /grunt
+269 verbose url resolving [ 'https://registry.npmjs.org/', './grunt' ]
+270 verbose url resolved https://registry.npmjs.org/grunt
+271 verbose request where is https://registry.npmjs.org/grunt
+272 info trying registry request attempt 1 at 01:42:36
+273 verbose etag "9UNXQBDWNSVW3HVYRPKWOKQXV"
+274 http GET https://registry.npmjs.org/grunt
+275 http 304 https://registry.npmjs.org/grunt-contrib-nodeunit
+276 silly registry.get cb [ 304,
+276 silly registry.get   { date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+276 silly registry.get     via: '1.1 varnish',
+276 silly registry.get     'cache-control': 'max-age=60',
+276 silly registry.get     etag: '"2176G8IUVHRCYW51V2YOZIEF2"',
+276 silly registry.get     age: '0',
+276 silly registry.get     connection: 'keep-alive',
+276 silly registry.get     'x-served-by': 'cache-atl6224-ATL',
+276 silly registry.get     'x-cache': 'HIT',
+276 silly registry.get     'x-cache-hits': '1',
+276 silly registry.get     'x-timer': 'S1433914956.021863,VS0,VE27',
+276 silly registry.get     vary: 'Accept' } ]
+277 verbose etag https://registry.npmjs.org/grunt-contrib-nodeunit from cache
+278 http 200 https://registry.npmjs.org/grunt-contrib-clean
+279 silly registry.get cb [ 200,
+279 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+279 silly registry.get     etag: '"7PCJ1O4AL08R7TZSLSBZ2360Y"',
+279 silly registry.get     'content-type': 'application/json',
+279 silly registry.get     'cache-control': 'max-age=60',
+279 silly registry.get     'content-length': '23453',
+279 silly registry.get     'accept-ranges': 'bytes',
+279 silly registry.get     date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+279 silly registry.get     via: '1.1 varnish',
+279 silly registry.get     age: '58',
+279 silly registry.get     connection: 'keep-alive',
+279 silly registry.get     'x-served-by': 'cache-atl6230-ATL',
+279 silly registry.get     'x-cache': 'HIT',
+279 silly registry.get     'x-cache-hits': '2',
+279 silly registry.get     'x-timer': 'S1433914956.023209,VS0,VE0',
+279 silly registry.get     vary: 'Accept' } ]
+280 silly addNameRange number 2 { name: 'grunt-contrib-clean', range: '*', hasData: true }
+281 silly addNameRange versions [ 'grunt-contrib-clean',
+281 silly addNameRange   [ '0.1.0',
+281 silly addNameRange     '0.2.0',
+281 silly addNameRange     '0.3.0',
+281 silly addNameRange     '0.3.1',
+281 silly addNameRange     '0.3.2',
+281 silly addNameRange     '0.4.0',
+281 silly addNameRange     '0.4.1',
+281 silly addNameRange     '0.5.0',
+281 silly addNameRange     '0.6.0',
+281 silly addNameRange     '0.4.0-a',
+281 silly addNameRange     '0.4.0-rc5',
+281 silly addNameRange     '0.4.0-rc6' ] ]
+282 verbose addNamed [ 'grunt-contrib-clean', '0.6.0' ]
+283 verbose addNamed [ '0.6.0', '0.6.0' ]
+284 silly lockFile 0a668ef6-grunt-contrib-clean-0-6-0 grunt-contrib-clean@0.6.0
+285 verbose lock grunt-contrib-clean@0.6.0 /Users/victor/.npm/0a668ef6-grunt-contrib-clean-0-6-0.lock
+286 silly addNameRange number 2 { name: 'grunt-contrib-nodeunit', range: '*', hasData: true }
+287 silly addNameRange versions [ 'grunt-contrib-nodeunit',
+287 silly addNameRange   [ '0.1.0',
+287 silly addNameRange     '0.1.1',
+287 silly addNameRange     '0.1.2',
+287 silly addNameRange     '0.2.0',
+287 silly addNameRange     '0.2.1',
+287 silly addNameRange     '0.2.2',
+287 silly addNameRange     '0.3.0',
+287 silly addNameRange     '0.1.2-rc5',
+287 silly addNameRange     '0.1.2-rc6',
+287 silly addNameRange     '0.3.1',
+287 silly addNameRange     '0.3.2',
+287 silly addNameRange     '0.3.3',
+287 silly addNameRange     '0.4.0',
+287 silly addNameRange     '0.4.1' ] ]
+288 verbose addNamed [ 'grunt-contrib-nodeunit', '0.4.1' ]
+289 verbose addNamed [ '0.4.1', '0.4.1' ]
+290 silly lockFile 3261ce55-grunt-contrib-nodeunit-0-4-1 grunt-contrib-nodeunit@0.4.1
+291 verbose lock grunt-contrib-nodeunit@0.4.1 /Users/victor/.npm/3261ce55-grunt-contrib-nodeunit-0-4-1.lock
+292 silly lockFile 0a668ef6-grunt-contrib-clean-0-6-0 grunt-contrib-clean@0.6.0
+293 silly lockFile 0a668ef6-grunt-contrib-clean-0-6-0 grunt-contrib-clean@0.6.0
+294 silly lockFile 3261ce55-grunt-contrib-nodeunit-0-4-1 grunt-contrib-nodeunit@0.4.1
+295 silly lockFile 3261ce55-grunt-contrib-nodeunit-0-4-1 grunt-contrib-nodeunit@0.4.1
+296 silly lockFile 8bff91c3-grunt-contrib-clean grunt-contrib-clean@
+297 silly lockFile 8bff91c3-grunt-contrib-clean grunt-contrib-clean@
+298 silly lockFile 6e65465f-grunt-contrib-nodeunit grunt-contrib-nodeunit@
+299 silly lockFile 6e65465f-grunt-contrib-nodeunit grunt-contrib-nodeunit@
+300 http 200 https://registry.npmjs.org/grunt-contrib-concat
+301 silly registry.get cb [ 200,
+301 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+301 silly registry.get     etag: '"1QMR97Q6EA4ILR7008IZ3JBRZ"',
+301 silly registry.get     'content-type': 'application/json',
+301 silly registry.get     'cache-control': 'max-age=60',
+301 silly registry.get     'content-length': '29969',
+301 silly registry.get     'accept-ranges': 'bytes',
+301 silly registry.get     date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+301 silly registry.get     via: '1.1 varnish',
+301 silly registry.get     age: '29',
+301 silly registry.get     connection: 'keep-alive',
+301 silly registry.get     'x-served-by': 'cache-atl6227-ATL',
+301 silly registry.get     'x-cache': 'HIT',
+301 silly registry.get     'x-cache-hits': '1',
+301 silly registry.get     'x-timer': 'S1433914956.011139,VS0,VE1',
+301 silly registry.get     vary: 'Accept' } ]
+302 silly addNameRange number 2 { name: 'grunt-contrib-concat', range: '*', hasData: true }
+303 silly addNameRange versions [ 'grunt-contrib-concat',
+303 silly addNameRange   [ '0.1.0',
+303 silly addNameRange     '0.1.1',
+303 silly addNameRange     '0.1.2',
+303 silly addNameRange     '0.1.3',
+303 silly addNameRange     '0.2.0',
+303 silly addNameRange     '0.3.0',
+303 silly addNameRange     '0.4.0',
+303 silly addNameRange     '0.5.0',
+303 silly addNameRange     '0.5.1',
+303 silly addNameRange     '0.1.2-rc5',
+303 silly addNameRange     '0.1.2-rc6' ] ]
+304 verbose addNamed [ 'grunt-contrib-concat', '0.5.1' ]
+305 verbose addNamed [ '0.5.1', '0.5.1' ]
+306 silly lockFile 63a362d5-grunt-contrib-concat-0-5-1 grunt-contrib-concat@0.5.1
+307 verbose lock grunt-contrib-concat@0.5.1 /Users/victor/.npm/63a362d5-grunt-contrib-concat-0-5-1.lock
+308 silly lockFile 63a362d5-grunt-contrib-concat-0-5-1 grunt-contrib-concat@0.5.1
+309 silly lockFile 63a362d5-grunt-contrib-concat-0-5-1 grunt-contrib-concat@0.5.1
+310 silly lockFile 9f2aab3b-grunt-contrib-concat grunt-contrib-concat@
+311 silly lockFile 9f2aab3b-grunt-contrib-concat grunt-contrib-concat@
+312 http 200 https://registry.npmjs.org/grunt-contrib-jshint
+313 silly registry.get cb [ 200,
+313 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+313 silly registry.get     etag: '"1RUBNR2E5X67G0M2WOQBEBGH6"',
+313 silly registry.get     'content-type': 'application/json',
+313 silly registry.get     'cache-control': 'max-age=60',
+313 silly registry.get     'content-length': '59147',
+313 silly registry.get     'accept-ranges': 'bytes',
+313 silly registry.get     date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+313 silly registry.get     via: '1.1 varnish',
+313 silly registry.get     age: '36',
+313 silly registry.get     connection: 'keep-alive',
+313 silly registry.get     'x-served-by': 'cache-atl6223-ATL',
+313 silly registry.get     'x-cache': 'HIT',
+313 silly registry.get     'x-cache-hits': '2',
+313 silly registry.get     'x-timer': 'S1433914956.012480,VS0,VE0',
+313 silly registry.get     vary: 'Accept' } ]
+314 http 200 https://registry.npmjs.org/grunt-contrib-uglify
+315 silly registry.get cb [ 200,
+315 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+315 silly registry.get     etag: '"B39K1H581ENPTYS2SXLK6V17W"',
+315 silly registry.get     'content-type': 'application/json',
+315 silly registry.get     'cache-control': 'max-age=60',
+315 silly registry.get     'content-length': '65689',
+315 silly registry.get     'accept-ranges': 'bytes',
+315 silly registry.get     date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+315 silly registry.get     via: '1.1 varnish',
+315 silly registry.get     age: '35',
+315 silly registry.get     connection: 'keep-alive',
+315 silly registry.get     'x-served-by': 'cache-atl6232-ATL',
+315 silly registry.get     'x-cache': 'HIT',
+315 silly registry.get     'x-cache-hits': '14',
+315 silly registry.get     'x-timer': 'S1433914956.016701,VS0,VE0',
+315 silly registry.get     vary: 'Accept' } ]
+316 silly addNameRange number 2 { name: 'grunt-contrib-jshint', range: '*', hasData: true }
+317 silly addNameRange versions [ 'grunt-contrib-jshint',
+317 silly addNameRange   [ '0.1.0',
+317 silly addNameRange     '0.1.1',
+317 silly addNameRange     '0.2.0',
+317 silly addNameRange     '0.3.0',
+317 silly addNameRange     '0.4.0',
+317 silly addNameRange     '0.4.1',
+317 silly addNameRange     '0.4.2',
+317 silly addNameRange     '0.4.3',
+317 silly addNameRange     '0.5.0',
+317 silly addNameRange     '0.5.1',
+317 silly addNameRange     '0.5.2',
+317 silly addNameRange     '0.5.3',
+317 silly addNameRange     '0.5.4',
+317 silly addNameRange     '0.6.0',
+317 silly addNameRange     '0.6.1',
+317 silly addNameRange     '0.6.2',
+317 silly addNameRange     '0.6.3',
+317 silly addNameRange     '0.6.4',
+317 silly addNameRange     '0.6.5',
+317 silly addNameRange     '0.7.0',
+317 silly addNameRange     '0.7.1',
+317 silly addNameRange     '0.7.2',
+317 silly addNameRange     '0.8.0',
+317 silly addNameRange     '0.9.0',
+317 silly addNameRange     '0.9.1',
+317 silly addNameRange     '0.9.2',
+317 silly addNameRange     '0.10.0',
+317 silly addNameRange     '0.11.0',
+317 silly addNameRange     '0.11.1',
+317 silly addNameRange     '0.11.2',
+317 silly addNameRange     '0.1.1-rc5',
+317 silly addNameRange     '0.1.1-rc6' ] ]
+318 verbose addNamed [ 'grunt-contrib-jshint', '0.11.2' ]
+319 verbose addNamed [ '0.11.2', '0.11.2' ]
+320 silly lockFile 53316110-grunt-contrib-jshint-0-11-2 grunt-contrib-jshint@0.11.2
+321 verbose lock grunt-contrib-jshint@0.11.2 /Users/victor/.npm/53316110-grunt-contrib-jshint-0-11-2.lock
+322 silly addNameRange number 2 { name: 'grunt-contrib-uglify', range: '*', hasData: true }
+323 silly addNameRange versions [ 'grunt-contrib-uglify',
+323 silly addNameRange   [ '0.1.0',
+323 silly addNameRange     '0.1.1',
+323 silly addNameRange     '0.1.2',
+323 silly addNameRange     '0.2.0',
+323 silly addNameRange     '0.2.1',
+323 silly addNameRange     '0.2.2',
+323 silly addNameRange     '0.2.3',
+323 silly addNameRange     '0.2.4',
+323 silly addNameRange     '0.2.5',
+323 silly addNameRange     '0.2.6',
+323 silly addNameRange     '0.2.7',
+323 silly addNameRange     '0.3.0',
+323 silly addNameRange     '0.3.1',
+323 silly addNameRange     '0.1.1-rc5',
+323 silly addNameRange     '0.1.1-rc6',
+323 silly addNameRange     '0.3.2',
+323 silly addNameRange     '0.3.3',
+323 silly addNameRange     '0.4.0',
+323 silly addNameRange     '0.5.0',
+323 silly addNameRange     '0.4.1',
+323 silly addNameRange     '0.5.1',
+323 silly addNameRange     '0.6.0',
+323 silly addNameRange     '0.7.0',
+323 silly addNameRange     '0.8.0',
+323 silly addNameRange     '0.8.1',
+323 silly addNameRange     '0.9.0',
+323 silly addNameRange     '0.9.1' ] ]
+324 verbose addNamed [ 'grunt-contrib-uglify', '0.9.1' ]
+325 verbose addNamed [ '0.9.1', '0.9.1' ]
+326 silly lockFile 59c70bbc-grunt-contrib-uglify-0-9-1 grunt-contrib-uglify@0.9.1
+327 verbose lock grunt-contrib-uglify@0.9.1 /Users/victor/.npm/59c70bbc-grunt-contrib-uglify-0-9-1.lock
+328 silly lockFile 53316110-grunt-contrib-jshint-0-11-2 grunt-contrib-jshint@0.11.2
+329 silly lockFile 53316110-grunt-contrib-jshint-0-11-2 grunt-contrib-jshint@0.11.2
+330 silly lockFile c28ce841-grunt-contrib-jshint grunt-contrib-jshint@
+331 silly lockFile c28ce841-grunt-contrib-jshint grunt-contrib-jshint@
+332 silly lockFile 59c70bbc-grunt-contrib-uglify-0-9-1 grunt-contrib-uglify@0.9.1
+333 silly lockFile 59c70bbc-grunt-contrib-uglify-0-9-1 grunt-contrib-uglify@0.9.1
+334 silly lockFile 1f4692e4-grunt-contrib-uglify grunt-contrib-uglify@
+335 silly lockFile 1f4692e4-grunt-contrib-uglify grunt-contrib-uglify@
+336 http 304 https://registry.npmjs.org/grunt-preprocess
+337 silly registry.get cb [ 304,
+337 silly registry.get   { date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+337 silly registry.get     via: '1.1 varnish',
+337 silly registry.get     'cache-control': 'max-age=60',
+337 silly registry.get     etag: '"669BQ82OXGAZG40PC5C4W2CDA"',
+337 silly registry.get     age: '0',
+337 silly registry.get     connection: 'keep-alive',
+337 silly registry.get     'x-served-by': 'cache-atl6230-ATL',
+337 silly registry.get     'x-cache': 'MISS',
+337 silly registry.get     'x-cache-hits': '0',
+337 silly registry.get     'x-timer': 'S1433914956.098833,VS0,VE67',
+337 silly registry.get     vary: 'Accept' } ]
+338 verbose etag https://registry.npmjs.org/grunt-preprocess from cache
+339 silly addNameRange number 2 { name: 'grunt-preprocess', range: '*', hasData: true }
+340 silly addNameRange versions [ 'grunt-preprocess',
+340 silly addNameRange   [ '0.1.0',
+340 silly addNameRange     '0.2.0',
+340 silly addNameRange     '0.2.1',
+340 silly addNameRange     '0.3.0',
+340 silly addNameRange     '0.4.0',
+340 silly addNameRange     '1.0.0',
+340 silly addNameRange     '1.2.0',
+340 silly addNameRange     '1.2.1',
+340 silly addNameRange     '1.3.0',
+340 silly addNameRange     '1.4.0',
+340 silly addNameRange     '2.0.0',
+340 silly addNameRange     '2.1.0',
+340 silly addNameRange     '2.2.0',
+340 silly addNameRange     '2.3.0',
+340 silly addNameRange     '3.0.0',
+340 silly addNameRange     '3.0.1',
+340 silly addNameRange     '4.0.0',
+340 silly addNameRange     '4.1.0' ] ]
+341 verbose addNamed [ 'grunt-preprocess', '4.1.0' ]
+342 verbose addNamed [ '4.1.0', '4.1.0' ]
+343 silly lockFile 7549f94b-grunt-preprocess-4-1-0 grunt-preprocess@4.1.0
+344 verbose lock grunt-preprocess@4.1.0 /Users/victor/.npm/7549f94b-grunt-preprocess-4-1-0.lock
+345 silly lockFile 7549f94b-grunt-preprocess-4-1-0 grunt-preprocess@4.1.0
+346 silly lockFile 7549f94b-grunt-preprocess-4-1-0 grunt-preprocess@4.1.0
+347 silly lockFile 01c0bc23-grunt-preprocess grunt-preprocess@
+348 silly lockFile 01c0bc23-grunt-preprocess grunt-preprocess@
+349 http 304 https://registry.npmjs.org/grunt-git-revision-count
+350 silly registry.get cb [ 304,
+350 silly registry.get   { date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+350 silly registry.get     via: '1.1 varnish',
+350 silly registry.get     'cache-control': 'max-age=60',
+350 silly registry.get     etag: '"1HPZXIV7Q49QHM0OCKV1GVNIM"',
+350 silly registry.get     age: '0',
+350 silly registry.get     connection: 'keep-alive',
+350 silly registry.get     'x-served-by': 'cache-atl6224-ATL',
+350 silly registry.get     'x-cache': 'MISS',
+350 silly registry.get     'x-cache-hits': '0',
+350 silly registry.get     'x-timer': 'S1433914956.090978,VS0,VE81',
+350 silly registry.get     vary: 'Accept' } ]
+351 verbose etag https://registry.npmjs.org/grunt-git-revision-count from cache
+352 silly addNameRange number 2 { name: 'grunt-git-revision-count', range: '*', hasData: true }
+353 silly addNameRange versions [ 'grunt-git-revision-count', [ '0.0.1' ] ]
+354 verbose addNamed [ 'grunt-git-revision-count', '0.0.1' ]
+355 verbose addNamed [ '0.0.1', '0.0.1' ]
+356 silly lockFile 509298d2-grunt-git-revision-count-0-0-1 grunt-git-revision-count@0.0.1
+357 verbose lock grunt-git-revision-count@0.0.1 /Users/victor/.npm/509298d2-grunt-git-revision-count-0-0-1.lock
+358 silly lockFile 509298d2-grunt-git-revision-count-0-0-1 grunt-git-revision-count@0.0.1
+359 silly lockFile 509298d2-grunt-git-revision-count-0-0-1 grunt-git-revision-count@0.0.1
+360 silly lockFile 18489407-grunt-git-revision-count grunt-git-revision-count@
+361 silly lockFile 18489407-grunt-git-revision-count grunt-git-revision-count@
+362 http 304 https://registry.npmjs.org/grunt-wget
+363 silly registry.get cb [ 304,
+363 silly registry.get   { date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+363 silly registry.get     via: '1.1 varnish',
+363 silly registry.get     'cache-control': 'max-age=60',
+363 silly registry.get     etag: '"49TDSJZV663LIPF0VWG4J2YCH"',
+363 silly registry.get     age: '0',
+363 silly registry.get     connection: 'keep-alive',
+363 silly registry.get     'x-served-by': 'cache-atl6232-ATL',
+363 silly registry.get     'x-cache': 'MISS',
+363 silly registry.get     'x-cache-hits': '0',
+363 silly registry.get     'x-timer': 'S1433914956.161827,VS0,VE33',
+363 silly registry.get     vary: 'Accept' } ]
+364 verbose etag https://registry.npmjs.org/grunt-wget from cache
+365 silly addNameRange number 2 { name: 'grunt-wget', range: '*', hasData: true }
+366 silly addNameRange versions [ 'grunt-wget',
+366 silly addNameRange   [ '0.0.1', '0.1.0', '0.1.1', '0.1.2', '0.1.3' ] ]
+367 verbose addNamed [ 'grunt-wget', '0.1.3' ]
+368 verbose addNamed [ '0.1.3', '0.1.3' ]
+369 silly lockFile bd1fde34-grunt-wget-0-1-3 grunt-wget@0.1.3
+370 verbose lock grunt-wget@0.1.3 /Users/victor/.npm/bd1fde34-grunt-wget-0-1-3.lock
+371 silly lockFile bd1fde34-grunt-wget-0-1-3 grunt-wget@0.1.3
+372 silly lockFile bd1fde34-grunt-wget-0-1-3 grunt-wget@0.1.3
+373 silly lockFile c5d0fddf-grunt-wget grunt-wget@
+374 silly lockFile c5d0fddf-grunt-wget grunt-wget@
+375 http 304 https://registry.npmjs.org/grunt-node-qunit
+376 silly registry.get cb [ 304,
+376 silly registry.get   { date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+376 silly registry.get     via: '1.1 varnish',
+376 silly registry.get     'cache-control': 'max-age=60',
+376 silly registry.get     etag: '"1OOU747LHTEUFUS8M9ZZOB09T"',
+376 silly registry.get     age: '0',
+376 silly registry.get     connection: 'keep-alive',
+376 silly registry.get     'x-served-by': 'cache-atl6223-ATL',
+376 silly registry.get     'x-cache': 'MISS',
+376 silly registry.get     'x-cache-hits': '0',
+376 silly registry.get     'x-timer': 'S1433914956.157498,VS0,VE47',
+376 silly registry.get     vary: 'Accept' } ]
+377 verbose etag https://registry.npmjs.org/grunt-node-qunit from cache
+378 silly addNameRange number 2 { name: 'grunt-node-qunit', range: '*', hasData: true }
+379 silly addNameRange versions [ 'grunt-node-qunit',
+379 silly addNameRange   [ '0.0.6',
+379 silly addNameRange     '0.0.3',
+379 silly addNameRange     '0.1.0',
+379 silly addNameRange     '0.1.1',
+379 silly addNameRange     '1.0.0',
+379 silly addNameRange     '2.0.0',
+379 silly addNameRange     '2.0.1',
+379 silly addNameRange     '2.0.2' ] ]
+380 verbose addNamed [ 'grunt-node-qunit', '2.0.2' ]
+381 verbose addNamed [ '2.0.2', '2.0.2' ]
+382 silly lockFile 4bd844b1-grunt-node-qunit-2-0-2 grunt-node-qunit@2.0.2
+383 verbose lock grunt-node-qunit@2.0.2 /Users/victor/.npm/4bd844b1-grunt-node-qunit-2-0-2.lock
+384 silly lockFile 4bd844b1-grunt-node-qunit-2-0-2 grunt-node-qunit@2.0.2
+385 silly lockFile 4bd844b1-grunt-node-qunit-2-0-2 grunt-node-qunit@2.0.2
+386 silly lockFile 3c65f2f4-grunt-node-qunit grunt-node-qunit@
+387 silly lockFile 3c65f2f4-grunt-node-qunit grunt-node-qunit@
+388 http 304 https://registry.npmjs.org/grunt-jsdoc
+389 silly registry.get cb [ 304,
+389 silly registry.get   { date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+389 silly registry.get     via: '1.1 varnish',
+389 silly registry.get     'cache-control': 'max-age=60',
+389 silly registry.get     etag: '"1ODIA0QR7ZPFOF4KTAKUGWAA"',
+389 silly registry.get     age: '0',
+389 silly registry.get     connection: 'keep-alive',
+389 silly registry.get     'x-served-by': 'cache-atl6230-ATL',
+389 silly registry.get     'x-cache': 'HIT',
+389 silly registry.get     'x-cache-hits': '1',
+389 silly registry.get     'x-timer': 'S1433914956.202483,VS0,VE27',
+389 silly registry.get     vary: 'Accept' } ]
+390 verbose etag https://registry.npmjs.org/grunt-jsdoc from cache
+391 silly lockFile 184cca73-grunt-jsdoc-beta grunt-jsdoc@beta
+392 silly lockFile 184cca73-grunt-jsdoc-beta grunt-jsdoc@beta
+393 http 200 https://registry.npmjs.org/grunt-shell
+394 silly registry.get cb [ 200,
+394 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+394 silly registry.get     etag: '"CB9NBPEH7P2BYT1BOP12H9AKU"',
+394 silly registry.get     'content-type': 'application/json',
+394 silly registry.get     'cache-control': 'max-age=60',
+394 silly registry.get     'content-length': '28701',
+394 silly registry.get     'accept-ranges': 'bytes',
+394 silly registry.get     date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+394 silly registry.get     via: '1.1 varnish',
+394 silly registry.get     age: '41',
+394 silly registry.get     connection: 'keep-alive',
+394 silly registry.get     'x-served-by': 'cache-atl6232-ATL',
+394 silly registry.get     'x-cache': 'HIT',
+394 silly registry.get     'x-cache-hits': '2',
+394 silly registry.get     'x-timer': 'S1433914956.234639,VS0,VE0',
+394 silly registry.get     vary: 'Accept' } ]
+395 silly addNameRange number 2 { name: 'grunt-shell', range: '*', hasData: true }
+396 silly addNameRange versions [ 'grunt-shell',
+396 silly addNameRange   [ '0.1.0',
+396 silly addNameRange     '0.1.1',
+396 silly addNameRange     '0.1.2',
+396 silly addNameRange     '0.1.3',
+396 silly addNameRange     '0.1.4',
+396 silly addNameRange     '0.2.0',
+396 silly addNameRange     '0.2.1',
+396 silly addNameRange     '0.2.2',
+396 silly addNameRange     '0.3.0',
+396 silly addNameRange     '0.3.1',
+396 silly addNameRange     '0.4.0',
+396 silly addNameRange     '0.5.0',
+396 silly addNameRange     '0.6.0',
+396 silly addNameRange     '0.6.1',
+396 silly addNameRange     '0.6.2',
+396 silly addNameRange     '0.6.4',
+396 silly addNameRange     '0.7.0',
+396 silly addNameRange     '1.0.0',
+396 silly addNameRange     '1.0.1',
+396 silly addNameRange     '1.1.0',
+396 silly addNameRange     '1.1.1',
+396 silly addNameRange     '1.1.2' ] ]
+397 verbose addNamed [ 'grunt-shell', '1.1.2' ]
+398 verbose addNamed [ '1.1.2', '1.1.2' ]
+399 silly lockFile 33ce2e0a-grunt-shell-1-1-2 grunt-shell@1.1.2
+400 verbose lock grunt-shell@1.1.2 /Users/victor/.npm/33ce2e0a-grunt-shell-1-1-2.lock
+401 silly lockFile 33ce2e0a-grunt-shell-1-1-2 grunt-shell@1.1.2
+402 silly lockFile 33ce2e0a-grunt-shell-1-1-2 grunt-shell@1.1.2
+403 silly lockFile 9b13ef1a-grunt-shell grunt-shell@
+404 silly lockFile 9b13ef1a-grunt-shell grunt-shell@
+405 http 200 https://registry.npmjs.org/grunt-closure-tools
+406 silly registry.get cb [ 200,
+406 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+406 silly registry.get     etag: '"23Y2PFPX5PYADT7FE53VW4C6W"',
+406 silly registry.get     'content-type': 'application/json',
+406 silly registry.get     'cache-control': 'max-age=60',
+406 silly registry.get     'content-length': '68288',
+406 silly registry.get     'accept-ranges': 'bytes',
+406 silly registry.get     date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+406 silly registry.get     via: '1.1 varnish',
+406 silly registry.get     age: '0',
+406 silly registry.get     connection: 'keep-alive',
+406 silly registry.get     'x-served-by': 'cache-atl6227-ATL',
+406 silly registry.get     'x-cache': 'MISS',
+406 silly registry.get     'x-cache-hits': '0',
+406 silly registry.get     'x-timer': 'S1433914956.122183,VS0,VE88',
+406 silly registry.get     vary: 'Accept' } ]
+407 silly addNameRange number 2 { name: 'grunt-closure-tools', range: '*', hasData: true }
+408 silly addNameRange versions [ 'grunt-closure-tools',
+408 silly addNameRange   [ '0.5.1',
+408 silly addNameRange     '0.6.0',
+408 silly addNameRange     '0.6.1',
+408 silly addNameRange     '0.6.3',
+408 silly addNameRange     '0.6.5',
+408 silly addNameRange     '0.6.6',
+408 silly addNameRange     '0.6.7',
+408 silly addNameRange     '0.6.8',
+408 silly addNameRange     '0.6.9',
+408 silly addNameRange     '0.6.10',
+408 silly addNameRange     '0.6.11',
+408 silly addNameRange     '0.6.12',
+408 silly addNameRange     '0.6.13',
+408 silly addNameRange     '0.7.0',
+408 silly addNameRange     '0.7.1',
+408 silly addNameRange     '0.7.2',
+408 silly addNameRange     '0.7.3',
+408 silly addNameRange     '0.7.5',
+408 silly addNameRange     '0.7.6',
+408 silly addNameRange     '0.7.7',
+408 silly addNameRange     '0.8.0',
+408 silly addNameRange     '0.8.1',
+408 silly addNameRange     '0.8.2',
+408 silly addNameRange     '0.8.3',
+408 silly addNameRange     '0.8.4',
+408 silly addNameRange     '0.8.5',
+408 silly addNameRange     '0.8.6',
+408 silly addNameRange     '0.8.7',
+408 silly addNameRange     '0.9.0',
+408 silly addNameRange     '0.9.2',
+408 silly addNameRange     '0.9.3',
+408 silly addNameRange     '0.9.4',
+408 silly addNameRange     '0.9.5',
+408 silly addNameRange     '0.9.6',
+408 silly addNameRange     '0.9.7',
+408 silly addNameRange     '0.9.8',
+408 silly addNameRange     '0.9.9' ] ]
+409 verbose addNamed [ 'grunt-closure-tools', '0.9.9' ]
+410 verbose addNamed [ '0.9.9', '0.9.9' ]
+411 silly lockFile 3ed30265-grunt-closure-tools-0-9-9 grunt-closure-tools@0.9.9
+412 verbose lock grunt-closure-tools@0.9.9 /Users/victor/.npm/3ed30265-grunt-closure-tools-0-9-9.lock
+413 silly lockFile 8daf1efd-ls-grunt-closure-tools-0-9-9-tgz https://registry.npmjs.org/grunt-closure-tools/-/grunt-closure-tools-0.9.9.tgz
+414 verbose lock https://registry.npmjs.org/grunt-closure-tools/-/grunt-closure-tools-0.9.9.tgz /Users/victor/.npm/8daf1efd-ls-grunt-closure-tools-0-9-9-tgz.lock
+415 verbose addRemoteTarball [ 'https://registry.npmjs.org/grunt-closure-tools/-/grunt-closure-tools-0.9.9.tgz',
+415 verbose addRemoteTarball   'd2272588934dfd4d1f0006bea5f95e4ebe30eb6e' ]
+416 info retry fetch attempt 1 at 01:42:36
+417 verbose fetch to= /var/folders/wz/d4z3m0yn2jl0mmq6kg1ggb8m0000gn/T/npm-18154-dCDt3f0A/registry.npmjs.org/grunt-closure-tools/-/grunt-closure-tools-0.9.9.tgz
+418 http GET https://registry.npmjs.org/grunt-closure-tools/-/grunt-closure-tools-0.9.9.tgz
+419 http 200 https://registry.npmjs.org/grunt
+420 silly registry.get cb [ 200,
+420 silly registry.get   { server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+420 silly registry.get     etag: '"DJXYUPDCMD3UOM4MZEK8FCIMH"',
+420 silly registry.get     'content-type': 'application/json',
+420 silly registry.get     'cache-control': 'max-age=60',
+420 silly registry.get     'content-length': '89426',
+420 silly registry.get     'accept-ranges': 'bytes',
+420 silly registry.get     date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+420 silly registry.get     via: '1.1 varnish',
+420 silly registry.get     age: '0',
+420 silly registry.get     connection: 'keep-alive',
+420 silly registry.get     'x-served-by': 'cache-atl6223-ATL',
+420 silly registry.get     'x-cache': 'HIT',
+420 silly registry.get     'x-cache-hits': '1',
+420 silly registry.get     'x-timer': 'S1433914956.248794,VS0,VE30',
+420 silly registry.get     vary: 'Accept' } ]
+421 silly addNameRange number 2 { name: 'grunt', range: '*', hasData: true }
+422 silly addNameRange versions [ 'grunt',
+422 silly addNameRange   [ '0.1.0',
+422 silly addNameRange     '0.1.1',
+422 silly addNameRange     '0.1.2',
+422 silly addNameRange     '0.2.0',
+422 silly addNameRange     '0.2.1',
+422 silly addNameRange     '0.2.2',
+422 silly addNameRange     '0.2.3',
+422 silly addNameRange     '0.2.4',
+422 silly addNameRange     '0.2.5',
+422 silly addNameRange     '0.2.6',
+422 silly addNameRange     '0.2.7',
+422 silly addNameRange     '0.2.8',
+422 silly addNameRange     '0.2.9',
+422 silly addNameRange     '0.2.10',
+422 silly addNameRange     '0.2.11',
+422 silly addNameRange     '0.2.12',
+422 silly addNameRange     '0.2.13',
+422 silly addNameRange     '0.2.14',
+422 silly addNameRange     '0.2.15',
+422 silly addNameRange     '0.3.0',
+422 silly addNameRange     '0.3.1',
+422 silly addNameRange     '0.3.2',
+422 silly addNameRange     '0.3.3',
+422 silly addNameRange     '0.3.4',
+422 silly addNameRange     '0.3.5',
+422 silly addNameRange     '0.3.6',
+422 silly addNameRange     '0.3.7',
+422 silly addNameRange     '0.3.8',
+422 silly addNameRange     '0.3.9',
+422 silly addNameRange     '0.3.10',
+422 silly addNameRange     '0.3.11',
+422 silly addNameRange     '0.3.12',
+422 silly addNameRange     '0.3.13',
+422 silly addNameRange     '0.3.14',
+422 silly addNameRange     '0.3.15',
+422 silly addNameRange     '0.3.16',
+422 silly addNameRange     '0.3.17',
+422 silly addNameRange     '0.4.0',
+422 silly addNameRange     '0.4.1',
+422 silly addNameRange     '0.4.2',
+422 silly addNameRange     '0.4.3',
+422 silly addNameRange     '0.4.4',
+422 silly addNameRange     '0.4.5',
+422 silly addNameRange     '0.3.13-a',
+422 silly addNameRange     '0.4.0-a',
+422 silly addNameRange     '0.4.0-rc1',
+422 silly addNameRange     '0.4.0-rc2',
+422 silly addNameRange     '0.4.0-rc3',
+422 silly addNameRange     '0.4.0-rc4',
+422 silly addNameRange     '0.4.0-rc5',
+422 silly addNameRange     '0.4.0-rc6',
+422 silly addNameRange     '0.4.0-rc7',
+422 silly addNameRange     '0.4.0-rc8' ] ]
+423 verbose addNamed [ 'grunt', '0.4.5' ]
+424 verbose addNamed [ '0.4.5', '0.4.5' ]
+425 silly lockFile 81abf7ad-grunt-0-4-5 grunt@0.4.5
+426 verbose lock grunt@0.4.5 /Users/victor/.npm/81abf7ad-grunt-0-4-5.lock
+427 silly lockFile 81abf7ad-grunt-0-4-5 grunt@0.4.5
+428 silly lockFile 81abf7ad-grunt-0-4-5 grunt@0.4.5
+429 silly lockFile 55f1ff24-grunt grunt@
+430 silly lockFile 55f1ff24-grunt grunt@
+431 http 304 https://registry.npmjs.org/grunt-template
+432 silly registry.get cb [ 304,
+432 silly registry.get   { date: 'Wed, 10 Jun 2015 05:42:36 GMT',
+432 silly registry.get     via: '1.1 varnish',
+432 silly registry.get     'cache-control': 'max-age=60',
+432 silly registry.get     etag: '"65BCHW3MJ5V2MVSJBGS2CQTF"',
+432 silly registry.get     age: '0',
+432 silly registry.get     connection: 'keep-alive',
+432 silly registry.get     'x-served-by': 'cache-atl6224-ATL',
+432 silly registry.get     'x-cache': 'HIT',
+432 silly registry.get     'x-cache-hits': '1',
+432 silly registry.get     'x-timer': 'S1433914956.208586,VS0,VE313',
+432 silly registry.get     vary: 'Accept' } ]
+433 verbose etag https://registry.npmjs.org/grunt-template from cache
+434 silly addNameRange number 2 { name: 'grunt-template', range: '*', hasData: true }
+435 silly addNameRange versions [ 'grunt-template',
+435 silly addNameRange   [ '0.1.0', '0.2.0', '0.2.1', '0.2.2', '0.2.3' ] ]
+436 verbose addNamed [ 'grunt-template', '0.2.3' ]
+437 verbose addNamed [ '0.2.3', '0.2.3' ]
+438 silly lockFile 3b2032b5-grunt-template-0-2-3 grunt-template@0.2.3
+439 verbose lock grunt-template@0.2.3 /Users/victor/.npm/3b2032b5-grunt-template-0-2-3.lock
+440 silly lockFile 3b2032b5-grunt-template-0-2-3 grunt-template@0.2.3
+441 silly lockFile 3b2032b5-grunt-template-0-2-3 grunt-template@0.2.3
+442 silly lockFile ca2ceda5-grunt-template grunt-template@
+443 silly lockFile ca2ceda5-grunt-template grunt-template@
+444 http 200 https://registry.npmjs.org/grunt-closure-tools/-/grunt-closure-tools-0.9.9.tgz
+445 silly lockFile 8daf1efd-ls-grunt-closure-tools-0-9-9-tgz https://registry.npmjs.org/grunt-closure-tools/-/grunt-closure-tools-0.9.9.tgz
+446 silly lockFile 8daf1efd-ls-grunt-closure-tools-0-9-9-tgz https://registry.npmjs.org/grunt-closure-tools/-/grunt-closure-tools-0.9.9.tgz
+447 silly lockFile 3ed30265-grunt-closure-tools-0-9-9 grunt-closure-tools@0.9.9
+448 silly lockFile 3ed30265-grunt-closure-tools-0-9-9 grunt-closure-tools@0.9.9
+449 silly lockFile 867f52d1-grunt-closure-tools grunt-closure-tools@
+450 silly lockFile 867f52d1-grunt-closure-tools grunt-closure-tools@
+451 error notarget No compatible version found: grunt-jsdoc@'beta'
+451 error notarget Valid install targets:
+451 error notarget ["0.2.3","0.2.4","0.3.0","0.3.1","0.3.2","0.3.3","0.4.0","0.4.1","0.4.2","0.4.3","0.5.0","0.5.1","0.5.2","0.5.3","0.5.4","0.5.5","0.5.6","0.6.0","0.5.7","0.6.1","0.6.2","0.5.8","0.6.3","0.6.4","0.6.5","0.6.6","0.6.7"]
+451 error notarget
+451 error notarget This is most likely not a problem with npm itself.
+451 error notarget In most cases you or one of your dependencies are requesting
+451 error notarget a package version that doesn't exist.
+452 error System Darwin 14.1.0
+453 error command "node" "/usr/local/bin/npm" "install"
+454 error cwd /Users/victor/Development/betajs/betajs-dynamics
+455 error node -v v0.10.33
+456 error npm -v 1.4.28
+457 error code ETARGET
+458 verbose exit [ 1, true ]

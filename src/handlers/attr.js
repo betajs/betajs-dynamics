@@ -57,8 +57,12 @@ Scoped.define("module:Handlers.Attr", [
 					if (this._isEvent) {
 						this._attribute.value = '';
 						this._$element.on(this._attrName.substring(2), function () {
-							self._node._locals.event = arguments;
+              // Ensures the domEvent does not continue to
+              // overshadow another variable after the __executeDyn call ends.
+              var oldDomEvent = self._node._locals.domEvent;
+							self._node._locals.domEvent = arguments;
 							self._node.__executeDyn(self._dyn);
+              self._node._locals.domEvent = oldDomEvent;
 						});
 					}
 				}

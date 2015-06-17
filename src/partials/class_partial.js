@@ -11,7 +11,7 @@ Scoped.define("module:Partials.ClassPartial", ["module:Handlers.Partial"], funct
    * the Html element. If the expression evaluates to false, the class is not
    * included.
    *
-   * @example <div ba-class="{{'first': true, 'second': 1 === 2}}></div>"
+   * @example <div ba-class="{{{'first': true, 'second': 1 === 2}}}></div>"
    * // Evaluates to <div class="first"></div>
    */
  	var Cls = Partial.extend({scoped: scoped}, {

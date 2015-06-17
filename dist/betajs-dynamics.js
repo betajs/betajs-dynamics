@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '111.1434579337310'
+		version: '112.1434579597378'
 	};
 });
 
@@ -1302,8 +1302,12 @@ Scoped.define("module:Handlers.Attr", [
 					if (this._isEvent) {
 						this._attribute.value = '';
 						this._$element.on(this._attrName.substring(2), function () {
-							self._node._locals.event = arguments;
+              // Ensures the domEvent does not continue to
+              // overshadow another variable after the __executeDyn call ends.
+              var oldDomEvent = self._node._locals.domEvent;
+							self._node._locals.domEvent = arguments;
 							self._node.__executeDyn(self._dyn);
+              self._node._locals.domEvent = oldDomEvent;
 						});
 					}
 				}
@@ -1856,7 +1860,7 @@ Scoped.define("module:Partials.ClassPartial", ["module:Handlers.Partial"], funct
    * the Html element. If the expression evaluates to false, the class is not
    * included.
    *
-   * @example <div ba-class="{{'first': true, 'second': 1 === 2}}></div>"
+   * @example <div ba-class="{{{'first': true, 'second': 1 === 2}}}></div>"
    * // Evaluates to <div class="first"></div>
    */
  	var Cls = Partial.extend({scoped: scoped}, {
@@ -1927,13 +1931,14 @@ Scoped.define("module:Partials.IfPartial", ["module:Partials.ShowPartial"], func
    *
    * @param {expression} baIf Expression to evaluate for truth. If true,
    * internal html will be rendered. If false, internal html will not be
-   * rendered.
+   * rendered. Note, if the expression should be evaluted, it must be wrapped in
+   * {{}}. See the examples below.
    *
-   * @example <div ba-if="1 === 1"><h1>Hi</h1><div>
-   * // Evaluated to <div ba-if="1 === 1"><h1>Hi</h1></div>
+   * @example <div ba-if="{{1 === 1}}"><h1>Hi</h1><div>
+   * // Evaluated to <div><h1>Hi</h1></div>
    *
-   * @example <div ba-if="1 === 2"></h1>Hi</h1></div>
-   * // Evaluated to <div ba-if="1 === 2"></div>
+   * @example <div ba-if="{{1 === 2}}"></h1>Hi</h1></div>
+   * // Evaluated to <div></div>
    */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
@@ -2334,11 +2339,12 @@ Scoped.define("module:Partials.ShowPartial", ["module:Handlers.Partial"], functi
    *
    * @param {expression} baShow Expression to evaluate for truth. If true,
    * internal html will be displayed. If false, internal html will not be
-   * displayed.
+   * displayed. Expression must be wrapped in {{}} so it will be evaluated, as
+   * seen below.
    *
-   * @example <p ba-show="1 === 1">Hi</p>
+   * @example <p ba-show="{{1 === 1}}">Hi</p>
    * // Evalues to <p>Hi</p>
-   * @example <p ba-show="1 === 2">Hi</p>
+   * @example <p ba-show="{{1 === 2}}">Hi</p>
    * // Evalues to <p style="display: none;">Hi</p>
    */
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {

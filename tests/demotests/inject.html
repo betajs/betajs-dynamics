@@ -15,6 +15,7 @@
 			</br>
 
 			<ba-inner ba-inject="{{=value}}"
+			          ba-overwrite="test"
 					  ba-internal_property="{{=internal_property}}"
 					  ba-external_property="{{=external_property}}"
 					></ba-inner>
@@ -110,7 +111,9 @@
 							"</div>",
 				initial: {
 					attrs: {
-						attr_test : test_value
+						attr_test : test_value,
+						overwrite: "foobar",
+						not_overwrite: "foobar"
 					},
 					functions: {
 						testf : function () {
@@ -136,7 +139,10 @@ outer.set("value", "Hello");
 				QUnit.equal(root.find("#injected").html().trim(), outer.get("value"));
 				QUnit.equal(root.find("#prop :first-child").html().trim(), external_changed);
 				QUnit.equal(root.find("#arr :first-child").html().trim(), array_changed[0]);
-
+				var inner = outer.scope(">").materialize()[0];
+				
+				QUnit.equal(inner.isArgumentAttr("overwrite"), true);
+				QUnit.equal(inner.isArgumentAttr("not_overwrite"), false);
 			}
 		</script>
 

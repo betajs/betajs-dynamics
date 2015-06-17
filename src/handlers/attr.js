@@ -85,8 +85,8 @@ Scoped.define("module:Handlers.Attr", [
 				this.unbindTagHandler();
 				this._tagHandler = handler;
 				if (!this._partial && this._attrName.indexOf("ba-") === 0) {
-					var innerKey = this._attrName.substring("ba-".length);
-					this._tagHandler.properties().set(innerKey, this._attrValue);
+					var innerKey = this._attrName.substring("ba-".length);					
+					this._tagHandler.setArgumentAttr(innerKey, this._attrValue);
 					if (this._dyn && this._dyn.bidirectional) {
 						this._tagHandler.properties().on("change:" + innerKey, function (value) {
 							this._node.mesh().write(this._dyn.variable, value);

@@ -22,6 +22,7 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 		_handlerInitialize: function (options) {
 			options = options || {};
 			this._parentHandler = options.parentHandler || null;
+			this._argumentAttrs = {};
 			var template = options.template || this.template;
 			this.__element = options.element ? $(options.element) : null;
 			this.initialContent = this.__element ? this.__element.html() : $(options.parentElement).html();
@@ -73,6 +74,15 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 				this.__element = elements;
 				this.__activeElement = this.__element.parent();
 			}
+		},
+		
+		setArgumentAttr: function (key, value) {
+			this.properties().set(key, value);
+			this._argumentAttrs[key] = true;
+		},
+		
+		isArgumentAttr: function (key) {
+			return !!this._argumentAttrs[key];
 		},
 		
 		element: function () {

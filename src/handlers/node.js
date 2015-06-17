@@ -143,7 +143,7 @@ Scoped.define("module:Handlers.Node", [
 					parentElement: this._$element.get(0),
 					parentHandler: this._handler,
 					autobind: false,
-					tagName: tagv
+					tagName: tagv					
 				});
 				//this._$element.append(this._tagHandler.element());
 				Objs.iter(this._attrs, function (attr) {

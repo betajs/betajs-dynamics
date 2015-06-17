@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-06-08
+betajs-dynamics - v0.0.1 - 2015-06-17
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -537,7 +537,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.1 - 2015-06-08
+betajs-dynamics - v0.0.1 - 2015-06-17
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '110.1433801592748'
+		version: '111.1434579337310'
 	};
 });
 
@@ -1330,8 +1330,8 @@ Scoped.define("module:Handlers.Attr", [
 				this.unbindTagHandler();
 				this._tagHandler = handler;
 				if (!this._partial && this._attrName.indexOf("ba-") === 0) {
-					var innerKey = this._attrName.substring("ba-".length);
-					this._tagHandler.properties().set(innerKey, this._attrValue);
+					var innerKey = this._attrName.substring("ba-".length);					
+					this._tagHandler.setArgumentAttr(innerKey, this._attrValue);
 					if (this._dyn && this._dyn.bidirectional) {
 						this._tagHandler.properties().on("change:" + innerKey, function (value) {
 							this._node.mesh().write(this._dyn.variable, value);
@@ -1385,6 +1385,7 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 		_handlerInitialize: function (options) {
 			options = options || {};
 			this._parentHandler = options.parentHandler || null;
+			this._argumentAttrs = {};
 			var template = options.template || this.template;
 			this.__element = options.element ? $(options.element) : null;
 			this.initialContent = this.__element ? this.__element.html() : $(options.parentElement).html();
@@ -1436,6 +1437,15 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 				this.__element = elements;
 				this.__activeElement = this.__element.parent();
 			}
+		},
+		
+		setArgumentAttr: function (key, value) {
+			this.properties().set(key, value);
+			this._argumentAttrs[key] = true;
+		},
+		
+		isArgumentAttr: function (key) {
+			return !!this._argumentAttrs[key];
 		},
 		
 		element: function () {
@@ -1701,7 +1711,7 @@ Scoped.define("module:Handlers.Node", [
 					parentElement: this._$element.get(0),
 					parentHandler: this._handler,
 					autobind: false,
-					tagName: tagv
+					tagName: tagv					
 				});
 				//this._$element.append(this._tagHandler.element());
 				Objs.iter(this._attrs, function (attr) {
@@ -2432,7 +2442,7 @@ Scoped.define("module:Dynamic", [
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
-   			
+
 		   	_notifications: {
 				_activate: "__createActivate"
 			},

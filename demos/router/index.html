@@ -16,78 +16,53 @@
 		<a href="#/main/advanced/3">Main/Advanced/3</a>
 		<a href="#/polymorphic/about">Polymorphic About</a>
 		<a href="#/polymorphic/simple">Polymorphic Simple</a>
-		<ba-{{route.page}}>
-		</ba-{{route.page}}>
-		git
+		<ba-{{state.name}}>
+		</ba-{{state.name}}>
 		<script ba-ignore>
-			router = new BetaJS.Browser.Router({
-				routes: {
-					"/about": {
-						state: "About"
-					},
-					"/main/simple": {
-						state: "Simple"
-					},
-					"/main/advanced/([0-9]+)": {
-						state: "Advanced",
-						mapping: ["number"]
-					},
-					"/polymorphic/(about|simple)": {
-//						states: ["About", "Simple"],
-						state: function (args) {
-							return BetaJS.Strings.capitalize(args[0]);
-						}
-					}
-				}
-			});
-			router.hashRoute = new BetaJS.Browser.HashRouteBinder(router);
-			router.stateHost = new BetaJS.States.Host();
-			router.stateRoute = new BetaJS.Browser.StateRouteBinder(router, router.stateHost);
+			var router = new BetaJS.Router.Router();
+			var state = new BetaJS.States.Host();
+			var binder = new BetaJS.Router.StateRouteBinder(router, state);
 			
-			router.stateHost.register("Base", {
-				_globals: ["page"]
+			binder.register("about", "/about");
+			
+			binder.register("simple", "/main/simple", {
+				_defaults: { "sub": "foobar" }
 			});
-			router.stateHost.register("About", "Base", {
-				_defaults: {"page": "about"}
+			
+			binder.register("advanced", "/main/advanced/(number:[0-9]+)");
+			
+			router.bind("polymorphic", "/polymorphic/(type:about|simple)");
+			binder.bindRouteToState("polymorphic", function (name, args) {
+				return {
+					name: "Polymorphic" + BetaJS.Strings.capitalize(args.type)
+				};
 			});
-			router.stateHost.register("Main", "Base", {
-				_globals: ["sub"],
-				_defaults: {"page": "main"}
+			BetaJS.Objs.iter(["About", "Simple"], function (key) {
+				state.register("Polymorphic" + key);
+				binder.bindStateToRoute("Polymorphic" + key, function (name, args) {
+					return {
+						name: "polymorphic",
+						args: {type: key.toLowerCase()}
+					};
+				});
 			});
-			router.stateHost.register("Simple", "Main", {
-				_defaults: {
-					"sub": "simple"
-				}
-			});
-			router.stateHost.register("Advanced", "Main", {
-				_globals: ["number"],
-				_defaults: {
-					"sub": "advanced"
-				}
-			});
-			router.stateHost.initialize("About");
 
-			var route = router.stateHost;
-			
+			var hashRouteBinder = new BetaJS.Browser.HashRouteBinder(router);
+		
 			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.About", {
 				template: "<h1>About</h1>"
 			}).register();
-			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Main", {
-				template: "<h1>Main</h1><ba-{{route.sub}} ba-route='{{route}}'></ba-{{route.sub}}>"
-			}).register();
 			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Simple", {
-				template: "<h2>Simple {{foobar}}</h2>",
-				initial: {
-					create: function () {
-						route.get("page");
-						this.set("foobar", "Foobar working");
-//						this.set("foobar", router.stateHost.get("page"));
-						this.set("foobar", router.stateHost.get("page"));
-					}
-				}
+				template: "<h2>Simple {{state.sub}}</h2>",
 			}).register();
 			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Advanced", {
-				template: "<h2>Advanced</h2><h3>{{route.number}}</h3>"
+				template: "<h2>Advanced</h2><h3>{{state.number}}</h3>"
+			}).register();
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.PolymorphicAbout", {
+				template: "<h2>Poly About </h2>",
+			}).register();
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.PolymorphicSimple", {
+				template: "<h2>Poly Simple </h2>",
 			}).register();
 
 			

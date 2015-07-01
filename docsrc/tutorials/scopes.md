@@ -32,7 +32,7 @@ Basic Usage Example:
 
 		initial : {
 
-			scope : {
+			scopes : {
 				child_dynamic: ">[tagname='ba-childdynamic']",
 			},
 
@@ -66,7 +66,7 @@ More Examples of valid Syntax
 
 		initial : {
 
-			scope : {
+			scopes : {
 				parent_dynamic: "<",
 				child_dynamics: ">",
 				all_children: ">+",

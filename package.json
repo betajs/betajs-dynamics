@@ -20,8 +20,9 @@
     "grunt-closure-tools": "",
     "grunt-node-qunit": "",
     "grunt-contrib-jshint": "",
+    "grunt-contrib-connect": "",
     "grunt-wget": "",
-    "grunt-jsdoc": "beta",
+    "grunt-jsdoc": "",
     "grunt-shell": "",
     "grunt-template": ""
   },

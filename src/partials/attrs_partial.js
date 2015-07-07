@@ -15,8 +15,9 @@ Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], funct
  	var Cls = Partial.extend({scoped: scoped}, {
 		
 		_apply: function (value) {
+			var props = this._node._tagHandler ? this._node._tagHandler.properties() : this._node.properties();
 			for (var key in value)
-				this._node.properties().set(key, value[key]);
+				props.set(key, value[key]);
 		}
 
  	});

@@ -19,7 +19,12 @@
 
 <script>
 	BetaJS.Dynamics.Dynamic.extend(null, {
-		template: '<outer>{{foobar}}</outer><inner>{{tester}}</inner>'
+		template: '<outer>{{foobar}}</outer><inner>{{tester}}</inner>',
+		initial: {
+			create: function () {
+				QUnit.equal(this.get("tester"), "abc");
+			}
+		}
 	}).register("ba-innertest");
 
     var root = $("test");

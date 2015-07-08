@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-07-07
+betajs-dynamics - v0.0.1 - 2015-07-08
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -537,7 +537,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.1 - 2015-07-07
+betajs-dynamics - v0.0.1 - 2015-07-08
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -554,7 +554,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '123.1436289294859'
+		version: '124.1436370705605'
 	};
 });
 
@@ -1353,10 +1353,15 @@ Scoped.define("module:Handlers.Attr", [
 							this._node.mesh().write(this._dyn.variable, value);
 						}, this);							
 					}
+				} else if (this._partial) {
+					this._partial.bindTagHandler(handler);
 				}
 			},
 			
 			unbindTagHandler: function (handler) {
+				if (this._partial) {
+					this._partial.unbindTagHandler(handler);
+				}
 				if (this._tagHandler)
 					this._tagHandler.properties().off(null, null, this);
 				this._tagHandler = null;
@@ -1557,6 +1562,10 @@ Scoped.define("module:Handlers.Partial", [
 				this._active = false;
 				this._deactivate();
 			},
+			
+			bindTagHandler: function (handler) {},
+			
+			unbindTagHandler: function (handler) {},
 			
 			_change: function (value, oldValue) {},
 			
@@ -1853,6 +1862,10 @@ Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], funct
 			var props = this._node._tagHandler ? this._node._tagHandler.properties() : this._node.properties();
 			for (var key in value)
 				props.set(key, value[key]);
+		},
+		
+		bindTagHandler: function (handler) {
+			this._apply(this._value);
 		}
 
  	});

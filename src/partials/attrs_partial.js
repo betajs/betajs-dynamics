@@ -18,6 +18,10 @@ Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], funct
 			var props = this._node._tagHandler ? this._node._tagHandler.properties() : this._node.properties();
 			for (var key in value)
 				props.set(key, value[key]);
+		},
+		
+		bindTagHandler: function (handler) {
+			this._apply(this._value);
 		}
 
  	});

@@ -108,10 +108,15 @@ Scoped.define("module:Handlers.Attr", [
 							this._node.mesh().write(this._dyn.variable, value);
 						}, this);							
 					}
+				} else if (this._partial) {
+					this._partial.bindTagHandler(handler);
 				}
 			},
 			
 			unbindTagHandler: function (handler) {
+				if (this._partial) {
+					this._partial.unbindTagHandler(handler);
+				}
 				if (this._tagHandler)
 					this._tagHandler.properties().off(null, null, this);
 				this._tagHandler = null;

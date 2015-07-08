@@ -179,6 +179,10 @@ Scoped.define("module:Handlers.Partial", [
 				this._deactivate();
 			},
 			
+			bindTagHandler: function (handler) {},
+			
+			unbindTagHandler: function (handler) {},
+			
 			_change: function (value, oldValue) {},
 			
 			_activate: function () {},

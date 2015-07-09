@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-07-08
+betajs-dynamics - v0.0.1 - 2015-07-09
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -558,7 +558,7 @@ Public.exports();
 }).call(this);
 
 /*!
-betajs-dynamics - v0.0.1 - 2015-07-08
+betajs-dynamics - v0.0.1 - 2015-07-09
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -575,7 +575,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '125.1436390686020'
+		version: '126.1436442052833'
 	};
 });
 
@@ -1454,29 +1454,33 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 			}
 		},
 		
-		_handlerInitializeTemplate: function (template, parentElement) {
-			var elements;
-			var is_text = false;
-			try {
-				elements = $(template.trim());
-			} catch (e) {
-				elements = $(document.createTextNode(template.trim()));
-				is_text = true;
-			}
-			if (this.__element) {
-				this.__element.html(template);
-				this.__activeElement = this.__element;
-			} else if (parentElement) {
-				if (is_text) {
-					$(parentElement).html(elements);
-					this.__element = elements;
-				} else {
-					$(parentElement).html(template);
-					this.__element = $(parentElement).find(">");
+		_handlerGetTemplate: function (template) {
+			this.cls._templateCache = this.cls._templateCache || {};
+			if (!this.cls._templateCache[template]) {
+				var compiled;
+				try {
+					compiled = $(template.trim());
+				} catch (e) {
+					compiled = $(document.createTextNode(template.trim()));
 				}
+				this.cls._templateCache[template] = compiled;
+			}
+			return this.cls._templateCache[template].clone();
+		},
+		
+		_handlerInitializeTemplate: function (template, parentElement) {
+			var compiled = this._handlerGetTemplate(template);
+			if (this.__element) {
+				this.__activeElement = this.__element;
+				this.__element.html("");
+				this.__element.append(compiled);
+			} else if (parentElement) {
 				this.__activeElement = $(parentElement);
+				this.__element = compiled;
+				this.__activeElement.html("");
+				this.__activeElement.append(compiled);
 			} else {
-				this.__element = elements;
+				this.__element = compiled;
 				this.__activeElement = this.__element.parent();
 			}
 		},

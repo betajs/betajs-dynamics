@@ -1,6 +1,6 @@
 {
 
-  "introduction": {
+  "intro": {
     "title": "Introduction",
     "children" : {
       "helloworld": {
@@ -43,7 +43,9 @@
       "create" : {},
       "funtions" : {},
       "binding" : {},
-      "scopes" : {}
+      "scopes" : {
+    	  "title": "Scopes"
+      }
     }
   },
 

@@ -20,10 +20,12 @@
     "grunt-closure-tools": "",
     "grunt-node-qunit": "",
     "grunt-contrib-jshint": "",
+    "grunt-contrib-connect": "",
     "grunt-wget": "",
-    "grunt-jsdoc": "beta",
+    "grunt-jsdoc": "",
     "grunt-shell": "",
-    "grunt-template": ""
+    "grunt-template": "",
+    "grunt-betajs-docs-compile": ""
   },
   "repository": {
     "type": "git",

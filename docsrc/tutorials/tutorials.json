@@ -1,6 +1,6 @@
 {
 
-  "introduction": {
+  "intro": {
     "title": "Introduction",
     "children" : {
       "helloworld": {
@@ -43,8 +43,10 @@
       "collections" : {},
       "create" : {},
       "funtions" : {},
-      "scopes" : {},
-      "binding" : {}
+      "binding" : {},
+      "scopes" : {
+    	  "title": "Scopes"
+      }
     }
   },
 
@@ -56,15 +58,22 @@
 
   },
 
-  "html_attributes": {
+  "html-attributes": {
+    "title" : "HTML Attributes",
     "children" : {
-      "ba-click" : {},
+      "ba-click" : {
+        "title": "ba-click"
+      },
       "ba-tap" : {},
       "ba-class" : {},
       "ba-show" : {},
-      "ba-if" : {},
+      "ba-if" : {
+        "title" : "ba-if"
+      },
       "ba-ignore" : {},
-      "ba-repeat" : {},
+      "ba-repeat" : {
+        "title" : "ba-repeat"
+      },
       "ba-attrs" : {},
       "ba-on" : {},
       "ba-return" : {},

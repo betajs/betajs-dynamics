@@ -1,10 +1,10 @@
 /*!
-betajs-dynamics - v0.0.1 - 2015-06-18
+betajs-dynamics - v0.0.1 - 2015-09-12
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
 /*!
-betajs-scoped - v0.0.1 - 2015-03-26
+betajs-scoped - v0.0.2 - 2015-07-08
 Copyright (c) Oliver Friedmann
 MIT Software License.
 */
@@ -118,7 +118,7 @@ var Attach = {
 			var current_version = current.version.split(".");
 			var newer = false;
 			for (var i = 0; i < Math.min(my_version.length, current_version.length); ++i) {
-				newer = my_version[i] > current_version[i];
+				newer = parseInt(my_version[i], 10) > parseInt(current_version[i], 10);
 				if (my_version[i] != current_version[i]) 
 					break;
 			}
@@ -287,6 +287,17 @@ function newNamespace (options) {
 			}
 		}
 	}
+	
+	function nodeUnresolvedWatchers(node, base, result) {
+		node = node || nsRoot;
+		base = base ? base + "." + node.route : node.route;
+		result = result || [];
+		if (!node.ready)
+			result.push(base);
+		for (var k in node.children)
+			result = nodeUnresolvedWatchers(node.children[k], base, result);
+		return result;
+	}
 
 	return {
 		
@@ -319,6 +330,10 @@ function newNamespace (options) {
 		
 		obtain: function (path, callback, context) {
 			nodeAddWatcher(nodeNavigate(path), callback, context);
+		},
+		
+		unresolvedWatchers: function (path) {
+			return nodeUnresolvedWatchers(nodeNavigate(path), path);
 		}
 		
 	};
@@ -511,7 +526,12 @@ function newScope (parent, parentNamespace, rootNamespace, globalNamespace) {
 			var ns = this.resolve(namespaceLocator);
 			ns.namespace.digest(ns.path);
 			return this;
-		}		
+		},
+		
+		unresolved: function (namespaceLocator) {
+			var ns = this.resolve(namespaceLocator);
+			return ns.namespace.unresolvedWatchers(ns.path);
+		}
 		
 	};
 	
@@ -523,7 +543,7 @@ var rootScope = newScope(null, rootNamespace, rootNamespace, globalNamespace);
 var Public = Helper.extend(rootScope, {
 		
 	guid: "4b6878ee-cb6a-46b3-94ac-27d91f58d666",
-	version: '9.1427403679672',
+	version: '9.9436390238591',
 		
 	upgrade: Attach.upgrade,
 	attach: Attach.attach,
@@ -536,8 +556,9 @@ Public = Public.upgrade();
 Public.exports();
 	return Public;
 }).call(this);
+
 /*!
-betajs-dynamics - v0.0.1 - 2015-06-18
+betajs-dynamics - v0.0.1 - 2015-09-12
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -554,7 +575,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '121.1434666548434'
+		version: '124.1442041634184'
 	};
 });
 
@@ -1353,10 +1374,15 @@ Scoped.define("module:Handlers.Attr", [
 							this._node.mesh().write(this._dyn.variable, value);
 						}, this);							
 					}
+				} else if (this._partial) {
+					this._partial.bindTagHandler(handler);
 				}
 			},
 			
 			unbindTagHandler: function (handler) {
+				if (this._partial) {
+					this._partial.unbindTagHandler(handler);
+				}
 				if (this._tagHandler)
 					this._tagHandler.properties().off(null, null, this);
 				this._tagHandler = null;
@@ -1428,29 +1454,33 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 			}
 		},
 		
-		_handlerInitializeTemplate: function (template, parentElement) {
-			var elements;
-			var is_text = false;
-			try {
-				elements = $(template.trim());
-			} catch (e) {
-				elements = $(document.createTextNode(template.trim()));
-				is_text = true;
-			}
-			if (this.__element) {
-				this.__element.html(template);
-				this.__activeElement = this.__element;
-			} else if (parentElement) {
-				if (is_text) {
-					$(parentElement).html(elements);
-					this.__element = elements;
-				} else {
-					$(parentElement).html(template);
-					this.__element = $(parentElement).find(">");
+		_handlerGetTemplate: function (template) {
+			this.cls._templateCache = this.cls._templateCache || {};
+			if (!this.cls._templateCache[template]) {
+				var compiled;
+				try {
+					compiled = $(template.trim());
+				} catch (e) {
+					compiled = $(document.createTextNode(template.trim()));
 				}
+				this.cls._templateCache[template] = compiled;
+			}
+			return this.cls._templateCache[template].clone();
+		},
+		
+		_handlerInitializeTemplate: function (template, parentElement) {
+			var compiled = this._handlerGetTemplate(template);
+			if (this.__element) {
+				this.__activeElement = this.__element;
+				this.__element.html("");
+				this.__element.append(compiled);
+			} else if (parentElement) {
 				this.__activeElement = $(parentElement);
+				this.__element = compiled;
+				this.__activeElement.html("");
+				this.__activeElement.append(compiled);
 			} else {
-				this.__element = elements;
+				this.__element = compiled;
 				this.__activeElement = this.__element.parent();
 			}
 		},
@@ -1557,6 +1587,10 @@ Scoped.define("module:Handlers.Partial", [
 				this._active = false;
 				this._deactivate();
 			},
+			
+			bindTagHandler: function (handler) {},
+			
+			unbindTagHandler: function (handler) {},
 			
 			_change: function (value, oldValue) {},
 			
@@ -1850,8 +1884,13 @@ Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], funct
  	var Cls = Partial.extend({scoped: scoped}, {
 		
 		_apply: function (value) {
+			var props = this._node._tagHandler ? this._node._tagHandler.properties() : this._node.properties();
 			for (var key in value)
-				this._node.properties().set(key, value[key]);
+				props.set(key, value[key]);
+		},
+		
+		bindTagHandler: function (handler) {
+			this._apply(this._value);
 		}
 
  	});

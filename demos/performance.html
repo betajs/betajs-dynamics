@@ -1,0 +1,35 @@
+<html>
+	<head>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.1.1/es5-shim.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/json2/20140204/json2.js"></script>
+        <script src="../vendors/beta.js"></script>
+        <script src="../vendors/beta-browser-noscoped.js"></script>
+		<script src="../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+		<go>
+			<div ba-repeat="{{item::list}}">
+				<ba-inner ba-item="{{item}}">
+				</ba-inner>
+			</div>
+		</go>
+		<script>
+			var t = BetaJS.Time.now();
+			var list = [];
+			for (var i = 0; i < 1000; ++i)
+				list.push({foobar: "Item " + i});
+			BetaJS.Dynamics.Dynamic.extend(null, {
+				template: "<p>{{item.foobar}}</p>",
+			}).register("ba-inner");
+			var mainDynamic = new BetaJS.Dynamics.Dynamic({
+				element: $("go").get(0),
+				attrs: {
+					list: list
+				}
+			});
+			mainDynamic.activate();
+			document.title = BetaJS.Time.now() - t;
+		</script>
+	</body>
+</html>

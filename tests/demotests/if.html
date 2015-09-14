@@ -74,8 +74,8 @@
 				<h4>Test ba-if Boolean & Inject</h4>
 
 				<ba-inner
-					ba-if="{{showinject}}"
-					ba-inject="{{=value}}"
+					id="inject-boolean"
+					ba-boolean="{{showinject}}"
 					ba-internal_property="{{=internal_property}}"
 					ba-external_property="{{=external_property}}"
 					></ba-inner>
@@ -184,7 +184,7 @@
 			var inject = new BetaJS.Dynamics.Dynamic({
 				element: root.find("#inject"),
 				attrs: {
-					showinject: true,
+					showinject: false,
 					internal_property: new BetaJS.Properties.Properties({v : internal_message}),
 				},
 				functions: {
@@ -209,17 +209,21 @@
 			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inject", {
 				template: 	"<inner>Value inner : " +
 								"<div id='innertest'>" + innertest +"</div>" +
+								"<div ba-if='boolean'>" +
+									"<span>Boolean: </span>" +
+									"<span class='test1'>{{=boolean}}</span>" +
+								"</div>" +
 								"<div>" +
-									"<span>String:</span>" +
-									"<span id='test2'>{{=inject}}</span>" +
+									"<span>String: </span>" +
+									"<span class='test2'>{{=inject}}</span>" +
 								"</div>" +
 								"<div>" +
 									"<span>Internal Property: </span>" +
-									"<span id='int'>{{=internal_property.v}}</span>" +
+									"<span class='int'>{{=internal_property.v}}</span>" +
 								"</div>" +
 								"<div>" +
 									"<span>External Property: </span>" +
-									"<span id='ext'>{{=external_property.v}}</span>" +
+									"<span class='ext'>{{=external_property.v}}</span>" +
 								"</div>" +
 							"</inner>"
 			}).register("ba-inner");
@@ -282,7 +286,11 @@
 
 				//Inject
 
+				QUnit.equal($("#inject-boolean").find('.test1').length, 0);
 
+
+//				QUnit.equal(root.find("#test2").html().trim(), inject.get("value"));
+//				QUnit.equal(root.find("#test2").html().trim(), inject.get("value"));
 //				QUnit.equal(root.find("#test2").html().trim(), inject.get("value"));
 //				QUnit.equal(root.find("#innertest").html().trim(), innertest);
 
@@ -296,3 +304,22 @@
 
 	</body>
 </html>
+
+<head>...</head>
+<body>
+<ba-outer></ba-outer>
+</body>
+
+<script>
+//	BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Outer", {
+//		template: 	"<ba-inner ba-boolean='boolean'></ba-inner>",
+//		initial : {
+//			attrs : {
+//				boolean : false
+//			}
+//		}
+//	}).register();
+//	BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inner", {
+//		template: 	"<inner ba-if='boolean'>Value inner : {{boolean}}</inner>"
+//	}).register();
+</script>

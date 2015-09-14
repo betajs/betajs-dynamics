@@ -48,7 +48,11 @@
 		
 		<script src="data/scoped.js"></script>
 		<script src="data/mesh.js"></script>
-    <script src="handlers/attr.js"></script>
+        <script src="handlers/attr.js"></script>
+        <script>
+            if (BetaJS.Browser.Info.isChrome() && document.location.href.indexOf("file://") === 0)
+            	alert("Please either run grunt check, serve the tests via a webserver or use a different browser");
+        </script>
 	</body>
 
 </html>

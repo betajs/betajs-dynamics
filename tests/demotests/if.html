@@ -75,12 +75,10 @@
 
 				<ba-inner
 					id="inject-boolean"
-					ba-if="{{showinject}}"
+					ba-boolean="{{showinject}}"
 					ba-internal_property="{{=internal_property}}"
 					ba-external_property="{{=external_property}}"
 					></ba-inner>
-
-                <!--  was: ba-boolean instead of ba-if before -->
 
 				<br/>
 
@@ -211,7 +209,7 @@
 			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inject", {
 				template: 	"<inner>Value inner : " +
 								"<div id='innertest'>" + innertest +"</div>" +
-								"<div ba-if='boolean'>" +
+								"<div ba-if='{{boolean}}'>" +
 									"<span>Boolean: </span>" +
 									"<span class='test1'>{{=boolean}}</span>" +
 								"</div>" +
@@ -288,7 +286,7 @@
 
 				//Inject
 
-				QUnit.equal($("#inject-boolean").find('.test1').length, 0);
+				QUnit.equal($("#inject-boolean").find('.test1').parent().css("display"), "none");
 
 
 //				QUnit.equal(root.find("#test2").html().trim(), inject.get("value"));

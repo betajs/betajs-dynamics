@@ -9,35 +9,40 @@
 
 		<test>
 
-			<input value="{{=value}}">
-			<div>Value Outer : {{=value}}</div>
+			<div>
+				<h4>Direct Inject</h4>
+				<input value="{{=value}}">
+				<div>Value Outer : {{=value}}</div>
 
-			</br>
+				<ba-inner ba-inject="{{=value}}"
+						  ba-undef="{{some_undef_value.test}}"
+						  ba-overwrite="test"
+						  ba-internal_property="{{=internal_property}}"
+						  ba-external_property="{{=external_property}}"
+						></ba-inner>
+				</br>
+			</div>
 
-			<ba-inner ba-inject="{{=value}}"
-			          ba-overwrite="test"
-					  ba-internal_property="{{=internal_property}}"
-					  ba-external_property="{{=external_property}}"
-					></ba-inner>
-			</br>
-
-			Property Array:
-			<div
-					id="prop"
-					ba-repeat="{{prop :: property_array}}">
-				<div>{{prop.v}}</div>
+			<div>
+				<h4>Property Array:</h4>
+				<div
+						id="prop"
+						ba-repeat="{{prop :: property_array}}">
+					<div>{{prop.v}}</div>
+				</div>
 			</div>
 
 			</br>
 
-			Array:
-			{{=value}}
-			<ul
-					id="arr"
-					ba-repeat="{{item :: array_items}}">
-				<li>{{item}}</li>
-			</ul>
-
+			<div>
+				<h4>Array:</h4>
+				{{=value}}
+				<ul
+						id="arr"
+						ba-repeat="{{item :: array_items}}">
+					<li>{{item}}</li>
+				</ul>
+			</div>
 			</br>
 
 			<button ba-click="change_props()">Change Property</button>
@@ -131,6 +136,7 @@ outer.set("value", "Hello");
 				QUnit.equal(root.find("#attr_test").html().trim(), test_value);
 
 				//Others
+//				QUnit.equal(!!inner.get('undef'), !!undefined);
 				QUnit.equal(root.find("#injected").html().trim(), outer.get("value"));
 				QUnit.equal(root.find("#prop :first-child").html().trim(), external_initial);
 				QUnit.equal(root.find("#arr :first-child").html().trim(), array_initial[0]);

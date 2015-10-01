@@ -67,22 +67,29 @@ More Examples of valid Syntax
 		initial : {
 
 			scopes : {
+				//This gives you the Dynamic
 				parent_dynamic: "<",
+				specific_child: ">[tagname='ba-tagname']",
+				specific_in_all_children: ">+[tagname='ba-tagname']"
+
+				//This gives you a query result of the Dynamics
 				child_dynamics: ">",
 				all_children: ">+",
 				parents_children_dynamics: "<>",
 				parents_childrens_children_dynamics: "<>>",
-				specific_child: ">[tagname='ba-tagname']",
-				specific_in_all_children: ">+[tagname='ba-tagname']"
 			},
 
 			create : {
 
 				//Examples of Accessing other Dynamics
+
+				//Directly
 				var scope_attr = this.scopes.parent_dynamic.get('attribute_in_parent_dynamic');
-				var bind_attr = this.get('parent_dynamic_attribute');
-				if (scope_attr == bind_attr)
-					console.log('This is set up correctly');
+				// scope_attr is an attribute from the parent_dynamic
+
+				//Query Collection
+				var json_data = this.scopes.child_dynamics.get(0);
+				// json_data is a JSON object that contains the attribute values from the first child_dynamic
 
 			},
 

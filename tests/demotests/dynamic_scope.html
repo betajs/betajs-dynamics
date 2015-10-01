@@ -1,0 +1,94 @@
+<html>
+<head>
+    <link rel="stylesheet" href="../assets/styles.css">
+
+    <script src="../assets/jquery.js"></script>
+    <script src="../../vendors/beta.js"></script>
+    <script src="../../vendors/beta-browser-noscoped.js"></script>
+    <script src="../../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+
+<test>
+    <ba-outer></ba-outer>
+</test>
+
+<script>
+    var inner = 'Inner Dynamic';
+    var middle = 'Middle Dynamic';
+    var outer = 'Outer Dynamic';
+
+	BetaJS.Dynamics.Dynamic.extend(null, {
+		template:   '<inner>{{text}}</inner>' +
+                    '<span> - displaying the text from : </span>' +
+                    '<inner_scoped_text>{{other}}</inner_scoped_text>',
+		initial: {
+            attrs : {
+                text : inner
+            },
+            scopes : {
+                outer: "<+[tagname='ba-outer']"
+            },
+            create : function () {
+                this.set('other', this.scopes.outer.get('text'));
+            }
+		}
+	}).register("ba-inner");
+
+    BetaJS.Dynamics.Dynamic.extend(null, {
+        template:   '<middle>{{text}}</middle> ' +
+                    '<span> - displaying the text from : </span>' +
+                    '<middle_scoped_text>{{other}}</middle_scoped_text></br>' +
+                    '<ba-inner></ba-inner>',
+        initial: {
+            attrs : {
+                text : middle
+            },
+            scopes : {
+                parent_dynamic: "<"
+            },
+            create : function () {
+                this.set('other', this.scopes.parent_dynamic.get('text'));
+            }
+        }
+    }).register("ba-middle");
+
+    BetaJS.Dynamics.Dynamic.extend(null, {
+        template:   '<outer>{{text}}</outer>' +
+                    '<span> - displaying the text from : </span>' +
+                    '<outer_scoped_text>{{other}}</outer_scoped_text></br>' +
+                    '<ba-middle></ba-middle>',
+        initial: {
+            attrs : {
+                text : outer
+            },
+            scopes : {
+                children: ">"
+            }
+        },
+        _afterActivate : function () {
+            this.set('other', this.scopes.children.get(0).text);
+        }
+    }).register("ba-outer");
+
+    var root = $("test");
+
+    var dynamic = new BetaJS.Dynamics.Dynamic({element: root});
+    dynamic.activate();
+
+    function test() {
+
+        //Are the Dynamics working correctly?
+        QUnit.equal(root.find("inner").html().trim(), inner);
+        QUnit.equal(root.find("middle").html().trim(), middle);
+        QUnit.equal(root.find("outer").html().trim(), outer);
+
+        //Is the Scoping working correctly?
+        QUnit.equal(root.find("inner_scoped_text").html().trim(), outer);
+        QUnit.equal(root.find("middle_scoped_text").html().trim(), outer);
+        QUnit.equal(root.find("outer_scoped_text").html().trim(), middle);
+    }
+</script>
+
+</body>
+</html>

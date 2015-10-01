@@ -3,7 +3,7 @@ Scoped.define("module:Partials.ShareScope", ["module:Handlers.Partial"], functio
  		return {
 			
  			bindTagHandler: function (handler) {
- 				handler.properties().bind("", this._node.properties(), {deep: true});
+ 				handler.properties().bind("", this._value ? this._value : this._node.properties(), {deep: true});
  			}
  		
  		};

@@ -1,8 +1,5 @@
 module.banner = '/*!\n<%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %>\nCopyright (c) <%= pkg.contributors %>\n<%= pkg.license %> Software License.\n*/\n';
 
-var Routes = {};
-Routes.port = '8711';
-
 module.exports = function(grunt) {
 
 	grunt
@@ -46,7 +43,8 @@ module.exports = function(grunt) {
 				clean : {
 					raw:"dist/betajs-dynamics-raw.js",
 					closure:"dist/betajs-dynamics-closure.js",
-					browserstack : [ "./browserstack.json", "BrowserStackLocal" ]
+					browserstack : [ "./browserstack.json", "BrowserStackLocal" ],
+					jsdoc : ['./jsdoc.conf.json']
 				},
 				uglify : {
 					options : {
@@ -119,19 +117,57 @@ module.exports = function(grunt) {
 						}
 					}
 				},
-        connect: {
-          server: {
-            options: {
-              port: Routes.port,
-              base: '.',
-              keepalive: true,
-              open: {
-                target: 'http://localhost:' + Routes.port + '/tests/tests.html'
-              }
-            }
-          }
-        },
+		        connect: {
+		          server: {
+		            options: {
+		              port: 8711,
+		              base: '.',
+		              keepalive: true,
+		              open: {
+		                target: 'http://localhost:8711/tests/tests.html'
+		              }
+		            }
+		          }
+		        },
 				template : {
+					"jsdoc": {
+						options: {
+							data: {
+								data: {
+									"tags": {
+										"allowUnknownTags": true
+									},
+									"plugins": ["plugins/markdown"],
+									"templates": {
+										"cleverLinks": false,
+										"monospaceLinks": false,
+										"dateFormat": "ddd MMM Do YYYY",
+										"outputSourceFiles": true,
+										"outputSourcePath": true,
+										"systemName": "BetaJS",
+										"footer": "",
+										"copyright": "BetaJS (c) - MIT License",
+										"navType": "vertical",
+										"theme": "cerulean",
+										"linenums": true,
+										"collapseSymbols": false,
+										"inverseNav": true,
+										"highlightTutorialCode": true,
+										"protocol": "fred://",
+										"singleTutorials": true,
+										"emptyTutorials": true
+									},
+									"markdown": {
+										"parser": "gfm",
+										"hardwrap": true
+									}
+								}
+							}
+						},
+						files : {
+							"jsdoc.conf.json": ["json.tpl"]
+						}
+					},
 					"readme" : {
 						options : {
 							data: {
@@ -213,6 +249,7 @@ module.exports = function(grunt) {
 	grunt.registerTask('default', [ 'revision-count', 'concat:dist_raw',
 			'preprocess', 'clean:raw', 'concat:dist_scoped', 'uglify' ]);
 	grunt.registerTask('qunit', [ 'connect' ]);
+	grunt.registerTask('docs', ['template:jsdoc', 'jsdoc', 'clean:jsdoc']);
 	grunt.registerTask('lint', [ 'jshint:source', 'jshint:dist',
 	                 			 'jshint:gruntfile', "jshint:tests" ]);
 	grunt.registerTask('check', [ 'lint', 'qunit' ]);

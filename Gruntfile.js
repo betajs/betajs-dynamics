@@ -119,18 +119,18 @@ module.exports = function(grunt) {
 						}
 					}
 				},
-        connect: {
-          server: {
-            options: {
-              port: Routes.port,
-              base: '.',
-              keepalive: true,
-              open: {
-                target: 'http://localhost:' + Routes.port + '/tests/tests.html'
-              }
-            }
-          }
-        },
+				connect: {
+				  server: {
+					options: {
+					  port: Routes.port,
+					  base: '.',
+					  keepalive: true,
+					  open: {
+						target: 'http://localhost:' + Routes.port + '/tests/tests.html'
+					  }
+					}
+				  }
+				},
 				template : {
 					"readme" : {
 						options : {

@@ -90,6 +90,7 @@ More Examples of valid Syntax
 				//Query Collection
 				var json_data = this.scopes.child_dynamics.get(0);
 				// json_data is a JSON object that contains the attribute values from the first child_dynamic
+				var json_data = this.scopes.child_dynamics.get(0).materialize();
 
 			},
 
@@ -97,3 +98,39 @@ More Examples of valid Syntax
 
 
 ```
+
+
+//TODO:
+Access Scope from Outside.
+
+BetaJS.Dynamics.Dynamic.extend(null, {
+
+    template:   '<div>{{text}}</div>'
+
+    initial: {
+
+        attrs : {text : 'Hello'}
+
+    }
+
+}).register(“ba-test");
+
+var test_text = ???;
+
+var dynamic = new BetaJS.Dynamics.Dynamic({
+
+    element: $(‘body’)
+
+});
+
+dynamic.activate();
+
+HTML:
+
+<body>
+
+    <ba-test></ba-test>
+
+</body>
+
+dynamic.scope(“>”).get(“attr”)

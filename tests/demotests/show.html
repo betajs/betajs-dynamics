@@ -1,0 +1,306 @@
+<html>
+	<head>
+		<link rel="stylesheet" href="../assets/styles.css">
+
+		<script src="../assets/jquery.js"></script>
+        <script src="../../vendors/beta.js"></script>
+        <script src="../../vendors/beta-browser-noscoped.js"></script>
+		<script src="../../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+
+		<test>
+
+			<div>
+				<br/>
+				<h3>Tests for ba-show</h3>
+				<br/>
+			</div>
+
+			<div id="bashowsimple">
+				<h4 ba-show="{{false}}">Test ba-show simple</h4>
+				<input value="{{=value}}">
+				<div id="showbinding" ba-show="{{showbinding}}">{{=value}}</div>
+				<div id="hidebinding" ba-show="{{!showbinding}}">Hide Binding</div>
+				<button ba-click="change_showbinding()">Show/Hide</button>
+
+				<h4>Test ba-show Direct Values</h4>
+				<div id="direct_true" ba-show="{{true}}">True</div>
+				<div id="direct_false" ba-show="{{false}}">False</div>
+				<div id="direct_null" ba-show="{{null}}">Null</div>
+				<div id="direct_undefined" ba-show="{{undefined}}">Undefined</div>
+				<br/>
+			</div>
+
+			<div id="special">
+				<h4>Test ba-show Special Values</h4>
+				<div id="null" ba-show="{{value_null}}">Null</div>
+				<button ba-click="value_null = null">Set null</button>
+				<div id="undefined" ba-show="{{value_undefined}}">Undefined</div>
+				<button ba-click="value_undefined = undefined">Set undefined</button>
+				<br/>
+			</div>
+
+			<div id="local">
+				<h4>Test Local Propterties</h4>
+				<div>
+					<span>Value: </span>
+					<span id="localvalue">{{property}}</span>
+				</div>
+				<div>
+					<div id="showlocal" ba-show="{{property}}">Showlocal</div>
+					<div id="hidelocal" ba-show="{{!property}}">Hidelocal</div>
+				</div>
+				<button ba-click="change_showlocal()">Show/Hide Local</button>
+				<br/>
+			</div>
+
+			<!--<div id="global">-->
+				<!--<h4>Test Global Propterties</h4>-->
+				<!--<div>-->
+					<!--<span>Value: </span>-->
+					<!--<span id="globalvalue">{{bool.v}}</span>-->
+				<!--</div>-->
+				<!--<div>-->
+					<!--<div id="showglobal" ba-show="{{bool.v}}">Showglobal</div>-->
+					<!--<div id="hideglobal" ba-show="{{!bool.v}}">Hideglobal</div>-->
+				<!--</div>-->
+				<!--<button ba-click="change_showglobal()">Show/Hide Global</button>-->
+				<!--<br/>-->
+			<!--</div>-->
+
+			<div id="inject">
+
+				<h4>Test ba-show Boolean & Inject</h4>
+
+				<ba-inner
+					id="inject-boolean"
+					ba-boolean="{{showinject}}"
+					ba-internal_property="{{=internal_property}}"
+					ba-external_property="{{=external_property}}"
+					></ba-inner>
+
+				<br/>
+
+				<button id="bool" ba-click="showinject = !showinject">Change Boolean</button>
+
+				<h4>Test ba-show Property & Inject</h4>
+
+				<div>
+					<span>Internal Property Value: </span>
+					<span>{{internal_property.v}}</span>
+				</div>
+
+				<h5>Dynamic to be injected:</h5>
+
+				<ba-inner
+						ba-show="{{internal_property.v}}"
+						ba-inject="{{=value}}"
+						ba-internal_property="{{=internal_property}}"
+						ba-external_property="{{=external_property}}"
+						></ba-inner>
+
+				<br/>
+
+				<button id="props" ba-click="change_props()">Change Property</button>
+
+				<br/>
+
+			</div>
+
+		</test>
+
+		<script>
+		
+			var global = window;
+
+			//Elements
+			var root = $("test");
+			var button = $("button");
+
+			//Messages
+			var external_message = "This is an External Property";
+			var internal_message = "This is an Internal Property";
+			var new_internal = "New Internal Property Value";
+//			var global_message = "This is a Global Property";
+			var local_message = "This is a Local Property";
+
+			//Properties
+			var external_property = new BetaJS.Properties.Properties({v : external_message});
+//			global.bool = new BetaJS.Properties.Properties({v : global_message});
+
+			//Dynamics
+			var showbinding = new BetaJS.Dynamics.Dynamic({
+				element: root.find("#bashowsimple"),
+				attrs: {
+					value: "Show Binding",
+					showbinding: true
+				},
+				functions: {
+					change_showbinding : function () {
+						this.set("showbinding",!this.get("showbinding"));
+					}
+				}
+			});
+			showbinding.activate();
+
+			var special = new BetaJS.Dynamics.Dynamic({
+				element: root.find("#special"),
+				attrs: {
+					value_null: true,
+					value_undefined: true
+				},
+				functions: {
+				}
+			});
+			special.activate();
+
+
+			var showlocal = new BetaJS.Dynamics.Dynamic({
+				element: root.find("#local"),
+				attrs: {
+					property : local_message
+				},
+				functions: {
+					change_showlocal : function () {
+						this.set("property",!this.get("property"));
+					}
+				}
+			});
+			showlocal.activate();
+
+//			var showglobal = new BetaJS.Dynamics.Dynamic({
+//				element: root.find("#global"),
+//				attrs: {
+//				},
+//				functions: {
+//					change_showglobal : function () {
+//						global.bool.set("v",!global.bool.get("v"));
+//					}
+//				}
+//			});
+//			showglobal.activate();
+
+			var inject = new BetaJS.Dynamics.Dynamic({
+				element: root.find("#inject"),
+				attrs: {
+					showinject: false,
+					internal_property: new BetaJS.Properties.Properties({v : internal_message}),
+				},
+				functions: {
+					change_bool : function (){
+						this.set("showinject", !this.get("showinject"));
+					},
+					change_props : function (){
+						//console.log(this.get("internal_property").get("v"));
+						this.get("internal_property").set("v",null);
+						//console.log(this.get("internal_property").get("v"));
+
+//						this.get("internal_property").set("v",null);
+
+//						console.log(this.get("internal_property"));
+
+					}
+				}
+			});
+
+			var innertest = "Inner Test";
+
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inject", {
+				template: 	"<inner>Value inner : " +
+								"<div id='innertest'>" + innertest +"</div>" +
+								"<div ba-show='{{boolean}}'>" +
+									"<span>Boolean: </span>" +
+									"<span class='test1'>{{=boolean}}</span>" +
+								"</div>" +
+								"<div>" +
+									"<span>String: </span>" +
+									"<span class='test2'>{{=inject}}</span>" +
+								"</div>" +
+								"<div>" +
+									"<span>Internal Property: </span>" +
+									"<span class='int'>{{=internal_property.v}}</span>" +
+								"</div>" +
+								"<div>" +
+									"<span>External Property: </span>" +
+									"<span class='ext'>{{=external_property.v}}</span>" +
+								"</div>" +
+							"</inner>"
+			}).register("ba-inner");
+
+			inject.activate();
+
+			function test() {
+				QUnit.equal(root.children().length, 5);
+
+				//Binding
+				showbinding.set("value", "Hello");
+				QUnit.equal($("#bashowsimple").find("div").html().trim(), showbinding.get("value"));
+				QUnit.equal($("#showbinding").css("display"),"block");
+				QUnit.equal($("#hidebinding").css("display"),"none");
+				$("#bashowsimple").find("button").trigger("click");
+				QUnit.equal($("#showbinding").css("display"),"none");
+				QUnit.equal($("#hidebinding").css("display"),"block");
+				showbinding.call("change_showbinding");
+				QUnit.equal($("#showbinding").css("display"),"block");
+				QUnit.equal($("#hidebinding").css("display"),"none");
+
+				//Direct
+				QUnit.equal($("#direct_true").css("display"),"block");
+				QUnit.equal($("#direct_false").css("display"),"none");
+				QUnit.equal($("#direct_null").css("display"),"none");
+				QUnit.equal($("#direct_undefined").css("display"),"none");
+
+				//Special
+				QUnit.equal($("#null").css("display"),"block");
+				special.set("value_null",null);
+				QUnit.equal($("#null").css("display"),"none");
+
+				QUnit.equal($("#undefined").css("display"),"block");
+				special.set("value_undefined",undefined);
+				QUnit.equal($("#undefined").css("display"),"none");
+
+				//Local Property
+				QUnit.equal($("#localvalue").html().trim(),local_message);
+				QUnit.equal($("#showlocal").css("display"),"block");
+				QUnit.equal($("#hidelocal").css("display"),"none");
+				showlocal.call("change_showlocal");
+				QUnit.equal($("#showlocal").css("display"),"none");
+				QUnit.equal($("#hidelocal").css("display"),"block");
+				$("#local").find("button").trigger("click");
+				QUnit.equal($("#showlocal").css("display"),"block");
+				QUnit.equal($("#hidelocal").css("display"),"none");
+
+				//Global Property
+				//TODO: Nice to have, low Priority
+//				QUnit.equal($("#globalvalue").html().trim(),global_message);
+//				QUnit.equal($("#showglobal").css("display"),"block");
+//				QUnit.equal($("#hideglobal").css("display"),"none");
+//				showglobal.call("change_showglobal");
+//				QUnit.equal($("#showglobal").css("display"),"none");
+//				QUnit.equal($("#hideglobal").css("display"),"block");
+//				$("#global").find("button").trigger("click");
+//				QUnit.equal($("#showglobal").css("display"),"block");
+//				QUnit.equal($("#hideglobal").css("display"),"none");
+
+
+				//Inject
+
+				QUnit.equal($("#inject-boolean").find('.test1').parent().css("display"), "none");
+
+
+//				QUnit.equal(root.find("#test2").html().trim(), inject.get("value"));
+//				QUnit.equal(root.find("#test2").html().trim(), inject.get("value"));
+//				QUnit.equal(root.find("#test2").html().trim(), inject.get("value"));
+//				QUnit.equal(root.find("#innertest").html().trim(), innertest);
+
+//				inject.call("change_props");
+//				button.trigger( "click" );
+//				QUnit.equal(root.find("#int").html().trim(), new_internal);
+//				QUnit.equal(root.find("#int").html().trim(), new_internal);
+
+			}			
+		</script>
+
+	</body>
+</html>

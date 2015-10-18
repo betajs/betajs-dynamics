@@ -49,7 +49,9 @@ used Dynamic functionalities. On specifics how they work please refer to the ind
 			},
 
 			functions : {
-				some_function : () {}
+				some_function : () {
+					this.element() //to access the element itself
+				}
 			}
 
 		},

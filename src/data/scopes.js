@@ -95,7 +95,9 @@ Scoped.define("module:Data.Scope", [
 				this.__properties.on("change", function (key, value, oldValue) {
 					this.trigger("change:" + key, value, oldValue);
 				}, this);
-				this.__functions = options.functions;
+				this.__functions = Objs.map(options.functions, function (value) {
+					return Types.is_string(value) ? Functions.as_method(this[value], this) : value;
+				}, this);
 				this.__scopes = {};
 				this.__data = options.data;
 				this.setAll(Types.is_function(options.attrs) ? options.attrs() : options.attrs);
@@ -236,7 +238,15 @@ Scoped.define("module:Data.Scope", [
 			}	
 	
 		};
-	}]);
+	}], {
+
+		_extender: {
+			functions: function (base, overwrite) {
+				return Objs.extend(Objs.clone(base, 1), overwrite);
+			}
+		}
+	
+	});
 });
 		
 		

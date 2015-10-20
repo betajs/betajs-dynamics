@@ -241,7 +241,7 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-closure-tools');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-node-qunit');
-  grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-contrib-connect');
 	grunt.loadNpmTasks('grunt-jsdoc');
 	grunt.loadNpmTasks('grunt-shell');
 	grunt.loadNpmTasks('grunt-template');	

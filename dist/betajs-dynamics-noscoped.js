@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.2 - 2015-10-18
+betajs-dynamics - v0.0.4 - 2015-10-20
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '141.1445194033049'
+		version: '142.1445355947445'
 	};
 });
 
@@ -720,8 +720,9 @@ Scoped.define("module:Handlers.Attr", [
 	    "module:Parser",
 	    "jquery:",
 	    "base:Types",
+	    "base:Strings",
 	    "module:Registries"
-	], function (Class, Parser, $, Types, Registries, scoped) {
+	], function (Class, Parser, $, Types, Strings, Registries, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, function (inherited) {
 		return {
@@ -810,15 +811,15 @@ Scoped.define("module:Handlers.Attr", [
 					if (this._attrName === "value" && this._element.value !== value)
 						this.__inputVal(this._element, value);
 					if (this._tagHandler && this._dyn)
-						this._tagHandler.properties().set(this._attrName.substring("ba-".length), value);
+						this._tagHandler.properties().set(Strings.first_after(this._attrName, "-"), value);
 				}
 			},
 
 			bindTagHandler: function (handler) {
 				this.unbindTagHandler();
 				this._tagHandler = handler;
-				if (!this._partial && this._attrName.indexOf("ba-") === 0) {
-					var innerKey = this._attrName.substring("ba-".length);					
+				if (!this._partial && Registries.prefixes[Strings.splitFirst(this._attrName, "-").head]) {
+					var innerKey = Strings.first_after(this._attrName, "-");					
 					this._tagHandler.setArgumentAttr(innerKey, this._attrValue);
 					if (this._dyn && this._dyn.bidirectional) {
 						this._tagHandler.properties().on("change:" + innerKey, function (value) {
@@ -1313,7 +1314,8 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry"], function (Cla
 	return {		
 		
 		handler: new ClassRegistry({}, true),
-		partial: new ClassRegistry({}, true)
+		partial: new ClassRegistry({}, true),
+		prefixes: {"ba": true}
 	
 	};
 });

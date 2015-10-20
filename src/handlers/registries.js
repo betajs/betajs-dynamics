@@ -2,7 +2,8 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry"], function (Cla
 	return {		
 		
 		handler: new ClassRegistry({}, true),
-		partial: new ClassRegistry({}, true)
+		partial: new ClassRegistry({}, true),
+		prefixes: {"ba": true}
 	
 	};
 });

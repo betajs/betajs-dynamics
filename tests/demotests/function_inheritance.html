@@ -10,26 +10,27 @@
     <body>
 
         <test>
-            <input value="{{=testvar}}" /><p>{{testvar}}</p>
-            <ba-innerfullbind ba-sharescope>
-            </ba-innerfullbind>
-            <ba-innerfullbind ba-sharescope="{{props}}">
-            </ba-innerfullbind>
         </test>
 
         <script>
-            var X = BetaJS.Dynamics.Dynamic.extend(null, {
+            var Y = BetaJS.Dynamics.Dynamic.extend(null, {
                 template: '<button ba-click="click()">Click Me</button>',
                 functions: {
-                   	click: "click"
+                   	click: "click",
+                   	other: function () {
+                   		this.set("otherA", true);
+                   	}
                 },
                 click: function () {
                 	this.set("clickA", true);
                 }
-            }).extend(null, function (inherited) {
+            });
+            var X = Y.extend(null, function (inherited) {
             	return {
             		functions: {
             			other: function () {
+            				this.set("otherB", true);
+            				inherited.functions.other.call(this);
             			}
             		},
                     click: function () {
@@ -49,6 +50,9 @@
             	$("test button").click();
                 QUnit.equal(main.get("clickB"), true);
                 QUnit.equal(main.get("clickA"), true);
+                main.call("other");
+                QUnit.equal(main.get("otherB"), true);
+                QUnit.equal(main.get("otherA"), true);
             }
         </script>
 

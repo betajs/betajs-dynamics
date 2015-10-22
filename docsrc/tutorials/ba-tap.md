@@ -1,7 +1,11 @@
 
 
-The ba-click Partial executes the code passed into it when the User clicks on the related DOM element.
-(or calls a function from the related Dynamic).
+The ba-tap partial is similar to the ba-click and is meant to be used with touchscreen interfaces,
+it executes the code passed into it, or calls a function from the related Dynamic when the user taps on the screen.
+
+#### Note
+
+In particular this partial is useful when the ba-click experiences a delay on touchscreen surfaces.
 
 
 #### Example 1:
@@ -10,7 +14,7 @@ Will call an alert pop-up
 
 
 ```html
-<div ba-click="alert('Hi')"><h1>Hi</h1><div>
+<div ba-tap="alert('Hi')"><h1>Hi</h1><div>
 ```
 
 #### Example 2:
@@ -18,7 +22,7 @@ Will call an alert pop-up
 Will Show/Hide the "<h1>Hi</h1>"  element when you click on the surrounding div element.
 
 ```html
-<div class="some_class" ba-click="boolean != boolean">
+<div class="some_class" ba-tap="boolean != boolean">
     <h1 ba-show="boolean">Hi</h1>
 <div>
 ```
@@ -39,7 +43,7 @@ Will Show/Hide the "<h1>Hi</h1>"  element when you click on the surrounding div 
 Will also call an alert pop-up
 
 ```html
-<div class="some_class" ba-click="some_function()">
+<div class="some_class" ba-tap="some_function()">
     <h1>Hi</h1>
 <div>
 ```

@@ -55,20 +55,6 @@
 				<br/>
 			</div>
 
-			<!--<div id="global">-->
-				<!--<h4>Test Global Propterties</h4>-->
-				<!--<div>-->
-					<!--<span>Value: </span>-->
-					<!--<span id="globalvalue">{{bool.v}}</span>-->
-				<!--</div>-->
-				<!--<div>-->
-					<!--<div id="showglobal" ba-show="{{bool.v}}">Showglobal</div>-->
-					<!--<div id="hideglobal" ba-show="{{!bool.v}}">Hideglobal</div>-->
-				<!--</div>-->
-				<!--<button ba-click="change_showglobal()">Show/Hide Global</button>-->
-				<!--<br/>-->
-			<!--</div>-->
-
 			<div id="inject">
 
 				<h4>Test ba-show Boolean & Inject</h4>
@@ -122,12 +108,10 @@
 			var external_message = "This is an External Property";
 			var internal_message = "This is an Internal Property";
 			var new_internal = "New Internal Property Value";
-//			var global_message = "This is a Global Property";
 			var local_message = "This is a Local Property";
 
 			//Properties
 			var external_property = new BetaJS.Properties.Properties({v : external_message});
-//			global.bool = new BetaJS.Properties.Properties({v : global_message});
 
 			//Dynamics
 			var showbinding = new BetaJS.Dynamics.Dynamic({
@@ -169,18 +153,6 @@
 			});
 			showlocal.activate();
 
-//			var showglobal = new BetaJS.Dynamics.Dynamic({
-//				element: root.find("#global"),
-//				attrs: {
-//				},
-//				functions: {
-//					change_showglobal : function () {
-//						global.bool.set("v",!global.bool.get("v"));
-//					}
-//				}
-//			});
-//			showglobal.activate();
-
 			var inject = new BetaJS.Dynamics.Dynamic({
 				element: root.find("#inject"),
 				attrs: {
@@ -192,14 +164,7 @@
 						this.set("showinject", !this.get("showinject"));
 					},
 					change_props : function (){
-						//console.log(this.get("internal_property").get("v"));
 						this.get("internal_property").set("v",null);
-						//console.log(this.get("internal_property").get("v"));
-
-//						this.get("internal_property").set("v",null);
-
-//						console.log(this.get("internal_property"));
-
 					}
 				}
 			});
@@ -271,26 +236,10 @@
 				QUnit.equal($("#showlocal").css("display"),"block");
 				QUnit.equal($("#hidelocal").css("display"),"none");
 
-				//Global Property
-				//TODO: Nice to have, low Priority
-//				QUnit.equal($("#globalvalue").html().trim(),global_message);
-//				QUnit.equal($("#showglobal").css("display"),"block");
-//				QUnit.equal($("#hideglobal").css("display"),"none");
-//				showglobal.call("change_showglobal");
-//				QUnit.equal($("#showglobal").css("display"),"none");
-//				QUnit.equal($("#hideglobal").css("display"),"block");
-//				$("#global").find("button").trigger("click");
-//				QUnit.equal($("#showglobal").css("display"),"block");
-//				QUnit.equal($("#hideglobal").css("display"),"none");
-
-
 				//Inject
 
 				QUnit.equal($("#inject-boolean").find('.test1').parent().css("display"), "none");
 
-
-//				QUnit.equal(root.find("#test2").html().trim(), inject.get("value"));
-//				QUnit.equal(root.find("#test2").html().trim(), inject.get("value"));
 //				QUnit.equal(root.find("#test2").html().trim(), inject.get("value"));
 //				QUnit.equal(root.find("#innertest").html().trim(), innertest);
 

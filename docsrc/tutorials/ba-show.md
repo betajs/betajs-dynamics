@@ -3,10 +3,19 @@
 The ba-show Partial is used to automatically show or hide DOM Elements depending on the
 boolean value of a given condition.
 
-###
-In comparison to ba-if it doesn't remove the whole DOM Element
-and it will be faster to load if you wish to show it again,
-however it will also stay in memory durging this time.
+#### Note
+Ba-if is really just a convenience method to show/hide DOM elements.
+
+If ba-show evaluates to false it will apply the css property "display: none" to the DOM element it is placed on.
+In comparison if ba-if evaluates to false it will also free all the resources of all underlying dynamics.
+
+ba-if:
++ Less memory usage
+- Potentially slower loading time
+
+ba-show:
++ Faster loading time
+- More memory
 
 
 #### Example 1:

@@ -11,49 +11,29 @@
 
 <test>
 
-    <div>
-        </br>
-        <h3>Tests for ba-if & Inject</h3>
-        </br>
-    </div>
+    <div><br><h3>Tests for the "ba-if" Partial & Injecting Properties</h3><br></div>
 
     <div id="outer">
 
         <h4>Normal Array:</h4>
-
-        <div
-                id="normal_array"
-                ba-repeat="{{norm :: normal_array}}">
+        <div id="normal_array" ba-repeat="{{norm :: normal_array}}">
             <div>Hi</div>
             <div>{{norm}}</div>
         </div>
 
         <h4>Property Array:</h4>
-
-        <div
-                id="property_array"
-                ba-repeat="{{prop :: property_array}}">
+        <div id="property_array" ba-repeat="{{prop :: property_array}}">
             <div>Hi</div>
             <div>{{prop}}</div>
         </div>
 
         <h4>Middle</h4>
-
-        <ba-middle
-                ba-inject="{{{v:'haha'}}}"
-                ></ba-middle>
+        <ba-middle ba-inject="{{{v:'haha'}}}"></ba-middle>
 
         <h4>Middle & Array</h4>
-
         <button ba-click='change_array()'>Change Array</button>
-
-        <div
-                id="middle"
-                ba-repeat="{{prop :: property_array}}">
-            <ba-middle
-                    ba-if="{{prop.v}}"
-                    ba-inject="{{prop}}"
-                    ></ba-middle>
+        <div id="middle" ba-repeat="{{prop :: property_array}}">
+            <ba-middle ba-if="{{prop.v}}" ba-inject="{{prop}}"></ba-middle>
         </div>
 
     </div>
@@ -100,10 +80,7 @@
                         "<div>inject: {{inject}}</div>" +
                         "<div>inject.v: {{inject.v}}</div>" +
                         "<div>inject.v.v: {{inject.v.v}}</div>" +
-                        "<ba-inner " +
-                            "ba-if='{{inject.v}}'" +
-                            "ba-inject='{{inject.v}}'" +
-                        "></ba-inner>" +
+                        "<ba-inner ba-if='{{inject.v}}' ba-inject='{{inject.v}}'></ba-inner>" +
                     "</middle></br></br>",
         initial: {
             attrs: {
@@ -123,44 +100,21 @@
         QUnit.equal(root.children().length, 2);
 
         //Arrays
-        QUnit.equal(
-                $("#normal_array").find("div").length,
-                2 * outer.get("normal_array").length
-        );
-        QUnit.equal(
-                $("#property_array").find("div").length,
-                2 * outer.get("property_array").length
-        );
+        QUnit.equal($("#normal_array").find("div").length, 2 * outer.get("normal_array").length);
+        QUnit.equal($("#property_array").find("div").length, 2 * outer.get("property_array").length);
 
         //ba-repeat & Dynamic
 
-        /*  -- there are not three instances of middle in there but one, because of the if
-        QUnit.equal(
-                $($("#middle inner")[0]).html().trim(),
-                "Inner: null"
-        );
+        //  -- there are not three instances of middle in there but one, because of the if
+//        QUnit.equal($($("#middle inner")[0]).html().trim(), "Inner: null");
+//        QUnit.equal($($("#middle inner")[1]).html().trim(), internal_message);
 
-        QUnit.equal(
-                $($("#middle inner")[1]).html().trim(),
-                "Inner: This is an internal Message"
-        );
-        */
-        QUnit.equal(
-                $($("#middle inner")[0]).html().trim(),
-                "Inner: This is an internal Message"
-        );
+        QUnit.equal($($("#middle inner")[0]).html().trim(), "Inner: " + internal_message);
 
         outer.call("change_array");
 
-        QUnit.equal(
-                $($("#middle inner")[0]).html().trim(),
-                "Inner: This is an internal Message"
-        );
-
-        QUnit.equal(
-                $($("#middle ba-middle")[1]).css('display'),
-                "none"
-        );
+        QUnit.equal($($("#middle inner")[0]).html().trim(), "Inner: " + internal_message);
+        QUnit.equal($($("#middle ba-middle")[1]).css('display'), "none");
 
     }
 </script>

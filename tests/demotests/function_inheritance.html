@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../assets/styles.css">
+
+        <script src="../assets/jquery.js"></script>
+        <script src="../../vendors/beta.js"></script>
+        <script src="../../vendors/beta-browser-noscoped.js"></script>
+        <script src="../../dist/betajs-dynamics.js"></script>
+    </head>
+    <body>
+
+        <test>
+            <input value="{{=testvar}}" /><p>{{testvar}}</p>
+            <ba-innerfullbind ba-sharescope>
+            </ba-innerfullbind>
+            <ba-innerfullbind ba-sharescope="{{props}}">
+            </ba-innerfullbind>
+        </test>
+
+        <script>
+            var X = BetaJS.Dynamics.Dynamic.extend(null, {
+                template: '<button ba-click="click()">Click Me</button>',
+                functions: {
+                   	click: "click"
+                },
+                click: function () {
+                	this.set("clickA", true);
+                }
+            }).extend(null, function (inherited) {
+            	return {
+            		functions: {
+            			other: function () {
+            			}
+            		},
+                    click: function () {
+                        this.set("clickB", true);
+                        inherited.click.call(this);
+                    }
+            	};
+            });
+
+            var main = new X({
+                element: $("test")
+            });
+            main.activate();
+
+
+            function test() {
+            	$("test button").click();
+                QUnit.equal(main.get("clickB"), true);
+                QUnit.equal(main.get("clickA"), true);
+            }
+        </script>
+
+    </body>
+</html>

@@ -16,6 +16,10 @@ Scoped.define("module:Dynamic", [
 			constructor: function (options) {
 				this.initial = this.initial || {};
 				options = Objs.extend(Objs.clone(this.initial, 1), options);
+				Objs.iter(this.cls.__initialForward, function (key) {
+					if (!(key in options) && (key in this))
+						options[key] = this[key];
+				}, this);
 				if (!options.parent && options.parentHandler) {
 					var ph = options.parentHandler;
 					while (ph && !options.parent) {
@@ -40,6 +44,10 @@ Scoped.define("module:Dynamic", [
 				
 		};
 	}], {
+		
+		__initialForward: [
+		    "functions", "attrs", "collections", "template"
+        ],
 		
 		canonicName: function () {
 			return Strings.last_after(this.classname, ".").toLowerCase();

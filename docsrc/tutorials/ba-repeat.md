@@ -1,7 +1,7 @@
 
 ### Introduction
 
-The ba-repeat partial repeats the containing DOM elements of the DOM Elements it is placed on with different values a certain number of times.
+The ba-repeat partial repeats the containing DOM elements of the DOM Elements it is placed a certain number of times.
 
 ##### Example 1:
 
@@ -117,4 +117,24 @@ Evaluates to
 </div>
 ```
 
-#### ba-repeat-element
+### ba-repeat-element
+
+ba-repeat-element is a special form of ba-repeat, it repeats the element it is placed on itself.
+The ba-repeat is the preferred partial due to performance.
+
+##### Example :
+
+```html
+<ul>
+    <li ba-repeat="{{ i :: [1,2] }}">{{i}}</li>
+</ul>
+```
+
+Evaluates to
+
+```html
+<ul>
+    <li>1</li>
+    <li>2</li>
+</ul>
+```

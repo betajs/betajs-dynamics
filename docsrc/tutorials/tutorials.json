@@ -62,17 +62,23 @@
     "title" : "HTML Attributes",
     "children" : {
       "ba-click" : {
-        "title": "ba-click"
+        "title": "The ba-click Partial"
       },
-      "ba-tap" : {},
-      "ba-class" : {},
-      "ba-show" : {},
+      "ba-tap" : {
+        "title" : "The ba-tap Partial"
+      },
+      "ba-class" : {
+        "title" : "The ba-class Partial"
+      },
+      "ba-show" : {
+        "title" : "The ba-show Partial"
+      },
       "ba-if" : {
-        "title" : "ba-if"
+        "title" : "The ba-if Partial"
       },
       "ba-ignore" : {},
       "ba-repeat" : {
-        "title" : "ba-repeat"
+        "title" : "The ba-repeat Partial"
       },
       "ba-attrs" : {},
       "ba-on" : {},

@@ -11,11 +11,7 @@
 
 		<test>
 
-			<div>
-				</br>
-				<h3>Test for ba-if & ba-class</h3>
-				</br>
-			</div>
+			<div></br><h3>Test for the Combination of the "ba-if" Partial and the "ba-class" Partial</h3></br></div>
 
 			<div id="baifsimple">
 				<h4>Test ba-if simple</h4>
@@ -27,26 +23,16 @@
 				<div>
 					<h4>Expected Behaviour (Class/Background seperate): </h4>
 					<div>If: </div>
-					<div id="inner"
-							ba-if="{{showbinding}}"
-							>{{=value}}</div>
-					<div
-							ba-if="{{!showbinding}}"
-							>Hide Binding</div>
+					<div id="inner" ba-if="{{showbinding}}">{{=value}}</div>
+					<div ba-if="{{!showbinding}}">Hide Binding</div>
 					</br>
 					<div>Background:</div>
-					<div
-							ba-class="{{{'green':showbinding}}}"
-							>{{=value}}</div>
-					<div
-							ba-class="{{{'red':!showbinding}}}"
-							>Hide Binding</div>
+					<div ba-class="{{{'green':showbinding}}}">{{=value}}</div>
+					<div ba-class="{{{'red':!showbinding}}}">Hide Binding</div>
 				</div>
 				<div>
 					<h4>Actual Behaviour</h4>
-					<div
-							id="showbinding"
-							ba-if="{{showbinding}}"
+					<div id="showbinding" ba-if="{{showbinding}}"
 							ba-class="{{{'green':showbinding}}}"
 							>{{=value}}</div>
 					<div

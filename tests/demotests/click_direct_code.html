@@ -21,26 +21,22 @@
 			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
 		
 			dynamic.set("test", false);
-      dynamic.set("outer", false);
-      dynamic.set("inner", false);
+      		dynamic.set("outer", false);
+			dynamic.set("inner", false);
 			dynamic.activate();
 			
 			function test() {
 				QUnit.equal(dynamic.get("test"), false);
-			
 				root.find("button").click();
-			
 				QUnit.equal(dynamic.get("test"), true);
-			
 				root.find("button").click();
-			
 				QUnit.equal(dynamic.get("test"), false);
 
-        QUnit.equal(dynamic.get("outer"), false);
-        QUnit.equal(dynamic.get("inner"), false);
-        root.find("div#inner").click();
-        QUnit.equal(dynamic.get("outer"), false, "outer should be false");
-        QUnit.equal(dynamic.get("inner"), true, "inner should be true");
+				QUnit.equal(dynamic.get("outer"), false);
+				QUnit.equal(dynamic.get("inner"), false);
+				root.find("div#inner").click();
+				QUnit.equal(dynamic.get("outer"), false, "outer should be false");
+				QUnit.equal(dynamic.get("inner"), true, "inner should be true");
 			}			
 		</script>
 	</body>

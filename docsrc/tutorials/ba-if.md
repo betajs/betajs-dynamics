@@ -1,8 +1,20 @@
 
 
-The ba-if Partial is used to automatically add or remove DOM Elements depending on the
+The ba-if Partial is used to automatically display or hide DOM Elements depending on the
 boolean value of a given condition.
 
+#### Note
+
+If ba-if evaluates to false it will free all the resources of all underlying dynamics.
+In comparison ba-show does not do this.
+
+ba-if:
++ Less memory usage
+- Potentially slower loading time
+
+ba-show:
++ Faster loading time
+- More memory
 
 #### Example 1:
 
@@ -13,7 +25,7 @@ boolean value of a given condition.
 Will evaluate to
 
 ```html
-<div><h1>Hi</h1><div>
+<div><h1 style="display:block;">Hi</h1><div>
 ```
 
 And
@@ -26,7 +38,7 @@ And
 Will evaluate to
 
 ```html
-<div><div>
+<div><h1 style="display:none;">Hi</h1><div>
 ```
 
 #### Example 2:
@@ -51,7 +63,7 @@ Will evaluate to
 Will evaluate to
 
 ```html
-<div class="some_class">
+<div class="some_class" style="display:block;">
     <h1>Hi</h1>
 <div>
 ```

@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.2 - 2015-10-18
+betajs-dynamics - v0.0.3 - 2015-10-19
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -290,12 +290,14 @@ function newNamespace (options) {
 	
 	function nodeUnresolvedWatchers(node, base, result) {
 		node = node || nsRoot;
-		base = base ? base + "." + node.route : node.route;
 		result = result || [];
 		if (!node.ready)
 			result.push(base);
-		for (var k in node.children)
-			result = nodeUnresolvedWatchers(node.children[k], base, result);
+		for (var k in node.children) {
+			var c = node.children[k];
+			var r = (base ? base + "." : "") + c.route;
+			result = nodeUnresolvedWatchers(c, r, result);
+		}
 		return result;
 	}
 
@@ -543,7 +545,7 @@ var rootScope = newScope(null, rootNamespace, rootNamespace, globalNamespace);
 var Public = Helper.extend(rootScope, {
 		
 	guid: "4b6878ee-cb6a-46b3-94ac-27d91f58d666",
-	version: '9.9436390238591',
+	version: '9.9436392609879',
 		
 	upgrade: Attach.upgrade,
 	attach: Attach.attach,
@@ -558,7 +560,7 @@ Public.exports();
 }).call(this);
 
 /*!
-betajs-dynamics - v0.0.2 - 2015-10-18
+betajs-dynamics - v0.0.3 - 2015-10-19
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -575,7 +577,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '142.1445201656874'
+		version: '144.1445255143227'
 	};
 });
 
@@ -1015,7 +1017,9 @@ Scoped.define("module:Data.Scope", [
 				this.__properties.on("change", function (key, value, oldValue) {
 					this.trigger("change:" + key, value, oldValue);
 				}, this);
-				this.__functions = options.functions;
+				this.__functions = Objs.map(options.functions, function (value) {
+					return Types.is_string(value) ? Functions.as_method(this[value], this) : value;
+				}, this);
 				this.__scopes = {};
 				this.__data = options.data;
 				this.setAll(Types.is_function(options.attrs) ? options.attrs() : options.attrs);
@@ -1156,7 +1160,15 @@ Scoped.define("module:Data.Scope", [
 			}	
 	
 		};
-	}]);
+	}], {
+
+		_extender: {
+			functions: function (base, overwrite) {
+				return Objs.extend(Objs.clone(base, 1), overwrite);
+			}
+		}
+	
+	});
 });
 		
 		
@@ -2521,6 +2533,10 @@ Scoped.define("module:Dynamic", [
 			constructor: function (options) {
 				this.initial = this.initial || {};
 				options = Objs.extend(Objs.clone(this.initial, 1), options);
+				Objs.iter(this.cls.__initialForward, function (key) {
+					if (!(key in options) && (key in this))
+						options[key] = this[key];
+				}, this);
 				if (!options.parent && options.parentHandler) {
 					var ph = options.parentHandler;
 					while (ph && !options.parent) {
@@ -2545,6 +2561,10 @@ Scoped.define("module:Dynamic", [
 				
 		};
 	}], {
+		
+		__initialForward: [
+		    "functions", "attrs", "collections", "template"
+        ],
 		
 		canonicName: function () {
 			return Strings.last_after(this.classname, ".").toLowerCase();

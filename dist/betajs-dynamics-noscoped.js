@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.4 - 2015-10-20
+betajs-dynamics - v0.0.4 - 2015-10-21
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '142.1445355947445'
+		version: '143.1445472024907'
 	};
 });
 
@@ -1348,6 +1348,21 @@ Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], funct
 
  	});
  	Cls.register("ba-attrs");
+	return Cls;
+});
+
+
+Scoped.define("module:Partials.FunctionsPartial", ["module:Handlers.Partial", "browser:Info", "base:Objs"], function (Partial, Info, Objs, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+ 		return {
+			
+ 			bindTagHandler: function (handler) { 				
+ 				Objs.extend(handler.__functions, this._value); 
+ 			}
+ 		
+ 		};
+ 	});
+ 	Cls.register("ba-functions");
 	return Cls;
 });
 

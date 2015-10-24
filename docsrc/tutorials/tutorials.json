@@ -6,9 +6,6 @@
       "helloworld": {
         "title": "Hello World",
         "dependencies" : ["betajs:dynamics_basics","betajs:properties", "extern:HTML", "external:","external:Javascript"]
-      },
-      "dynamics_basics" : {
-        "title": "Dynamics Basics"
       }
     }
   },
@@ -82,7 +79,9 @@
       },
       "ba-attrs" : {},
       "ba-on" : {},
-      "ba-return" : {},
+      "ba-return" : {
+        "title" : "The ba-return Partial"
+      },
       "ba-template-url" : {},
       "ba-*" : {}
     }

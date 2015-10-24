@@ -4,7 +4,7 @@ Scoped.define("module:Partials.TapPartial", ["module:Handlers.Partial", "browser
    * @name ba-tap
    *
    * @description
-   * The ba-tao partial allows the specification of custom on tap behavior. Tap
+   * The ba-tap partial allows the specification of custom on tap behavior. Tap
    * is particularly useful for handling mobile events.
    *
    * @param {expression} baTap Expression to evaluate upon tap. See ba-click

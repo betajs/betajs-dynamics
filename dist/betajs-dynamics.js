@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.3 - 2015-10-19
+betajs-dynamics - v0.0.5 - 2015-10-22
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -560,7 +560,7 @@ Public.exports();
 }).call(this);
 
 /*!
-betajs-dynamics - v0.0.3 - 2015-10-19
+betajs-dynamics - v0.0.5 - 2015-10-22
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -577,7 +577,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '144.1445255143227'
+		version: '146.1445535406026'
 	};
 });
 
@@ -1281,8 +1281,9 @@ Scoped.define("module:Handlers.Attr", [
 	    "module:Parser",
 	    "jquery:",
 	    "base:Types",
+	    "base:Strings",
 	    "module:Registries"
-	], function (Class, Parser, $, Types, Registries, scoped) {
+	], function (Class, Parser, $, Types, Strings, Registries, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, function (inherited) {
 		return {
@@ -1371,15 +1372,15 @@ Scoped.define("module:Handlers.Attr", [
 					if (this._attrName === "value" && this._element.value !== value)
 						this.__inputVal(this._element, value);
 					if (this._tagHandler && this._dyn)
-						this._tagHandler.properties().set(this._attrName.substring("ba-".length), value);
+						this._tagHandler.properties().set(Strings.first_after(this._attrName, "-"), value);
 				}
 			},
 
 			bindTagHandler: function (handler) {
 				this.unbindTagHandler();
 				this._tagHandler = handler;
-				if (!this._partial && this._attrName.indexOf("ba-") === 0) {
-					var innerKey = this._attrName.substring("ba-".length);					
+				if (!this._partial && Registries.prefixes[Strings.splitFirst(this._attrName, "-").head]) {
+					var innerKey = Strings.first_after(this._attrName, "-");					
 					this._tagHandler.setArgumentAttr(innerKey, this._attrValue);
 					if (this._dyn && this._dyn.bidirectional) {
 						this._tagHandler.properties().on("change:" + innerKey, function (value) {
@@ -1874,7 +1875,8 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry"], function (Cla
 	return {		
 		
 		handler: new ClassRegistry({}, true),
-		partial: new ClassRegistry({}, true)
+		partial: new ClassRegistry({}, true),
+		prefixes: {"ba": true}
 	
 	};
 });
@@ -1907,6 +1909,21 @@ Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], funct
 
  	});
  	Cls.register("ba-attrs");
+	return Cls;
+});
+
+
+Scoped.define("module:Partials.FunctionsPartial", ["module:Handlers.Partial", "browser:Info", "base:Objs"], function (Partial, Info, Objs, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+ 		return {
+			
+ 			bindTagHandler: function (handler) { 				
+ 				Objs.extend(handler.__functions, this._value); 
+ 			}
+ 		
+ 		};
+ 	});
+ 	Cls.register("ba-functions");
 	return Cls;
 });
 
@@ -2452,7 +2469,7 @@ Scoped.define("module:Partials.TapPartial", ["module:Handlers.Partial", "browser
    * @name ba-tap
    *
    * @description
-   * The ba-tao partial allows the specification of custom on tap behavior. Tap
+   * The ba-tap partial allows the specification of custom on tap behavior. Tap
    * is particularly useful for handling mobile events.
    *
    * @param {expression} baTap Expression to evaluate upon tap. See ba-click

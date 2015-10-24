@@ -7,23 +7,39 @@
 	</head>
 	<body>
 		<test>
-		
-			<button
-					ba-on:mouseover="mouseover()"
-					ba-on:mouseleave="mouseleave()"
-					>Mouseover</button>
 
-			<script>
-				function leave() {
-					console.log('Mouseleave');
-				}
-			</script>
-			<div>Value: {{test}}</div>
+			<div id="dynamic">
+				<button ba-on:mouseover="mouseover()" ba-on:mouseleave="mouseleave()">Dynamic Mouseover</button>
+
+				<script>
+					function leave() {
+						console.log('Mouseleave');
+					}
+				</script>
+				<div>Value: {{test}}</div>
+			</div><br>
+
+			<div id="DOMevent">
+				<button onmouseover="enter()" ba-on:mouseleave="leave()">DOMevent Mouseover</button>
+
+				<script>
+					function enter() {
+						console.log('Mouseenter');
+						DOMevent.set("test", true);
+					}
+					function leave() {
+						console.log('Mouseleave');
+						DOMevent.set("test", false);
+					}
+				</script>
+				<div>Value: {{test}}</div>
+			</div>
+
 		</test>
 		<script>
 			var root = $("test");
 			var dynamic = new BetaJS.Dynamics.Dynamic({
-				element: root.get(0),
+				element: root.find("#dynamic"),
 				functions: {
 					mouseover : function () {
 						//console.log('Mouseover');
@@ -35,10 +51,28 @@
 					}
 				}
 			});
-		
+
+			var DOMevent = new BetaJS.Dynamics.Dynamic({
+				element: root.find("#DOMevent"),
+				functions: {
+					mouseover : function () {
+						//console.log('Mouseover');
+						this.set('test',true);
+					},
+					mouseleave : function () {
+						//console.log('Mouseleave');
+						this.set('test',false);
+					}
+				}
+			});
+
 			dynamic.set("test", false);
 			dynamic.activate();
-			
+
+			DOMevent.set("test", false);
+			DOMevent.activate();
+
+
 			function test() {
 				QUnit.equal(dynamic.get("test"), false);
 			

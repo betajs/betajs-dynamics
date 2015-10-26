@@ -10,28 +10,72 @@
     <body>
 
         <test>
-            <xyz-innertest ba-functions="{{callbacks}}"></xyz-innertest>
+            <outertest></outertest>
         </test>
 
         <script>
+
             BetaJS.Dynamics.Dynamic.extend(null, {
-                template: '<button ba-click="click()">Click Me</button>'
-            }).register("xyz-innertest");
+                template:
+                        '<button id="click1" ba-click="click1()">{{inner_button_value1}}</button>' +
+                        '<button id="click2" ba-click="click2()">{{inner_button_value2}}</button>',
+                initial : {
+                    attrs : {
+                        inner_button_value1 : "Update me!",
+                        inner_button_value2 : "Update me!",
+                        update_value : "Test"
+                    },
+                    functions : {
+                        click1 : function (haha) {
+                            console.log('You clicked me!!');
+                        },
+                        click2 : function (haha) {
+                            console.log('You clicked me!!');
+                        }
+                    }
+                }
+            }).register("innertest");
+
+            BetaJS.Dynamics.Dynamic.extend(null, {
+                template:
+                        '<input value="{{=outer_button_title}}">' +
+                        '<innertest ba-functions="{{callbacks}}" ba-update_value="{{outer_button_title}}"></innertest>',
+                initial : {
+                    attrs: {
+                        outer_button_title: 'New Value',
+                        callbacks: {
+                            click1: function (huhu) {
+                                main.set("clicked", true);
+                                this.set('inner_button_value1', this.get('update_value'));
+                            }
+                        }
+                    }
+                },
+                create: function () {
+                    this.set('callbacks', {
+                        click2: function (huhu) {
+                            main.set("clicked", true);
+                            console.log('second');
+                            this.set('inner_button_value2', this.get('update_value'));
+                        }
+                    })
+                }
+            }).register("outertest");
 
             var main = new BetaJS.Dynamics.Dynamic({
                 element: $("test")
             });
-            main.set("callbacks", {
-            	click: function () {
-            		main.set("clicked", true);
-            	}
-            });
+
             main.activate();
 
 
             function test() {
-            	$("test button").click();
+                $("test #click1").click();
                 QUnit.equal(main.get("clicked"), true);
+                QUnit.equal(main.scope('>[tagname="outertest"]').get('outer_button_title'), $("test #click1").prop('innerHTML'));
+
+                $("test #click2").click();
+                QUnit.equal(main.scope('>[tagname="outertest"]').get('outer_button_title'), $("test #click2").prop('innerHTML'));
             }
         </script>
 

@@ -23,13 +23,16 @@
 				<button onmouseover="enter()" ba-on:mouseleave="leave()">DOMevent Mouseover</button>
 
 				<script>
+					var DOMevent = {};
 					function enter() {
 						console.log('Mouseenter');
-						DOMevent.set("test", true);
+						if (DOMevent)
+							DOMevent.set("test", true);
 					}
 					function leave() {
 						console.log('Mouseleave');
-						DOMevent.set("test", false);
+						if (DOMevent)
+							DOMevent.set("test", false);
 					}
 				</script>
 				<div>Value: {{test}}</div>
@@ -52,7 +55,7 @@
 				}
 			});
 
-			var DOMevent = new BetaJS.Dynamics.Dynamic({
+			DOMevent = new BetaJS.Dynamics.Dynamic({
 				element: root.find("#DOMevent"),
 				functions: {
 					mouseover : function () {

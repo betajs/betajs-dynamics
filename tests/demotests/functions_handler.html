@@ -52,13 +52,11 @@
                     }
                 },
                 create: function () {
-                    this.set('callbacks', {
-                        click2: function (huhu) {
-                            main.set("clicked", true);
-                            console.log('second');
-                            this.set('inner_button_value2', this.get('update_value'));
-                        }
-                    })
+                    this.set('callbacks.click2', function (huhu) {
+                           main.set("clicked", true);
+                           console.log('second');
+                           this.set('inner_button_value2', this.get('update_value'));
+                    });
                 }
             }).register("outertest");
 

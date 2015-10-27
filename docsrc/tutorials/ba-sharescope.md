@@ -5,58 +5,41 @@ The ba-sharescope Partial share the scope between the parent dynamic and the chi
 #### Example:
 
 ```js
-
-            BetaJS.Dynamics.Dynamic.extend(null, {
-                template: '<input value="{{=testvar}}" /><p>{{testvar}}</p>',
-                initial : {
-                    attrs: {
-                        testvar: "Test"
-                    }
-                }
-            }).register("ba-innerfullbind");
-
-            var main = new BetaJS.Dynamics.Dynamic({
-                element: $("test"),
-                attrs: {
-                    testvar: "Foobar",
-                    props: new BetaJS.Properties.Properties({
-                    	testvar: "Coolbar"
-                    })
-                }
-            });
-            main.activate();
-
-
     var parent_dynamic = new BetaJS.Dynamics.Dynamic({
         element: $(".some_class"),
         initial:  {
             attrs : {
-                some_attribute : "This is from the Parent Dynamic
+                some_attribute : "This is from the Parent Dynamic",
+                property: new BetaJS.Properties.Properties({
+                    another_attribute: "Parent"
+                })
             }
         }
     });
-    var child_dynamic = new BetaJS.Dynamics.Dynamic({
-        template: '<div></div>',
+    BetaJS.Dynamics.Dynamic.extend(null, {
+        template: '<div class="child1">{{some_attribute}}</div><div class="child2">{{another_attribute}}</div>',
         initial:  {
             attrs : {
-                some_attribute : "This is from the Child Dynamic
-                another_attribute : "This is from the Child Dynamic
+                some_attribute : "This is from the Child Dynamic",
+                another_attribute : "Child"
             }
         }
     }).register('ba-child');
-    parent_dynamic.activate()
+    parent_dynamic.activate();
 ```
 
 ```html
-
-    <input value="{{=testvar}}" /><p>{{testvar}}</p>
-    <ba-innerfullbind ba-sharescope>
-    </ba-innerfullbind>
-    <ba-innerfullbind ba-sharescope="{{props}}">
-    </ba-innerfullbind>
-
-
     <div class="some_class">
+        <div class="parent1">{{some_attribute}}</div><div class="parent2">{{another_attribute}}</div>
         <ba-child ba-sharescope></ba-child>
+        <ba-child ba-sharescope="{{property}}"></ba-child>
     </div>
 ```
+
+will evaluate to
+
+<div class="some_class">
+    <div>This is from the Child Dynamic</div><div>Child</div>
+    <div>This is from the Child Dynamic</div><div>Child</div>
+    <div>This is from the Child Dynamic</div><div>Child</div>
+</div>

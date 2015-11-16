@@ -10,8 +10,10 @@
 <body>
 
 <test>
-	<div ba-attrs="{{{foobar: 'xyz'}}}">	
-		<ba-innertest ba-attrs="{{{tester: 'abc'}}}">
+	<div ba-attrs="{{{foobar: 'xyz', another: 'another'}}}">
+		<ba-innertest
+                ba-attrs="{{{tester: 'abc', some_set_attr: 'changed'}}}"
+                ba-another_set_attr="{{another}}">
 		</ba-innertest>
 	</div>
 	<testouter>{{foobar}}</testouter><testinner>{{tester}}</testinner>
@@ -19,7 +21,15 @@
 
 <script>
 	BetaJS.Dynamics.Dynamic.extend(null, {
-		template: '<outer>{{foobar}}</outer><inner>{{tester}}</inner>',
+		template :
+                '<outer>{{foobar}}</outer>' +
+                '<some_set_attr>{{some_set_attr}}</some_set_attr>' +
+                '<another_set_attr>{{another_set_attr}}</another_set_attr>' +
+                '<inner>{{tester}}</inner>',
+        attrs : {
+            some_set_attr : "initial",
+            another_set_attr : "initial"
+        }
 	}).register("ba-innertest");
 
     var root = $("test");
@@ -32,6 +42,9 @@
     function test() {
         QUnit.equal(root.find("testouter").html().trim(), "xyz");
         QUnit.equal(root.find("testinner").html().trim(), "");
+        QUnit.equal(root.find("some_set_attr").html().trim(), "changed");
+        QUnit.equal(root.find("another_set_attr").html().trim(), "anotherchanged");
+
         QUnit.equal(root.find("outer").html().trim(), "");
         QUnit.equal(root.find("inner").html().trim(), "abc");
     }

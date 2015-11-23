@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.10 - 2015-11-22
+betajs-dynamics - v0.0.11 - 2015-11-23
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -560,7 +560,7 @@ Public.exports();
 }).call(this);
 
 /*!
-betajs-dynamics - v0.0.10 - 2015-11-22
+betajs-dynamics - v0.0.11 - 2015-11-23
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -577,7 +577,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '159.1448246484425'
+		version: '160.1448286376062'
 	};
 });
 
@@ -1089,6 +1089,15 @@ Scoped.define("module:Data.Scope", [
 				return this.__properties.get(key);
 			},
 			
+			setProp: function (key, value) {
+				this.__properties.setProp(key, value);
+				return this;
+			},
+			
+			getProp: function (key) {
+				return this.__properties.getProp(key);
+			},
+
 			define: function (name, func, ctx) {
 				this.__functions[name] = Functions.as_method(func, ctx || this);
 				return this;
@@ -1226,6 +1235,18 @@ Scoped.define("module:Data.MultiScope", [
 				return iter.hasNext() ? iter.next().get(key) : null;
 			},
 			
+			setProp: function (key, value) {
+				var iter = this.iterator();
+				while (iter.hasNext())
+					iter.next().setProp(key, value);
+				return this;
+			},
+			
+			getProp: function (key) {
+				var iter = this.iterator();
+				return iter.hasNext() ? iter.next().getProp(key) : null;
+			},
+
 			define: function (name, func) {
 				var iter = this.iterator();
 				while (iter.hasNext())

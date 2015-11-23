@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '160.1448286376062'
+		version: '161.1448319002891'
 	};
 });
 
@@ -1094,6 +1094,7 @@ Scoped.define("module:Handlers.Node", [
 	    "base:Events.EventsMixin",
 	    "base:Ids",
 	    "browser:Dom",
+	    "browser:Info",
 	    "module:Parser",
 	    "jquery:",
 	    "module:Data.Mesh",
@@ -1101,7 +1102,7 @@ Scoped.define("module:Handlers.Node", [
 	    "base:Types",
 	    "module:Registries",
 	    "module:Handlers.Attr"
-	], function (Class, EventsMixin, Ids, Dom, Parser, $, Mesh, Objs, Types, Registries, Attr, scoped) {
+	], function (Class, EventsMixin, Ids, Dom, Info, Parser, $, Mesh, Objs, Types, Registries, Attr, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, [EventsMixin, function (inherited) {
 		return {
@@ -1234,6 +1235,13 @@ Scoped.define("module:Handlers.Node", [
 				}
 				if (!Registries.handler.get(tagv))
 					return false;
+				if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9) {
+					this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
+					this._element = this._$element.get(0);
+					Objs.iter(this._attrs, function (attr) {
+						attr.updateElement(this._element);
+					}, this);
+				}
 				this._tagHandler = Registries.handler.create(tagv, {
 					parentElement: this._$element.get(0),
 					parentHandler: this._handler,
@@ -1263,8 +1271,8 @@ Scoped.define("module:Handlers.Node", [
 		        	if (this._restoreInnerTemplate)
 		        		this._$element.html(this._innerTemplate);
 		        	this._touchedInner = true;
-					if (this._element.nodeType == this._element.TEXT_NODE) {
-						this._dyn = Parser.parseText(this._element.textContent);
+		        	if (this._element.nodeType == 3) {
+		        		this._dyn = Parser.parseText(this._$element.text());
 						if (this._dyn) {
 							this.__dynOn(this._dyn, function () {
 								this.__updateDyn();
@@ -1289,7 +1297,10 @@ Scoped.define("module:Handlers.Node", [
 				var value = this.__executeDyn(this._dyn);
 				if (force || value != this._dyn.value) {
 					this._dyn.value = value;
-					this._element.textContent = value;
+					if ("textContent" in this._element)
+						this._element.textContent = value;
+					else
+						this._$element.replaceWith(value);
 				}
 			},
 				

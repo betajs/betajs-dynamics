@@ -47,9 +47,13 @@ Scoped.define("module:Handlers.Node", [
 					watch: this.properties()
 				});
 				
-				if (this._element.attributes)
+				if (this._element.attributes) {
+					// Copy attributes first before registering it, preventing a bug when partials add attributes during initialization
+					var attrs = [];
 					for (var i = 0; i < this._element.attributes.length; ++i)
-						this._registerAttr(this._element.attributes[i]);
+						attrs.push(this._element.attributes[i]);
+					Objs.iter(attrs, this._registerAttr, this);
+				}
 
 				this._locked = false;
 				this._active = !this._active;

@@ -50,13 +50,14 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 		},
 		
 		_handlerGetTemplate: function (template) {
+			template = Strings.trim(template);
 			this.cls._templateCache = this.cls._templateCache || {};
 			if (!this.cls._templateCache[template]) {
 				var compiled;
 				try {
-					compiled = $(template.trim());
+					compiled = $(template);
 				} catch (e) {
-					compiled = $(document.createTextNode(template.trim()));
+					compiled = $(document.createTextNode(template));
 				}
 				this.cls._templateCache[template] = compiled;
 			}

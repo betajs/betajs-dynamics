@@ -5,8 +5,9 @@ Scoped.define("module:Partials.RepeatElementPartial", [
         "base:Objs",
         "jquery:",
         "module:Parser",
-        "base:Properties.Properties"
-	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, scoped) {
+        "base:Properties.Properties",
+        "base:Strings"
+	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, Strings, scoped) {
   /**
    * @name ba-repeat-element
    *
@@ -41,7 +42,7 @@ Scoped.define("module:Partials.RepeatElementPartial", [
  			},
  			
  			_newItemElements: function () {
- 				var template = this.__filteredTemplate.trim();
+ 				var template = Strings.trim(this.__filteredTemplate);
 				var element = $(template).get(0);
 				this._node._$element.after(element);
  				element["ba-handled"] = true;

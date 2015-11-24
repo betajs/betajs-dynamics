@@ -198,6 +198,10 @@ Scoped.define("module:Data.Scope", [
 				return this.__parent;
 			},
 			
+			_eventChain: function () {
+				return this.parent();
+			},
+			
 			root: function () {
 				return this.__root;
 			},

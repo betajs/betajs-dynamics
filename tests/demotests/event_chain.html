@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../assets/styles.css">
+
+        <script src="../assets/jquery.js"></script>
+        <script src="../../vendors/beta.js"></script>
+        <script src="../../vendors/beta-browser-noscoped.js"></script>
+        <script src="../../dist/betajs-dynamics.js"></script>
+    </head>
+    <body>
+
+        <test>
+            <outertest></outertest>
+        </test>
+
+        <script>
+
+            BetaJS.Dynamics.Dynamic.extend(null, {
+                template:
+                        '<button ba-click="click()">Click</button>',
+                initial : {
+                    functions : {
+                        click : function () {
+                            this.chainedTrigger("foobar");
+                        }
+                    }
+                }
+            }).register("innertest");
+
+            BetaJS.Dynamics.Dynamic.extend(null, {
+                template:
+                        '<innertest></innertest>',
+            }).register("outertest");
+
+            var main = new BetaJS.Dynamics.Dynamic({
+                element: $("test")
+            });
+
+            main.activate();
+
+            function test() {
+            	var clicked = false;
+            	main.on("foobar", function () {
+            		clicked = true;
+            	});
+                $("test button").click();
+                QUnit.equal(clicked, true);
+            }
+        </script>
+
+    </body>
+</html>

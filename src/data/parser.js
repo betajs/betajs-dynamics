@@ -1,4 +1,6 @@
-Scoped.define("module:Parser", ["base:Types", "base:Objs", "base:JavaScript"], function (Types, Objs, JavaScript) {
+Scoped.define("module:Parser", [
+    "base:Types", "base:Objs", "base:JavaScript", "base:Strings"
+], function (Types, Objs, JavaScript, Strings) {
 	return {		
 		
 		parseText: function (text) {
@@ -54,7 +56,7 @@ Scoped.define("module:Parser", ["base:Types", "base:Objs", "base:JavaScript"], f
 			var i = code.indexOf("::");
 			var args = null;
 			if (i >= 0) {
-				args = code.substring(0, i).trim();
+				args = Strings.trim(code.substring(0, i));
 				code = code.substring(i + 2);
 			}
 			return {

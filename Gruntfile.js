@@ -157,6 +157,7 @@ module.exports = function(grunt) {
 									"protocol": "fred://",
 									"singleTutorials": true,
 									"emptyTutorials": true
+									//"baseTemplate" : "test"
 								},
 								"markdown": {
 									"parser": "gfm",

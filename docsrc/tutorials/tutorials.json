@@ -22,68 +22,70 @@
     }
   },
 
-  "initialize" : {
-    "title": "Initializing Dynamics"
-  },
+  "js-attributes": {
+    "title" : "JS Attributes",
+    "collapsible": "true",
 
-  "templates" : {
-    "title": "Templates"
-  },
-
-  "element" : {
-    "title": "Element"
-  },
-
-  "initial" : {
     "children" : {
-      "attributes" : {},
-      "collections" : {},
-      "create" : {},
-      "funtions" : {},
-      "binding" : {},
-      "scopes" : {
-    	  "title": "Scopes"
+      "initialize": {
+        "title": "Initializing Dynamics"
+      },
+      "templates": {
+        "title": "Templates"
+      },
+      "element": {
+        "title": "Element"
+      },
+      "_afterActivate": {
+        "title": "_afterActivate"
+      },
+      "scopes": {
+        "title": "Accessing Dynamics"
       }
     }
   },
 
-  "_afterActivate" : {
-
-  },
-
-  "html_binding": {
-
-  },
-
   "html-attributes": {
-    "title" : "HTML Attributes",
+    "title" : "DOM Partials",
+    "collapsible" : "true",
+
     "children" : {
       "ba-click" : {
-        "title": "The ba-click Partial"
+        "title": "ba-click"
       },
       "ba-tap" : {
-        "title" : "The ba-tap Partial"
+        "title" : "ba-tap"
       },
       "ba-class" : {
-        "title" : "The ba-class Partial"
+        "title" : "ba-class"
       },
       "ba-show" : {
-        "title" : "The ba-show Partial"
+        "title" : "ba-show"
       },
       "ba-if" : {
-        "title" : "The ba-if Partial"
+        "title" : "ba-if"
       },
-      "ba-ignore" : {},
+      "ba-ignore" : {
+        "title" : "ba-ignore"
+      },
       "ba-repeat" : {
-        "title" : "The ba-repeat Partial"
+        "title" : "ba-repeat"
       },
-      "ba-attrs" : {},
-      "ba-on" : {},
+      "ba-attrs" : {
+        "title" : "ba-attrs"
+      },
+      "ba-on" : {
+        "title" : "ba-on"
+      },
       "ba-return" : {
-        "title" : "The ba-return Partial"
+        "title" : "ba-return"
       },
-      "ba-template-url" : {},
-      "ba-*" : {}
+      "ba-template-url" : {
+        "title" : "ba-template-url"
+      },
+      "ba-a" : {
+        "title" : "ba-a"
+      }
     }
   }
 

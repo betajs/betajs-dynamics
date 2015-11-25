@@ -1,0 +1,29 @@
+<html>
+<head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.1.1/es5-shim.js"></script>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/json2/20140204/json2.js"></script>
+	<script src="../vendors/beta.js"></script>
+	<script src="../vendors/beta-browser-noscoped.js"></script>
+	<script src="../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+<go>
+	<ba-a ba-i="1">
+	</ba-a>
+</go>
+<script>
+	var t = BetaJS.Time.now();
+
+	BetaJS.Dynamics.Dynamic.extend(null, {
+		template: "<span>{{i}} <ba-a ba-if='{{i<500}}' ba-i='{{(i-0)+1}}'></ba-a></span>",
+
+	}).register("ba-a");
+	var mainDynamic = new BetaJS.Dynamics.Dynamic({
+		element: $("go").get(0)
+	});
+	mainDynamic.activate();
+	document.title = BetaJS.Time.now() - t;
+</script>
+</body>
+</html>

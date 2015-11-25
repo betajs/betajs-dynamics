@@ -5,8 +5,9 @@ Scoped.define("module:Partials.RepeatPartial", [
         "base:Collections.FilteredCollection",
         "base:Objs",
         "jquery:",
-        "module:Parser"
-	], function (Partial, Properties, Collection, FilteredCollection, Objs, $, Parser, scoped) {
+        "module:Parser",
+        "base:Strings"
+	], function (Partial, Properties, Collection, FilteredCollection, Objs, $, Parser, Strings, scoped) {
 	  /**
 	   * @name ba-repeat
 	   *
@@ -31,11 +32,11 @@ Scoped.define("module:Partials.RepeatPartial", [
  				inherited.constructor.apply(this, arguments);
  				this.__registered = false;
  				args = args.split("~");
- 				this.__repeatArg = args[0].trim();
+ 				this.__repeatArg = Strings.trim(args[0]);
  				this._destroyCollection = false;
  				this._destroyValueCollection = false;
  				if (args.length > 1) {
- 					this.__repeatFilter = Parser.parseCode(args[1].trim());
+ 					this.__repeatFilter = Parser.parseCode(Strings.trim(args[1]));
  					var self = this;
  					node.mesh().watch(this.__repeatFilter.dependencies, function () {
  						self.__filterChanged();
@@ -189,7 +190,7 @@ Scoped.define("module:Partials.RepeatPartial", [
  			
  			_newItemElements: function () {
  				var elements;
- 				var template = this._node._innerTemplate.trim();
+ 				var template = Strings.trim(this._node._innerTemplate);
  				try {
  					elements = $(template).appendTo(this._node._$element);
  				} catch (e) {

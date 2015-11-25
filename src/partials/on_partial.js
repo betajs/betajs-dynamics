@@ -1,5 +1,5 @@
 
-Scoped.define("module:Partials.EventPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.EventPartial", ["module:Handlers.Partial", "base:Strings"], function (Partial, Strings, scoped) {
   /**
    * @name ba-on
    *
@@ -27,7 +27,7 @@ Scoped.define("module:Partials.EventPartial", ["module:Handlers.Partial"], funct
  				var self = this;
  				this.__postfix = postfix;
  				this._node._$element.on(postfix + "." + this.cid(), function () {
- 					self._execute(value.trim());
+ 					self._execute(Strings.trim(value));
  				});
  			},
  			

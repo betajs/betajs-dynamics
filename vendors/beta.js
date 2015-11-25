@@ -1,5 +1,5 @@
 /*!
-betajs - v1.0.2 - 2015-09-24
+betajs - v1.0.13 - 2015-11-24
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -557,7 +557,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs - v1.0.2 - 2015-09-24
+betajs - v1.0.13 - 2015-11-24
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -570,7 +570,7 @@ Scoped.binding("module", "global:BetaJS");
 Scoped.define("module:", function () {
 	return {
 		guid: "71366f7a-7da3-4e55-9a0b-ea0e4e2a9e79",
-		version: '416.1443129734771'
+		version: '431.1448405133075'
 	};
 });
 
@@ -2245,7 +2245,22 @@ Scoped.define("module:Events.EventsMixin", [
 					}, this);
 				}, this);
 			}
-		}
+		},
+		
+		_eventChain: function () {},
+		
+		chainedTrigger: function (eventName, data) {
+			data = Objs.extend({
+				source: this,
+				bubbles: true
+			}, data);
+			this.trigger(eventName, data);
+			if (data.bubbles) {
+				var chain = this._eventChain();
+				if (chain && chain.chainedTrigger)
+					chain.chainedTrigger(eventName, data);
+			}
+	    }
 
 	};
 });
@@ -2466,6 +2481,12 @@ Scoped.define("module:Functions", ["module:Types"], function (Types) {
 		
 		newClass: function (cls) {
 			return this.newClassFunc(cls).apply(this, this.getArguments(arguments, 1));
+		},
+		
+		callWithin: function (context, method) {
+			if (Types.is_string(method))
+				method = context[method];
+			return method.apply(context, this.getArguments(arguments, 2));
 		}
 	
 	};
@@ -3676,6 +3697,7 @@ Scoped.define("module:Objs", ["module:Types"], function (Types) {
 
 		filter: function (obj, f, context) {
 			var ret = null;
+			f = f || function (x) { return !!x; };
 			if (Types.is_array(obj)) {
 				ret = [];
 				for (var i = 0; i < obj.length; ++i) {
@@ -4374,6 +4396,36 @@ Scoped.define("module:Properties.PropertiesMixin", [
 		
 		materializes: [],
 		
+		_resolveProps: function (key) {
+			var result = {
+				props: this,
+				key: key
+			};
+			var scope = this.data();
+			while (key) {
+				if (!scope || !Types.is_object(scope))
+					return result;
+				if (scope.__properties_guid === this.__properties_guid)
+					return scope._resolveProps(key);
+				var spl = Strings.splitFirst(key, ".");
+				if (!(spl.head in scope))
+					return result;
+				key = spl.tail;
+				scope = scope[spl.head];
+			}
+			return result;
+		},
+		
+		getProp: function (key) {
+			var resolved = this._resolveProps(key);
+			return resolved.props.get(resolved.key);
+		},
+		
+		setProp: function (key, value) {
+			var resolved = this._resolveProps(key);
+			resolved.props.set(resolved.key, value);
+		},
+		
 		get: function (key) {
 			return Scopes.get(key, this.__properties.data);
 		},
@@ -4727,7 +4779,11 @@ Scoped.define("module:Properties.PropertiesMixin", [
 				func: f,
 				dependencies: dependencies
 			};
-		}	
+		},
+		
+		pid: function () {
+			return this.cid();
+		}
 		
 	};
 });
@@ -6195,7 +6251,7 @@ Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
 			}
 			for ( i = 0; i < a.length; ++i)
 				a[i] = a[i].substring(len);
-			return a.join("\n").trim();
+			return this.trim(a.join("\n"));
 		},
 	
 		capitalize : function(input) {
@@ -6207,10 +6263,10 @@ Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
 		email_get_name : function(input) {
 		    input = input || "";
 			var temp = input.split("<");
-			input = temp[0].trim();
+			input = this.trim(temp[0]);
 			if (!input && temp.length > 1) {
 				temp = temp[1].split(">");
-				input = temp[0].trim();
+				input = this.trim(temp[0]);
 			}		
 			input = input.replace(/['"]/g, "").replace(/[\\._@]/g, " ");
 			return this.capitalize(input);
@@ -6219,18 +6275,22 @@ Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
 		email_get_email : function(input) {
 	        input = input || "";
 			var temp = input.split("<");
-			input = temp[0].trim();
+			input = this.trim(temp[0]);
 			if (temp.length > 1) {
 				temp = temp[1].split(">");
-				input = temp[0].trim();
+				input = this.trim(temp[0]);
 			}
-			input = input.replace(/'/g, "").replace(/"/g, "").trim();
+			input = this.trim(input.replace(/'/g, "").replace(/"/g, ""));
 			return input;
 		},
 	
 		email_get_salutatory_name : function(input) {
 	        input = input || "";
 			return (this.email_get_name(input).split(" "))[0];
+		},
+		
+		trim: function (s) {
+			return String.prototype.trim ? s.trim() : s.replace(/^\s+|\s+$/g, ''); 
 		},
 		
 		regexReplaceGroups: function (regex, args) {
@@ -7065,8 +7125,8 @@ Scoped.define("module:Trees.TreeQueryObject", ["module:Class", "module:Events.Ev
 				this.__query = query;
 				this.__result = {};
 				this.__partials = {};
-				this.__register(node, 0, {});
 				this.__ids = 0;
+				this.__register(node, 0, {});
 			},
 
 			destroy: function () {

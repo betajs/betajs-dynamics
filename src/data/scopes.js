@@ -167,6 +167,15 @@ Scoped.define("module:Data.Scope", [
 				return this.__properties.get(key);
 			},
 			
+			setProp: function (key, value) {
+				this.__properties.setProp(key, value);
+				return this;
+			},
+			
+			getProp: function (key) {
+				return this.__properties.getProp(key);
+			},
+
 			define: function (name, func, ctx) {
 				this.__functions[name] = Functions.as_method(func, ctx || this);
 				return this;
@@ -187,6 +196,10 @@ Scoped.define("module:Data.Scope", [
 			
 			parent: function () {
 				return this.__parent;
+			},
+			
+			_eventChain: function () {
+				return this.parent();
 			},
 			
 			root: function () {
@@ -304,6 +317,18 @@ Scoped.define("module:Data.MultiScope", [
 				return iter.hasNext() ? iter.next().get(key) : null;
 			},
 			
+			setProp: function (key, value) {
+				var iter = this.iterator();
+				while (iter.hasNext())
+					iter.next().setProp(key, value);
+				return this;
+			},
+			
+			getProp: function (key) {
+				var iter = this.iterator();
+				return iter.hasNext() ? iter.next().getProp(key) : null;
+			},
+
 			define: function (name, func) {
 				var iter = this.iterator();
 				while (iter.hasNext())

@@ -1,4 +1,4 @@
-Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jquery:", "browser:Loader", "module:Handlers.Node"], function (Objs, Strings, $, Loader, Node) {
+Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jquery:", "browser:Loader", "module:Handlers.Node", "module:Registries"], function (Objs, Strings, $, Loader, Node, Registries) {
 	return {		
 		
 		_notifications: {
@@ -49,23 +49,8 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 			}
 		},
 		
-		_handlerGetTemplate: function (template) {
-			template = Strings.trim(template);
-			this.cls._templateCache = this.cls._templateCache || {};
-			if (!this.cls._templateCache[template]) {
-				var compiled;
-				try {
-					compiled = $(template);
-				} catch (e) {
-					compiled = $(document.createTextNode(template));
-				}
-				this.cls._templateCache[template] = compiled;
-			}
-			return this.cls._templateCache[template].clone();
-		},
-		
 		_handlerInitializeTemplate: function (template, parentElement) {
-			var compiled = this._handlerGetTemplate(template);
+			var compiled = Registries.templates.create(template);
 			if (this.__element) {
 				this.__activeElement = this.__element;
 				this.__element.html("");

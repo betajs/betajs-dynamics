@@ -1,0 +1,80 @@
+<html>
+	<head>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="../vendors/beta.js"></script>
+        <script src="../vendors/beta-browser-noscoped.js"></script>
+		<script src="../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+		<go>
+			<big_brother></big_brother>
+		</go>
+		<script>
+
+			//Don't use the two numbers type_a & type_b, they are to simulate different components
+			var type_a = Math.round(Math.random()*10)+1;
+			function set_b(a) {
+				var b = Math.round(Math.random()*10)+1;
+				if (b != type_a)
+					return  b;
+				else
+					return set_b(a)
+			}
+			var type_b = set_b(type_a);
+			//Don't use the two numbers type_a & type_b, they are to simulate different components
+
+			BetaJS.Dynamics.Dynamic.extend(null, {
+				template : 	'<div ba-show="{{i=limit}}">George : </div>' +
+							'<button ba-click="call_whoever_is_interested()">Don`t tell Big Borther about me!</button>' +
+							"<ba-{{limit}} ba-if='{{i<limit}}' ba-i='{{(i-0)+1}}'>" +
+							"</ba-{{limit}}>",
+				attrs : {
+					limit: type_a
+				},
+				functions : {
+					call_whoever_is_interested : function () {
+						this.trigger("calling"); // no outside dependencies; doesn't care what other component it might work with in the end
+					}
+				}
+
+			}).register("ba-" + type_a);
+
+
+			BetaJS.Dynamics.Dynamic.extend(null, {
+				template : 	'<div ba-show="{{i=limit}}">Benjamin</div>' +
+							'<div ba-show="{{show}}">Don`t you know the 2nd commandment George?</div>' +
+							"<ba-{{limit}} ba-if='{{i<limit}}' ba-i='{{(i-0)+1}}'>" +
+							"</ba-{{limit}}>",
+				attrs : {
+					limit : type_b,
+					show : false
+				},
+				functions : {
+					reply_to_whoever_is_calling : function () { // not outside dependencies; doesn't care who will call this function in the end
+						this.set('show', true);
+					}
+				}
+
+			}).register("ba-" + type_b);
+
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Big_Brother", {
+				template: "<ba-{{a}} ba-data:name='sender'></ba-{{a}}><ba-{{b}} ba-data:name='receiver'></ba-{{b}}>",
+				attrs: {
+					a : type_a,
+					b : type_b
+				},
+				create: function () {
+		            this.scope(">[name='sender']").on("calling", function () { // this component now explicitly wants to combine both sub components, hence introduce all dependecies here
+		            	this.scope(">[name='receiver']").call("reply_to_whoever_is_calling");
+		            }, this);
+				}
+			}).register("big_brother");
+
+			var mainDynamic = new BetaJS.Dynamics.Dynamic({
+				element: $("go").get(0),
+			});
+			mainDynamic.activate();			
+
+		</script>
+	</body>
+</html>

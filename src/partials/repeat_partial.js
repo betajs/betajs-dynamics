@@ -6,8 +6,9 @@ Scoped.define("module:Partials.RepeatPartial", [
         "base:Objs",
         "jquery:",
         "module:Parser",
-        "base:Strings"
-	], function (Partial, Properties, Collection, FilteredCollection, Objs, $, Parser, Strings, scoped) {
+        "base:Strings",
+        "module:Registries"
+	], function (Partial, Properties, Collection, FilteredCollection, Objs, $, Parser, Strings, Registries, scoped) {
 	  /**
 	   * @name ba-repeat
 	   *
@@ -189,14 +190,7 @@ Scoped.define("module:Partials.RepeatPartial", [
  			},
  			
  			_newItemElements: function () {
- 				var elements;
- 				var template = Strings.trim(this._node._innerTemplate);
- 				try {
- 					elements = $(template).appendTo(this._node._$element);
- 				} catch (e) {
- 					elements = $(document.createTextNode(template)).appendTo(this._node._$element);
- 				}
- 				return elements;
+ 				return Registries.templates.create(this._node._innerTemplate).appendTo(this._node._$element);
  			}
  			
  		};

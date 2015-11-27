@@ -5,7 +5,8 @@
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/json2/20140204/json2.js"></script>
         <script src="../vendors/beta.js"></script>
         <script src="../vendors/beta-browser-noscoped.js"></script>
-		<script src="../dist/betajs-dynamics.js"></script>
+		<script src="../dist/betajs-dynamics-noscoped.js"></script>
+        <script src="../vendors/betajs-debug-noscoped.js"></script>
 	</head>
 	<body>
 		<go>
@@ -14,34 +15,17 @@
 				</ba-inner>
 			</div>
 		</go>
-		<script>
-		    window.perf = {
-		    	data: {},
-		    	start: function (key) {
-		    		if (!(key in this.data)) {
-		    			this.data[key] = {
-		    				total: 0,
-		    				counting: 0,
-		    				number: 0
-		    			};
-		    		} 
-		    		if (!this.data[key].counting)
-		    			this.data[key].counting = 0;
-		    		if (this.data[key].counting === 0)
-		    			this.data[key].start = BetaJS.Time.now();
-		    		this.data[key].number++;
-		    		this.data[key].counting++;
-		    	},
-		    	stop: function (key) {
-                    this.data[key].counting--;
-                    if (this.data[key].counting === 0) {
-                        this.data[key].total += BetaJS.Time.now() - this.data[key].start;
-                        delete this.data[key].start;
-                        delete this.data[key].counting;
-                    }
-		    	}		    	
-		    };
-			perf.start("all");
+		<script>		
+		    var profilerProperties = BetaJSDebug.Profiler.profilePrototypes([
+                BetaJS.Properties.Properties                                                                 
+            ], []);
+		    var profilerDynamic = BetaJSDebug.Profiler.profilePrototypes([
+                BetaJS.Dynamics.Dynamic		                                                            
+            ], [
+                BetaJS.Properties.Properties,
+                BetaJS.Trees.TreeQueryObject
+            ]);
+		    
 			var list = [];
 			for (var i = 0; i < 1000; ++i)
 				list.push({foobar: "Item " + i});
@@ -54,12 +38,12 @@
 					list: list
 				}
 			});
-			perf.start("activate");
 			mainDynamic.activate();
-			perf.stop("activate");
-			perf.stop("all");
-			console.log(perf.data);
-			document.title = perf.data.all.total;
+			
+			console.log({
+				properties: profilerProperties.time(),
+				dynamic: profilerDynamic.time()
+			});
 		</script>
 	</body>
 </html>

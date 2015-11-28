@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.13 - 2015-11-25
+betajs-dynamics - v0.0.13 - 2015-11-27
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -560,7 +560,7 @@ Public.exports();
 }).call(this);
 
 /*!
-betajs-dynamics - v0.0.13 - 2015-11-25
+betajs-dynamics - v0.0.13 - 2015-11-27
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -577,7 +577,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '168.1448505347228'
+		version: '170.1448680724674'
 	};
 });
 
@@ -693,13 +693,15 @@ Scoped.define("module:Data.Mesh", [
 				watcher.properties = n.properties;
 				var exp = n.head + (n.head && n.tail ? "." : "") + n.tail;
 				watcher.propertiesPrefix = exp;
-				watcher.properties.on("change:" + watcher.propertiesPrefix, function (value) {
+				watcher.properties.on("change:" + watcher.propertiesPrefix, function (value, oldValue, force) {
 					Objs.iter(watcher.children, this.__unbindWatcher, this);
 					Objs.iter(watcher.children, this.__bindWatcher, this);
-					watcher.value = value;
-					Objs.iter(watcher.cbs, function (cb) {
-						cb.callback.apply(cb.context);
-					}, this);
+					if (watcher.value != value || force) {
+						watcher.value = value;
+						Objs.iter(watcher.cbs, function (cb) {
+							cb.callback.apply(cb.context);
+						}, this);
+					}
 				}, this);
 				var value = watcher.properties.get(exp);
 				if (value != watcher.value) {

@@ -110,13 +110,15 @@ Scoped.define("module:Data.Mesh", [
 				watcher.properties = n.properties;
 				var exp = n.head + (n.head && n.tail ? "." : "") + n.tail;
 				watcher.propertiesPrefix = exp;
-				watcher.properties.on("change:" + watcher.propertiesPrefix, function (value) {
+				watcher.properties.on("change:" + watcher.propertiesPrefix, function (value, oldValue, force) {
 					Objs.iter(watcher.children, this.__unbindWatcher, this);
 					Objs.iter(watcher.children, this.__bindWatcher, this);
-					watcher.value = value;
-					Objs.iter(watcher.cbs, function (cb) {
-						cb.callback.apply(cb.context);
-					}, this);
+					if (watcher.value != value || force) {
+						watcher.value = value;
+						Objs.iter(watcher.cbs, function (cb) {
+							cb.callback.apply(cb.context);
+						}, this);
+					}
 				}, this);
 				var value = watcher.properties.get(exp);
 				if (value != watcher.value) {

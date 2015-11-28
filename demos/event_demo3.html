@@ -1,0 +1,80 @@
+<html>
+	<head>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <script src="../vendors/beta.js"></script>
+        <script src="../vendors/beta-browser-noscoped.js"></script>
+		<script src="../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+		<go>
+			<big_brother></big_brother>
+		</go>
+		<script>
+
+			//Don't use the two numbers type_a & type_b, they are to simulate different components
+			var type_a = Math.round(Math.random()*10)+1;
+			function set_b(a) {
+				var b = Math.round(Math.random()*10)+1;
+				if (b != type_a)
+					return  b;
+				else
+					return set_b(a)
+			}
+			var type_b = set_b(type_a);
+			//Don't use the two numbers type_a & type_b, they are to simulate different components
+
+			BetaJS.Dynamics.Dynamic.extend(null, {
+				template : 	'<div ba-show="{{i=limit}}">George : </div>' +
+							'<button ba-click="click()">Don`t tell Big Borther about me!</button>' +
+							"<ba-{{limit}} ba-if='{{i<limit}}' ba-i='{{(i-0)+1}}'>" +
+							"</ba-{{limit}}>",
+				attrs : {
+					limit: type_a
+				},
+				functions : {
+					click : function () {
+						//this.assoc("benjamin").call("outside_call");
+						this.assoc("friend").call("outside_call");
+					}
+				}
+
+			}).register("ba-" + type_a);
+
+
+			BetaJS.Dynamics.Dynamic.extend(null, {
+				template : 	'<div ba-show="{{i=limit}}">Benjamin</div>' +
+							'<div ba-show="{{show}}">Don`t you know the 2nd commandment George?</div>' +
+							"<ba-{{limit}} ba-if='{{i<limit}}' ba-i='{{(i-0)+1}}'>" +
+							"</ba-{{limit}}>",
+				attrs : {
+					limit : type_b,
+					show : false
+				},
+				functions : {
+					outside_call : function () {
+						this.set('show', true);
+					}
+				}
+
+			}).register("ba-" + type_b);
+
+			BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Big_Brother", {
+				//template: "<ba-{{a}}></ba-{{a}}><ba-{{b}} ba-register='benjamin'></ba-{{b}}>",
+				template: "<ba-{{a}} ba-assoc:friend='benjamin'></ba-{{a}}><ba-{{b}} ba-register='benjamin'></ba-{{b}}>",
+				attrs: {
+					a : type_a,
+					b : type_b
+				},
+				create: function () {
+				}
+			}).register("big_brother");
+
+			var mainDynamic = new BetaJS.Dynamics.Dynamic({
+				element: $("go").get(0),
+				name_registry: true
+			});
+			mainDynamic.activate();			
+
+		</script>
+	</body>
+</html>

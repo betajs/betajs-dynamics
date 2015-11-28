@@ -4,8 +4,9 @@ Scoped.define("module:Handlers.Attr", [
 	    "jquery:",
 	    "base:Types",
 	    "base:Strings",
-	    "module:Registries"
-	], function (Class, Parser, $, Types, Strings, Registries, scoped) {
+	    "module:Registries",
+	    "browser:Dom"
+	], function (Class, Parser, $, Types, Strings, Registries, Dom, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, function (inherited) {
 		return {
@@ -88,7 +89,7 @@ Scoped.define("module:Handlers.Attr", [
 					var old = this._attrValue;
 					this._attrValue = value;
 					
-					this._attribute.value = value;
+					this._attribute.value = Dom.entitiesToUnicode(value);
 					if (this._partial)
 						this._partial.change(value, old);
 					if (this._attrName === "value" && this._element.value !== value)

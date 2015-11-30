@@ -27,7 +27,7 @@ Scoped.define("module:Partials.ClickPartial", ["module:Handlers.Partial"], funct
  				inherited.constructor.apply(this, arguments);
  				var self = this;
  				this._node._$element.on("click", function (e) {
-          e.stopPropagation();
+ 					e.stopPropagation();
  					self._execute();
  				});
  			}

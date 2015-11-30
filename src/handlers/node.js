@@ -42,7 +42,7 @@ Scoped.define("module:Handlers.Node", [
 				this._expandChildren = true;
 				this._touchedInner = false;
 				
-				this._mesh = new Mesh([window, this.properties(), this._locals, this._handler.functions], this._handler, {
+				this._mesh = new Mesh([window, this.properties(), this._locals, this._handler.functions, this._handler._mesh_extend], this._handler, {
 					read: this.properties(),
 					write: this.properties(),
 					watch: this.properties()
@@ -207,7 +207,7 @@ Scoped.define("module:Handlers.Node", [
 				if (force || value != this._dyn.value) {
 					this._dyn.value = value;
 					if ("textContent" in this._element)
-						this._element.textContent = value;
+						this._element.textContent = Dom.entitiesToUnicode(value);
 					else
 						this._$element.replaceWith(value);
 				}

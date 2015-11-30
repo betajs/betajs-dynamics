@@ -53,18 +53,35 @@ Scoped.define("module:Dynamic", [
 			return Strings.last_after(this.classname, ".").toLowerCase();
 		},
 		
+		registeredName: function () {
+			return this.__registeredName || ("ba-" + this.canonicName());
+		},
+		
 		register: function (key, registry) {
 			registry = registry || Registries.handler;
-			if (!key)
-				key = "ba-" + this.canonicName();
+			this.__registeredName = key || this.registeredName();
 			registry.register(key, this);
 			return this;
 		},
 		
 		activate: function (options) {
-			var dyn = new this(options || {element: document.body});
+			var dyn = new this(options || {element: document.body, name_registry: true});
 			dyn.activate();
 			return dyn;
+		},
+		
+		attachStringTable: function (stringTable) {
+			this.__stringTable = stringTable;
+			return this;
+		},
+		
+		addStrings: function (strings) {
+			this.__stringTable.register(strings, this.registeredName());
+			return this;
+		},
+		
+		string: function (key) {
+			return this.__stringTable.get(key, this.registeredName());
 		}
 	
 	});

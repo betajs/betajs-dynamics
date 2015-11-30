@@ -23,17 +23,30 @@
 </test>
 <script>
     var root = $("test");
-
     var dynamic = new BetaJS.Dynamics.Dynamic({
         element: $("#helloworld")
     });
-
     dynamic.set("replaced_value", "Hello World");
-    dynamic.activate();
+    
+    function execute() {
+	
+	    dynamic.activate();
+
+    }
+    
+    if (!window.QUnit)
+    	execute();
 
     function test() {
-
+    	
+    	var activateProfile = BetaJSDebug.Profiler.profilePrototypeMethod("activate", BetaJS.Dynamics.Dynamic); 
+    	
+        execute();
+        
+        BetaJSDebug.Hooks.unhookMethod(activateProfile.hook);
+        
         QUnit.equal(dynamic.get("replaced_value"), $('#helloworld').html().trim());
+        QUnit.equal(activateProfile.profile.profile().enterCount, 1, "Activate should only be called once");
 
     }
 </script>

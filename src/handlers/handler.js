@@ -1,4 +1,6 @@
-Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jquery:", "browser:Loader", "module:Handlers.Node", "module:Registries"], function (Objs, Strings, $, Loader, Node, Registries) {
+Scoped.define("module:Handlers.HandlerMixin", [
+    "base:Objs", "base:Strings", "base:Functions", "jquery:", "browser:Loader", "module:Handlers.Node", "module:Registries", "module:Handlers.HandlerNameRegistry"
+], function (Objs, Strings, Functions, $, Loader, Node, Registries, HandlerNameRegistry) {
 	return {		
 		
 		_notifications: {
@@ -7,9 +9,11 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 		},
 		
 		__handlerConstruct: function () {
-			
+			this._mesh_extend = {
+				string: Functions.as_method(this.string, this)	
+			};
 		},
-		
+	
 		__handlerDestruct: function () {
 			Objs.iter(this.__rootNodes, function (node) {
 				node.destroy();
@@ -19,8 +23,18 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 		template: null,
 		templateUrl: null,
 		
+		string: function (key) {
+			if (this.cls.string)
+				return this.cls.string(key);
+			if (this.parent())
+				return this.parent().string(key);
+			return key;
+		},
+		
 		_handlerInitialize: function (options) {
 			options = options || {};
+			if (options.name_registry)
+				this.__nameRegistry = this.auto_destroy(new HandlerNameRegistry());
 			this._parentHandler = options.parentHandler || null;
 			this._argumentAttrs = {};
 			var template = options.template || this.template;
@@ -64,6 +78,28 @@ Scoped.define("module:Handlers.HandlerMixin", ["base:Objs", "base:Strings", "jqu
 				this.__element = compiled;
 				this.__activeElement = this.__element.parent();
 			}
+		},
+		
+		nameRegistry: function () {
+			return this.__nameRegistry || (this.parent() ? this.parent().nameRegistry() : null);
+		},
+		
+		byName: function (name) {
+			return this.nameRegistry().get(name);
+		},
+		
+		__assocs: {},
+		
+		addAssoc: function (name, registeredName) {
+			this.__assocs[name] = registeredName;
+		},
+		
+		removeAssoc: function (name) {
+			delete this.__assocs[name];
+		},
+		
+		assoc: function (name) {
+			return this.byName(this.__assocs[name] || name);
 		},
 		
 		setArgumentAttr: function (key, value) {
@@ -118,7 +154,7 @@ Scoped.define("module:Handlers.Handler", [
 			
 			properties: function () {
 				return this._properties;
-			}	
+			}
 			
 		};
    	}], {
@@ -195,5 +231,48 @@ Scoped.define("module:Handlers.Partial", [
 			registry.register(key, this);
 		}
 		
+	});
+});
+
+
+
+Scoped.define("module:Handlers.HandlerNameRegistry", [
+    "base:Class", "base:Objs"                                    
+], function (Class, Objs, scoped) {
+	return Class.extend({scoped: scoped}, function (inherited) {
+		return {
+
+			__handlers: {},
+			
+			destroy: function () {
+				Objs.iter(this.__handlers, function (value, name) {
+					this.unregister(name);
+				}, this);
+				inherited.destroy.call(this);
+			},
+			
+			register: function (handler, name) {
+				this.unregister(name);
+				this.__handlers[name] = handler;
+				handler.on("destroy", function () {
+					this.unregister(name);
+				}, this);
+			},
+			
+			unregister: function (name) {
+				if (name in this.__handlers) {
+					var handler = this.__handlers[name];
+					delete this.__handlers[name];
+					if (!handler.destroyed())
+						handler.off(null, null, this);
+				}
+			},
+			
+			get: function (name) {
+				return this.__handlers[name];
+			}
+		
+		};
+			
 	});
 });

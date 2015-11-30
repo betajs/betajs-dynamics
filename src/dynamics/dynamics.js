@@ -60,7 +60,7 @@ Scoped.define("module:Dynamic", [
 		register: function (key, registry) {
 			registry = registry || Registries.handler;
 			this.__registeredName = key || this.registeredName();
-			registry.register(key, this);
+			registry.register(this.__registeredName, this);
 			return this;
 		},
 		

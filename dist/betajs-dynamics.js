@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.15 - 2015-11-30
+betajs-dynamics - v0.0.16 - 2015-11-30
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -560,7 +560,7 @@ Public.exports();
 }).call(this);
 
 /*!
-betajs-dynamics - v0.0.15 - 2015-11-30
+betajs-dynamics - v0.0.16 - 2015-11-30
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -577,7 +577,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '174.1448870782512'
+		version: '178.1448921763990'
 	};
 });
 
@@ -2821,7 +2821,7 @@ Scoped.define("module:Dynamic", [
 		register: function (key, registry) {
 			registry = registry || Registries.handler;
 			this.__registeredName = key || this.registeredName();
-			registry.register(key, this);
+			registry.register(this.__registeredName, this);
 			return this;
 		},
 		

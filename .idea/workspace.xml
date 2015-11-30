@@ -2,19 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f5460155-3cc0-44c6-a6d3-10d73b1e1419" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/demos/event_demo2.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/demos/performance.html" afterPath="$PROJECT_DIR$/demos/performance.html" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/betajs-dynamics-noscoped.js" afterPath="$PROJECT_DIR$/dist/betajs-dynamics-noscoped.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/betajs-dynamics-noscoped.min.js" afterPath="$PROJECT_DIR$/dist/betajs-dynamics-noscoped.min.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/betajs-dynamics.js" afterPath="$PROJECT_DIR$/dist/betajs-dynamics.js" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/dist/betajs-dynamics.min.js" afterPath="$PROJECT_DIR$/dist/betajs-dynamics.min.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/handlers/handler.js" afterPath="$PROJECT_DIR$/src/handlers/handler.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/handlers/registries.js" afterPath="$PROJECT_DIR$/src/handlers/registries.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/partials/repeat_partial.js" afterPath="$PROJECT_DIR$/src/partials/repeat_partial.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/demotests/attrs_partial_test.html" afterPath="$PROJECT_DIR$/tests/demotests/attrs_partial_test.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/tests/demotests/share_scope2.html" afterPath="$PROJECT_DIR$/tests/demotests/share_scope2.html" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/vendors/beta.js" afterPath="$PROJECT_DIR$/vendors/beta.js" />
     </list>
     <ignored path="betajs-dynamics.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -90,21 +82,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="event_demo.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="event_demo.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/demos/event_demo.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-0.625">
+            <state vertical-scroll-proportion="0.032608695">
               <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="event_demo2.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="event_demo2.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/demos/event_demo2.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5869565">
-              <caret line="18" column="30" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
+            <state vertical-scroll-proportion="-10.0">
+              <caret line="16" column="55" selection-start-line="16" selection-start-column="55" selection-end-line="16" selection-end-column="55" />
               <folding />
             </state>
           </provider>
@@ -116,6 +108,7 @@
             <state vertical-scroll-proportion="0.0">
               <caret line="141" column="57" selection-start-line="141" selection-start-column="57" selection-end-line="141" selection-end-column="57" />
               <folding>
+                <marker date="1448562268000" expanded="true" signature="47:295" placeholder="[...]" />
                 <marker date="1448562268000" expanded="true" signature="6351:6419" placeholder="{...}" />
               </folding>
             </state>
@@ -128,10 +121,11 @@
             <state vertical-scroll-proportion="0.0">
               <caret line="1298" column="12" selection-start-line="1298" selection-start-column="12" selection-end-line="1298" selection-end-column="12" />
               <folding>
-                <marker date="1448562268000" expanded="false" signature="0:27" placeholder="/*...*/" />
-                <marker date="1448562268000" expanded="true" signature="54334:54341" placeholder="{...}" />
-                <marker date="1448562268000" expanded="true" signature="54334:54402" placeholder="{...}" />
-                <marker date="1448562268000" expanded="true" signature="57247:57265" placeholder="{...}" />
+                <marker date="1448629713000" expanded="false" signature="0:27" placeholder="/*...*/" />
+                <marker date="1448629713000" expanded="false" signature="0:41" placeholder="/*...*/" />
+                <marker date="1448629713000" expanded="true" signature="54334:54341" placeholder="{...}" />
+                <marker date="1448629713000" expanded="true" signature="54334:54402" placeholder="{...}" />
+                <marker date="1448629713000" expanded="true" signature="57247:57265" placeholder="{...}" />
               </folding>
             </state>
           </provider>
@@ -141,7 +135,7 @@
         <entry file="file://$PROJECT_DIR$/demos/performance.html">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="52" column="24" selection-start-line="52" selection-start-column="24" selection-end-line="52" selection-end-column="24" />
+              <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -223,6 +217,22 @@
     <option name="y" value="23" />
     <option name="width" value="1049" />
     <option name="height" value="876" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>RELAX NG</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -840,6 +850,7 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="141" column="57" selection-start-line="141" selection-start-column="57" selection-end-line="141" selection-end-column="57" />
           <folding>
+            <marker date="1448562268000" expanded="true" signature="47:295" placeholder="[...]" />
             <marker date="1448562268000" expanded="true" signature="6351:6419" placeholder="{...}" />
           </folding>
         </state>
@@ -850,10 +861,11 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="1298" column="12" selection-start-line="1298" selection-start-column="12" selection-end-line="1298" selection-end-column="12" />
           <folding>
-            <marker date="1448562268000" expanded="false" signature="0:27" placeholder="/*...*/" />
-            <marker date="1448562268000" expanded="true" signature="54334:54341" placeholder="{...}" />
-            <marker date="1448562268000" expanded="true" signature="54334:54402" placeholder="{...}" />
-            <marker date="1448562268000" expanded="true" signature="57247:57265" placeholder="{...}" />
+            <marker date="1448629713000" expanded="false" signature="0:27" placeholder="/*...*/" />
+            <marker date="1448629713000" expanded="false" signature="0:41" placeholder="/*...*/" />
+            <marker date="1448629713000" expanded="true" signature="54334:54341" placeholder="{...}" />
+            <marker date="1448629713000" expanded="true" signature="54334:54402" placeholder="{...}" />
+            <marker date="1448629713000" expanded="true" signature="57247:57265" placeholder="{...}" />
           </folding>
         </state>
       </provider>
@@ -861,7 +873,7 @@
     <entry file="file://$PROJECT_DIR$/demos/performance.html">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="52" column="24" selection-start-line="52" selection-start-column="24" selection-end-line="52" selection-end-column="24" />
+          <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
           <folding />
         </state>
       </provider>
@@ -884,18 +896,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/demos/event_demo.html">
+    <entry file="file://$PROJECT_DIR$/demos/event_demo2.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.625">
-          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
+        <state vertical-scroll-proportion="-10.0">
+          <caret line="16" column="55" selection-start-line="16" selection-start-column="55" selection-end-line="16" selection-end-column="55" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/demos/event_demo2.html">
+    <entry file="file://$PROJECT_DIR$/demos/event_demo.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5869565">
-          <caret line="18" column="30" selection-start-line="18" selection-start-column="30" selection-end-line="18" selection-end-column="30" />
+        <state vertical-scroll-proportion="0.032608695">
+          <caret line="26" column="0" selection-start-line="26" selection-start-column="0" selection-end-line="26" selection-end-column="0" />
           <folding />
         </state>
       </provider>

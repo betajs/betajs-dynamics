@@ -11,13 +11,15 @@
 
         <test>
             <innertest ba-event:innerevent="outerhandler"></innertest>
+
+            <div>This is the value of the triggered attribute in the main dynamic : {{triggered}}</div>
         </test>
 
         <script>
         
             BetaJS.Dynamics.Dynamic.extend(null, {
                 template:
-                        '<button ba-click="click()">Click</button>',
+                        '<button ba-click="click()">This is the innertest dynamic triggering the innerevent</button>',
                 initial : {
                     functions : {
                         click : function () {
@@ -29,13 +31,13 @@
 
             var main = new BetaJS.Dynamics.Dynamic({
                 element: $("test"),
+                attrs: {
+                    triggered: false
+                },
                 functions: {
                     outerhandler: function () {
                         this.set("triggered", true);
                     }
-                },
-                attrs: {
-                    triggered: false
                 }
             });
 

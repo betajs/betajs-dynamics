@@ -5,12 +5,11 @@ Scoped.define("module:Partials.AssocPartial", ["module:Handlers.Partial"], funct
 			
  			constructor: function (node, args, value, postfix) {
  				inherited.constructor.apply(this, arguments);
- 				this.__postfix = postfix;
  				this._node._handler.addAssoc(postfix, value); 
  			},
  			
  			destroy: function () {
- 				this._node._handler.removeAssoc(this.__postfix);
+ 				this._node._handler.removeAssoc(this._postfix);
  				inherited.destroy.call(this);
  			}
  			

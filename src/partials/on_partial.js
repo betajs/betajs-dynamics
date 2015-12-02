@@ -25,14 +25,13 @@ Scoped.define("module:Partials.EventPartial", ["module:Handlers.Partial", "base:
  			constructor: function (node, args, value, postfix) {
  				inherited.constructor.apply(this, arguments);
  				var self = this;
- 				this.__postfix = postfix;
  				this._node._$element.on(postfix + "." + this.cid(), function () {
  					self._execute(Strings.trim(value));
  				});
  			},
  			
  			destroy: function () {
- 				this._node._$element.off(this.__postfix + "." + this.cid());
+ 				this._node._$element.off(this._postfix + "." + this.cid());
  				inherited.destroy.call(this);
  			}
  		

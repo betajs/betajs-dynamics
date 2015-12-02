@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.16 - 2015-11-30
+betajs-dynamics - v0.0.16 - 2015-12-01
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -560,7 +560,7 @@ Public.exports();
 }).call(this);
 
 /*!
-betajs-dynamics - v0.0.16 - 2015-11-30
+betajs-dynamics - v0.0.16 - 2015-12-01
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -577,7 +577,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '181.1448921787371'
+		version: '182.1449002414631'
 	};
 });
 
@@ -1630,6 +1630,7 @@ Scoped.define("module:Handlers.Partial", [
 				this._args = args;
 				this._value = value;
 				this._active = false;
+				this._postfix = postfix;
 			},
 			
 			change: function (value, oldValue) {
@@ -2019,12 +2020,11 @@ Scoped.define("module:Partials.AssocPartial", ["module:Handlers.Partial"], funct
 			
  			constructor: function (node, args, value, postfix) {
  				inherited.constructor.apply(this, arguments);
- 				this.__postfix = postfix;
  				this._node._handler.addAssoc(postfix, value); 
  			},
  			
  			destroy: function () {
- 				this._node._handler.removeAssoc(this.__postfix);
+ 				this._node._handler.removeAssoc(this._postfix);
  				inherited.destroy.call(this);
  			}
  			
@@ -2067,23 +2067,16 @@ Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], funct
 
 
 Scoped.define("module:Partials.DataPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
-  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
- 		return {
-			
- 			_apply: function (value) {
- 				this._node._tagHandler.data(this.__postfix, value);
- 			},
- 			
- 			bindTagHandler: function (handler) {
- 				this._apply(this._value);
- 			},
-
- 			constructor: function (node, args, value, postfix) {
- 				inherited.constructor.apply(this, arguments);
- 				this.__postfix = postfix;
- 			}
- 		
- 		};
+  	var Cls = Partial.extend({scoped: scoped},  {
+		
+		_apply: function (value) {
+			this._node._tagHandler.data(this._postfix, value);
+		},
+		
+		bindTagHandler: function (handler) {
+			this._apply(this._value);
+		}
+	
  	});
  	Cls.register("ba-data");
 	return Cls;
@@ -2177,21 +2170,14 @@ Scoped.define("module:Partials.ClickPartial", ["module:Handlers.Partial"], funct
 });
 
 Scoped.define("module:Partials.EventPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
-  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
- 		return {
+  	var Cls = Partial.extend({scoped: scoped}, {
 			
- 			bindTagHandler: function (handler) {
- 				handler.on(this.__postfix, function (arg1, arg2, arg3, arg4) {
- 					this._node._handler.call(this._value, arg1, arg2, arg3, arg4);
- 				}, this);
- 			},
-
- 			constructor: function (node, args, value, postfix) {
- 				inherited.constructor.apply(this, arguments);
- 				this.__postfix = postfix;
- 			}
+		bindTagHandler: function (handler) {
+			handler.on(this._postfix, function (arg1, arg2, arg3, arg4) {
+				this._node._handler.call(this._value, arg1, arg2, arg3, arg4);
+			}, this);
+		}
  		
- 		};
  	});
  	Cls.register("ba-event");
 	return Cls;
@@ -2295,14 +2281,13 @@ Scoped.define("module:Partials.EventPartial", ["module:Handlers.Partial", "base:
  			constructor: function (node, args, value, postfix) {
  				inherited.constructor.apply(this, arguments);
  				var self = this;
- 				this.__postfix = postfix;
  				this._node._$element.on(postfix + "." + this.cid(), function () {
  					self._execute(Strings.trim(value));
  				});
  			},
  			
  			destroy: function () {
- 				this._node._$element.off(this.__postfix + "." + this.cid());
+ 				this._node._$element.off(this._postfix + "." + this.cid());
  				inherited.destroy.call(this);
  			}
  		

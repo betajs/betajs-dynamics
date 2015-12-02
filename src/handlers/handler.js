@@ -182,6 +182,7 @@ Scoped.define("module:Handlers.Partial", [
 				this._args = args;
 				this._value = value;
 				this._active = false;
+				this._postfix = postfix;
 			},
 			
 			change: function (value, oldValue) {

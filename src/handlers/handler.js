@@ -103,6 +103,8 @@ Scoped.define("module:Handlers.HandlerMixin", [
 		},
 		
 		setArgumentAttr: function (key, value) {
+			if (key in this.__extendables) 
+				value = Objs.tree_extend(this.properties().get(key) || {}, value);
 			this.properties().set(key, value);
 			this._argumentAttrs[key] = true;
 		},
@@ -113,6 +115,10 @@ Scoped.define("module:Handlers.HandlerMixin", [
 		
 		element: function () {
 			return this.__element;
+		},
+		
+		activeElement: function () {
+			return this.__activeElement;
 		},
 		
 		activate: function () {

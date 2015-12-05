@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="../assets/styles.css">
+
+        <script src="../assets/jquery.js"></script>
+        <script src="../../vendors/beta.js"></script>
+        <script src="../../vendors/beta-browser-noscoped.js"></script>
+        <script src="../../dist/betajs-dynamics.js"></script>
+    </head>
+    <body>
+
+        <test>
+            <outertest ba-inner="{{outer}}" ba-inner2="{{outer}}"></outertest>
+        </test>
+
+        <script>
+
+            BetaJS.Dynamics.Dynamic.extend(null, {
+                template: '<div>{{inner}}</div>',
+                attrs: {
+                	inner: {
+                		test: "test"
+                	},
+                	inner2: {
+                		test: "test"
+                	}
+                },
+                extendables: ["inner2"]
+            }).register("outertest");
+
+            var main = new BetaJS.Dynamics.Dynamic({
+                element: $("test"),
+                attrs: {
+                	outer: {
+                		foo: "bar"
+                	}
+                }
+            });
+
+            main.activate();
+
+            function test() {
+                QUnit.deepEqual(main.scope(">").get("inner"), {foo: "bar"});
+                QUnit.deepEqual(main.scope(">").get("inner2"), {foo: "bar", test: "test"});
+            }
+        </script>
+
+    </body>
+</html>

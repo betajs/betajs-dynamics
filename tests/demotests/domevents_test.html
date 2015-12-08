@@ -10,29 +10,31 @@
     <body>
 
         <test>
-            <outertest ba-inner="{{outer}}"></outertest>
+            <button>Click Me</button>
         </test>
 
         <script>
 
-            BetaJS.Dynamics.Dynamic.extend(null, {
-                template: '<div>{{inner}}</div>',
-            }).register("outertest");
-
             var main = new BetaJS.Dynamics.Dynamic({
                 element: $("test"),
+                functions: {
+                	clickme: function () {
+                		this.set("clicked", true);
+                	}
+                },
                 attrs: {
-                	outer: 42
+                	clicked: false
+                },
+                domevents: {
+                	"click button": "clickme"
                 }
             });
 
             main.activate();
 
             function test() {
-            	QUnit.equal(main.get("outer"), 42);
-                QUnit.equal(main.scope(">").get("inner"), 42);
-                QUnit.equal(typeof main.get("outer"), "number");
-                QUnit.equal(typeof main.scope(">").get("inner"), "number");
+            	$("test button").click();
+            	QUnit.equal(main.get("clicked"), true);
             }
         </script>
 

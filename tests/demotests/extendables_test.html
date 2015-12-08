@@ -10,29 +10,38 @@
     <body>
 
         <test>
-            <outertest ba-inner="{{outer}}"></outertest>
+            <outertest ba-inner="{{outer}}" ba-inner2="{{outer}}"></outertest>
         </test>
 
         <script>
 
             BetaJS.Dynamics.Dynamic.extend(null, {
                 template: '<div>{{inner}}</div>',
+                attrs: {
+                	inner: {
+                		test: "test"
+                	},
+                	inner2: {
+                		test: "test"
+                	}
+                },
+                extendables: ["inner2"]
             }).register("outertest");
 
             var main = new BetaJS.Dynamics.Dynamic({
                 element: $("test"),
                 attrs: {
-                	outer: 42
+                	outer: {
+                		foo: "bar"
+                	}
                 }
             });
 
             main.activate();
 
             function test() {
-            	QUnit.equal(main.get("outer"), 42);
-                QUnit.equal(main.scope(">").get("inner"), 42);
-                QUnit.equal(typeof main.get("outer"), "number");
-                QUnit.equal(typeof main.scope(">").get("inner"), "number");
+                QUnit.deepEqual(main.scope(">").get("inner"), {foo: "bar"});
+                QUnit.deepEqual(main.scope(">").get("inner2"), {foo: "bar", test: "test"});
             }
         </script>
 

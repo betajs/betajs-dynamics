@@ -3,8 +3,9 @@ Scoped.define("module:Dynamic", [
    	    "module:Handlers.HandlerMixin",
    	    "base:Objs",
    	    "base:Strings",
-   	    "module:Registries"
-   	], function (Scope, HandlerMixin, Objs, Strings, Registries, scoped) {
+   	    "module:Registries",
+   	    "jquery:"
+   	], function (Scope, HandlerMixin, Objs, Strings, Registries, $, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -16,6 +17,8 @@ Scoped.define("module:Dynamic", [
 			constructor: function (options) {
 				this.initial = this.initial || {};
 				options = Objs.extend(Objs.clone(this.initial, 1), options);
+				this.domevents = Objs.extend(this.domevents, options.domevents);
+				this.windowevents = Objs.extend(this.windowevents, options.windowevents);
 				Objs.iter(this.cls.__initialForward, function (key) {
 					if (!(key in options) && (key in this))
 						options[key] = this[key];
@@ -40,13 +43,40 @@ Scoped.define("module:Dynamic", [
 			handle_call_exception: function (name, args, e) {
 				console.log("Dynamics Exception in '" + this.cls.classname + "' calling method '" + name + "' : " + e);
 				return null;
+			},
+			
+			domevents: {},
+			windowevents: {},
+			
+			_afterActivate: function (activeElement) {
+				this.activeElement().off("." + this.cid() + "-domevents");
+				$(window).off("." + this.cid() + "-windowevents");
+				var self = this;
+				Objs.iter(this.domevents, function (target, event) {
+					var ev = event.split(" ");
+					var source = ev.length === 1 ? this.activeElement() : this.activeElement().find(ev[1]);
+					source.on(ev[0] + "." + this.cid() + "-domevents", function (eventData) {
+						self.call(target, eventData);
+					});
+				}, this);
+				Objs.iter(this.windowevents, function (target, event) {
+					$(window).on(event + "." + this.cid() + "-windowevents", function (eventData) {
+						self.call(target, eventData);
+					});
+				}, this);
+			},
+			
+			destroy: function () {
+				this.activeElement().off("." + this.cid() + "-domevents");
+				$(window).off("." + this.cid() + "-windowevents");
+				inherited.destroy.call(this);
 			}
 				
 		};
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "collections", "template", "create", "bind", "scopes"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "bind", "scopes"
         ],
 		
 		canonicName: function () {

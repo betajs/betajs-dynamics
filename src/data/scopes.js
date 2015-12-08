@@ -83,6 +83,7 @@ Scoped.define("module:Data.Scope", [
 					scopes: {},
 					bind: {},
 					attrs: {},
+					extendables: [],
 					collections: {}
 				}, options);
 				var parent = options.parent;
@@ -91,6 +92,7 @@ Scoped.define("module:Data.Scope", [
 				this.__parent = parent;
 				this.__root = parent ? parent.root() : this;
 				this.__children = {};
+				this.__extendables = Objs.objectify(options.extendables);
 				this.__properties = new Properties();
 				this.__properties.on("change", function (key, value, oldValue) {
 					this.trigger("change:" + key, value, oldValue);
@@ -154,6 +156,8 @@ Scoped.define("module:Data.Scope", [
 			},
 			
 			set: function (key, value, force) {
+				if (key in this.__extendables) 
+					value = Objs.tree_extend(this.__properties.get(key) || {}, value);
 				this.__properties.set(key, value, force);
 				return this;
 			},

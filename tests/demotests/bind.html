@@ -1,0 +1,61 @@
+<html>
+<head>
+    <script src="../assets/jquery.js"></script>
+    <script src="../../vendors/beta.js"></script>
+    <script src="../../vendors/betajs-browser-noscoped.js"></script>
+    <script src="../../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+
+<test>
+    <father></father>
+    <div id="helloworld">{{replaced_value}}</div>
+</test>
+<script>
+    var root = $("test");
+
+    BetaJS.Dynamics.Dynamic.extend(null, {
+        template:   '<force>{{force}}</force>',
+        // Doesn't work without initial
+        bind : {
+            force : "<+[tagname='father']:force"
+        }
+    }).register("luke");
+
+    BetaJS.Dynamics.Dynamic.extend(null, {
+        template:   '<luke>Jo</luke>',
+        attrs : {
+            force : 'Strong !'
+        }
+    }).register("father");
+
+    var dynamic = new BetaJS.Dynamics.Dynamic({
+        element: $("test")
+    });
+    dynamic.set("replaced_value", "Hello World");
+
+    function execute() {
+	
+	    dynamic.activate();
+
+    }
+    
+    if (!window.QUnit)
+    	execute();
+
+    function test() {
+    	
+    	var activateProfile = BetaJSDebug.Profiler.profilePrototypeMethod("activate", BetaJS.Dynamics.Dynamic); 
+    	
+        execute();
+        
+        BetaJSDebug.Hooks.unhookMethod(activateProfile.hook);
+        
+        QUnit.equal(dynamic.get("replaced_value"), $('#helloworld').html().trim());
+        QUnit.equal(activateProfile.profile.profile().enterCount, 1, "Activate should only be called once");
+
+    }
+</script>
+
+</body>
+</html>

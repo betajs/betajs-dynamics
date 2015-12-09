@@ -16,8 +16,7 @@
 
     BetaJS.Dynamics.Dynamic.extend(null, {
         template:   '<force>{{force}}</force>',
-        // Doesn't work without initial
-        bind : {
+        initialbind : {
             force : "<+[tagname='father']:force"
         }
     }).register("luke");

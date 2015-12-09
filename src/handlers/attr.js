@@ -3,10 +3,11 @@ Scoped.define("module:Handlers.Attr", [
 	    "module:Parser",
 	    "jquery:",
 	    "base:Types",
+	    "base:Objs",
 	    "base:Strings",
 	    "module:Registries",
 	    "browser:Dom"
-	], function (Class, Parser, $, Types, Strings, Registries, Dom, scoped) {
+	], function (Class, Parser, $, Types, Objs, Strings, Registries, Dom, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, function (inherited) {
 		return {
@@ -104,11 +105,20 @@ Scoped.define("module:Handlers.Attr", [
 				this._tagHandler = handler;
 				if (!this._partial && Registries.prefixes[Strings.splitFirst(this._attrName, "-").head]) {
 					var innerKey = Strings.first_after(this._attrName, "-");					
-					this._tagHandler.setArgumentAttr(innerKey, this._attrValue);
+					this._tagHandler.setArgumentAttr(innerKey, Class.is_pure_json(this._attrValue) ? Objs.clone(this._attrValue, 1) : this._attrValue);
 					if (this._dyn && this._dyn.bidirectional) {
-						this._tagHandler.properties().on("change:" + innerKey, function (value) {
-							this._node.mesh().write(this._dyn.variable, value);
-						}, this);							
+						if (Class.is_pure_json(this._attrValue)) {
+							this._tagHandler.properties().bind(innerKey, this._node._handler.properties(), {
+								deep: true,
+								left: true,
+								right: true,
+								secondKey: this._dyn.variable
+							});
+						} else {
+							this._tagHandler.properties().on("change:" + innerKey, function (value) {
+								this._node.mesh().write(this._dyn.variable, value);
+							}, this);							
+						}
 					}
 				} else if (this._partial) {
 					this._partial.bindTagHandler(handler);

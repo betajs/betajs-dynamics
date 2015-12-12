@@ -24,6 +24,12 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry", "base:Strings"
 				return compiled.clone();
 			}
 			
+		},
+		
+		warning: function (s) {
+			try {
+				console.log(s);
+			} catch (e) {}
 		}
 	
 	};

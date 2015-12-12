@@ -86,6 +86,10 @@ Scoped.define("module:Handlers.Node", [
 					this._attrs[attribute.name] = new Attr(this, attribute);
 			},
 			
+			tag: function () {
+				return this._tag;
+			},
+			
 			element: function () {
 				return this._element;
 			},

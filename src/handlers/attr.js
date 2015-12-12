@@ -56,10 +56,15 @@ Scoped.define("module:Handlers.Attr", [
 				this._attribute = attribute;
 				this.__updateAttr();
 				var splt = this._attrName.split(":");
-				if (this._partial)
+				if (this._partial) {
 					this._partial.destroy();
-				if (Registries.partial.get(splt[0]))
+					this._partial = null;
+				}
+				if (Registries.partial.get(splt[0])) {
 					this._partial = Registries.partial.create(splt[0], this._node, this._dyn ? this._dyn.args : {}, this._attrValue, splt[1]);
+					if (this._partial.cls.meta.value_hidden)
+						this._attribute.value = "";
+				}
 				if (this._dyn) {
 					var self = this;
 					if (this._dyn.bidirectional && this._attrName == "value") {
@@ -90,7 +95,9 @@ Scoped.define("module:Handlers.Attr", [
 					var old = this._attrValue;
 					this._attrValue = value;
 					
-					this._attribute.value = Dom.entitiesToUnicode(value);
+					if (!this._partial || !this._partial.cls.meta.value_hidden)
+						this._attribute.value = Dom.entitiesToUnicode(value);
+					
 					if (this._partial)
 						this._partial.change(value, old);
 					if (this._attrName === "value" && this._element.value !== value)
@@ -135,8 +142,13 @@ Scoped.define("module:Handlers.Attr", [
 			},
 			
 			activate: function () {
-				if (this._partial)
+				if (this._partial) {
+					if (this._partial.cls.meta.requires_tag_handler && !this._tagHandler) {
+						Registries.warning(this._partial.cls.classname + " is expecting a tag handler, but no registered tag handler for " + this._node.tag() + " has been found.");
+						return;
+					}
 					this._partial.activate();
+				}
 			},
 			
 			deactivate: function () {

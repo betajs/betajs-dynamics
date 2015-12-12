@@ -41,7 +41,7 @@ Scoped.define("module:Dynamic", [
 			},
 			
 			handle_call_exception: function (name, args, e) {
-				console.log("Dynamics Exception in '" + this.cls.classname + "' calling method '" + name + "' : " + e);
+				Registries.warning("Dynamics Exception in '" + this.cls.classname + "' calling method '" + name + "' : " + e);
 				return null;
 			},
 			

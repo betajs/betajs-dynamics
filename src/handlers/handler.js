@@ -36,31 +36,35 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			if (options.name_registry)
 				this.__nameRegistry = this.auto_destroy(new HandlerNameRegistry());
 			this._parentHandler = options.parentHandler || null;
+			this._parentElement = options.parentElement;
 			this._argumentAttrs = {};
-			var template = options.template || this.template;
+			this.template = options.template || this.template;
+			this.templateUrl = options.templateUrl || this.templateUrl;
+			if (this.templateUrl)
+				this.templateUrl = Strings.replaceAll(this.templateUrl, "%", Strings.last_after(this.cls.classname, ".").toLowerCase());
 			this.__element = options.element ? $(options.element) : null;
-			this.initialContent = this.__element ? this.__element.html() : $(options.parentElement).html();
-			this.__activeElement = this.__element ? this.__element : $(options.parentElement);
-			if (template)
-				this._handlerInitializeTemplate(template, options.parentElement);
+			this.initialContent = this.__element ? this.__element.html() : $(this._parentElement).html();
+			this.__activeElement = this.__element ? this.__element : $(this._parentElement);
+			
+			/*
+			if (this.template)
+				this._handlerInitializeTemplate(this.template, this._parentElement);
 			else {
-				var templateUrl = options.templateUrl || this.templateUrl;
-				if (templateUrl) {
-					templateUrl = Strings.replaceAll(templateUrl, "%", Strings.last_after(this.cls.classname, ".").toLowerCase());
+				if (this.templateUrl) {
 					this.__deferActivate = true;
 					if (this.__element)
 						this.__element.html("");
-					else if (options.parentElement)
-						$(options.parentElement).html("");
-					Loader.loadHtml(templateUrl, function (template) {
+					else if (this._parentElement)
+						$(this._parentElement).html("");
+					Loader.loadHtml(this.templateUrl, function (template) {
 						this.__deferActivate = false;
-						this._handlerInitializeTemplate(template, options.parentElement);
+						this._handlerInitializeTemplate(template, this._parentElement);
 						if (this.__deferedActivate)
 							this.activate();
 					}, this);
-				} /*else
-					this._handlerInitializeTemplate(template, options.parentElement);*/
+				}
 			}
+			*/
 		},
 		
 		_handlerInitializeTemplate: function (template, parentElement) {
@@ -122,10 +126,24 @@ Scoped.define("module:Handlers.HandlerMixin", [
 		},
 		
 		activate: function () {
+			/*
 			if (this.__deferActivate) {
 				this.__deferedActivate = true;
 				return;
-			}		
+			}
+			*/
+			if (this.template)
+				this._handlerInitializeTemplate(this.template, this._parentElement);
+			else {
+				if (this.templateUrl) {
+					Loader.loadHtml(this.templateUrl, function (template) {
+						this.templateUrl = null;
+						this.template = template;
+						this.activate();
+					}, this);
+				}
+			}
+			
 			this._notify("_activate");
 			this.__rootNodes = [];
 			var self = this;			
@@ -233,6 +251,11 @@ Scoped.define("module:Handlers.Partial", [
 		};
  	}, {
 		
+ 		meta: {
+ 			// value_hidden: false
+ 			// requires_tag_handler: false
+ 		},
+ 		
 		register: function (key, registry) {
 			registry = registry || Registries.partial;
 			registry.register(key, this);

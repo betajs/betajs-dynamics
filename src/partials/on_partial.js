@@ -1,5 +1,5 @@
 
-Scoped.define("module:Partials.EventPartial", ["module:Handlers.Partial", "base:Strings"], function (Partial, Strings, scoped) {
+Scoped.define("module:Partials.OnPartial", ["module:Handlers.Partial", "base:Strings"], function (Partial, Strings, scoped) {
   /**
    * @name ba-on
    *

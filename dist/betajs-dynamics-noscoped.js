@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.20 - 2015-12-12
+betajs-dynamics - v0.0.21 - 2015-12-12
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '192.1449925394314'
+		version: '194.1449936033018'
 	};
 });
 
@@ -2208,7 +2208,8 @@ Scoped.define("module:Partials.TapPartial", ["module:Handlers.Partial", "browser
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
  				var self = this;
- 				this._node._$element.on(Info.isMobile() ? "touchstart" : "click", function () {
+ 				this._node._$element.on(Info.isMobile() ? "touchstart" : "click", function (e) {
+ 					e.stopPropagation();
  					self._execute();
  				});
  			}

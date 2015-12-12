@@ -19,7 +19,8 @@ Scoped.define("module:Partials.TapPartial", ["module:Handlers.Partial", "browser
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
  				var self = this;
- 				this._node._$element.on(Info.isMobile() ? "touchstart" : "click", function () {
+ 				this._node._$element.on(Info.isMobile() ? "touchstart" : "click", function (e) {
+ 					e.stopPropagation();
  					self._execute();
  				});
  			}

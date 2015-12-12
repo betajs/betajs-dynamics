@@ -4,17 +4,23 @@
     "title": "Introduction",
     "children" : {
       "helloworld": {
-        "title": "Hello World",
+        "title": "Hello World Example",
         "dependencies" : ["betajs:dynamics_basics","betajs:properties", "extern:HTML", "external:","external:Javascript"]
+      },
+      "core_concepts": {
+        "title": "Core Concepts"
+      },
+      "overview": {
+        "title": "Overview"
       }
     }
   },
 
   "blueprint": {
-    "title": "Blueprint",
+    "title": "Blueprints",
     "children" : {
       "blueprint_js": {
-        "title": "JS"
+        "title": "Javascript"
       },
       "blueprint_html" : {
         "title": "HTML"
@@ -22,8 +28,8 @@
     }
   },
 
-  "js-attributes": {
-    "title" : "JS Attributes",
+  "dyn_js": {
+    "title" : "Dynamics Javascript",
     "collapsible": "true",
 
     "children" : {

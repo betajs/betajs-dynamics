@@ -19,7 +19,7 @@ Will call an alert pop-up
 
 #### Example 2:
 
-Will Show/Hide the "<h1>Hi</h1>"  element when you click on the surrounding div element.
+Will Show/Hide the Heading element when you click on the surrounding div element.
 
 ```html
 <div class="some_class" ba-tap="boolean != boolean">
@@ -40,7 +40,7 @@ Will Show/Hide the "<h1>Hi</h1>"  element when you click on the surrounding div 
 
 #### Example 3:
 
-Will also call an alert pop-up
+Will call an alert pop-up
 
 ```html
 <div class="some_class" ba-tap="some_function()">

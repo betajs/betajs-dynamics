@@ -1,4 +1,3 @@
-## This is the Hello World Project
 
 Before we start we assume that you know the basics of HTML,
 Javascript, Jquery and how to use these locally in your Browser.

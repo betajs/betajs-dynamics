@@ -1,9 +1,9 @@
 
-There are currently two ways to create Dynamics:
+You can create Dynamics both as instances and as classes which can be instantiated.
 - As one Instance of a BetaJS Dynamic
 - Create a new BetaJS Dynamics Class of which you can create multiple instances
 
-#### Instances
+#### Instance
 
 ```js
 
@@ -17,7 +17,7 @@ There are currently two ways to create Dynamics:
 
 ```
 
-#### Classes
+#### Class
 
 You can create new Dynamics classes using the code below:
 
@@ -41,7 +41,7 @@ either in the Javascript,
 
 ```
 
-or in the DOM:
+or by just adding the DOM tagname :
 
 ```html
 

@@ -118,6 +118,43 @@ Evaluates to
 </div>
 ```
 
+#### Sort
+
+Sort is a way to define a sorting Algorithm for collection in the ba-repeat Partial.
+
+##### Example 1:
+
+```js
+var dynamic = new BetaJS.Dynamics.Dynamic({
+    element: root.get(0),
+    collections: {
+        items: [{test: "A"}, {test: "D"}, {test: "C"}, {test: "B"}]
+    }
+});
+dynamic.get("items").set_compare(function (x, y) {
+    return x.get("test") < y.get("test") ? 1 : -1;
+});
+```
+
+```html
+<ul ba-repeat="{{ item :: items }}">
+    <li>{{item}}</li>
+</ul>
+```
+
+Evaluates to
+
+```html
+<ul>
+    <li>A</li>
+    <li>B</li>
+    <li>C</li>
+    <li>D</li>
+</ul>
+```
+
+
+
 ### ba-repeat-element
 
 ba-repeat-element is a special form of ba-repeat, it repeats the element it is placed on itself.

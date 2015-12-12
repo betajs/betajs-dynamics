@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.19 - 2015-12-09
+betajs-dynamics - v0.0.20 - 2015-12-12
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -560,7 +560,7 @@ Public.exports();
 }).call(this);
 
 /*!
-betajs-dynamics - v0.0.19 - 2015-12-09
+betajs-dynamics - v0.0.20 - 2015-12-12
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -577,7 +577,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '191.1449650698623'
+		version: '192.1449925394314'
 	};
 });
 
@@ -1369,10 +1369,15 @@ Scoped.define("module:Handlers.Attr", [
 				this._attribute = attribute;
 				this.__updateAttr();
 				var splt = this._attrName.split(":");
-				if (this._partial)
+				if (this._partial) {
 					this._partial.destroy();
-				if (Registries.partial.get(splt[0]))
+					this._partial = null;
+				}
+				if (Registries.partial.get(splt[0])) {
 					this._partial = Registries.partial.create(splt[0], this._node, this._dyn ? this._dyn.args : {}, this._attrValue, splt[1]);
+					if (this._partial.cls.meta.value_hidden)
+						this._attribute.value = "";
+				}
 				if (this._dyn) {
 					var self = this;
 					if (this._dyn.bidirectional && this._attrName == "value") {
@@ -1403,7 +1408,9 @@ Scoped.define("module:Handlers.Attr", [
 					var old = this._attrValue;
 					this._attrValue = value;
 					
-					this._attribute.value = Dom.entitiesToUnicode(value);
+					if (!this._partial || !this._partial.cls.meta.value_hidden)
+						this._attribute.value = Dom.entitiesToUnicode(value);
+					
 					if (this._partial)
 						this._partial.change(value, old);
 					if (this._attrName === "value" && this._element.value !== value)
@@ -1448,8 +1455,13 @@ Scoped.define("module:Handlers.Attr", [
 			},
 			
 			activate: function () {
-				if (this._partial)
+				if (this._partial) {
+					if (this._partial.cls.meta.requires_tag_handler && !this._tagHandler) {
+						Registries.warning(this._partial.cls.classname + " is expecting a tag handler, but no registered tag handler for " + this._node.tag() + " has been found.");
+						return;
+					}
 					this._partial.activate();
+				}
 			},
 			
 			deactivate: function () {
@@ -1500,31 +1512,35 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			if (options.name_registry)
 				this.__nameRegistry = this.auto_destroy(new HandlerNameRegistry());
 			this._parentHandler = options.parentHandler || null;
+			this._parentElement = options.parentElement;
 			this._argumentAttrs = {};
-			var template = options.template || this.template;
+			this.template = options.template || this.template;
+			this.templateUrl = options.templateUrl || this.templateUrl;
+			if (this.templateUrl)
+				this.templateUrl = Strings.replaceAll(this.templateUrl, "%", Strings.last_after(this.cls.classname, ".").toLowerCase());
 			this.__element = options.element ? $(options.element) : null;
-			this.initialContent = this.__element ? this.__element.html() : $(options.parentElement).html();
-			this.__activeElement = this.__element ? this.__element : $(options.parentElement);
-			if (template)
-				this._handlerInitializeTemplate(template, options.parentElement);
+			this.initialContent = this.__element ? this.__element.html() : $(this._parentElement).html();
+			this.__activeElement = this.__element ? this.__element : $(this._parentElement);
+			
+			/*
+			if (this.template)
+				this._handlerInitializeTemplate(this.template, this._parentElement);
 			else {
-				var templateUrl = options.templateUrl || this.templateUrl;
-				if (templateUrl) {
-					templateUrl = Strings.replaceAll(templateUrl, "%", Strings.last_after(this.cls.classname, ".").toLowerCase());
+				if (this.templateUrl) {
 					this.__deferActivate = true;
 					if (this.__element)
 						this.__element.html("");
-					else if (options.parentElement)
-						$(options.parentElement).html("");
-					Loader.loadHtml(templateUrl, function (template) {
+					else if (this._parentElement)
+						$(this._parentElement).html("");
+					Loader.loadHtml(this.templateUrl, function (template) {
 						this.__deferActivate = false;
-						this._handlerInitializeTemplate(template, options.parentElement);
+						this._handlerInitializeTemplate(template, this._parentElement);
 						if (this.__deferedActivate)
 							this.activate();
 					}, this);
-				} /*else
-					this._handlerInitializeTemplate(template, options.parentElement);*/
+				}
 			}
+			*/
 		},
 		
 		_handlerInitializeTemplate: function (template, parentElement) {
@@ -1586,10 +1602,24 @@ Scoped.define("module:Handlers.HandlerMixin", [
 		},
 		
 		activate: function () {
+			/*
 			if (this.__deferActivate) {
 				this.__deferedActivate = true;
 				return;
-			}		
+			}
+			*/
+			if (this.template)
+				this._handlerInitializeTemplate(this.template, this._parentElement);
+			else {
+				if (this.templateUrl) {
+					Loader.loadHtml(this.templateUrl, function (template) {
+						this.templateUrl = null;
+						this.template = template;
+						this.activate();
+					}, this);
+				}
+			}
+			
 			this._notify("_activate");
 			this.__rootNodes = [];
 			var self = this;			
@@ -1697,6 +1727,11 @@ Scoped.define("module:Handlers.Partial", [
 		};
  	}, {
 		
+ 		meta: {
+ 			// value_hidden: false
+ 			// requires_tag_handler: false
+ 		},
+ 		
 		register: function (key, registry) {
 			registry = registry || Registries.partial;
 			registry.register(key, this);
@@ -1834,6 +1869,10 @@ Scoped.define("module:Handlers.Node", [
 					this._attrs[attribute.name].updateAttribute(attribute);
 				else
 					this._attrs[attribute.name] = new Attr(this, attribute);
+			},
+			
+			tag: function () {
+				return this._tag;
 			},
 			
 			element: function () {
@@ -2031,6 +2070,12 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry", "base:Strings"
 				return compiled.clone();
 			}
 			
+		},
+		
+		warning: function (s) {
+			try {
+				console.log(s);
+			} catch (e) {}
 		}
 	
 	};
@@ -2090,7 +2135,7 @@ Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], funct
 
 Scoped.define("module:Partials.DataPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
   	var Cls = Partial.extend({scoped: scoped},  {
-		
+  		
 		_apply: function (value) {
 			this._node._tagHandler.data(this._postfix, value);
 		},
@@ -2099,6 +2144,12 @@ Scoped.define("module:Partials.DataPartial", ["module:Handlers.Partial"], functi
 			this._apply(this._value);
 		}
 	
+ 	}, {
+ 		
+ 		meta: {
+ 			requires_tag_handler: true
+ 		}
+ 		
  	});
  	Cls.register("ba-data");
 	return Cls;
@@ -2277,7 +2328,7 @@ Scoped.define("module:Partials.IgnorePartial", ["module:Handlers.Partial"], func
 });
 
 
-Scoped.define("module:Partials.EventPartial", ["module:Handlers.Partial", "base:Strings"], function (Partial, Strings, scoped) {
+Scoped.define("module:Partials.OnPartial", ["module:Handlers.Partial", "base:Strings"], function (Partial, Strings, scoped) {
   /**
    * @name ba-on
    *
@@ -2729,6 +2780,29 @@ Scoped.define("module:Partials.TapPartial", ["module:Handlers.Partial", "browser
 	return Cls;
 });
 
+Scoped.define("module:Partials.TemplatePartial",
+	["module:Handlers.Partial"], function (Partial, scoped) {
+
+ 	var Cls = Partial.extend({scoped: scoped}, {		
+
+		bindTagHandler: function (handler) {
+			if (this._value)
+				handler.template = this._value;
+		}
+		
+ 	}, {
+ 		
+ 		meta: {
+ 			requires_tag_handler: true,
+ 			hidden_value: true
+ 		}
+ 		
+ 	});
+ 	Cls.register("ba-template");
+	return Cls;
+
+});
+
 
 Scoped.define("module:Partials.TemplateUrlPartial",
 	["module:Handlers.Partial", "browser:Loader"], function (Partial, Loader, scoped) {
@@ -2809,7 +2883,7 @@ Scoped.define("module:Dynamic", [
 			},
 			
 			handle_call_exception: function (name, args, e) {
-				console.log("Dynamics Exception in '" + this.cls.classname + "' calling method '" + name + "' : " + e);
+				Registries.warning("Dynamics Exception in '" + this.cls.classname + "' calling method '" + name + "' : " + e);
 				return null;
 			},
 			

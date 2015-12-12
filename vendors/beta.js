@@ -1,5 +1,5 @@
 /*!
-betajs - v1.0.19 - 2015-12-08
+betajs - v1.0.21 - 2015-12-11
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -557,7 +557,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs - v1.0.19 - 2015-12-08
+betajs - v1.0.21 - 2015-12-11
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -570,7 +570,7 @@ Scoped.binding("module", "global:BetaJS");
 Scoped.define("module:", function () {
 	return {
 		guid: "71366f7a-7da3-4e55-9a0b-ea0e4e2a9e79",
-		version: '441.1449625201418'
+		version: '443.1449878831909'
 	};
 });
 
@@ -2161,6 +2161,10 @@ Scoped.define("module:Events.EventsMixin", [
 		},
 
 		trigger: function(events) {
+			if (this.__suspendedEvents > 0) {
+				this.__suspendedEventsQueue.push(arguments);
+				return this;
+			}
 			var self = this;
 			events = events.split(this.EVENT_SPLITTER);
 			var rest = Functions.getArguments(arguments, 1);
@@ -2223,6 +2227,23 @@ Scoped.define("module:Events.EventsMixin", [
 				if (chain && chain.chainedTrigger)
 					chain.chainedTrigger(eventName, data);
 			}
+	    },
+	    
+	    __suspendedEvents: 0,
+	    __suspendedEventsQueue: [],
+	    
+	    suspendEvents: function () {
+	    	this.__suspendedEvents++;
+	    },
+	    
+	    resumeEvents: function () {
+	    	this.__suspendedEvents--;
+	    	if (this.__suspendedEvents !== 0)
+	    		return;
+	    	Objs.iter(this.__suspendedEventsQueue, function (ev) {
+	    		this.trigger.apply(this, ev);
+	    	}, this);
+	    	this.__suspendedEventsQueue = [];
 	    }
 
 	};
@@ -5783,10 +5804,12 @@ Scoped.define("module:States.State", [
 					this["_" + this._persistents[i]] = args[this._persistents[i]];
 					used[this._locals[i]] = true;
 				}
+				host.suspendEvents();
 				Objs.iter(args, function (value, key) {
 					if (!used[key])
 						host.set(key, value);
 				}, this);
+				host.resumeEvents();
 			},
 			
 			allAttr: function () {
@@ -7661,12 +7684,20 @@ Scoped.define("module:Classes.Taggable", [
 			return this;
 		},
 		
+		removeTags: function (tags) {
+			Objs.iter(tags, this.removeTag, this);
+		},
+		
 		addTag: function (tag) {
 			this.__tags[tag] = true;
 			this._notify("tags-changed");
 			return this;
 		},
 		
+		addTags: function (tags) {
+			Objs.iter(tags, this.addTag, this);
+		},
+
 		tagIntersect: function (tags) {
 			return Objs.filter(tags, this.hasTag, this);
 		}
@@ -7753,6 +7784,50 @@ Scoped.define("module:Classes.StringTable", [
 
 		};
 	}]);
+});
+
+
+
+Scoped.define("module:Classes.LocaleTable", [
+	"module:Classes.StringTable"
+], function (StringTable, scoped) {
+	return StringTable.extend({scoped: scoped}, function (inherited) {
+		return {
+			
+			__locale: null,
+			
+			_localeTags: function (locale) {
+				if (!locale)
+					return null;
+				var result = [];
+				result.push("language:" + locale);
+				if (locale.indexOf("-") > 0)
+					result.push("language:" + locale.substring(0, locale.indexOf("-")));
+				return result;
+			},
+
+			clearLocale: function () {
+				this.removeTags(this._localeTags(this.__locale));
+				this.__locale = null;
+			},
+			
+			setLocale: function (locale) {
+				this.clearLocale();
+				this.__locale = this._localeTags(locale);
+				this.addTags(this.__locale);
+			},
+			
+			isLocaleSet: function () {
+				return !!this.__locale;
+			},
+			
+			setWeakLocale: function (locale) {
+				if (!this.isLocaleSet())
+					this.setLocale(locale);
+			}
+			
+		};
+	});
 });
 Scoped.define("module:Net.AjaxException", ["module:Exceptions.Exception"], function (Exception, scoped) {
 	return Exception.extend({scoped: scoped}, function (inherited) {

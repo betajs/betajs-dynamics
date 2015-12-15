@@ -86,8 +86,8 @@ Scoped.define("module:Data.Scope", [
 					extendables: [],
 					collections: {}
 				}, options);
-				if (options.initialbind)
-					options.bind = Objs.extend(options.bind, options.initialbind);
+				if (options.bindings)
+					options.bind = Objs.extend(options.bind, options.bindings);
 				var parent = options.parent;
 				this.__manager = parent ? parent.__manager : this._auto_destroy(new ScopeManager(this));
 				inherited.constructor.call(this);

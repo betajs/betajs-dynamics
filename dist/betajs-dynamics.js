@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.22 - 2015-12-12
+betajs-dynamics - v0.0.23 - 2015-12-14
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -670,7 +670,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.22 - 2015-12-12
+betajs-dynamics - v0.0.23 - 2015-12-14
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -687,7 +687,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '195.1449953977286'
+		version: '197.1450150139138'
 	};
 });
 
@@ -1124,8 +1124,8 @@ Scoped.define("module:Data.Scope", [
 					extendables: [],
 					collections: {}
 				}, options);
-				if (options.initialbind)
-					options.bind = Objs.extend(options.bind, options.initialbind);
+				if (options.bindings)
+					options.bind = Objs.extend(options.bind, options.bindings);
 				var parent = options.parent;
 				this.__manager = parent ? parent.__manager : this._auto_destroy(new ScopeManager(this));
 				inherited.constructor.call(this);
@@ -3031,7 +3031,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings"
         ],
 		
 		canonicName: function () {

@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.23 - 2015-12-14
+betajs-dynamics - v0.0.24 - 2015-12-15
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -670,7 +670,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.23 - 2015-12-14
+betajs-dynamics - v0.0.24 - 2015-12-15
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -687,7 +687,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '197.1450150139138'
+		version: '198.1450234742232'
 	};
 });
 
@@ -2907,7 +2907,7 @@ Scoped.define("module:Partials.TemplatePartial",
  		
  		meta: {
  			requires_tag_handler: true,
- 			hidden_value: true
+ 			value_hidden: true
  		}
  		
  	});

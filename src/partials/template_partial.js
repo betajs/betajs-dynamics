@@ -12,7 +12,7 @@ Scoped.define("module:Partials.TemplatePartial",
  		
  		meta: {
  			requires_tag_handler: true,
- 			hidden_value: true
+ 			value_hidden: true
  		}
  		
  	});

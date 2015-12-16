@@ -26,6 +26,7 @@
 			function test() {
 				QUnit.equal(root.find("#first div").html().trim(), "Testtest");
                 QUnit.equal(root.find("#second div").html().trim(), "Foobar");
+                QUnit.equal(root.find("#second").attr("ba-template"), "");
 			}
 		</script>
 	</body>

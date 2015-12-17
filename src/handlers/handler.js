@@ -141,6 +141,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 						this.template = template;
 						this.activate();
 					}, this);
+					return;
 				}
 			}
 			

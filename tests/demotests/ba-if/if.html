@@ -3,13 +3,13 @@
 		<link rel="stylesheet" href="../assets/styles.css">
 
 		<script src="../assets/jquery.js"></script>
-        <script src="../../vendors/beta.js"></script>
+        <script src="../../vendors/scoped.js"></script><script src="../../vendors/beta-noscoped.js"></script>
         <script src="../../vendors/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
 
-		<test>
+		<div id="test">
 
 
 			<div><br><h2>
@@ -98,12 +98,12 @@
 
 			</div>
 
-		</test>
+		</div>
 
 		<script>
 		
 			//Elements
-			var root = $("test");
+			var root = $("#test");
 			var button = $("button");
 
 			//Messages

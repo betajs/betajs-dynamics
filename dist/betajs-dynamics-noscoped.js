@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.20 - 2015-12-12
+betajs-dynamics - v0.0.25 - 2015-12-17
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,10 +16,12 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '192.1449925394314'
+		version: '200.1450331595740'
 	};
 });
 
+Scoped.assumeVersion("base:version", 444);
+Scoped.assumeVersion("browser:version", 58);
 Scoped.define("module:Data.Mesh", [
 	    "base:Class",
 	    "base:Events.EventsMixin",
@@ -451,8 +453,8 @@ Scoped.define("module:Data.Scope", [
 					extendables: [],
 					collections: {}
 				}, options);
-				if (options.initialbind)
-					options.bind = Objs.extend(options.bind, options.initialbind);
+				if (options.bindings)
+					options.bind = Objs.extend(options.bind, options.bindings);
 				var parent = options.parent;
 				this.__manager = parent ? parent.__manager : this._auto_destroy(new ScopeManager(this));
 				inherited.constructor.call(this);
@@ -1056,6 +1058,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 						this.template = template;
 						this.activate();
 					}, this);
+					return;
 				}
 			}
 			
@@ -1436,8 +1439,12 @@ Scoped.define("module:Handlers.Node", [
 					this._dyn.value = value;
 					if ("textContent" in this._element)
 						this._element.textContent = Dom.entitiesToUnicode(value);
-					else
+					else if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9 && ("data" in this._element))
+						this._element.data = Dom.entitiesToUnicode(value === null ? "" : value);
+					else {
+						// OF: Not clear if this is ever executed and whether it actually does something meaningful.
 						this._$element.replaceWith(value);
+					}
 				}
 			},
 				
@@ -1557,6 +1564,8 @@ Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], funct
  	var Cls = Partial.extend({scoped: scoped}, {
 		
 		_apply: function (value) {
+			if (!this._active)
+				return;
 			var props = this._node._tagHandler ? this._node._tagHandler.properties() : this._node.properties();
 			for (var key in value)
 				props.set(key, value[key]);
@@ -2208,7 +2217,8 @@ Scoped.define("module:Partials.TapPartial", ["module:Handlers.Partial", "browser
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
  				var self = this;
- 				this._node._$element.on(Info.isMobile() ? "touchstart" : "click", function () {
+ 				this._node._$element.on(Info.isMobile() ? "touchstart" : "click", function (e) {
+ 					e.stopPropagation();
  					self._execute();
  				});
  			}
@@ -2233,7 +2243,7 @@ Scoped.define("module:Partials.TemplatePartial",
  		
  		meta: {
  			requires_tag_handler: true,
- 			hidden_value: true
+ 			value_hidden: true
  		}
  		
  	});
@@ -2357,7 +2367,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings"
         ],
 		
 		canonicName: function () {

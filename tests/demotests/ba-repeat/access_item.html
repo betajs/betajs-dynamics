@@ -1,18 +1,20 @@
 <html>
 	<head>
 		<script src="../assets/jquery.js"></script>
-        <script src="../../vendors/beta.js"></script>
+        <script src="../../vendors/scoped.js"></script><script src="../../vendors/beta-noscoped.js"></script>
         <script src="../../vendors/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
-		<test>
+		<div id="test">
 			<div ba-repeat="{{item :: items}}">
-				<ba-inner-item ba-title="{{item.title}}" ba-data:id="{{item.cid()}}"></ba-inner-item>			
+				<div>IE</div>
+				<ba-inner-item ba-title="{{item.title}}" ba-data:id="{{item.cid()}}"></ba-inner-item>
+				<div>IE</div>			
 			</div>
-		</test>F
+		</div>
 		<script>
-			var root = $("test");
+			var root = $("#test");
 			BetaJS.Dynamics.Dynamic.extend(null, {
                 template: "{{title}}"
             }).register("ba-inner-item");

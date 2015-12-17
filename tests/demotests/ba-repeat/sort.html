@@ -6,13 +6,13 @@
 		<script src="../../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
-		<test>
+		<div id="test">
 			<ul ba-repeat="{{item :: items}}">
 				<li>{{item.test}}</li>
 			</ul>
-		</test>
+		</div>
 		<script>
-			var root = $("test");
+			var root = $("#test");
 
 			var dynamic = new BetaJS.Dynamics.Dynamic({
 				element: root.get(0),

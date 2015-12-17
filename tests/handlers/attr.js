@@ -7,13 +7,13 @@
  * This test is written in to ensure the updateElement does not cause a
  * permanent overshadowing of any variables in the Mesh layers.
  */
-QUnit.test("handlers/attr : prevent variable overshadowing on event", function(assert) {
+test("handlers/attr : prevent variable overshadowing on event", function(assert) {
   /**
    * domEvent is the name of the temporarily overshadowed variable.
    */
   var dynamic = new BetaJS.Dynamics.Dynamic({
     element: $("div#qunit-fixture"),
-    template: "<div id='attr-test' onkeyup='console.log({{domEvent}})' ba-repeat='{{ domEvent :: [1,2,3] }}'>{{domEvent}}</div>"}
+    template: "<div id='attr-test' onkeyup='{{console.log(domEvent)}}' ba-repeat='{{ domEvent :: [1,2,3] }}'>{{domEvent}}</div>"}
   );
   dynamic.activate();
 

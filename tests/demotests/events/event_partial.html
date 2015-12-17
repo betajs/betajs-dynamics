@@ -9,11 +9,11 @@
     </head>
     <body>
 
-        <test>
+        <div id="test">
             <innertest ba-event:innerevent="outerhandler"></innertest>
 
             <div>This is the value of the triggered attribute in the main dynamic : {{triggered}}</div>
-        </test>
+        </div>
 
         <script>
         
@@ -30,7 +30,7 @@
             }).register("innertest");
 
             var main = new BetaJS.Dynamics.Dynamic({
-                element: $("test"),
+                element: $("#test"),
                 attrs: {
                     triggered: false
                 },
@@ -45,7 +45,7 @@
 
             function test() {
             	QUnit.equal(main.get("triggered"), false);
-                $("test button").click();
+                $("#test button").click();
                 QUnit.equal(main.get("triggered"), true);
             }
         </script>

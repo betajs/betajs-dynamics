@@ -13,8 +13,8 @@ $(document).ready(function () {
 				var template = "";
 				var code = "";
 				parsed.each(function () {
-					if (this.tagName == "TEST")
-						$("#qunit-fixture").html("<test>" + $(this).html() + "</test>");
+					if (this.id == "test")
+						$("#qunit-fixture").html("<div id='test'>" + $(this).html() + "</div>");
 					if (this.tagName == "SCRIPT")
 						code = $(this).html();
 				});

@@ -9,15 +9,17 @@
     </head>
     <body>
 
-        <test>
+        <div id="test">
             <div class="some_class">
                 <div class="parent1">{{some_attribute}}</div><div class="parent2">{{property.another_attribute}}</div>
                 <ba-child ba-sharescope></ba-child>
                 <ba-child ba-sharescope="{{property}}"></ba-child>
             </div>
-        </test>
+        </div>
 
         <script>
+        
+        	var root = $("#test");
 
             var parent_dynamic = new BetaJS.Dynamics.Dynamic({
                 element: $(".some_class"),
@@ -39,12 +41,12 @@
 
 
             function test() {
-                QUnit.equal($("test").find(".parent1").html(), "This is from the Parent Dynamic");
-                QUnit.equal($("test").find(".parent2").html(), "Parent");
-                QUnit.equal($("test").find("ba-child:eq(0) .child1").html(), "This is from the Parent Dynamic");
-                QUnit.equal($("test").find("ba-child:eq(0) .child2").html(), "Child");
-                QUnit.equal($("test").find("ba-child:eq(1) .child1").html(), "This is from the Child Dynamic");
-                QUnit.equal($("test").find("ba-child:eq(1) .child2").html(), "Parent");
+                QUnit.equal(root.find(".parent1").html(), "This is from the Parent Dynamic");
+                QUnit.equal(root.find(".parent2").html(), "Parent");
+                QUnit.equal(root.find("ba-child:eq(0) .child1").html(), "This is from the Parent Dynamic");
+                QUnit.equal(root.find("ba-child:eq(0) .child2").html(), "Child");
+                QUnit.equal(root.find("ba-child:eq(1) .child1").html(), "This is from the Child Dynamic");
+                QUnit.equal(root.find("ba-child:eq(1) .child2").html(), "Parent");
             }
         </script>
 

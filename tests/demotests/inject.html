@@ -1,13 +1,13 @@
 <html>
 	<head>
 		<script src="../assets/jquery.js"></script>
-        <script src="../../vendors/beta.js"></script>
+        <script src="../../vendors/scoped.js"></script><script src="../../vendors/beta-noscoped.js"></script>
         <script src="../../vendors/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
 
-		<test>
+		<div id="test">
 
 			<div>
 				<h4>Direct Inject</h4>
@@ -47,10 +47,10 @@
 
 			<button ba-click="change_props()">Change Property</button>
 
-		</test>
+		</div>
 
 		<script>
-			var root = $("test");
+			var root = $("#test");
 
 			//Messages
 			var external_initial = "This is an External Property";

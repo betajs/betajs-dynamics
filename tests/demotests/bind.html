@@ -1,18 +1,19 @@
 <html>
 <head>
     <script src="../assets/jquery.js"></script>
-    <script src="../../vendors/beta.js"></script>
+    <script src="../../vendors/scoped.js"></script><script src="../../vendors/beta-noscoped.js"></script>
     <script src="../../vendors/betajs-browser-noscoped.js"></script>
     <script src="../../dist/betajs-dynamics.js"></script>
 </head>
 <body>
 
-<test>
+<div id="test">
+	<br/>
     <father></father>
     <div id="helloworld">{{replaced_value}}</div>
-</test>
+</div>
 <script>
-    var root = $("test");
+    var root = $("#test");
 
     BetaJS.Dynamics.Dynamic.extend(null, {
         template:   '<force>{{force}}</force>',
@@ -29,7 +30,7 @@
     }).register("father");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $("test")
+        element: $("#test")
     });
     dynamic.set("replaced_value", "Hello World");
 

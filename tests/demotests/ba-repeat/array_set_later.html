@@ -1,12 +1,12 @@
 <html>
 	<head>
 		<script src="../assets/jquery.js"></script>
-        <script src="../../vendors/beta.js"></script>
+        <script src="../../vendors/scoped.js"></script><script src="../../vendors/beta-noscoped.js"></script>
         <script src="../../vendors/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
-		<test>
+		<div id="test">
 			<input value="{{=value}}" placeholder="placeholder">
 			<button ba-click="add(value)">Add to List</button>
 			<br>
@@ -16,9 +16,9 @@
 			<ul ba-repeat="{{item :: items}}">
 				<li>{{item}}</li>
 			</ul>
-		</test>
+		</div>
 		<script>
-			var root = $("test");
+			var root = $("#test");
 			var array = ['A','B','C'];
 			var dynamic = new BetaJS.Dynamics.Dynamic({
 				element: root.get(0),

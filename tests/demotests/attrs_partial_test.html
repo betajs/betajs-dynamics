@@ -3,50 +3,54 @@
     <link rel="stylesheet" href="../assets/styles.css">
 
     <script src="../assets/jquery.js"></script>
-    <script src="../../vendors/beta.js"></script>
+    <script src="../../vendors/scoped.js"></script><script src="../../vendors/beta-noscoped.js"></script>
     <script src="../../vendors/betajs-browser-noscoped.js"></script>
     <script src="../../dist/betajs-dynamics.js"></script>
 </head>
 <body>
 
-<test>
+<div id="test">
 	<div ba-attrs="{{{foobar: 'xyz', another: 'another'}}}">
+		<br>
 		<ba-innertest
-                ba-attrs="{{{tester: 'abc', some_set_attr: 'changed'}}}"
-                ba-another_set_attr="{{another}}">
+                ba-attrs="{{{testerbar: 'abc', some_set_attr: 'changed'}}}"
+                ba-anothersetattr="{{another}}">
 		</ba-innertest>
+		<br>
 	</div>
-	<testouter>{{foobar}}</testouter><testinner>{{tester}}</testinner>
-</test>
+	<div id="testouter">{{foobar}}</div><div id="testinner">{{testerbar}}</div>
+</div>
 
 <script>
 	BetaJS.Dynamics.Dynamic.extend(null, {
 		template :
-                '<outer>{{foobar}}</outer>' +
-                '<some_set_attr>{{some_set_attr}}</some_set_attr>' +
-                '<another_set_attr>{{another_set_attr}}</another_set_attr>' +
-                '<inner>{{tester}}</inner>',
+                '<div id="outer">{{foobar}}</div>' +
+                '<div id="some_set_attr">{{some_set_attr}}</div>' +
+                '<div id="another_set_attr">{{anothersetattr}}</div>' +
+                '<div id="inner">{{testerbar}}</div>',
         attrs : {
             some_set_attr : "initial",
             another_set_attr : "initial"
         }
 	}).register("ba-innertest");
 
-    var root = $("test");
+    var root = $("#test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
         element: root
     });
     dynamic.activate();
+    console.log(dynamic.get("testerbar"));
+    console.log(dynamic.scope(">").get("testerbar"));
 
     function test() {
-        QUnit.equal(root.find("testouter").html().trim(), "xyz");
-        QUnit.equal(root.find("testinner").html().trim(), "");
-        QUnit.equal(root.find("some_set_attr").html().trim(), "changed");
+        QUnit.equal(root.find("#testouter").html().trim(), "xyz");
+        QUnit.equal(root.find("#testinner").html().trim(), "");
+        QUnit.equal(root.find("#some_set_attr").html().trim(), "changed");
         //QUnit.equal(root.find("another_set_attr").html().trim(), "anotherchanged");
 
-        QUnit.equal(root.find("outer").html().trim(), "");
-        QUnit.equal(root.find("inner").html().trim(), "abc");
+        QUnit.equal(root.find("#outer").html().trim(), "");
+        QUnit.equal(root.find("#inner").html().trim(), "abc");
     }
 </script>
 

@@ -9,9 +9,11 @@
 </head>
 <body>
 
-<test>
+<div id="test">
+	<br>
     <ba-outer></ba-outer>
-</test>
+    <br>
+</div>
 
 <script>
     var inner = 'Inner Dynamic';
@@ -19,9 +21,9 @@
     var outer = 'Outer Dynamic';
 
 	BetaJS.Dynamics.Dynamic.extend(null, {
-		template:   '<inner>{{text}}</inner>' +
+		template:   '<div id="inner">{{text}}</div>' +
                     '<span> - displaying the text from : </span>' +
-                    '<inner_scoped_text>{{other}}</inner_scoped_text>',
+                    '<div id="inner_scoped_text">{{other}}</div>',
         attrs : {
             text : inner
         },
@@ -34,9 +36,9 @@
 	}).register("ba-inner");
 
     BetaJS.Dynamics.Dynamic.extend(null, {
-        template:   '<middle>{{text}}</middle> ' +
+        template:   '<div id="middle">{{text}}</div> ' +
                     '<span> - displaying the text from : </span>' +
-                    '<middle_scoped_text>{{other}}</middle_scoped_text></br>' +
+                    '<div id="middle_scoped_text">{{other}}</div></br>' +
                     '<ba-inner></ba-inner>',
         attrs : {
             text : middle
@@ -50,9 +52,9 @@
     }).register("ba-middle");
 
     BetaJS.Dynamics.Dynamic.extend(null, {
-        template:   '<outer>{{text}}</outer>' +
+        template:   '<div id="outer">{{text}}</div>' +
                     '<span> - displaying the text from : </span>' +
-                    '<outer_scoped_text>{{other}}</outer_scoped_text></br>' +
+                    '<div id="outer_scoped_text">{{other}}</div></br>' +
                     '<ba-middle></ba-middle>',
         attrs : {
             text : outer
@@ -65,7 +67,7 @@
         }
     }).register("ba-outer");
 
-    var root = $("test");
+    var root = $("#test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({element: root});
     dynamic.activate();
@@ -73,14 +75,14 @@
     function test() {
 
         //Are the Dynamics working correctly?
-        QUnit.equal(root.find("inner").html().trim(), inner);
-        QUnit.equal(root.find("middle").html().trim(), middle);
-        QUnit.equal(root.find("outer").html().trim(), outer);
+        QUnit.equal(root.find("#inner").html().trim(), inner);
+        QUnit.equal(root.find("#middle").html().trim(), middle);
+        QUnit.equal(root.find("#outer").html().trim(), outer);
 
         //Is the Scoping working correctly?
-        QUnit.equal(root.find("inner_scoped_text").html().trim(), outer);
-        QUnit.equal(root.find("middle_scoped_text").html().trim(), outer);
-        QUnit.equal(root.find("outer_scoped_text").html().trim(), middle);
+        QUnit.equal(root.find("#inner_scoped_text").html().trim(), outer);
+        QUnit.equal(root.find("#middle_scoped_text").html().trim(), outer);
+        QUnit.equal(root.find("#outer_scoped_text").html().trim(), middle);
     }
 </script>
 

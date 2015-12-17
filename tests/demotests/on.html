@@ -6,7 +6,7 @@
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
-		<test>
+		<div id="test">
 
 			<div id="dynamic">
 				<button ba-on:mouseover="mouseover()" ba-on:mouseleave="mouseleave()">Dynamic Mouseover</button>
@@ -38,9 +38,9 @@
 				<div>Value: {{test}}</div>
 			</div>
 
-		</test>
+		</div>
 		<script>
-			var root = $("test");
+			var root = $("#test");
 			var dynamic = new BetaJS.Dynamics.Dynamic({
 				element: root.find("#dynamic"),
 				functions: {

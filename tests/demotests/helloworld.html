@@ -18,11 +18,11 @@
 
 </script>
 
-<test>
+<div id="test">
     <div id="helloworld">{{replaced_value}}</div>
-</test>
+</div>
 <script>
-    var root = $("test");
+    var root = $("#test");
     var dynamic = new BetaJS.Dynamics.Dynamic({
         element: $("#helloworld")
     });

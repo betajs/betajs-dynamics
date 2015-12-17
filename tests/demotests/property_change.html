@@ -6,7 +6,7 @@
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
-		<test>
+		<div id="test">
 			<div>
 				<span>Test 1: </span>
 				<span id="value1">{{value1}}</span>
@@ -22,9 +22,9 @@
 				<span id="value3">{{prop.value3}}</span>
 				<button ba-click="prop.value3 = changed_value3">Change Value3</button>
 			</div>
-		</test>
+		</div>
 		<script>
-			var root = $("test");
+			var root = $("#test");
 			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
 
 			// Initial Values

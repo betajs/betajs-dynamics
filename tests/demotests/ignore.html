@@ -6,13 +6,13 @@
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
-		<test>
+		<div id="test">
 			<div ba-ignore>
 				<p>{{inner}}</p>
 			</div>
-		</test>
+		</div>
 		<script>
-			var root = $("test");
+			var root = $("#test");
 			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
 		
 			dynamic.activate();

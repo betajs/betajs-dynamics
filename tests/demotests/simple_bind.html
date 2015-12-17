@@ -10,32 +10,34 @@
 <body>
 
 <div id="test">
-	<div ba-repeat-element="{{item :: items}}">
-		{{item}}
-	</div>
-	<ba-repeatdyn>
-	</ba-repeatdyn>
+	<div>IE</div>
+	<ba-innertest ba-inner="{{outer}}">
+	</ba-innertest>
+	<button>Click</button>
 </div>
 
 <script>
 	BetaJS.Dynamics.Dynamic.extend(null, {
-		template: '<div ba-repeat-element="{{item :: [1,2,3,4,5]}}">{{item}}</div>'
-	}).register("ba-repeatdyn");
+		template : '<div id="inner">{{inner}}</div>'
+	}).register("ba-innertest");
 
     var root = $("#test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
         element: root,
-       	attrs: {
-       		items: [1,2,3,4,5]
-       	}
+        attrs: {
+            outer: "foobar"
+        }
+    });
+    root.find("button").on("click", function () {
+    	dynamic.set("outer", "baz");
     });
     dynamic.activate();
 
     function test() {
-        QUnit.ok(root.children().length >= 5);
-        dynamic.set("items", [6]);
-        QUnit.ok(root.children().length < 5);
+    	QUnit.equal(root.find("#inner").html().trim(), "foobar");
+    	root.find("button").click();
+    	QUnit.equal(root.find("#inner").html().trim(), "baz");
     }
 </script>
 

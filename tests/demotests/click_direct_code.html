@@ -6,7 +6,7 @@
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
-		<test>
+		<div id="test">
 			<button ba-click="test=!test">Button</button>
 			<div>Value: {{test}}</div>
 
@@ -15,9 +15,9 @@
         <div id="inner" ba-click="inner=true">
         </div>
       </div>
-    </test>
+    </div>
 		<script>
-			var root = $("test");
+			var root = $("#test");
 			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
 		
 			dynamic.set("test", false);

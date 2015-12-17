@@ -9,9 +9,9 @@
     </head>
     <body>
 
-        <test>
+        <div id="test">
             <outertest></outertest>
-        </test>
+        </div>
 
         <script>
 
@@ -62,19 +62,19 @@
             }).register("outertest");
 
             var main = new BetaJS.Dynamics.Dynamic({
-                element: $("test")
+                element: $("#test")
             });
 
             main.activate();
 
 
             function test() {
-                $("test #click1").click();
+                $("#test #click1").click();
                 QUnit.equal(main.get("clicked"), true);
-                QUnit.equal(main.scope('>[tagname="outertest"]').get('outer_button_title'), $("test #click1").prop('innerHTML'));
+                QUnit.equal(main.scope('>[tagname="outertest"]').get('outer_button_title'), $("#test #click1").prop('innerHTML'));
 
-                $("test #click2").click();
-                QUnit.equal(main.scope('>[tagname="outertest"]').get('outer_button_title'), $("test #click2").prop('innerHTML'));
+                $("#test #click2").click();
+                QUnit.equal(main.scope('>[tagname="outertest"]').get('outer_button_title'), $("#test #click2").prop('innerHTML'));
             }
         </script>
 

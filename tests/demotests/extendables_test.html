@@ -9,14 +9,16 @@
     </head>
     <body>
 
-        <test>
-            <outertest ba-inner="{{outer}}" ba-inner2="{{outer}}"></outertest>
-        </test>
+        <div id="test">
+        	<div>Before</div>
+            <ba-outertest ba-inner="{{outer}}" ba-inner2="{{outer}}"></ba-outertest>
+            <div>After</div>
+        </div>
 
         <script>
 
             BetaJS.Dynamics.Dynamic.extend(null, {
-                template: '<div>{{inner}}</div>',
+                template: '<div>Inner.</div><div>{{inner}}</div>',
                 attrs: {
                 	inner: {
                 		test: "test"
@@ -26,10 +28,10 @@
                 	}
                 },
                 extendables: ["inner2"]
-            }).register("outertest");
+            }).register("ba-outertest");
 
             var main = new BetaJS.Dynamics.Dynamic({
-                element: $("test"),
+                element: $("#test"),
                 attrs: {
                 	outer: {
                 		foo: "bar"

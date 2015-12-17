@@ -6,16 +6,16 @@
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
-		<test>
+		<div id="test">
 			<ul id="set" ba-repeat="{{item :: items}}">
 				<li>{{item}}</li>
 			</ul>
 			<ul id="attrs" ba-repeat="{{item :: array_items}}">
 				<li>{{item}}</li>
 			</ul>
-		</test>
+		</div>
 		<script>
-			var root = $("test");
+			var root = $("#test");
 
 			var array = ["A", "B", "C"];
 

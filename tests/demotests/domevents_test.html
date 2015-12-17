@@ -9,14 +9,14 @@
     </head>
     <body>
 
-        <test>
+        <div id="test">
             <button>Click Me</button>
-        </test>
+        </div>
 
         <script>
 
             var main = new BetaJS.Dynamics.Dynamic({
-                element: $("test"),
+                element: $("#test"),
                 functions: {
                 	clickme: function () {
                 		this.set("clicked", true);
@@ -33,7 +33,7 @@
             main.activate();
 
             function test() {
-            	$("test button").click();
+            	$("#test button").click();
             	QUnit.equal(main.get("clicked"), true);
             }
         </script>

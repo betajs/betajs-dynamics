@@ -9,7 +9,7 @@
 </head>
 <body>
 
-<test>
+<div id="test">
 
     <div><br><h3>Tests for the "ba-if" Partial & Injecting Properties</h3><br></div>
 
@@ -33,17 +33,19 @@
         <h4>Middle & Array</h4>
         <button ba-click='change_array()'>Change Array</button>
         <div id="middle" ba-repeat="{{prop :: property_array}}">
+        	<div>IE</div>
             <ba-middle ba-if="{{prop.v}}" ba-inject="{{prop}}"></ba-middle>
+            <div>IE</div>
         </div>
 
     </div>
 
-</test>
+</div>
 
 <script>
 
     //Elements
-    var root = $("test");
+    var root = $("#test");
 
     //Components
     var internal_message = "This is an internal Message";
@@ -90,8 +92,8 @@
     }).register("ba-middle");
 
     BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Inner", {
-        template: 	"<inner> Inner: {{inject.v}}" +
-                    "</inner></br>"
+        template: 	"<div class='inner'> Inner: {{inject.v}}" +
+                    "</div></br>"
     }).register("ba-inner");
 
     outer.activate();
@@ -109,11 +111,11 @@
 //        QUnit.equal($($("#middle inner")[0]).html().trim(), "Inner: null");
 //        QUnit.equal($($("#middle inner")[1]).html().trim(), internal_message);
 
-        QUnit.equal($($("#middle inner")[0]).html().trim(), "Inner: " + internal_message);
+        QUnit.equal($($("#middle .inner")[0]).html().trim(), "Inner: " + internal_message);
 
         outer.call("change_array");
 
-        QUnit.equal($($("#middle inner")[0]).html().trim(), "Inner: " + internal_message);
+        QUnit.equal($($("#middle .inner")[0]).html().trim(), "Inner: " + internal_message);
         QUnit.equal($($("#middle ba-middle")[1]).css('display'), "none");
 
     }

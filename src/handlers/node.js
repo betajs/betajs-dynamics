@@ -212,8 +212,12 @@ Scoped.define("module:Handlers.Node", [
 					this._dyn.value = value;
 					if ("textContent" in this._element)
 						this._element.textContent = Dom.entitiesToUnicode(value);
-					else
+					else if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9 && ("data" in this._element))
+						this._element.data = Dom.entitiesToUnicode(value === null ? "" : value);
+					else {
+						// OF: Not clear if this is ever executed and whether it actually does something meaningful.
 						this._$element.replaceWith(value);
+					}
 				}
 			},
 				

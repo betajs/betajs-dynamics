@@ -6,12 +6,12 @@
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
-		<test>
+		<div id="test">
 		  <ba-inner id="first"></ba-inner>
 		  <ba-inner id="second" ba-template="{{othertemplate}}"></ba-inner>
-		</test>
+		</div>
 		<script>
-			var root = $("test");
+			var root = $("#test");
 
 			BetaJS.Dynamics.Dynamic.extend(null, {
 		        template :  '<div>Testtest</div>'

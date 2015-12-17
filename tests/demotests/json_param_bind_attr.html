@@ -11,33 +11,34 @@
 
 
 
-<test>
+<div id="test">
+	<br/>
     <ba-inner_test ba-model="{{=model}}">
     </ba-inner_test>
     <br>
-    Value in outer : <outer>{{model.value}}</outer>
+    Value in outer : <div id='outerx'>{{model.value}}</div>
     <button id="outer" ba-click="model.value = !model.value">Change from outer</button>
-</test>
+</div>
 
 <script>
 
     BetaJS.Dynamics.Dynamic.extend(null, {
-		template :  '<span>Value in inner : </span><inner>{{model.value}} </inner>' +
+		template :  '<span>Value in inner : </span><div id="innerx">{{model.value}} </div>' +
                     '<button id="inner" ba-click="model.value = !model.value">Change from inner</button>',
         attrs : {
             model : {
-                value : false
+                value : "false"
             }
         }
 	}).register("ba-inner_test");
 
-    var root = $("test");
+    var root = $("#test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
         element: root,
         attrs : {
             model : {
-                value : true
+                value : "true"
             }
         }
     });
@@ -45,18 +46,18 @@
 
     function test() {
 
-        QUnit.equal(root.find("inner").html().trim(), "true");
-        QUnit.equal(root.find("outer").html().trim(), "true");
+        QUnit.equal(root.find("#innerx").html().trim(), "true");
+        QUnit.equal(root.find("#outerx").html().trim(), "true");
         root.find("#outer").click();
-        QUnit.equal(root.find("inner").html().trim(), "false");
-        QUnit.equal(root.find("outer").html().trim(), "false");
+        QUnit.equal(root.find("#innerx").html().trim(), "false");
+        QUnit.equal(root.find("#outerx").html().trim(), "false");
 
 
-        QUnit.equal(root.find("inner").html().trim(), "false");
-        QUnit.equal(root.find("outer").html().trim(), "false");
+        QUnit.equal(root.find("#innerx").html().trim(), "false");
+        QUnit.equal(root.find("#outerx").html().trim(), "false");
         root.find("#inner").click();
-        QUnit.equal(root.find("outer").html().trim(), "true");
-        QUnit.equal(root.find("inner").html().trim(), "true");
+        QUnit.equal(root.find("#outerx").html().trim(), "true");
+        QUnit.equal(root.find("#innerx").html().trim(), "true");
 
     }
 </script>

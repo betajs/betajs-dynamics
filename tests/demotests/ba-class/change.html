@@ -13,7 +13,7 @@
 			.d {background: yellow}
 		</style>
 
-		<test>
+		<div id="test">
 			<table>
 				<tr>
 					<td>Type</td>
@@ -44,9 +44,9 @@
 					<td><div>{{d.v}}</div></td>
 				</tr>
 			</table>
-		</test>
+		</div>
 		<script>
-			var root = $("test");
+			var root = $("#test");
 			var dynamic = new BetaJS.Dynamics.Dynamic({
 				element: root.get(0),
 				create: function () {

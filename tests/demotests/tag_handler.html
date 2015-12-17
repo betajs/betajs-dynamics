@@ -9,23 +9,27 @@
 </head>
 <body>
 
-<test>
+<div id="test">
+	<div>IE</div>
 	<ba-{{handler}} ba-click="clicker++">
 	</ba-{{handler}}>
+	<div>IE</div>
 	<ba-{{replacer}}>
 		{{inner}}
 	</ba-{{replacer}}>
+	<div>IE</div>
 	<ba-{{component}} ba-arg="{{arg}}">
 	</ba-{{component}}>
-</test>
+	<div>IE</div>
+</div>
 
 <script>
 
 	BetaJS.Dynamics.Dynamic.extend(null, {
-		template: '<inserted>{{arg}}</inserted>'
+		template: '<div class="inserted">{{arg}}</div>'
 	}).register("ba-taghandlertest");
 	
-    var root = $("test");
+    var root = $("#test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
         element: root,
@@ -46,17 +50,19 @@
         dynamic.set("handler", "foo");
         QUnit.equal(!!root.find("ba-test").get(0), false);
         QUnit.equal(!!root.find("ba-foo").get(0), true);
+        if (BetaJS.Browser.Info.internetExplorerVersion() < 9)
+        	return;
         root.find("ba-foo").click();
         QUnit.equal(dynamic.get("clicker"), 2);
         
         QUnit.equal(!!root.find("ba-foobar").get(0), true);
         QUnit.equal(root.find("ba-foobar").html().trim(), "content");
         
-        QUnit.equal(!!root.find("inserted").get(0), false);
+        QUnit.equal(!!root.find(".inserted").get(0), false);
         dynamic.set("component", "taghandlertest");
-        QUnit.equal(!!root.find("inserted").get(0), true);
+        QUnit.equal(!!root.find(".inserted").get(0), true);
         dynamic.set("arg", "foobar");
-        QUnit.equal(root.find("inserted").html().trim(), "foobar");
+        QUnit.equal(root.find(".inserted").html().trim(), "foobar");
     }
 </script>
 

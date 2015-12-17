@@ -9,13 +9,13 @@
     </head>
     <body>
 
-        <test>
+        <div id="test">
             <input value="{{=testvar}}" /><p>{{testvar}}</p>
             <ba-innerfullbind ba-sharescope>
             </ba-innerfullbind>
             <ba-innerfullbind ba-sharescope="{{props}}">
             </ba-innerfullbind>
-        </test>
+        </div>
 
         <script>
             BetaJS.Dynamics.Dynamic.extend(null, {
@@ -28,7 +28,7 @@
             }).register("ba-innerfullbind");
 
             var main = new BetaJS.Dynamics.Dynamic({
-                element: $("test"),
+                element: $("#test"),
                 attrs: {
                     testvar: "Foobar",
                     props: new BetaJS.Properties.Properties({
@@ -40,8 +40,8 @@
 
 
             function test() {
-                QUnit.equal($("test").find("ba-innerfullbind:eq(0) input").val(), "Foobar");
-                QUnit.equal($("test").find("ba-innerfullbind:eq(1) input").val(), "Coolbar");
+                QUnit.equal($("#test").find("ba-innerfullbind:eq(0) input").val(), "Foobar");
+                QUnit.equal($("#test").find("ba-innerfullbind:eq(1) input").val(), "Coolbar");
             }
         </script>
 

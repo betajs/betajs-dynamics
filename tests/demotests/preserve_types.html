@@ -9,9 +9,9 @@
     </head>
     <body>
 
-        <test>
+        <div id="test">
             <outertest ba-inner="{{outer}}"></outertest>
-        </test>
+        </div>
 
         <script>
 
@@ -20,7 +20,7 @@
             }).register("outertest");
 
             var main = new BetaJS.Dynamics.Dynamic({
-                element: $("test"),
+                element: $("#test"),
                 attrs: {
                 	outer: 42
                 }

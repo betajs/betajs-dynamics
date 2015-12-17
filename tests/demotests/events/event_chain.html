@@ -9,9 +9,11 @@
     </head>
     <body>
 
-        <test>
+        <div id="test">
+        	<div>IE</div>
             <outertest></outertest>
-        </test>
+            <div>IE</div>
+        </div>
 
         <script>
 
@@ -33,7 +35,7 @@
             }).register("outertest");
 
             var main = new BetaJS.Dynamics.Dynamic({
-                element: $("test")
+                element: $("#test")
             });
 
             main.activate();
@@ -43,7 +45,7 @@
             	main.on("foobar", function () {
             		clicked = true;
             	});
-                $("test button").click();
+                $("#test button").click();
                 QUnit.equal(clicked, true);
             }
         </script>

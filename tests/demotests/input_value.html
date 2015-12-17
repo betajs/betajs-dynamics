@@ -6,7 +6,7 @@
 		<script src="../../dist/betajs-dynamics.js"></script>
 	</head>
 	<body>
-		<test>
+		<div id="test">
 			<div id="s1">
 				<div>String 1</div>
 				<input value="{{=string1}}" /></br>
@@ -17,9 +17,9 @@
 				<input value="{{=string2}}" />
 				<p>{{string2}}</p>
 			</div>
-		</test>
+		</div>
 		<script>
-			var root = $("test");
+			var root = $("#test");
 			var original_string = "Original String";
 
 			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root });

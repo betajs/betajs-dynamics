@@ -36,7 +36,7 @@
 		<democase src="demotests/events/event_partial.html"></democase>
 
 		<democase src="demotests/attrs_partial_test.html"></democase>
-		<democase src="demotests/bind.html"></democase>
+	 	<democase src="demotests/bind.html"></democase>
 		<democase src="demotests/bindings.html"></democase>
 		<democase src="demotests/click_direct_code.html"></democase>
 		<democase src="demotests/domevents_test.html"></democase>
@@ -56,7 +56,11 @@
 		<democase src="demotests/deep_change.html"></democase>
 		<democase src="demotests/template_partial.html"></democase>
 		<democase src="demotests/simple_bind.html"></democase>
-
+		<script>
+			if (!window.console) {
+				window.console = { log: function () {} };
+			}
+		</script>
 		<script src="assets/jquery.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.1.1/es5-shim.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/json2/20140204/json2.js"></script>

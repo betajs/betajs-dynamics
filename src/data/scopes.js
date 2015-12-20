@@ -69,9 +69,10 @@ Scoped.define("module:Data.Scope", [
 	    "base:Ids",
 	    "base:Properties.Properties",
 	    "base:Collections.Collection",
+	    "base:Strings",
 	    "module:Data.ScopeManager",
 	    "module:Data.MultiScope"
-	], function (Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Objs, Ids, Properties, Collection, ScopeManager, MultiScope, scoped) {
+	], function (Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Objs, Ids, Properties, Collection, Strings, ScopeManager, MultiScope, scoped) {
 	return Class.extend({scoped: scoped}, [EventsMixin, ListenMixin, ObjectIdMixin, function (inherited) {
 		return {
 				
@@ -84,7 +85,8 @@ Scoped.define("module:Data.Scope", [
 					bind: {},
 					attrs: {},
 					extendables: [],
-					collections: {}
+					collections: {},
+					computed: {}
 				}, options);
 				if (options.bindings)
 					options.bind = Objs.extend(options.bind, options.bindings);
@@ -116,6 +118,10 @@ Scoped.define("module:Data.Scope", [
 				Objs.iter(options.bind, function (value, key) {
 					var i = value.indexOf(":");
 					this.bind(this.scope(value.substring(0, i)), key, {secondKey: value.substring(i + 1)});
+				}, this);
+				Objs.iter(options.computed, function (value, key) {
+					var splt = Strings.splitHead(":");
+					this.__properties.compute(splt.head, value, splt.tail.split(","));
 				}, this);
 			},
 			

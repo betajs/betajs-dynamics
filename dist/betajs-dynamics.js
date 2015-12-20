@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.25 - 2015-12-17
+betajs-dynamics - v0.0.25 - 2015-12-20
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -670,7 +670,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.25 - 2015-12-17
+betajs-dynamics - v0.0.25 - 2015-12-20
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -687,7 +687,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '204.1450384428221'
+		version: '205.1450643677614'
 	};
 });
 
@@ -1107,9 +1107,10 @@ Scoped.define("module:Data.Scope", [
 	    "base:Ids",
 	    "base:Properties.Properties",
 	    "base:Collections.Collection",
+	    "base:Strings",
 	    "module:Data.ScopeManager",
 	    "module:Data.MultiScope"
-	], function (Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Objs, Ids, Properties, Collection, ScopeManager, MultiScope, scoped) {
+	], function (Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Objs, Ids, Properties, Collection, Strings, ScopeManager, MultiScope, scoped) {
 	return Class.extend({scoped: scoped}, [EventsMixin, ListenMixin, ObjectIdMixin, function (inherited) {
 		return {
 				
@@ -1122,7 +1123,8 @@ Scoped.define("module:Data.Scope", [
 					bind: {},
 					attrs: {},
 					extendables: [],
-					collections: {}
+					collections: {},
+					computed: {}
 				}, options);
 				if (options.bindings)
 					options.bind = Objs.extend(options.bind, options.bindings);
@@ -1154,6 +1156,10 @@ Scoped.define("module:Data.Scope", [
 				Objs.iter(options.bind, function (value, key) {
 					var i = value.indexOf(":");
 					this.bind(this.scope(value.substring(0, i)), key, {secondKey: value.substring(i + 1)});
+				}, this);
+				Objs.iter(options.computed, function (value, key) {
+					var splt = Strings.splitHead(":");
+					this.__properties.compute(splt.head, value, splt.tail.split(","));
 				}, this);
 			},
 			
@@ -2251,44 +2257,6 @@ Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], funct
 	return Cls;
 });
 
-
-Scoped.define("module:Partials.DataPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
-  	var Cls = Partial.extend({scoped: scoped},  {
-  		
-		_apply: function (value) {
-			this._node._tagHandler.data(this._postfix, value);
-		},
-		
-		bindTagHandler: function (handler) {
-			this._apply(this._value);
-		}
-	
- 	}, {
- 		
- 		meta: {
- 			requires_tag_handler: true
- 		}
- 		
- 	});
- 	Cls.register("ba-data");
-	return Cls;
-});
-
-
-Scoped.define("module:Partials.FunctionsPartial", ["module:Handlers.Partial", "browser:Info", "base:Objs"], function (Partial, Info, Objs, scoped) {
- 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
- 		return {
-			
- 			bindTagHandler: function (handler) { 				
- 				Objs.extend(handler.__functions, this._value); 
- 			}
- 		
- 		};
- 	});
- 	Cls.register("ba-functions");
-	return Cls;
-});
-
 Scoped.define("module:Partials.ClassPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
   /**
    * @name ba-class
@@ -2361,6 +2329,29 @@ Scoped.define("module:Partials.ClickPartial", ["module:Handlers.Partial"], funct
 	return Cls;
 });
 
+
+Scoped.define("module:Partials.DataPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+  	var Cls = Partial.extend({scoped: scoped},  {
+  		
+		_apply: function (value) {
+			this._node._tagHandler.data(this._postfix, value);
+		},
+		
+		bindTagHandler: function (handler) {
+			this._apply(this._value);
+		}
+	
+ 	}, {
+ 		
+ 		meta: {
+ 			requires_tag_handler: true
+ 		}
+ 		
+ 	});
+ 	Cls.register("ba-data");
+	return Cls;
+});
+
 Scoped.define("module:Partials.EventPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
   	var Cls = Partial.extend({scoped: scoped}, {
 			
@@ -2372,6 +2363,21 @@ Scoped.define("module:Partials.EventPartial", ["module:Handlers.Partial"], funct
  		
  	});
  	Cls.register("ba-event");
+	return Cls;
+});
+
+
+Scoped.define("module:Partials.FunctionsPartial", ["module:Handlers.Partial", "browser:Info", "base:Objs"], function (Partial, Info, Objs, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+ 		return {
+			
+ 			bindTagHandler: function (handler) { 				
+ 				Objs.extend(handler.__functions, this._value); 
+ 			}
+ 		
+ 		};
+ 	});
+ 	Cls.register("ba-functions");
 	return Cls;
 });
 
@@ -2705,15 +2711,12 @@ Scoped.define("module:Partials.RepeatPartial", [
  				var result = [];
  				var self = this;
  				var elements = this._newItemElements();
- 				var elementArr = [];
  				elements.each(function () {
  					result.push(self._node._registerChild(this, locals));
- 					elementArr.push($(this));
  				});
  				this._collectionChildren[item.cid()] = {
 					item: item,
-					nodes: result,
-					elements: elementArr
+					nodes: result
 				};
  				var idx = this._collection.getIndex(item);
  				if (idx < this._collection.count() - 1)
@@ -2735,23 +2738,34 @@ Scoped.define("module:Partials.RepeatPartial", [
  				return this._collectionChildren[item.cid()];
  			},
  			
- 			_prependItem: function (base, item) {
- 				var baseData = this._itemData(base);
+ 			_itemDataElements: function (item) {
  				var itemData = this._itemData(item);
- 				if (!baseData || !itemData)
+ 				if (!itemData)
+ 					return null;
+ 				var result = [];
+ 				Objs.iter(itemData.nodes, function (node) {
+ 					result.push(node.$element());
+ 				});
+ 				return result;
+ 			},
+ 			
+ 			_prependItem: function (base, item) {
+ 				var baseDataElements = this._itemDataElements(base);
+ 				var itemDataElements = this._itemDataElements(item);
+ 				if (!baseDataElements || !itemDataElements)
  					return;
- 				Objs.iter(itemData.elements, function (element) {
- 					element.insertBefore(baseData.elements[0]);
+ 				Objs.iter(itemDataElements, function (element) {
+ 					element.insertBefore(baseDataElements[0]);
  				});
  			},
  			
  			_appendItem: function (base, item) {
- 				var baseData = this._itemData(base);
- 				var itemData = this._itemData(item);
- 				if (!baseData || !itemData)
+ 				var baseDataElements = this._itemDataElements(base);
+ 				var itemDataElements = this._itemDataElements(item);
+ 				if (!baseDataElements || !itemDataElements)
  					return;
- 				var current = baseData.elements[baseData.elements.length - 1];
- 				Objs.iter(itemData.elements, function (element) {
+ 				var current = baseDataElements[baseDataElements.length - 1];
+ 				Objs.iter(itemDataElements, function (element) {
  					current.after(element);
  					current = element;
  				});
@@ -3038,7 +3052,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed"
         ],
 		
 		canonicName: function () {

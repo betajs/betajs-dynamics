@@ -137,15 +137,12 @@ Scoped.define("module:Partials.RepeatPartial", [
  				var result = [];
  				var self = this;
  				var elements = this._newItemElements();
- 				var elementArr = [];
  				elements.each(function () {
  					result.push(self._node._registerChild(this, locals));
- 					elementArr.push($(this));
  				});
  				this._collectionChildren[item.cid()] = {
 					item: item,
-					nodes: result,
-					elements: elementArr
+					nodes: result
 				};
  				var idx = this._collection.getIndex(item);
  				if (idx < this._collection.count() - 1)
@@ -167,23 +164,34 @@ Scoped.define("module:Partials.RepeatPartial", [
  				return this._collectionChildren[item.cid()];
  			},
  			
- 			_prependItem: function (base, item) {
- 				var baseData = this._itemData(base);
+ 			_itemDataElements: function (item) {
  				var itemData = this._itemData(item);
- 				if (!baseData || !itemData)
+ 				if (!itemData)
+ 					return null;
+ 				var result = [];
+ 				Objs.iter(itemData.nodes, function (node) {
+ 					result.push(node.$element());
+ 				});
+ 				return result;
+ 			},
+ 			
+ 			_prependItem: function (base, item) {
+ 				var baseDataElements = this._itemDataElements(base);
+ 				var itemDataElements = this._itemDataElements(item);
+ 				if (!baseDataElements || !itemDataElements)
  					return;
- 				Objs.iter(itemData.elements, function (element) {
- 					element.insertBefore(baseData.elements[0]);
+ 				Objs.iter(itemDataElements, function (element) {
+ 					element.insertBefore(baseDataElements[0]);
  				});
  			},
  			
  			_appendItem: function (base, item) {
- 				var baseData = this._itemData(base);
- 				var itemData = this._itemData(item);
- 				if (!baseData || !itemData)
+ 				var baseDataElements = this._itemDataElements(base);
+ 				var itemDataElements = this._itemDataElements(item);
+ 				if (!baseDataElements || !itemDataElements)
  					return;
- 				var current = baseData.elements[baseData.elements.length - 1];
- 				Objs.iter(itemData.elements, function (element) {
+ 				var current = baseDataElements[baseDataElements.length - 1];
+ 				Objs.iter(itemDataElements, function (element) {
  					current.after(element);
  					current = element;
  				});

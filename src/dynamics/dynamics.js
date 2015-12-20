@@ -76,7 +76,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed"
         ],
 		
 		canonicName: function () {

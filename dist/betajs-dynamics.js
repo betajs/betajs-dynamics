@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.25 - 2015-12-20
+betajs-dynamics - v0.0.25 - 2015-12-21
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -670,7 +670,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.25 - 2015-12-20
+betajs-dynamics - v0.0.25 - 2015-12-21
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -687,7 +687,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '205.1450643677614'
+		version: '206.1450740737644'
 	};
 });
 
@@ -1234,7 +1234,10 @@ Scoped.define("module:Data.Scope", [
 			call: function (name) {
 				var args = Functions.getArguments(arguments, 1);
 				try {					
-					return this.__functions[name].apply(this, args);
+					if (Types.is_string(name))
+						return this.__functions[name].apply(this, args);
+					else
+						return name.apply(this, args);
 				} catch (e) {
 					return this.handle_call_exception(name, args, e);
 				}

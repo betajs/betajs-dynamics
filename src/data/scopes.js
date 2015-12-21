@@ -196,7 +196,10 @@ Scoped.define("module:Data.Scope", [
 			call: function (name) {
 				var args = Functions.getArguments(arguments, 1);
 				try {					
-					return this.__functions[name].apply(this, args);
+					if (Types.is_string(name))
+						return this.__functions[name].apply(this, args);
+					else
+						return name.apply(this, args);
 				} catch (e) {
 					return this.handle_call_exception(name, args, e);
 				}

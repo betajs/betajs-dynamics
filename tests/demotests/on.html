@@ -13,7 +13,6 @@
 
 				<script>
 					function leave() {
-						console.log('Mouseleave');
 					}
 				</script>
 				<div>Value: {{test}}</div>
@@ -25,12 +24,10 @@
 				<script>
 					var DOMevent = {};
 					function enter() {
-						console.log('Mouseenter');
 						if (DOMevent)
 							DOMevent.set("test", true);
 					}
 					function leave() {
-						console.log('Mouseleave');
 						if (DOMevent)
 							DOMevent.set("test", false);
 					}
@@ -45,11 +42,9 @@
 				element: root.find("#dynamic"),
 				functions: {
 					mouseover : function () {
-						//console.log('Mouseover');
 						this.set('test',true);
 					},
 					mouseleave : function () {
-						//console.log('Mouseleave');
 						this.set('test',false);
 					}
 				}
@@ -59,11 +54,9 @@
 				element: root.find("#DOMevent"),
 				functions: {
 					mouseover : function () {
-						//console.log('Mouseover');
 						this.set('test',true);
 					},
 					mouseleave : function () {
-						//console.log('Mouseleave');
 						this.set('test',false);
 					}
 				}

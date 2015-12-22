@@ -35,6 +35,7 @@
             function test() {
             	$("#test button").click();
             	QUnit.equal(main.get("clicked"), true);
+            	main.destroy();
             }
         </script>
 

@@ -40,8 +40,6 @@
         element: root
     });
     dynamic.activate();
-    console.log(dynamic.get("testerbar"));
-    console.log(dynamic.scope(">").get("testerbar"));
 
     function test() {
         QUnit.equal(root.find("#testouter").html().trim(), "xyz");

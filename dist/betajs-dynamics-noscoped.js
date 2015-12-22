@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '206.1450740737644'
+		version: '207.1450749496922'
 	};
 });
 
@@ -2346,15 +2346,15 @@ Scoped.define("module:Dynamic", [
 				this.functions = this.__functions;
 				this._handlerInitialize(options);
 				this.__createActivate = options.create || function () {};
+				this.__registered_dom_events = [];
+				this.dom_events = {};
+				this.window_events = {};
 			},
 			
 			handle_call_exception: function (name, args, e) {
 				Registries.warning("Dynamics Exception in '" + this.cls.classname + "' calling method '" + name + "' : " + e);
 				return null;
 			},
-			
-			domevents: {},
-			windowevents: {},
 			
 			_afterActivate: function (activeElement) {
 				this.activeElement().off("." + this.cid() + "-domevents");
@@ -2363,6 +2363,7 @@ Scoped.define("module:Dynamic", [
 				Objs.iter(this.domevents, function (target, event) {
 					var ev = event.split(" ");
 					var source = ev.length === 1 ? this.activeElement() : this.activeElement().find(ev[1]);
+					this.__registered_dom_events.push(source);
 					source.on(ev[0] + "." + this.cid() + "-domevents", function (eventData) {
 						self.call(target, eventData);
 					});
@@ -2375,7 +2376,9 @@ Scoped.define("module:Dynamic", [
 			},
 			
 			destroy: function () {
-				this.activeElement().off("." + this.cid() + "-domevents");
+				Objs.iter(this.__registered_dom_events, function (source) {
+					source.off("." + this.cid() + "-domevents");
+				}, this);
 				$(window).off("." + this.cid() + "-windowevents");
 				inherited.destroy.call(this);
 			}

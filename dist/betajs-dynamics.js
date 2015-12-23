@@ -1,10 +1,10 @@
 /*!
-betajs-dynamics - v0.0.25 - 2015-12-21
+betajs-dynamics - v0.0.27 - 2015-12-23
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
 /*!
-betajs-scoped - v0.0.4 - 2015-12-12
+betajs-scoped - v0.0.5 - 2015-12-23
 Copyright (c) Oliver Friedmann
 MIT Software License.
 */
@@ -424,7 +424,7 @@ function newScope (parent, parentNS, rootNS, globalNS) {
 						params.push(Helper.stringify(argmts[i]));
 					this.compiled += this.options.ident + "." + name + "(" + params.join(", ") + ");\n\n";
 				}
-				var result = args.callback.apply(args.context || this, arguments);
+				var result = this.options.compile ? {} : args.callback.apply(args.context || this, arguments);
 				callback.call(this, ns, result);
 			}, this);
 		};
@@ -642,7 +642,7 @@ var rootScope = newScope(null, rootNamespace, rootNamespace, globalNamespace);
 var Public = Helper.extend(rootScope, {
 		
 	guid: "4b6878ee-cb6a-46b3-94ac-27d91f58d666",
-	version: '21.1449951185971',
+	version: '22.1450888807473',
 		
 	upgrade: Attach.upgrade,
 	attach: Attach.attach,
@@ -670,7 +670,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.25 - 2015-12-21
+betajs-dynamics - v0.0.27 - 2015-12-23
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -687,7 +687,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '207.1450749496922'
+		version: '208.1450889906941'
 	};
 });
 
@@ -1596,8 +1596,16 @@ Scoped.define("module:Handlers.Attr", [
 });
 
 Scoped.define("module:Handlers.HandlerMixin", [
-    "base:Objs", "base:Strings", "base:Functions", "jquery:", "browser:Loader", "module:Handlers.Node", "module:Registries", "module:Handlers.HandlerNameRegistry"
-], function (Objs, Strings, Functions, $, Loader, Node, Registries, HandlerNameRegistry) {
+    "base:Objs",
+    "base:Strings",
+    "base:Functions",
+    "jquery:",
+    "browser:Loader",
+    "module:Handlers.Node",
+    "module:Registries",
+    "module:Handlers.HandlerNameRegistry",
+    "browser:DomMutation.NodeRemoveObserver"
+], function (Objs, Strings, Functions, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver) {
 	return {		
 		
 		_notifications: {
@@ -1642,6 +1650,13 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			this.__element = options.element ? $(options.element) : null;
 			this.initialContent = this.__element ? this.__element.html() : $(this._parentElement).html();
 			this.__activeElement = this.__element ? this.__element : $(this._parentElement);
+			if (options.remove_observe) {
+				this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement.get(0)));
+				this.__removeObserver.on("node-removed", function () {
+					this.weakDestroy();
+				}, this);
+			}
+			this.__activeElement.dynamicshandler = this;
 			
 			/*
 			if (this.template)
@@ -2977,6 +2992,94 @@ Scoped.define("module:Partials.TemplateUrlPartial",
 
 });
 
+Scoped.define("module:DomObserver", [
+    "base:Class",
+    "base:Objs",
+    "browser:DomMutation.NodeInsertObserver",
+    "module:Registries",
+    "module:Dynamic",
+    "jquery:"
+], function (Class, Objs, NodeInsertObserver, Registries, Dynamic, $, scoped) {
+	return Class.extend({scoped: scoped}, function (inherited) {
+		return {
+			
+			constructor: function (options) {
+				inherited.constructor.call(this);
+				options = options || {};
+				this.__root = options.root || document.body;
+				this.__persistent_dynamics = !!options.persistent_dynamics;
+				this.__allowed_dynamics = options.allowed_dynamics ? Objs.objectify(options.allowed_dynamics) : null;
+				this.__forbidden_dynamics = options.forbidden_dynamics ? Objs.objectify(options.forbidden_dynamics) : null;
+				this.__dynamics = {};
+				if (!options.ignore_existing) {
+					Objs.iter(Registries.handler.classes(), function (cls, key) {
+						if (this.__forbidden_dynamics && this.__forbidden_dynamics[key])
+							return;
+						if (this.__allowed_dynamics && !this.__allowed_dynamics[key])
+							return;
+						var self = this;
+						$(this.__root).find(key).each(function () {
+							if (this.dynamicshandler)
+								return;
+							self.__nodeInserted(this);
+						});
+					}, this);
+				}
+				this.__observer = NodeInsertObserver.create({
+					root: this.__root,
+					filter: this.__observerFilter,
+					context: this
+				});
+				this.__observer.on("node-inserted", this.__nodeInserted, this);
+			},
+			
+			destroy: function () {
+				this.__observer.destroy();
+				Objs.iter(this.__dynamics, function (dynamic) {
+					dynamic.off(null, null, this);
+					if (!this.__persistent_dynamics)
+						dynamic.weakDestroy();
+				}, this);
+				inherited.destroy.call(this);
+			},
+			
+			__observerFilter: function (node) {
+				if (node.dynamicshandler || !node.tagName)
+					return false;
+				var tag = node.tagName.toLowerCase();
+				if (!Registries.handler.get(tag))
+					return false;
+				if (this.__forbidden_dynamics && this.__forbidden_dynamics[tag])
+					return false;
+				if (this.__allowed_dynamics && !this.__allowed_dynamics[tag])
+					return false;
+				return true;
+			},
+			
+			__nodeInserted: function (node) {
+				var dynamic = new Dynamic({
+					element: node,
+					remove_observe: true
+				});
+				this.__dynamics[dynamic.cid()] = dynamic;
+				dynamic.on("destroy", function () {
+					delete this.__dynamics[dynamic.cid()];
+				}, this);
+				dynamic.activate();
+			}
+			
+		};
+	}, {
+		
+		__singleton: null,
+		
+		activate: function (options) {
+			if (!this.__singleton)
+				this.__singleton = new this(options);
+		}		
+		
+	});
+});
 Scoped.define("module:Dynamic", [
    	    "module:Data.Scope",
    	    "module:Handlers.HandlerMixin",

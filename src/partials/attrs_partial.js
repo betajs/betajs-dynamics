@@ -1,3 +1,4 @@
+
 Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
   /**
    * @name ba-attrs

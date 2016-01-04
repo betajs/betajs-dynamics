@@ -1,6 +1,14 @@
 Scoped.define("module:Handlers.HandlerMixin", [
-    "base:Objs", "base:Strings", "base:Functions", "jquery:", "browser:Loader", "module:Handlers.Node", "module:Registries", "module:Handlers.HandlerNameRegistry"
-], function (Objs, Strings, Functions, $, Loader, Node, Registries, HandlerNameRegistry) {
+    "base:Objs",
+    "base:Strings",
+    "base:Functions",
+    "jquery:",
+    "browser:Loader",
+    "module:Handlers.Node",
+    "module:Registries",
+    "module:Handlers.HandlerNameRegistry",
+    "browser:DomMutation.NodeRemoveObserver"
+], function (Objs, Strings, Functions, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver) {
 	return {		
 		
 		_notifications: {
@@ -45,6 +53,13 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			this.__element = options.element ? $(options.element) : null;
 			this.initialContent = this.__element ? this.__element.html() : $(this._parentElement).html();
 			this.__activeElement = this.__element ? this.__element : $(this._parentElement);
+			if (options.remove_observe) {
+				this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement.get(0)));
+				this.__removeObserver.on("node-removed", function () {
+					this.weakDestroy();
+				}, this);
+			}
+			this.__activeElement.dynamicshandler = this;
 			
 			/*
 			if (this.template)

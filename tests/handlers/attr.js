@@ -13,8 +13,11 @@ test("handlers/attr : prevent variable overshadowing on event", function(assert)
    */
   var dynamic = new BetaJS.Dynamics.Dynamic({
     element: $("div#qunit-fixture"),
-    template: "<div id='attr-test' onkeyup='{{console.log(domEvent)}}' ba-repeat='{{ domEvent :: [1,2,3] }}'>{{domEvent}}</div>"}
-  );
+    template: "<div id='attr-test' onkeyup='{{test(domEvent)}}' ba-repeat='{{ domEvent :: [1,2,3] }}'>{{domEvent}}</div>",
+    functions: {
+    	test: function (domEvent) {}
+    }
+  });
   dynamic.activate();
 
   var root = $("div#attr-test");

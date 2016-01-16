@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.27 - 2015-12-23
+betajs-dynamics - v0.0.28 - 2016-01-16
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 MIT Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '208.1450889906941'
+		version: '209.1452970026810'
 	};
 });
 
@@ -858,8 +858,24 @@ Scoped.define("module:Handlers.Attr", [
 					var old = this._attrValue;
 					this._attrValue = value;
 					
-					if (!this._partial || !this._partial.cls.meta.value_hidden)
-						this._attribute.value = Dom.entitiesToUnicode(value);
+					if (!this._partial || !this._partial.cls.meta.value_hidden) {
+						var result = Dom.entitiesToUnicode(value);
+						
+						
+						/*
+						 *  Fixing a Safari bug. These three lines will cause Safari to crash: 
+						 *     
+						 *     <style> [class^="randomstring"] { background: white; } </style>
+						 *	   <div class="" id="test"></div>
+						 *	   <script> document.getElementById("test").attributes.class.value = null; </script>
+                         *
+						 */
+						if (result === null && this._attrName === "class")
+							result = "";
+						
+						
+						this._attribute.value = result;
+					}
 					
 					if (this._partial)
 						this._partial.change(value, old);

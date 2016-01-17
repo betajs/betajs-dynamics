@@ -1,7 +1,7 @@
 /*!
-betajs-dynamics - v0.0.28 - 2016-01-16
+betajs-dynamics - v0.0.29 - 2016-01-17
 Copyright (c) Oliver Friedmann,Victor Lingenthal
-MIT Software License.
+Apache 2.0 Software License.
 */
 /*!
 betajs-scoped - v0.0.5 - 2015-12-23
@@ -670,9 +670,9 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.28 - 2016-01-16
+betajs-dynamics - v0.0.29 - 2016-01-17
 Copyright (c) Oliver Friedmann,Victor Lingenthal
-MIT Software License.
+Apache 2.0 Software License.
 */
 (function () {
 
@@ -687,7 +687,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '209.1452970026810'
+		version: '210.1453060156275'
 	};
 });
 
@@ -1615,13 +1615,14 @@ Scoped.define("module:Handlers.HandlerMixin", [
     "base:Objs",
     "base:Strings",
     "base:Functions",
+	"base:Types",
     "jquery:",
     "browser:Loader",
     "module:Handlers.Node",
     "module:Registries",
     "module:Handlers.HandlerNameRegistry",
     "browser:DomMutation.NodeRemoveObserver"
-], function (Objs, Strings, Functions, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver) {
+], function (Objs, Strings, Functions, Types, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver) {
 	return {		
 		
 		_notifications: {
@@ -1656,6 +1657,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			options = options || {};
 			if (options.name_registry)
 				this.__nameRegistry = this.auto_destroy(new HandlerNameRegistry());
+			this.__types = options.types || {};
 			this._parentHandler = options.parentHandler || null;
 			this._parentElement = options.parentElement;
 			this._argumentAttrs = {};
@@ -1737,6 +1739,8 @@ Scoped.define("module:Handlers.HandlerMixin", [
 		setArgumentAttr: function (key, value) {
 			if (key in this.__extendables) 
 				value = Objs.tree_extend(this.properties().get(key) || {}, value);
+			if (this.__types[key])
+				value = Types.parseType(value, this.__types[key]);
 			this.properties().set(key, value);
 			this._argumentAttrs[key] = true;
 		},
@@ -3177,7 +3181,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types"
         ],
 		
 		canonicName: function () {

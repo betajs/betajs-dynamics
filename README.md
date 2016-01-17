@@ -1,4 +1,4 @@
-# betajs-dynamics 0.0.18
+# betajs-dynamics 0.0.29
 
 BetaJS-Dynamics is a dynamic DOM templating engine.
 
@@ -26,7 +26,7 @@ for `file:///`.
 | Chrome | 14 - Latest |
 | Safari | 4 - Latest |
 | Opera | 12 - Latest |
-| Internet Explorer | 9 - Latest |
+| Internet Explorer | 8 - Latest |
 | iOS | 7.0 - Latest |
 | Android | 4.0 - Latest |
 
@@ -67,7 +67,7 @@ for `file:///`.
 
 ## License
 
-MIT
+Apache 2.0
 
 
 

@@ -16,4 +16,4 @@ Scoped.define("module:", function () {
 });
 
 Scoped.assumeVersion("base:version", 444);
-Scoped.assumeVersion("browser:version", 58);
+Scoped.assumeVersion("browser:version", 65);

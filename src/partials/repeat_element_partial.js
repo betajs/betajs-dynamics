@@ -6,8 +6,9 @@ Scoped.define("module:Partials.RepeatElementPartial", [
         "jquery:",
         "module:Parser",
         "base:Properties.Properties",
-        "base:Strings"
-	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, Strings, scoped) {
+        "base:Strings",
+        "browser:Dom"
+	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, Strings, Dom, scoped) {
   /**
    * @name ba-repeat-element
    *
@@ -33,7 +34,7 @@ Scoped.define("module:Partials.RepeatElementPartial", [
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
- 				this.__filteredTemplate = $(node._template).removeAttr("ba-repeat-element").get(0).outerHTML;
+ 				this.__filteredTemplate = Dom.outerHTML($(node._template).removeAttr("ba-repeat-element").get(0));
  			},
  			
  			_activate: function () {

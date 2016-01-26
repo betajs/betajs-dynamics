@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.29 - 2016-01-17
+betajs-dynamics - v0.0.29 - 2016-01-26
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 Apache 2.0 Software License.
 */
@@ -16,12 +16,12 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '210.1453060156275'
+		version: '211.1453822801946'
 	};
 });
 
 Scoped.assumeVersion("base:version", 444);
-Scoped.assumeVersion("browser:version", 58);
+Scoped.assumeVersion("browser:version", 65);
 Scoped.define("module:Data.Mesh", [
 	    "base:Class",
 	    "base:Events.EventsMixin",
@@ -1302,7 +1302,7 @@ Scoped.define("module:Handlers.Node", [
 				this._tagHandler = null;
 				
 				this._$element = $(element);
-				this._template = element.outerHTML;
+				this._template = Dom.outerHTML(element);
 				this._innerTemplate = element.innerHTML;
 				this._locals = locals || {};
 				this._active = true;
@@ -1468,7 +1468,7 @@ Scoped.define("module:Handlers.Node", [
 						if (!this._element.childNodes[i]["ba-handled"])
 							this._registerChild(this._element.childNodes[i]);
 				}
-				this._$element.css("display", "");
+				// this._$element.css("display", "");
 				Objs.iter(this._attrs, function (attr) {
 					attr.activate();
 				});
@@ -1890,8 +1890,9 @@ Scoped.define("module:Partials.RepeatElementPartial", [
         "jquery:",
         "module:Parser",
         "base:Properties.Properties",
-        "base:Strings"
-	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, Strings, scoped) {
+        "base:Strings",
+        "browser:Dom"
+	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, Strings, Dom, scoped) {
   /**
    * @name ba-repeat-element
    *
@@ -1917,7 +1918,7 @@ Scoped.define("module:Partials.RepeatElementPartial", [
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
- 				this.__filteredTemplate = $(node._template).removeAttr("ba-repeat-element").get(0).outerHTML;
+ 				this.__filteredTemplate = Dom.outerHTML($(node._template).removeAttr("ba-repeat-element").get(0));
  			},
  			
  			_activate: function () {
@@ -2546,6 +2547,12 @@ Scoped.define("module:Dynamic", [
 		
 		string: function (key) {
 			return this.__stringTable.get(key, this.registeredName());
+		},
+		
+		_extender: {
+			attrs: function (base, overwrite) {
+				return Objs.extend(Objs.clone(base, 1), overwrite);
+			}
 		}
 	
 	});

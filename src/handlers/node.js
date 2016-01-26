@@ -31,7 +31,7 @@ Scoped.define("module:Handlers.Node", [
 				this._tagHandler = null;
 				
 				this._$element = $(element);
-				this._template = element.outerHTML;
+				this._template = Dom.outerHTML(element);
 				this._innerTemplate = element.innerHTML;
 				this._locals = locals || {};
 				this._active = true;
@@ -197,7 +197,7 @@ Scoped.define("module:Handlers.Node", [
 						if (!this._element.childNodes[i]["ba-handled"])
 							this._registerChild(this._element.childNodes[i]);
 				}
-				this._$element.css("display", "");
+				// this._$element.css("display", "");
 				Objs.iter(this._attrs, function (attr) {
 					attr.activate();
 				});

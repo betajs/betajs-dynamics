@@ -115,6 +115,12 @@ Scoped.define("module:Dynamic", [
 		
 		string: function (key) {
 			return this.__stringTable.get(key, this.registeredName());
+		},
+		
+		_extender: {
+			attrs: function (base, overwrite) {
+				return Objs.extend(Objs.clone(base, 1), overwrite);
+			}
 		}
 	
 	});

@@ -1,4 +1,5 @@
-# betajs-dynamics 0.0.30
+# betajs-dynamics 0.0.31
+[![Code Climate](https://codeclimate.com/github/betajs/betajs-dynamics/badges/gpa.svg)](https://codeclimate.com/github/betajs/betajs-dynamics)
 
 BetaJS-Dynamics is a dynamic DOM templating engine.
 

@@ -61,7 +61,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 					this.weakDestroy();
 				}, this);
 			}
-			this.__activeElement.dynamicshandler = this;
+			this.__activeElement.get(0).dynamicshandler = this;
 			
 			/*
 			if (this.template)

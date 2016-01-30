@@ -1,4 +1,4 @@
-# betajs-dynamics 0.0.29
+# betajs-dynamics 0.0.30
 
 BetaJS-Dynamics is a dynamic DOM templating engine.
 

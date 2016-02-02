@@ -1,4 +1,5 @@
-# betajs-dynamics 0.0.31
+# betajs-dynamics 0.0.32
+[![Build Status](https://api.travis-ci.org/betajs/betajs-dynamics.svg?branch=master)](https://travis-ci.org/betajs/betajs-dynamics)
 [![Code Climate](https://codeclimate.com/github/betajs/betajs-dynamics/badges/gpa.svg)](https://codeclimate.com/github/betajs/betajs-dynamics)
 
 BetaJS-Dynamics is a dynamic DOM templating engine.
@@ -7,10 +8,6 @@ BetaJS-Dynamics is a dynamic DOM templating engine.
 ## Status
 Active, In Development
 
-## Testing
-Linting and tests can be run with `grunt check`. This command serves the
-`tests.html` file on a local server. This reduces cross origin request errors
-for `file:///`.
 
 ## Links
 | Resource   | URL |
@@ -70,6 +67,5 @@ for `file:///`.
 ## License
 
 Apache 2.0
-
 
 

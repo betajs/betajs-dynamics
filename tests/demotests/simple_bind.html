@@ -13,6 +13,7 @@
 	<div>IE</div>
 	<ba-innertest ba-inner="{{outer}}">
 	</ba-innertest>
+	<div id="computed">{{outer2}}</div>
 	<button>Click</button>
 </div>
 
@@ -27,6 +28,11 @@
         element: root,
         attrs: {
             outer: "foobar"
+        },
+        computed: {
+        	"outer2:outer": function () {
+        		return this.get("outer") + this.get("outer");
+        	}
         }
     });
     root.find("button").on("click", function () {
@@ -38,6 +44,7 @@
     	QUnit.equal(root.find("#inner").html().trim(), "foobar");
     	root.find("button").click();
     	QUnit.equal(root.find("#inner").html().trim(), "baz");
+    	QUnit.equal(root.find("#computed").html().trim(), "bazbaz");
     }
 </script>
 

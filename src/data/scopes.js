@@ -86,7 +86,8 @@ Scoped.define("module:Data.Scope", [
 					attrs: {},
 					extendables: [],
 					collections: {},
-					computed: {}
+					computed: {},
+					events: {}
 				}, options);
 				if (options.bindings)
 					options.bind = Objs.extend(options.bind, options.bindings);
@@ -122,6 +123,9 @@ Scoped.define("module:Data.Scope", [
 				Objs.iter(options.computed, function (value, key) {
 					var splt = Strings.splitFirst(key, ":");
 					this.__properties.compute(splt.head, value, splt.tail.split(","));
+				}, this);
+				Objs.iter(options.events, function (value, key) {
+					this.on(key, value, this);
 				}, this);
 			},
 			

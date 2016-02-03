@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.32 - 2016-02-02
+betajs-dynamics - v0.0.33 - 2016-02-02
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 Apache 2.0 Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '217.1454454938844'
+		version: '218.1454469690945'
 	};
 });
 
@@ -453,7 +453,8 @@ Scoped.define("module:Data.Scope", [
 					attrs: {},
 					extendables: [],
 					collections: {},
-					computed: {}
+					computed: {},
+					events: {}
 				}, options);
 				if (options.bindings)
 					options.bind = Objs.extend(options.bind, options.bindings);
@@ -489,6 +490,9 @@ Scoped.define("module:Data.Scope", [
 				Objs.iter(options.computed, function (value, key) {
 					var splt = Strings.splitFirst(key, ":");
 					this.__properties.compute(splt.head, value, splt.tail.split(","));
+				}, this);
+				Objs.iter(options.events, function (value, key) {
+					this.on(key, value, this);
 				}, this);
 			},
 			
@@ -2530,7 +2534,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events"
         ],
 		
 		canonicName: function () {

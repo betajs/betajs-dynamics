@@ -90,12 +90,12 @@ module.exports = function(grunt) {
 						overwrite : true
 					},
 					files : {
+//						"./vendors/benchmark.js": "https://raw.githubusercontent.com/bestiejs/benchmark.js/v1.0.0/benchmark.js",
 						"./vendors/scoped.js" : "https://raw.githubusercontent.com/betajs/betajs-scoped/master/dist/scoped.js",
 						"./vendors/beta-noscoped.js" : "https://raw.githubusercontent.com/betajs/betajs/master/dist/beta-noscoped.js",
 						"./vendors/betajs-browser-noscoped.js" : "https://raw.githubusercontent.com/betajs/betajs-browser/master/dist/betajs-browser-noscoped.js",
 						"./vendors/betajs-debug-noscoped.js" : "https://raw.githubusercontent.com/betajs/betajs-debug/master/dist/betajs-debug-noscoped.js",
-						"./vendors/jquery-1.9.closure-extern.js" : "https://raw.githubusercontent.com/google/closure-compiler/master/contrib/externs/jquery-1.9.js",
-						"./vendors/benchmark.js": "https://raw.githubusercontent.com/bestiejs/benchmark.js/v1.0.0/benchmark.js"
+						"./vendors/jquery-1.9.closure-extern.js" : "https://raw.githubusercontent.com/google/closure-compiler/master/contrib/externs/jquery-1.9.js"
 					}
 				}
 			},
@@ -169,7 +169,7 @@ module.exports = function(grunt) {
 						}
 					},
 					files : {
-						"jsdoc.conf.json": ["json.tpl"]
+						"jsdoc.conf.json": ["compile/json.tpl"]
 					}
 				},
 				"readme" : {
@@ -180,7 +180,15 @@ module.exports = function(grunt) {
 						}
 					},
 					files : {
-						"README.md" : ["readme.tpl"]
+						"README.md" : ["compile/readme.tpl"]
+					}
+				},
+				"license" : {
+					options : {
+						data: grunt.file.readJSON('package.json')
+					},
+					files : {
+						"LICENSE" : ["compile/license.tpl"]
 					}
 				},
 				"browserstack-desktop" : {
@@ -194,23 +202,22 @@ module.exports = function(grunt) {
 									'firefox_latest',
 									'firefox_4',
 									'chrome_latest',
-									'chrome_14',
+									'chrome_15',
 									'safari_latest',
 									'safari_4',
 									'opera_latest',
 									'opera_12_15',
+									'edge_latest',
 									'ie_11',
 									'ie_10',
-									'ie_9'/*,
-									'ie_8',
-									'ie_7',
-									'ie_6'*/
+									'ie_9',
+									'ie_8'
 								]
 							}
 						}
 					},
 					files : {
-						"browserstack.json" : ["json.tpl"]
+						"browserstack.json" : ["compile/json.tpl"]
 					}
 				},
 				"browserstack-mobile" : {
@@ -221,7 +228,7 @@ module.exports = function(grunt) {
 								"test_framework" : "qunit",
 								"timeout": 10 * 60,
 								"browsers": [
-									{"os": "ios", "os_version": "8.0"},
+									{"os": "ios", "os_version": "9.1"},
 									{"os": "ios", "os_version": "7.0"},
 									{"os": "android", "os_version": "4.4"},
 									{"os": "android", "os_version": "4.0"}
@@ -230,7 +237,7 @@ module.exports = function(grunt) {
 						}
 					},
 					files : {
-						"browserstack.json" : ["json.tpl"]
+						"browserstack.json" : ["compile/json.tpl"]
 					}
 				}
 			}
@@ -262,5 +269,6 @@ module.exports = function(grunt) {
 	grunt.registerTask('browserstack-desktop', [ 'template:browserstack-desktop', 'shell:browserstack', 'clean:browserstack' ]);
 	grunt.registerTask('browserstack-mobile', [ 'template:browserstack-mobile', 'shell:browserstack', 'clean:browserstack' ]);
 	grunt.registerTask('readme', [ 'template:readme' ]);
+	grunt.registerTask('license', [ 'template:license' ]);
 
 };

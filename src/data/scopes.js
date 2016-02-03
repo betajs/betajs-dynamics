@@ -193,7 +193,12 @@ Scoped.define("module:Data.Scope", [
 				return this;
 			},
 			
+			/* Deprecated */
 			call: function (name) {
+				return this.execute.apply(this, arguments);
+			},
+			
+			execute: function (name) {
 				var args = Functions.getArguments(arguments, 1);
 				try {					
 					if (Types.is_string(name))

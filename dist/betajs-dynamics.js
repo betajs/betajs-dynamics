@@ -1,678 +1,616 @@
 /*!
-betajs-dynamics - v0.0.27 - 2015-12-23
+betajs-dynamics - v0.0.31 - 2016-01-30
 Copyright (c) Oliver Friedmann,Victor Lingenthal
-MIT Software License.
+Apache 2.0 Software License.
 */
 /*!
-betajs-scoped - v0.0.5 - 2015-12-23
+betajs-scoped - v0.0.6 - 2016-01-25
 Copyright (c) Oliver Friedmann
-MIT Software License.
+Apache 2.0 Software License.
 */
-var Scoped = (function () {
-var Globals = {
+var Scoped = function () {
+	var Globals = {
 
-	get : function(key) {
-		if (typeof window !== "undefined")
-			return window[key];
-		if (typeof global !== "undefined")
-			return global[key];
-		return null;
-	},
+		get: function (key) {
+			if (typeof window !== "undefined") return window[key];
+			if (typeof global !== "undefined") return global[key];
+			return null;
+		},
 
-	set : function(key, value) {
-		if (typeof window !== "undefined")
-			window[key] = value;
-		if (typeof global !== "undefined")
-			global[key] = value;
-		return value;
-	},
-	
-	setPath: function (path, value) {
-		var args = path.split(".");
-		if (args.length == 1)
-			return this.set(path, value);		
-		var current = this.get(args[0]) || this.set(args[0], {});
-		for (var i = 1; i < args.length - 1; ++i) {
-			if (!(args[i] in current))
-				current[args[i]] = {};
-			current = current[args[i]];
+		set: function (key, value) {
+			if (typeof window !== "undefined") window[key] = value;
+			if (typeof global !== "undefined") global[key] = value;
+			return value;
+		},
+
+		setPath: function (path, value) {
+			var args = path.split(".");
+			if (args.length == 1) return this.set(path, value);
+			var current = this.get(args[0]) || this.set(args[0], {});
+			for (var i = 1; i < args.length - 1; ++i) {
+				if (!(args[i] in current)) current[args[i]] = {};
+				current = current[args[i]];
+			}
+			current[args[args.length - 1]] = value;
+			return value;
+		},
+
+		getPath: function (path) {
+			var args = path.split(".");
+			if (args.length == 1) return this.get(path);
+			var current = this.get(args[0]);
+			for (var i = 1; i < args.length; ++i) {
+				if (!current) return current;
+				current = current[args[i]];
+			}
+			return current;
 		}
-		current[args[args.length - 1]] = value;
-		return value;
-	},
-	
-	getPath: function (path) {
-		var args = path.split(".");
-		if (args.length == 1)
-			return this.get(path);		
-		var current = this.get(args[0]);
-		for (var i = 1; i < args.length; ++i) {
-			if (!current)
-				return current;
-			current = current[args[i]];
-		}
-		return current;
-	}
 
-};
-var Helper = {
-		
-	method: function (obj, func) {
-		return function () {
-			return func.apply(obj, arguments);
-		};
-	},
-	
-	extend: function (base, overwrite) {
-		base = base || {};
-		overwrite = overwrite || {};
-		for (var key in overwrite)
-			base[key] = overwrite[key];
-		return base;
-	},
-	
-	typeOf: function (obj) {
-		return Object.prototype.toString.call(obj) === '[object Array]' ? "array" : typeof obj;
-	},
-	
-	isEmpty: function (obj) {
-		if (obj === null || typeof obj === "undefined")
+	};
+
+	var Helper = {
+
+		method: function (obj, func) {
+			return function () {
+				return func.apply(obj, arguments);
+			};
+		},
+
+		extend: function (base, overwrite) {
+			base = base || {};
+			overwrite = overwrite || {};
+			for (var key in overwrite) base[key] = overwrite[key];
+			return base;
+		},
+
+		typeOf: function (obj) {
+			return Object.prototype.toString.call(obj) === '[object Array]' ? "array" : typeof obj;
+		},
+
+		isEmpty: function (obj) {
+			if (obj === null || typeof obj === "undefined") return true;
+			if (this.typeOf(obj) == "array") return obj.length === 0;
+			if (typeof obj !== "object") return false;
+			for (var key in obj) return false;
 			return true;
-		if (this.typeOf(obj) == "array")
-			return obj.length === 0;
-		if (typeof obj !== "object")
-			return false;
-		for (var key in obj)
-			return false;
-		return true;
-	},
-	
-	matchArgs: function (args, pattern) {
-		var i = 0;
-		var result = {};
-		for (var key in pattern) {
-			if (pattern[key] === true || this.typeOf(args[i]) == pattern[key]) {
-				result[key] = args[i];
-				i++;
-			} else if (this.typeOf(args[i]) == "undefined")
-				i++;
-		}
-		return result;
-	},
-	
-	stringify: function (value) {
-		if (this.typeOf(value) == "function")
-			return "" + value;
-		return JSON.stringify(value);
-	}	
+		},
 
-};
-var Attach = {
-		
-	__namespace: "Scoped",
-	
-	upgrade: function (namespace) {
-		var current = Globals.get(namespace || Attach.__namespace);
-		if (current && Helper.typeOf(current) == "object" && current.guid == this.guid && Helper.typeOf(current.version) == "string") {
-			var my_version = this.version.split(".");
-			var current_version = current.version.split(".");
-			var newer = false;
-			for (var i = 0; i < Math.min(my_version.length, current_version.length); ++i) {
-				newer = parseInt(my_version[i], 10) > parseInt(current_version[i], 10);
-				if (my_version[i] != current_version[i]) 
-					break;
+		matchArgs: function (args, pattern) {
+			var i = 0;
+			var result = {};
+			for (var key in pattern) {
+				if (pattern[key] === true || this.typeOf(args[i]) == pattern[key]) {
+					result[key] = args[i];
+					i++;
+				} else if (this.typeOf(args[i]) == "undefined") i++;
 			}
-			return newer ? this.attach(namespace) : current;				
-		} else
-			return this.attach(namespace);		
-	},
+			return result;
+		},
 
-	attach : function(namespace) {
-		if (namespace)
-			Attach.__namespace = namespace;
-		var current = Globals.get(Attach.__namespace);
-		if (current == this)
+		stringify: function (value) {
+			if (this.typeOf(value) == "function") return "" + value;
+			return JSON.stringify(value);
+		}
+
+	};
+	var Attach = {
+
+		__namespace: "Scoped",
+		__revert: null,
+
+		upgrade: function (namespace) {
+			var current = Globals.get(namespace || Attach.__namespace);
+			if (current && Helper.typeOf(current) == "object" && current.guid == this.guid && Helper.typeOf(current.version) == "string") {
+				var my_version = this.version.split(".");
+				var current_version = current.version.split(".");
+				var newer = false;
+				for (var i = 0; i < Math.min(my_version.length, current_version.length); ++i) {
+					newer = parseInt(my_version[i], 10) > parseInt(current_version[i], 10);
+					if (my_version[i] != current_version[i]) break;
+				}
+				return newer ? this.attach(namespace) : current;
+			} else return this.attach(namespace);
+		},
+
+		attach: function (namespace) {
+			if (namespace) Attach.__namespace = namespace;
+			var current = Globals.get(Attach.__namespace);
+			if (current == this) return this;
+			Attach.__revert = current;
+			if (current) {
+				try {
+					var exported = current.__exportScoped();
+					this.__exportBackup = this.__exportScoped();
+					this.__importScoped(exported);
+				} catch (e) {
+					// We cannot upgrade the old version.
+				}
+			}
+			Globals.set(Attach.__namespace, this);
 			return this;
-		Attach.__revert = current;
-		if (current) {
-			try {
-				var exported = current.__exportScoped();
-				this.__exportBackup = this.__exportScoped();
-				this.__importScoped(exported);
-			} catch (e) {
-				// We cannot upgrade the old version.
+		},
+
+		detach: function (forceDetach) {
+			if (forceDetach) Globals.set(Attach.__namespace, null);
+			if (typeof Attach.__revert != "undefined") Globals.set(Attach.__namespace, Attach.__revert);
+			delete Attach.__revert;
+			if (Attach.__exportBackup) this.__importScoped(Attach.__exportBackup);
+			return this;
+		},
+
+		exports: function (mod, object, forceExport) {
+			mod = mod || (typeof module != "undefined" ? module : null);
+			if (typeof mod == "object" && mod && "exports" in mod && (forceExport || mod.exports == this || !mod.exports || Helper.isEmpty(mod.exports))) mod.exports = object || this;
+			return this;
+		}
+
+	};
+
+	function newNamespace(opts) {
+
+		var options = {
+			tree: typeof opts.tree === "boolean" ? opts.tree : false,
+			global: typeof opts.global === "boolean" ? opts.global : false,
+			root: typeof opts.root === "object" ? opts.root : {}
+		};
+
+		function initNode(options) {
+			return {
+				route: typeof options.route === "string" ? options.route : null,
+				parent: typeof options.parent === "object" ? options.parent : null,
+				ready: typeof options.ready === "boolean" ? options.ready : false,
+				children: {},
+				watchers: [],
+				data: {},
+				lazy: []
+			};
+		}
+
+		var nsRoot = initNode({ ready: true });
+
+		if (options.tree) {
+			if (options.global) {
+				try {
+					if (window) nsRoot.data = window;
+				} catch (e) {}
+				try {
+					if (global) nsRoot.data = global;
+				} catch (e) {}
+			} else nsRoot.data = options.root;
+		}
+
+		function nodeDigest(node) {
+			if (node.ready) return;
+			if (node.parent && !node.parent.ready) {
+				nodeDigest(node.parent);
+				return;
+			}
+			if (node.route && node.parent && node.route in node.parent.data) {
+				node.data = node.parent.data[node.route];
+				node.ready = true;
+				for (var i = 0; i < node.watchers.length; ++i) node.watchers[i].callback.call(node.watchers[i].context || this, node.data);
+				node.watchers = [];
+				for (var key in node.children) nodeDigest(node.children[key]);
 			}
 		}
-		Globals.set(Attach.__namespace, this);
-		return this;
-	},
-	
-	detach: function (forceDetach) {
-		if (forceDetach)
-			Globals.set(Attach.__namespace, null);
-		if (typeof Attach.__revert != "undefined")
-			Globals.set(Attach.__namespace, Attach.__revert);
-		delete Attach.__revert;
-		if (Attach.__exportBackup)
-			this.__importScoped(Attach.__exportBackup);
-		return this;
-	},
-	
-	exports: function (mod, object, forceExport) {
-		mod = mod || (typeof module != "undefined" ? module : null);
-		if (typeof mod == "object" && mod && "exports" in mod && (forceExport || mod.exports == this || !mod.exports || Helper.isEmpty(mod.exports)))
-			mod.exports = object || this;
-		return this;
-	}	
 
-};
-
-function newNamespace (options) {
-	
-	options = Helper.extend({
-		tree: false,
-		global: false,
-		root: {}
-	}, options);
-	
-	function initNode(options) {
-		return Helper.extend({
-			route: null,
-			parent: null,
-			children: {},
-			watchers: [],
-			data: {},
-			ready: false,
-			lazy: []
-		}, options);
-	}
-	
-	var nsRoot = initNode({ready: true});
-	
-	if (options.tree) {
-		var treeRoot = null;
-		if (options.global) {
-			try {
-				if (window)
-					treeRoot = window;
-			} catch (e) { }
-			try {
-				if (global)
-					treeRoot = global;
-			} catch (e) { }
-		} else
-			treeRoot = options.root;
-		nsRoot.data = treeRoot;
-	}
-	
-	function nodeDigest(node) {
-		if (node.ready)
-			return;
-		if (node.parent && !node.parent.ready) {
-			nodeDigest(node.parent);
-			return;
-		}
-		if (node.route in node.parent.data) {
-			node.data = node.parent.data[node.route];
+		function nodeEnforce(node) {
+			if (node.ready) return;
+			if (node.parent && !node.parent.ready) nodeEnforce(node.parent);
 			node.ready = true;
-			for (var i = 0; i < node.watchers.length; ++i)
-				node.watchers[i].callback.call(node.watchers[i].context || this, node.data);
+			if (node.parent) {
+				if (options.tree && typeof node.parent.data == "object") node.parent.data[node.route] = node.data;
+			}
+			for (var i = 0; i < node.watchers.length; ++i) node.watchers[i].callback.call(node.watchers[i].context || this, node.data);
 			node.watchers = [];
-			for (var key in node.children)
-				nodeDigest(node.children[key]);
 		}
-	}
-	
-	function nodeEnforce(node) {
-		if (node.ready)
-			return;
-		if (node.parent && !node.parent.ready)
-			nodeEnforce(node.parent);
-		node.ready = true;
-		if (options.tree && typeof node.parent.data == "object")
-			node.parent.data[node.route] = node.data;
-		for (var i = 0; i < node.watchers.length; ++i)
-			node.watchers[i].callback.call(node.watchers[i].context || this, node.data);
-		node.watchers = [];
-	}
-	
-	function nodeSetData(node, value) {
-		if (typeof value == "object" && node.ready) {
-			for (var key in value)
-				node.data[key] = value[key];
-		} else
-			node.data = value;
-		if (typeof value == "object") {
-			for (var ckey in value) {
-				if (node.children[ckey])
-					node.children[ckey].data = value[ckey];
-			}
-		}
-		nodeEnforce(node);
-		for (var k in node.children)
-			nodeDigest(node.children[k]);
-	}
-	
-	function nodeClearData(node) {
-		if (node.ready && node.data) {
-			for (var key in node.data)
-				delete node.data[key];
-		}
-	}
-	
-	function nodeNavigate(path) {
-		if (!path)
-			return nsRoot;
-		var routes = path.split(".");
-		var current = nsRoot;
-		for (var i = 0; i < routes.length; ++i) {
-			if (routes[i] in current.children)
-				current = current.children[routes[i]];
-			else {
-				current.children[routes[i]] = initNode({
-					parent: current,
-					route: routes[i]
-				});
-				current = current.children[routes[i]];
-				nodeDigest(current);
-			}
-		}
-		return current;
-	}
-	
-	function nodeAddWatcher(node, callback, context) {
-		if (node.ready)
-			callback.call(context || this, node.data);
-		else {
-			node.watchers.push({
-				callback: callback,
-				context: context
-			});
-			if (node.lazy.length > 0) {
-				var f = function (node) {
-					if (node.lazy.length > 0) {
-						var lazy = node.lazy.shift();
-						lazy.callback.call(lazy.context || this, node.data);
-						f(node);
-					}
-				};
-				f(node);
-			}
-		}
-	}
-	
-	function nodeUnresolvedWatchers(node, base, result) {
-		node = node || nsRoot;
-		result = result || [];
-		if (!node.ready)
-			result.push(base);
-		for (var k in node.children) {
-			var c = node.children[k];
-			var r = (base ? base + "." : "") + c.route;
-			result = nodeUnresolvedWatchers(c, r, result);
-		}
-		return result;
-	}
 
-	return {
-		
-		extend: function (path, value) {
-			nodeSetData(nodeNavigate(path), value);
-		},
-		
-		set: function (path, value) {
-			var node = nodeNavigate(path);
-			if (node.data)
-				nodeClearData(node);
-			nodeSetData(node, value);
-		},
-		
-		get: function (path) {
-			var node = nodeNavigate(path);
-			return node.ready ? node.data : null;
-		},
-		
-		lazy: function (path, callback, context) {
-			var node = nodeNavigate(path);
-			if (node.ready)
-				callback(context || this, node.data);
-			else {
-				node.lazy.push({
+		function nodeSetData(node, value) {
+			if (typeof value == "object" && node.ready) {
+				for (var key in value) node.data[key] = value[key];
+			} else node.data = value;
+			if (typeof value == "object") {
+				for (var ckey in value) {
+					if (node.children[ckey]) node.children[ckey].data = value[ckey];
+				}
+			}
+			nodeEnforce(node);
+			for (var k in node.children) nodeDigest(node.children[k]);
+		}
+
+		function nodeClearData(node) {
+			if (node.ready && node.data) {
+				for (var key in node.data) delete node.data[key];
+			}
+		}
+
+		function nodeNavigate(path) {
+			if (!path) return nsRoot;
+			var routes = path.split(".");
+			var current = nsRoot;
+			for (var i = 0; i < routes.length; ++i) {
+				if (routes[i] in current.children) current = current.children[routes[i]];else {
+					current.children[routes[i]] = initNode({
+						parent: current,
+						route: routes[i]
+					});
+					current = current.children[routes[i]];
+					nodeDigest(current);
+				}
+			}
+			return current;
+		}
+
+		function nodeAddWatcher(node, callback, context) {
+			if (node.ready) callback.call(context || this, node.data);else {
+				node.watchers.push({
 					callback: callback,
 					context: context
 				});
-			}
-		},
-		
-		digest: function (path) {
-			nodeDigest(nodeNavigate(path));
-		},
-		
-		obtain: function (path, callback, context) {
-			nodeAddWatcher(nodeNavigate(path), callback, context);
-		},
-		
-		unresolvedWatchers: function (path) {
-			return nodeUnresolvedWatchers(nodeNavigate(path), path);
-		},
-		
-		__export: function () {
-			return {
-				options: options,
-				nsRoot: nsRoot
-			};
-		},
-		
-		__import: function (data) {
-			options = data.options;
-			nsRoot = data.nsRoot;
-		}
-		
-	};
-	
-}
-function newScope (parent, parentNS, rootNS, globalNS) {
-	
-	var self = this;
-	var nextScope = null;
-	var childScopes = [];
-	var parentNamespace = parentNS;
-	var rootNamespace = rootNS;
-	var globalNamespace = globalNS;
-	var localNamespace = newNamespace({tree: true});
-	var privateNamespace = newNamespace({tree: false});
-	
-	var bindings = {
-		"global": {
-			namespace: globalNamespace
-		}, "root": {
-			namespace: rootNamespace
-		}, "local": {
-			namespace: localNamespace
-		}, "default": {
-			namespace: privateNamespace
-		}, "parent": {
-			namespace: parentNamespace
-		}, "scope": {
-			namespace: localNamespace,
-			readonly: false
-		}
-	};
-	
-	var custom = function (argmts, name, callback) {
-		var args = Helper.matchArgs(argmts, {
-			options: "object",
-			namespaceLocator: true,
-			dependencies: "array",
-			hiddenDependencies: "array",
-			callback: true,
-			context: "object"
-		});
-		
-		var options = Helper.extend({
-			lazy: this.options.lazy
-		}, args.options || {});
-		
-		var ns = this.resolve(args.namespaceLocator);
-		
-		var execute = function () {
-			this.require(args.dependencies, args.hiddenDependencies, function () {
-				arguments[arguments.length - 1].ns = ns;
-				if (this.options.compile) {
-					var params = [];
-					for (var i = 0; i < argmts.length; ++i)
-						params.push(Helper.stringify(argmts[i]));
-					this.compiled += this.options.ident + "." + name + "(" + params.join(", ") + ");\n\n";
-				}
-				var result = this.options.compile ? {} : args.callback.apply(args.context || this, arguments);
-				callback.call(this, ns, result);
-			}, this);
-		};
-		
-		if (options.lazy)
-			ns.namespace.lazy(ns.path, execute, this);
-		else
-			execute.apply(this);
-
-		return this;
-	};
-	
-	return {
-		
-		getGlobal: Helper.method(Globals, Globals.getPath),
-		setGlobal: Helper.method(Globals, Globals.setPath),
-		
-		options: {
-			lazy: false,
-			ident: "Scoped",
-			compile: false			
-		},
-		
-		compiled: "",
-		
-		nextScope: function () {
-			if (!nextScope)
-				nextScope = newScope(this, localNamespace, rootNamespace, globalNamespace);
-			return nextScope;
-		},
-		
-		subScope: function () {
-			var sub = this.nextScope();
-			childScopes.push(sub);
-			nextScope = null;
-			return sub;
-		},
-		
-		binding: function (alias, namespaceLocator, options) {
-			if (!bindings[alias] || !bindings[alias].readonly) {
-				var ns;
-				if (Helper.typeOf(namespaceLocator) != "string") {
-					ns = {
-						namespace: newNamespace({
-							tree: true,
-							root: namespaceLocator
-						}),
-						path: null	
+				if (node.lazy.length > 0) {
+					var f = function (node) {
+						if (node.lazy.length > 0) {
+							var lazy = node.lazy.shift();
+							lazy.callback.call(lazy.context || this, node.data);
+							f(node);
+						}
 					};
-				} else
-					ns = this.resolve(namespaceLocator);
-				bindings[alias] = Helper.extend(options, ns);
-			}
-			return this;
-		},
-		
-		resolve: function (namespaceLocator) {
-			var parts = namespaceLocator.split(":");
-			if (parts.length == 1) {
-				return {
-					namespace: privateNamespace,
-					path: parts[0]
-				};
-			} else {
-				var binding = bindings[parts[0]];
-				if (!binding)
-					throw ("The namespace '" + parts[0] + "' has not been defined (yet).");
-				return {
-					namespace: binding.namespace,
-					path : binding.path && parts[1] ? binding.path + "." + parts[1] : (binding.path || parts[1])
-				};
-			}
-		},
-		
-		define: function () {
-			return custom.call(this, arguments, "define", function (ns, result) {
-				if (ns.namespace.get(ns.path))
-					throw ("Scoped namespace " + ns.path + " has already been defined. Use extend to extend an existing namespace instead");
-				ns.namespace.set(ns.path, result);
-			});
-		},
-		
-		assume: function () {
-			var args = Helper.matchArgs(arguments, {
-				assumption: true,
-				dependencies: "array",
-				callback: true,
-				context: "object",
-				error: "string"
-			});
-			var dependencies = args.dependencies || [];
-			dependencies.unshift(args.assumption);
-			this.require(dependencies, function (assumptionValue) {
-				if (!args.callback.apply(args.context || this, arguments))
-					throw ("Scoped Assumption '" + args.assumption + "' failed, value is " + assumptionValue + (args.error ? ", but assuming " + args.error : "")); 
-			});
-		},
-		
-		assumeVersion: function () {
-			var args = Helper.matchArgs(arguments, {
-				assumption: true,
-				dependencies: "array",
-				callback: true,
-				context: "object",
-				error: "string"
-			});
-			var dependencies = args.dependencies || [];
-			dependencies.unshift(args.assumption);
-			this.require(dependencies, function () {
-				var argv = arguments;
-				var assumptionValue = argv[0];
-				argv[0] = assumptionValue.split(".");
-				for (var i = 0; i < argv[0].length; ++i)
-					argv[0][i] = parseInt(argv[0][i], 10);
-				if (Helper.typeOf(args.callback) === "function") {
-					if (!args.callback.apply(args.context || this, args))
-						throw ("Scoped Assumption '" + args.assumption + "' failed, value is " + assumptionValue + (args.error ? ", but assuming " + args.error : ""));
-				} else {
-					var version = (args.callback + "").split(".");
-					for (var j = 0; j < Math.min(argv[0].length, version.length); ++j)
-						if (parseInt(version[j], 10) > argv[0][j])
-							throw ("Scoped Version Assumption '" + args.assumption + "' failed, value is " + assumptionValue + ", but assuming at least " + args.callback);
+					f(node);
 				}
-			});
-		},
-		
-		extend: function () {
-			return custom.call(this, arguments, "extend", function (ns, result) {
-				ns.namespace.extend(ns.path, result);
-			});
-		},
-		
-		condition: function () {
-			return custom.call(this, arguments, "condition", function (ns, result) {
-				if (result)
-					ns.namespace.set(ns.path, result);
-			});
-		},
-		
-		require: function () {
-			var args = Helper.matchArgs(arguments, {
-				dependencies: "array",
-				hiddenDependencies: "array",
-				callback: "function",
-				context: "object"
-			});
-			args.callback = args.callback || function () {};
-			var dependencies = args.dependencies || [];
-			var allDependencies = dependencies.concat(args.hiddenDependencies || []);
-			var count = allDependencies.length;
-			var deps = [];
-			var environment = {};
-			if (count) {
-				var f = function (value) {
-					if (this.i < deps.length)
-						deps[this.i] = value;
-					count--;
-					if (count === 0) {
-						deps.push(environment);
-						args.callback.apply(args.context || this.ctx, deps);
-					}
-				};
-				for (var i = 0; i < allDependencies.length; ++i) {
-					var ns = this.resolve(allDependencies[i]);
-					if (i < dependencies.length)
-						deps.push(null);
-					ns.namespace.obtain(ns.path, f, {
-						ctx: this,
-						i: i
+			}
+		}
+
+		function nodeUnresolvedWatchers(node, base, result) {
+			node = node || nsRoot;
+			result = result || [];
+			if (!node.ready) result.push(base);
+			for (var k in node.children) {
+				var c = node.children[k];
+				var r = (base ? base + "." : "") + c.route;
+				result = nodeUnresolvedWatchers(c, r, result);
+			}
+			return result;
+		}
+
+		return {
+
+			extend: function (path, value) {
+				nodeSetData(nodeNavigate(path), value);
+			},
+
+			set: function (path, value) {
+				var node = nodeNavigate(path);
+				if (node.data) nodeClearData(node);
+				nodeSetData(node, value);
+			},
+
+			get: function (path) {
+				var node = nodeNavigate(path);
+				return node.ready ? node.data : null;
+			},
+
+			lazy: function (path, callback, context) {
+				var node = nodeNavigate(path);
+				if (node.ready) callback(context || this, node.data);else {
+					node.lazy.push({
+						callback: callback,
+						context: context
 					});
 				}
-			} else {
-				deps.push(environment);
-				args.callback.apply(args.context || this, deps);
+			},
+
+			digest: function (path) {
+				nodeDigest(nodeNavigate(path));
+			},
+
+			obtain: function (path, callback, context) {
+				nodeAddWatcher(nodeNavigate(path), callback, context);
+			},
+
+			unresolvedWatchers: function (path) {
+				return nodeUnresolvedWatchers(nodeNavigate(path), path);
+			},
+
+			__export: function () {
+				return {
+					options: options,
+					nsRoot: nsRoot
+				};
+			},
+
+			__import: function (data) {
+				options = data.options;
+				nsRoot = data.nsRoot;
 			}
+
+		};
+	}
+	function newScope(parent, parentNS, rootNS, globalNS) {
+
+		var self = this;
+		var nextScope = null;
+		var childScopes = [];
+		var parentNamespace = parentNS;
+		var rootNamespace = rootNS;
+		var globalNamespace = globalNS;
+		var localNamespace = newNamespace({ tree: true });
+		var privateNamespace = newNamespace({ tree: false });
+
+		var bindings = {
+			"global": {
+				namespace: globalNamespace
+			}, "root": {
+				namespace: rootNamespace
+			}, "local": {
+				namespace: localNamespace
+			}, "default": {
+				namespace: privateNamespace
+			}, "parent": {
+				namespace: parentNamespace
+			}, "scope": {
+				namespace: localNamespace,
+				readonly: false
+			}
+		};
+
+		var custom = function (argmts, name, callback) {
+			var args = Helper.matchArgs(argmts, {
+				options: "object",
+				namespaceLocator: true,
+				dependencies: "array",
+				hiddenDependencies: "array",
+				callback: true,
+				context: "object"
+			});
+
+			var options = Helper.extend({
+				lazy: this.options.lazy
+			}, args.options || {});
+
+			var ns = this.resolve(args.namespaceLocator);
+
+			var execute = function () {
+				this.require(args.dependencies, args.hiddenDependencies, function () {
+					arguments[arguments.length - 1].ns = ns;
+					if (this.options.compile) {
+						var params = [];
+						for (var i = 0; i < argmts.length; ++i) params.push(Helper.stringify(argmts[i]));
+						this.compiled += this.options.ident + "." + name + "(" + params.join(", ") + ");\n\n";
+					}
+					var result = this.options.compile ? {} : args.callback.apply(args.context || this, arguments);
+					callback.call(this, ns, result);
+				}, this);
+			};
+
+			if (options.lazy) ns.namespace.lazy(ns.path, execute, this);else execute.apply(this);
+
 			return this;
-		},
-		
-		digest: function (namespaceLocator) {
-			var ns = this.resolve(namespaceLocator);
-			ns.namespace.digest(ns.path);
-			return this;
-		},
-		
-		unresolved: function (namespaceLocator) {
-			var ns = this.resolve(namespaceLocator);
-			return ns.namespace.unresolvedWatchers(ns.path);
-		},
-		
-		__export: function () {
+		};
+
+		return {
+
+			getGlobal: Helper.method(Globals, Globals.getPath),
+			setGlobal: Helper.method(Globals, Globals.setPath),
+
+			options: {
+				lazy: false,
+				ident: "Scoped",
+				compile: false
+			},
+
+			compiled: "",
+
+			nextScope: function () {
+				if (!nextScope) nextScope = newScope(this, localNamespace, rootNamespace, globalNamespace);
+				return nextScope;
+			},
+
+			subScope: function () {
+				var sub = this.nextScope();
+				childScopes.push(sub);
+				nextScope = null;
+				return sub;
+			},
+
+			binding: function (alias, namespaceLocator, options) {
+				if (!bindings[alias] || !bindings[alias].readonly) {
+					var ns;
+					if (Helper.typeOf(namespaceLocator) != "string") {
+						ns = {
+							namespace: newNamespace({
+								tree: true,
+								root: namespaceLocator
+							}),
+							path: null
+						};
+					} else ns = this.resolve(namespaceLocator);
+					bindings[alias] = Helper.extend(options, ns);
+				}
+				return this;
+			},
+
+			resolve: function (namespaceLocator) {
+				var parts = namespaceLocator.split(":");
+				if (parts.length == 1) {
+					return {
+						namespace: privateNamespace,
+						path: parts[0]
+					};
+				} else {
+					var binding = bindings[parts[0]];
+					if (!binding) throw "The namespace '" + parts[0] + "' has not been defined (yet).";
+					return {
+						namespace: binding.namespace,
+						path: binding.path && parts[1] ? binding.path + "." + parts[1] : binding.path || parts[1]
+					};
+				}
+			},
+
+			define: function () {
+				return custom.call(this, arguments, "define", function (ns, result) {
+					if (ns.namespace.get(ns.path)) throw "Scoped namespace " + ns.path + " has already been defined. Use extend to extend an existing namespace instead";
+					ns.namespace.set(ns.path, result);
+				});
+			},
+
+			assume: function () {
+				var args = Helper.matchArgs(arguments, {
+					assumption: true,
+					dependencies: "array",
+					callback: true,
+					context: "object",
+					error: "string"
+				});
+				var dependencies = args.dependencies || [];
+				dependencies.unshift(args.assumption);
+				this.require(dependencies, function (assumptionValue) {
+					if (!args.callback.apply(args.context || this, arguments)) throw "Scoped Assumption '" + args.assumption + "' failed, value is " + assumptionValue + (args.error ? ", but assuming " + args.error : "");
+				});
+			},
+
+			assumeVersion: function () {
+				var args = Helper.matchArgs(arguments, {
+					assumption: true,
+					dependencies: "array",
+					callback: true,
+					context: "object",
+					error: "string"
+				});
+				var dependencies = args.dependencies || [];
+				dependencies.unshift(args.assumption);
+				this.require(dependencies, function () {
+					var argv = arguments;
+					var assumptionValue = argv[0];
+					argv[0] = assumptionValue.split(".");
+					for (var i = 0; i < argv[0].length; ++i) argv[0][i] = parseInt(argv[0][i], 10);
+					if (Helper.typeOf(args.callback) === "function") {
+						if (!args.callback.apply(args.context || this, args)) throw "Scoped Assumption '" + args.assumption + "' failed, value is " + assumptionValue + (args.error ? ", but assuming " + args.error : "");
+					} else {
+						var version = (args.callback + "").split(".");
+						for (var j = 0; j < Math.min(argv[0].length, version.length); ++j) if (parseInt(version[j], 10) > argv[0][j]) throw "Scoped Version Assumption '" + args.assumption + "' failed, value is " + assumptionValue + ", but assuming at least " + args.callback;
+					}
+				});
+			},
+
+			extend: function () {
+				return custom.call(this, arguments, "extend", function (ns, result) {
+					ns.namespace.extend(ns.path, result);
+				});
+			},
+
+			condition: function () {
+				return custom.call(this, arguments, "condition", function (ns, result) {
+					if (result) ns.namespace.set(ns.path, result);
+				});
+			},
+
+			require: function () {
+				var args = Helper.matchArgs(arguments, {
+					dependencies: "array",
+					hiddenDependencies: "array",
+					callback: "function",
+					context: "object"
+				});
+				args.callback = args.callback || function () {};
+				var dependencies = args.dependencies || [];
+				var allDependencies = dependencies.concat(args.hiddenDependencies || []);
+				var count = allDependencies.length;
+				var deps = [];
+				var environment = {};
+				if (count) {
+					var f = function (value) {
+						if (this.i < deps.length) deps[this.i] = value;
+						count--;
+						if (count === 0) {
+							deps.push(environment);
+							args.callback.apply(args.context || this.ctx, deps);
+						}
+					};
+					for (var i = 0; i < allDependencies.length; ++i) {
+						var ns = this.resolve(allDependencies[i]);
+						if (i < dependencies.length) deps.push(null);
+						ns.namespace.obtain(ns.path, f, {
+							ctx: this,
+							i: i
+						});
+					}
+				} else {
+					deps.push(environment);
+					args.callback.apply(args.context || this, deps);
+				}
+				return this;
+			},
+
+			digest: function (namespaceLocator) {
+				var ns = this.resolve(namespaceLocator);
+				ns.namespace.digest(ns.path);
+				return this;
+			},
+
+			unresolved: function (namespaceLocator) {
+				var ns = this.resolve(namespaceLocator);
+				return ns.namespace.unresolvedWatchers(ns.path);
+			},
+
+			__export: function () {
+				return {
+					parentNamespace: parentNamespace.__export(),
+					rootNamespace: rootNamespace.__export(),
+					globalNamespace: globalNamespace.__export(),
+					localNamespace: localNamespace.__export(),
+					privateNamespace: privateNamespace.__export()
+				};
+			},
+
+			__import: function (data) {
+				parentNamespace.__import(data.parentNamespace);
+				rootNamespace.__import(data.rootNamespace);
+				globalNamespace.__import(data.globalNamespace);
+				localNamespace.__import(data.localNamespace);
+				privateNamespace.__import(data.privateNamespace);
+			}
+
+		};
+	}
+	var globalNamespace = newNamespace({ tree: true, global: true });
+	var rootNamespace = newNamespace({ tree: true });
+	var rootScope = newScope(null, rootNamespace, rootNamespace, globalNamespace);
+
+	var Public = Helper.extend(rootScope, {
+
+		guid: "4b6878ee-cb6a-46b3-94ac-27d91f58d666",
+		version: '32.1453754118896',
+
+		upgrade: Attach.upgrade,
+		attach: Attach.attach,
+		detach: Attach.detach,
+		exports: Attach.exports,
+
+		__exportScoped: function () {
 			return {
-				parentNamespace: parentNamespace.__export(),
-				rootNamespace: rootNamespace.__export(),
 				globalNamespace: globalNamespace.__export(),
-				localNamespace: localNamespace.__export(),
-				privateNamespace: privateNamespace.__export()
+				rootNamespace: rootNamespace.__export(),
+				rootScope: rootScope.__export()
 			};
 		},
-		
-		__import: function (data) {
-			parentNamespace.__import(data.parentNamespace);
-			rootNamespace.__import(data.rootNamespace);
+
+		__importScoped: function (data) {
 			globalNamespace.__import(data.globalNamespace);
-			localNamespace.__import(data.localNamespace);
-			privateNamespace.__import(data.privateNamespace);
+			rootNamespace.__import(data.rootNamespace);
+			rootScope.__import(data.rootScope);
 		}
-		
-	};
-	
-}
-var globalNamespace = newNamespace({tree: true, global: true});
-var rootNamespace = newNamespace({tree: true});
-var rootScope = newScope(null, rootNamespace, rootNamespace, globalNamespace);
 
-var Public = Helper.extend(rootScope, {
-		
-	guid: "4b6878ee-cb6a-46b3-94ac-27d91f58d666",
-	version: '22.1450888807473',
-		
-	upgrade: Attach.upgrade,
-	attach: Attach.attach,
-	detach: Attach.detach,
-	exports: Attach.exports,
-	
-	__exportScoped: function () {
-		return {
-			globalNamespace: globalNamespace.__export(),
-			rootNamespace: rootNamespace.__export(),
-			rootScope: rootScope.__export()
-		};
-	},
-	
-	__importScoped: function (data) {
-		globalNamespace.__import(data.globalNamespace);
-		rootNamespace.__import(data.rootNamespace);
-		rootScope.__import(data.rootScope);
-	}
-	
-});
+	});
 
-Public = Public.upgrade();
-Public.exports();
+	Public = Public.upgrade();
+	Public.exports();
 	return Public;
-}).call(this);
+}.call(this);
+
 /*!
-betajs-dynamics - v0.0.27 - 2015-12-23
+betajs-dynamics - v0.0.31 - 2016-01-30
 Copyright (c) Oliver Friedmann,Victor Lingenthal
-MIT Software License.
+Apache 2.0 Software License.
 */
 (function () {
 
@@ -687,12 +625,12 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '208.1450889906941'
+		version: '211.1454134939731'
 	};
 });
 
 Scoped.assumeVersion("base:version", 444);
-Scoped.assumeVersion("browser:version", 58);
+Scoped.assumeVersion("browser:version", 65);
 Scoped.define("module:Data.Mesh", [
 	    "base:Class",
 	    "base:Events.EventsMixin",
@@ -1231,7 +1169,12 @@ Scoped.define("module:Data.Scope", [
 				return this;
 			},
 			
+			/* Deprecated */
 			call: function (name) {
+				return this.execute.apply(this, arguments);
+			},
+			
+			execute: function (name) {
 				var args = Functions.getArguments(arguments, 1);
 				try {					
 					if (Types.is_string(name))
@@ -1529,8 +1472,24 @@ Scoped.define("module:Handlers.Attr", [
 					var old = this._attrValue;
 					this._attrValue = value;
 					
-					if (!this._partial || !this._partial.cls.meta.value_hidden)
-						this._attribute.value = Dom.entitiesToUnicode(value);
+					if (!this._partial || !this._partial.cls.meta.value_hidden) {
+						var result = Dom.entitiesToUnicode(value);
+						
+						
+						/*
+						 *  Fixing a Safari bug. These three lines will cause Safari to crash: 
+						 *     
+						 *     <style> [class^="randomstring"] { background: white; } </style>
+						 *	   <div class="" id="test"></div>
+						 *	   <script> document.getElementById("test").attributes.class.value = null; </script>
+                         *
+						 */
+						if (result === null && this._attrName === "class")
+							result = "";
+						
+						
+						this._attribute.value = result;
+					}
 					
 					if (this._partial)
 						this._partial.change(value, old);
@@ -1599,13 +1558,14 @@ Scoped.define("module:Handlers.HandlerMixin", [
     "base:Objs",
     "base:Strings",
     "base:Functions",
+	"base:Types",
     "jquery:",
     "browser:Loader",
     "module:Handlers.Node",
     "module:Registries",
     "module:Handlers.HandlerNameRegistry",
     "browser:DomMutation.NodeRemoveObserver"
-], function (Objs, Strings, Functions, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver) {
+], function (Objs, Strings, Functions, Types, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver) {
 	return {		
 		
 		_notifications: {
@@ -1640,6 +1600,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			options = options || {};
 			if (options.name_registry)
 				this.__nameRegistry = this.auto_destroy(new HandlerNameRegistry());
+			this.__types = options.types || {};
 			this._parentHandler = options.parentHandler || null;
 			this._parentElement = options.parentElement;
 			this._argumentAttrs = {};
@@ -1656,7 +1617,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 					this.weakDestroy();
 				}, this);
 			}
-			this.__activeElement.dynamicshandler = this;
+			this.__activeElement.get(0).dynamicshandler = this;
 			
 			/*
 			if (this.template)
@@ -1721,6 +1682,8 @@ Scoped.define("module:Handlers.HandlerMixin", [
 		setArgumentAttr: function (key, value) {
 			if (key in this.__extendables) 
 				value = Objs.tree_extend(this.properties().get(key) || {}, value);
+			if (this.__types[key])
+				value = Types.parseType(value, this.__types[key]);
 			this.properties().set(key, value);
 			this._argumentAttrs[key] = true;
 		},
@@ -1953,7 +1916,7 @@ Scoped.define("module:Handlers.Node", [
 				this._tagHandler = null;
 				
 				this._$element = $(element);
-				this._template = element.outerHTML;
+				this._template = Dom.outerHTML(element);
 				this._innerTemplate = element.innerHTML;
 				this._locals = locals || {};
 				this._active = true;
@@ -2119,7 +2082,7 @@ Scoped.define("module:Handlers.Node", [
 						if (!this._element.childNodes[i]["ba-handled"])
 							this._registerChild(this._element.childNodes[i]);
 				}
-				this._$element.css("display", "");
+				// this._$element.css("display", "");
 				Objs.iter(this._attrs, function (attr) {
 					attr.activate();
 				});
@@ -2241,6 +2204,7 @@ Scoped.define("module:Partials.AssocPartial", ["module:Handlers.Partial"], funct
  	Cls.register("ba-assoc");
 	return Cls;
 });
+
 
 Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
   /**
@@ -2541,8 +2505,9 @@ Scoped.define("module:Partials.RepeatElementPartial", [
         "jquery:",
         "module:Parser",
         "base:Properties.Properties",
-        "base:Strings"
-	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, Strings, scoped) {
+        "base:Strings",
+        "browser:Dom"
+	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, Strings, Dom, scoped) {
   /**
    * @name ba-repeat-element
    *
@@ -2568,7 +2533,7 @@ Scoped.define("module:Partials.RepeatElementPartial", [
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
- 				this.__filteredTemplate = $(node._template).removeAttr("ba-repeat-element").get(0).outerHTML;
+ 				this.__filteredTemplate = Dom.outerHTML($(node._template).removeAttr("ba-repeat-element").get(0));
  			},
  			
  			_activate: function () {
@@ -3085,9 +3050,11 @@ Scoped.define("module:Dynamic", [
    	    "module:Handlers.HandlerMixin",
    	    "base:Objs",
    	    "base:Strings",
+   	    "base:Types",
+   	    "base:Functions",
    	    "module:Registries",
    	    "jquery:"
-   	], function (Scope, HandlerMixin, Objs, Strings, Registries, $, scoped) {
+   	], function (Scope, HandlerMixin, Objs, Strings, Types, Functions, Registries, $, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -3102,8 +3069,20 @@ Scoped.define("module:Dynamic", [
 				this.domevents = Objs.extend(this.domevents, options.domevents);
 				this.windowevents = Objs.extend(this.windowevents, options.windowevents);
 				Objs.iter(this.cls.__initialForward, function (key) {
-					if (!(key in options) && (key in this))
+					if (!(key in this))
+						return;
+					if (key in options) {
+						if (Types.is_object(this[key]) && Types.is_object(options[key]))
+							options[key] = Objs.extend(Objs.clone(this[key], 1), options[key]);
+					} else
 						options[key] = this[key];
+				}, this);
+				Objs.iter(this.object_functions, function (key) {
+					this[key] = function () {
+						var args = Functions.getArguments(arguments);
+						args.unshift(key);
+						return this.execute.apply(this, args);
+					};
 				}, this);
 				if (!options.parent && options.parentHandler) {
 					var ph = options.parentHandler;
@@ -3161,7 +3140,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types"
         ],
 		
 		canonicName: function () {
@@ -3170,6 +3149,10 @@ Scoped.define("module:Dynamic", [
 		
 		registeredName: function () {
 			return this.__registeredName || ("ba-" + this.canonicName());
+		},
+		
+		findByElement: function (element) {
+			return $(element).get(0).dynamicshandler;
 		},
 		
 		register: function (key, registry) {
@@ -3196,7 +3179,16 @@ Scoped.define("module:Dynamic", [
 		},
 		
 		string: function (key) {
-			return this.__stringTable.get(key, this.registeredName());
+			var result = this.__stringTable.get(key, this.registeredName());
+			if (!result && this.parent.string)
+				result = this.parent.string(key);
+			return result;
+		},
+		
+		_extender: {
+			attrs: function (base, overwrite) {
+				return Objs.extend(Objs.clone(base, 1), overwrite);
+			}
 		}
 	
 	});

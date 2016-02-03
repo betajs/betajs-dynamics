@@ -3,9 +3,11 @@ Scoped.define("module:Dynamic", [
    	    "module:Handlers.HandlerMixin",
    	    "base:Objs",
    	    "base:Strings",
+   	    "base:Types",
+   	    "base:Functions",
    	    "module:Registries",
    	    "jquery:"
-   	], function (Scope, HandlerMixin, Objs, Strings, Registries, $, scoped) {
+   	], function (Scope, HandlerMixin, Objs, Strings, Types, Functions, Registries, $, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -20,8 +22,20 @@ Scoped.define("module:Dynamic", [
 				this.domevents = Objs.extend(this.domevents, options.domevents);
 				this.windowevents = Objs.extend(this.windowevents, options.windowevents);
 				Objs.iter(this.cls.__initialForward, function (key) {
-					if (!(key in options) && (key in this))
+					if (!(key in this))
+						return;
+					if (key in options) {
+						if (Types.is_object(this[key]) && Types.is_object(options[key]))
+							options[key] = Objs.extend(Objs.clone(this[key], 1), options[key]);
+					} else
 						options[key] = this[key];
+				}, this);
+				Objs.iter(this.object_functions, function (key) {
+					this[key] = function () {
+						var args = Functions.getArguments(arguments);
+						args.unshift(key);
+						return this.execute.apply(this, args);
+					};
 				}, this);
 				if (!options.parent && options.parentHandler) {
 					var ph = options.parentHandler;
@@ -79,7 +93,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types"
         ],
 		
 		canonicName: function () {
@@ -88,6 +102,10 @@ Scoped.define("module:Dynamic", [
 		
 		registeredName: function () {
 			return this.__registeredName || ("ba-" + this.canonicName());
+		},
+		
+		findByElement: function (element) {
+			return $(element).get(0).dynamicshandler;
 		},
 		
 		register: function (key, registry) {
@@ -114,7 +132,16 @@ Scoped.define("module:Dynamic", [
 		},
 		
 		string: function (key) {
-			return this.__stringTable.get(key, this.registeredName());
+			var result = this.__stringTable.get(key, this.registeredName());
+			if (!result && this.parent.string)
+				result = this.parent.string(key);
+			return result;
+		},
+		
+		_extender: {
+			attrs: function (base, overwrite) {
+				return Objs.extend(Objs.clone(base, 1), overwrite);
+			}
 		}
 	
 	});

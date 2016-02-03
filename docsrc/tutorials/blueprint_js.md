@@ -13,10 +13,10 @@ BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Dynamictemplate", {
     element : $(".someclass"),
 
 
-    bind : {
+    bindings : {
         parent_dynamic_attribute: "<:attribute_in_parent_dynamic"
     },
-    scope : {
+    scopes : {
         parent_dynamic: "<"
     },
 

@@ -2,13 +2,14 @@ Scoped.define("module:Handlers.HandlerMixin", [
     "base:Objs",
     "base:Strings",
     "base:Functions",
+	"base:Types",
     "jquery:",
     "browser:Loader",
     "module:Handlers.Node",
     "module:Registries",
     "module:Handlers.HandlerNameRegistry",
     "browser:DomMutation.NodeRemoveObserver"
-], function (Objs, Strings, Functions, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver) {
+], function (Objs, Strings, Functions, Types, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver) {
 	return {		
 		
 		_notifications: {
@@ -43,6 +44,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			options = options || {};
 			if (options.name_registry)
 				this.__nameRegistry = this.auto_destroy(new HandlerNameRegistry());
+			this.__types = options.types || {};
 			this._parentHandler = options.parentHandler || null;
 			this._parentElement = options.parentElement;
 			this._argumentAttrs = {};
@@ -59,7 +61,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 					this.weakDestroy();
 				}, this);
 			}
-			this.__activeElement.dynamicshandler = this;
+			this.__activeElement.get(0).dynamicshandler = this;
 			
 			/*
 			if (this.template)
@@ -124,6 +126,8 @@ Scoped.define("module:Handlers.HandlerMixin", [
 		setArgumentAttr: function (key, value) {
 			if (key in this.__extendables) 
 				value = Objs.tree_extend(this.properties().get(key) || {}, value);
+			if (this.__types[key])
+				value = Types.parseType(value, this.__types[key]);
 			this.properties().set(key, value);
 			this._argumentAttrs[key] = true;
 		},

@@ -1,11 +1,15 @@
 /*!
 <<<<<<< HEAD
+<<<<<<< HEAD
 betajs-browser - v1.0.15 - 2015-12-17
 =======
 betajs-browser - v1.0.17 - 2015-12-23
 >>>>>>> 1d31e3d762d408752fb3580fb35e914007830005
+=======
+betajs-browser - v1.0.19 - 2016-01-26
+>>>>>>> 083bcbfcb3a98e170892a2ba8e2c1ae5b92ac608
 Copyright (c) Oliver Friedmann
-MIT Software License.
+Apache 2.0 Software License.
 */
 (function () {
 
@@ -26,14 +30,18 @@ Scoped.define("module:", function () {
 	return {
 		guid: "02450b15-9bbf-4be2-b8f6-b483bc015d06",
 <<<<<<< HEAD
+<<<<<<< HEAD
 		version: '62.1450385743675'
 =======
 		version: '63.1450889613503'
 >>>>>>> 1d31e3d762d408752fb3580fb35e914007830005
+=======
+		version: '65.1453822294725'
+>>>>>>> 083bcbfcb3a98e170892a2ba8e2c1ae5b92ac608
 	};
 });
 
-Scoped.assumeVersion("base:version", 444);
+Scoped.assumeVersion("base:version", 451);
 Scoped.define("module:JQueryAjax", [
 	    "base:Net.AbstractAjax",
 	    "base:Net.AjaxException",
@@ -43,30 +51,6 @@ Scoped.define("module:JQueryAjax", [
 	], function (AbstractAjax, AjaxException, Promise, BrowserInfo, $, scoped) {
 	return AbstractAjax.extend({scoped: scoped}, function (inherited) {
 		return {
-			
-			_syncCall: function (options) {
-				var result;
-				$.ajax({
-					type: options.method,
-					async: false,
-					url: options.uri,
-					dataType: options.decodeType ? options.decodeType : null, 
-					data: options.encodeType && options.encodeType == "json" ? JSON.stringify(options.data) : options.data,
-					success: function (response) {
-						result = response;
-					},
-					error: function (jqXHR, textStatus, errorThrown) {
-						var err = "";
-						try {
-							err = JSON.parse(jqXHR.responseText);
-						} catch (e) {
-							err = JSON.parse('"' + jqXHR.responseText + '"');
-						}
-						throw new AjaxException(jqXHR.status, errorThrown, err);
-					}
-				});
-				return result;
-			},
 			
 			_asyncCall: function (options, callbacks) {
 				var promise = Promise.create();
@@ -293,9 +277,18 @@ Scoped.define("module:Cookies", ["base:Objs", "base:Types"], function (Objs, Typ
 });
 
 Scoped.define("module:Dom", [
-    "base:Objs", "jquery:", "base:Types"
-], function (Objs, $, Types) {
-	return {	
+    "base:Objs",
+    "jquery:",
+    "base:Types",
+    "module:Info"
+], function (Objs, $, Types, Info) {
+	return {
+		
+		outerHTML: function (element) {
+			if (!Info.isFirefox() || Info.firefoxVersion() >= 11)
+				return element.outerHTML;
+			return $('<div>').append($(element).clone()).html();
+		},
 		
 		changeTag: function (node, name) {
 			var replacement = document.createElement(name);
@@ -714,8 +707,9 @@ Scoped.define("module:DomMutation.MutationObserverNodeRemoveObserver", [
 
 Scoped.define("module:DomMutation.DOMNodeRemovedNodeRemoveObserver", [
 	"module:DomMutation.NodeRemoveObserver",
+	"module:Info",
 	"jquery:"
-], function (Observer, $, scoped) {
+], function (Observer, Info, $, scoped) {
 	return Observer.extend({scoped: scoped}, function (inherited) {
 		return {
 			
@@ -736,7 +730,7 @@ Scoped.define("module:DomMutation.DOMNodeRemovedNodeRemoveObserver", [
 	}, {
 		
 		supported: function (node) {
-			return true;
+			return !Info.isInternetExplorer() || Info.internetExplorerVersion() >= 9;
 		}
 		
 	});	
@@ -744,13 +738,56 @@ Scoped.define("module:DomMutation.DOMNodeRemovedNodeRemoveObserver", [
 });
 
 
+
+Scoped.define("module:DomMutation.TimerNodeRemoveObserver", [
+  	"module:DomMutation.NodeRemoveObserver",
+  	"base:Timers.Timer",
+  	"jquery:"
+], function (Observer, Timer, $, scoped) {
+	return Observer.extend({scoped: scoped}, function (inherited) {
+		return {
+			
+			constructor: function (node) {
+				inherited.constructor.call(this, node);
+				this._timer = new Timer({
+					context: this,
+					fire: this._fire,
+					delay: 100
+				});
+			},
+			
+			destroy: function () {
+				this._timer.weakDestroy();
+				inherited.destroy.call(this);
+			},
+			
+			_fire: function () {
+				if (!this._node.parentElement) {
+					this._timer.stop();
+					this._nodeRemoved(this._node);
+				}
+			}
+			
+		};
+	}, {
+		
+		supported: function (node) {
+			return true;
+		}
+		
+	});	
+
+});
+
 Scoped.extend("module:DomMutation.NodeRemoveObserver", [
     "module:DomMutation.NodeRemoveObserver",
     "module:DomMutation.MutationObserverNodeRemoveObserver",
-    "module:DomMutation.DOMNodeRemovedNodeRemoveObserver"
-], function (Observer, MutationObserverNodeRemoveObserver, DOMNodeRemovedNodeRemoveObserver) {
-	Observer.register(MutationObserverNodeRemoveObserver, 2);
-	Observer.register(DOMNodeRemovedNodeRemoveObserver, 1);
+    "module:DomMutation.DOMNodeRemovedNodeRemoveObserver",
+    "module:DomMutation.TimerNodeRemoveObserver"
+], function (Observer, MutationObserverNodeRemoveObserver, DOMNodeRemovedNodeRemoveObserver, TimerNodeRemoveObserver) {
+	Observer.register(MutationObserverNodeRemoveObserver, 3);
+	Observer.register(DOMNodeRemovedNodeRemoveObserver, 2);
+	Observer.register(TimerNodeRemoveObserver, 1);
 	return {};
 });
 
@@ -886,8 +923,8 @@ Scoped.extend("module:DomMutation.NodeInsertObserver", [
 	"module:DomMutation.MutationObserverNodeInsertObserver",
 	"module:DomMutation.DOMNodeInsertedNodeInsertObserver"
 ], function (Observer, MutationObserverNodeInsertObserver, DOMNodeInsertedNodeInsertObserver) {
-	Observer.register(MutationObserverNodeInsertObserver, 2);
-	Observer.register(DOMNodeInsertedNodeInsertObserver, 1);
+	Observer.register(MutationObserverNodeInsertObserver, 3);
+	Observer.register(DOMNodeInsertedNodeInsertObserver, 2);
 	return {};
 });
 
@@ -1565,6 +1602,26 @@ Scoped.define("module:Info", [
 		operaVersion: function () {
 			return this.__cached("operaVersion", function (nav, ua) {
 				var re = /OPR\/(\d+\.\d+)[^\d]/gi;
+				var ma = re.exec(ua);
+				if (ma)
+					return parseFloat(ma[1]);
+				return null;
+			});
+		},
+		
+		safariVersion: function () {
+			return this.__cached("safariVersion", function (nav, ua) {
+				var re = /Version\/(\d+\.\d+)[^\d]/gi;
+				var ma = re.exec(ua);
+				if (ma)
+					return parseFloat(ma[1]);
+				return null;
+			});
+		},
+
+		firefoxVersion: function () {
+			return this.__cached("firefoxVersion", function (nav, ua) {
+				var re = /Firefox\/(\d+\.\d+)/gi;
 				var ma = re.exec(ua);
 				if (ma)
 					return parseFloat(ma[1]);

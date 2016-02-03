@@ -1,7 +1,7 @@
 /*!
-betajs-dynamics - v0.0.27 - 2015-12-23
+betajs-dynamics - v0.0.31 - 2016-01-30
 Copyright (c) Oliver Friedmann,Victor Lingenthal
-MIT Software License.
+Apache 2.0 Software License.
 */
 (function () {
 
@@ -16,12 +16,12 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '208.1450889906941'
+		version: '211.1454134939731'
 	};
 });
 
 Scoped.assumeVersion("base:version", 444);
-Scoped.assumeVersion("browser:version", 58);
+Scoped.assumeVersion("browser:version", 65);
 Scoped.define("module:Data.Mesh", [
 	    "base:Class",
 	    "base:Events.EventsMixin",
@@ -560,7 +560,12 @@ Scoped.define("module:Data.Scope", [
 				return this;
 			},
 			
+			/* Deprecated */
 			call: function (name) {
+				return this.execute.apply(this, arguments);
+			},
+			
+			execute: function (name) {
 				var args = Functions.getArguments(arguments, 1);
 				try {					
 					if (Types.is_string(name))
@@ -858,8 +863,24 @@ Scoped.define("module:Handlers.Attr", [
 					var old = this._attrValue;
 					this._attrValue = value;
 					
-					if (!this._partial || !this._partial.cls.meta.value_hidden)
-						this._attribute.value = Dom.entitiesToUnicode(value);
+					if (!this._partial || !this._partial.cls.meta.value_hidden) {
+						var result = Dom.entitiesToUnicode(value);
+						
+						
+						/*
+						 *  Fixing a Safari bug. These three lines will cause Safari to crash: 
+						 *     
+						 *     <style> [class^="randomstring"] { background: white; } </style>
+						 *	   <div class="" id="test"></div>
+						 *	   <script> document.getElementById("test").attributes.class.value = null; </script>
+                         *
+						 */
+						if (result === null && this._attrName === "class")
+							result = "";
+						
+						
+						this._attribute.value = result;
+					}
 					
 					if (this._partial)
 						this._partial.change(value, old);
@@ -928,13 +949,14 @@ Scoped.define("module:Handlers.HandlerMixin", [
     "base:Objs",
     "base:Strings",
     "base:Functions",
+	"base:Types",
     "jquery:",
     "browser:Loader",
     "module:Handlers.Node",
     "module:Registries",
     "module:Handlers.HandlerNameRegistry",
     "browser:DomMutation.NodeRemoveObserver"
-], function (Objs, Strings, Functions, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver) {
+], function (Objs, Strings, Functions, Types, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver) {
 	return {		
 		
 		_notifications: {
@@ -969,6 +991,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			options = options || {};
 			if (options.name_registry)
 				this.__nameRegistry = this.auto_destroy(new HandlerNameRegistry());
+			this.__types = options.types || {};
 			this._parentHandler = options.parentHandler || null;
 			this._parentElement = options.parentElement;
 			this._argumentAttrs = {};
@@ -985,7 +1008,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 					this.weakDestroy();
 				}, this);
 			}
-			this.__activeElement.dynamicshandler = this;
+			this.__activeElement.get(0).dynamicshandler = this;
 			
 			/*
 			if (this.template)
@@ -1050,6 +1073,8 @@ Scoped.define("module:Handlers.HandlerMixin", [
 		setArgumentAttr: function (key, value) {
 			if (key in this.__extendables) 
 				value = Objs.tree_extend(this.properties().get(key) || {}, value);
+			if (this.__types[key])
+				value = Types.parseType(value, this.__types[key]);
 			this.properties().set(key, value);
 			this._argumentAttrs[key] = true;
 		},
@@ -1282,7 +1307,7 @@ Scoped.define("module:Handlers.Node", [
 				this._tagHandler = null;
 				
 				this._$element = $(element);
-				this._template = element.outerHTML;
+				this._template = Dom.outerHTML(element);
 				this._innerTemplate = element.innerHTML;
 				this._locals = locals || {};
 				this._active = true;
@@ -1448,7 +1473,7 @@ Scoped.define("module:Handlers.Node", [
 						if (!this._element.childNodes[i]["ba-handled"])
 							this._registerChild(this._element.childNodes[i]);
 				}
-				this._$element.css("display", "");
+				// this._$element.css("display", "");
 				Objs.iter(this._attrs, function (attr) {
 					attr.activate();
 				});
@@ -1570,6 +1595,7 @@ Scoped.define("module:Partials.AssocPartial", ["module:Handlers.Partial"], funct
  	Cls.register("ba-assoc");
 	return Cls;
 });
+
 
 Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
   /**
@@ -1870,8 +1896,9 @@ Scoped.define("module:Partials.RepeatElementPartial", [
         "jquery:",
         "module:Parser",
         "base:Properties.Properties",
-        "base:Strings"
-	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, Strings, scoped) {
+        "base:Strings",
+        "browser:Dom"
+	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, Strings, Dom, scoped) {
   /**
    * @name ba-repeat-element
    *
@@ -1897,7 +1924,7 @@ Scoped.define("module:Partials.RepeatElementPartial", [
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
- 				this.__filteredTemplate = $(node._template).removeAttr("ba-repeat-element").get(0).outerHTML;
+ 				this.__filteredTemplate = Dom.outerHTML($(node._template).removeAttr("ba-repeat-element").get(0));
  			},
  			
  			_activate: function () {
@@ -2414,9 +2441,11 @@ Scoped.define("module:Dynamic", [
    	    "module:Handlers.HandlerMixin",
    	    "base:Objs",
    	    "base:Strings",
+   	    "base:Types",
+   	    "base:Functions",
    	    "module:Registries",
    	    "jquery:"
-   	], function (Scope, HandlerMixin, Objs, Strings, Registries, $, scoped) {
+   	], function (Scope, HandlerMixin, Objs, Strings, Types, Functions, Registries, $, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -2431,8 +2460,20 @@ Scoped.define("module:Dynamic", [
 				this.domevents = Objs.extend(this.domevents, options.domevents);
 				this.windowevents = Objs.extend(this.windowevents, options.windowevents);
 				Objs.iter(this.cls.__initialForward, function (key) {
-					if (!(key in options) && (key in this))
+					if (!(key in this))
+						return;
+					if (key in options) {
+						if (Types.is_object(this[key]) && Types.is_object(options[key]))
+							options[key] = Objs.extend(Objs.clone(this[key], 1), options[key]);
+					} else
 						options[key] = this[key];
+				}, this);
+				Objs.iter(this.object_functions, function (key) {
+					this[key] = function () {
+						var args = Functions.getArguments(arguments);
+						args.unshift(key);
+						return this.execute.apply(this, args);
+					};
 				}, this);
 				if (!options.parent && options.parentHandler) {
 					var ph = options.parentHandler;
@@ -2490,7 +2531,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types"
         ],
 		
 		canonicName: function () {
@@ -2499,6 +2540,10 @@ Scoped.define("module:Dynamic", [
 		
 		registeredName: function () {
 			return this.__registeredName || ("ba-" + this.canonicName());
+		},
+		
+		findByElement: function (element) {
+			return $(element).get(0).dynamicshandler;
 		},
 		
 		register: function (key, registry) {
@@ -2525,7 +2570,16 @@ Scoped.define("module:Dynamic", [
 		},
 		
 		string: function (key) {
-			return this.__stringTable.get(key, this.registeredName());
+			var result = this.__stringTable.get(key, this.registeredName());
+			if (!result && this.parent.string)
+				result = this.parent.string(key);
+			return result;
+		},
+		
+		_extender: {
+			attrs: function (base, overwrite) {
+				return Objs.extend(Objs.clone(base, 1), overwrite);
+			}
 		}
 	
 	});

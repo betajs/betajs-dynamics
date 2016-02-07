@@ -1,6 +1,6 @@
 {
   "name": "betajs-dynamics",
-  "version": "0.0.33",
+  "version": "0.0.35",
   "description": "BetaJS-Dynamics is a dynamic DOM templating engine.",
   "homepage": "http://betajs.com",
   "contributors": [
@@ -26,7 +26,8 @@
     "grunt-shell": "",
     "grunt-template": "",
     "grunt-betajs-docs-compile": "",
-    "jsdom": ""
+    "jsdom": "",
+	"betajs-compile": "betajs/betajs-compile"
   },
   "repository": {
     "type": "git",
@@ -36,6 +37,14 @@
 	  "test": "grunt check-node"
   },
   "meta": {
+	"guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
+	"blog": "http://blog.betajs.com",
+	"twitter": "http://twitter.com/thebetajs",
+	"badges": {
+		"codeclimate": true,
+		"travis": true,
+		"npm": false
+	},
     "status": "Active, In Development",
     "weakDependencies": {
       "betajs-scoped": "https://github.com/betajs/betajs-scoped"

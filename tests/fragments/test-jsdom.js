@@ -54,7 +54,7 @@ test("jsdom", function () {
     		*/
         ]; 
 		democases.forEach(function (src) {
-			var src = "tests/" + src;
+			src = "tests/" + src;
 			var title = BetaJS.Strings.splitLast(BetaJS.Strings.splitFirst(src, ".html").head, "/").tail.replace(/_/g, " ");				
 			test("demotest : " + title, function () {
 				stop();

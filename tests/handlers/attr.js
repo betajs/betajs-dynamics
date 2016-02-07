@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * @TODO This test does not currently catch the edge case shadowing bug.
  * However, if the bug shows up again, this test serves as a starting point.

@@ -25,8 +25,11 @@ Scoped.define("module:Handlers.HandlerMixin", [
 	
 		__handlerDestruct: function () {
 			Objs.iter(this.__rootNodes, function (node) {
+				var $element = node.$element();
 				node.destroy();
-			});
+				if (this.remove_on_destroy)
+					$element.html("");
+			}, this);
 		},
 		
 		template: null,
@@ -39,6 +42,8 @@ Scoped.define("module:Handlers.HandlerMixin", [
 				return this.parent().string(key);
 			return key;
 		},
+		
+		remove_on_destroy: false,
 		
 		_handlerInitialize: function (options) {
 			options = options || {};

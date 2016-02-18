@@ -15,7 +15,7 @@ Scoped.define("module:Dynamic", [
 		   	_notifications: {
 				_activate: "__createActivate"
 			},
-				
+			
 			constructor: function (options) {
 				this.initial = this.initial || {};
 				options = Objs.extend(Objs.clone(this.initial, 1), options);

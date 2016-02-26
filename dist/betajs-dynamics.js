@@ -1,7 +1,7 @@
 /*!
-betajs-dynamics - v0.0.36 - 2016-02-18
-Copyright (c) Oliver Friedmann,Victor Lingenthal
-Apache 2.0 Software License.
+betajs-dynamics - v0.0.37 - 2016-02-26
+Copyright (c) Victor Lingenthal,Oliver Friedmann
+Apache-2.0 Software License.
 */
 /** @flow **//*!
 betajs-scoped - v0.0.7 - 2016-02-06
@@ -693,9 +693,9 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.36 - 2016-02-18
-Copyright (c) Oliver Friedmann,Victor Lingenthal
-Apache 2.0 Software License.
+betajs-dynamics - v0.0.37 - 2016-02-26
+Copyright (c) Victor Lingenthal,Oliver Friedmann
+Apache-2.0 Software License.
 */
 (function () {
 
@@ -710,7 +710,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '220.1455806852935'
+		version: '221.1456506676350'
 	};
 });
 
@@ -1584,6 +1584,7 @@ Scoped.define("module:Dynamic", [
 					} else
 						options[key] = this[key];
 				}, this);
+				this.__dispose = options.dispose;
 				Objs.iter(this.object_functions, function (key) {
 					this[key] = function () {
 						var args = Functions.getArguments(arguments);
@@ -1636,6 +1637,12 @@ Scoped.define("module:Dynamic", [
 			},
 			
 			destroy: function () {
+				Objs.iter(this.__dispose, function (attr) {
+					var obj = this.get(attr);
+					this.set(attr, null);
+					if (obj && obj.weakDestroy)
+						obj.weakDestroy();
+				}, this);
 				Objs.iter(this.__registered_dom_events, function (source) {
 					source.off("." + this.cid() + "-domevents");
 				}, this);
@@ -1647,7 +1654,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose"
         ],
 		
 		canonicName: function () {
@@ -1695,6 +1702,9 @@ Scoped.define("module:Dynamic", [
 		_extender: {
 			attrs: function (base, overwrite) {
 				return Objs.extend(Objs.clone(base, 1), overwrite);
+			},
+			dispose: function (first, second) {
+				return (first || []).concat(second || []);
 			}
 		}
 	

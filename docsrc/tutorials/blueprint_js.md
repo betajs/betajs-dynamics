@@ -16,7 +16,7 @@ BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Dynamictemplate", {
     bindings : {
         parent_dynamic_attribute: "<:attribute_in_parent_dynamic"
     },
-    scopes : {
+    scope : {
         parent_dynamic: "<"
     },
 
@@ -39,7 +39,7 @@ BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Dynamictemplate", {
         this.get('some_collection').remove('one');
 
         //Accessing other Dynamics
-        var scope_attr = this.scopes.parent_dynamic.get('attribute_in_parent_dynamic');
+        var scope_attr = this.scope.parent_dynamic.get('attribute_in_parent_dynamic');
         var bind_attr = this.get('parent_dynamic_attribute');
         if (scope_attr == bind_attr)
             console.log('This is set up correctly');

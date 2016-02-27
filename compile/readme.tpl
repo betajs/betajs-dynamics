@@ -1,4 +1,5 @@
 <%= indent %># <%= framework.name %> <%= framework.version %>
+[![Build Status](https://api.travis-ci.org/betajs/<%= framework.name %>.svg?branch=master)](https://travis-ci.org/betajs/<%= framework.name %>)
 [![Code Climate](https://codeclimate.com/github/betajs/<%= framework.name %>/badges/gpa.svg)](https://codeclimate.com/github/betajs/<%= framework.name %>)
 
 <%= framework.description %>
@@ -7,10 +8,6 @@
 <%= indent %>## Status
 <%= framework.meta.status %>
 
-<%= indent %>## Testing
-Linting and tests can be run with `grunt check`. This command serves the
-`tests.html` file on a local server. This reduces cross origin request errors
-for `file:///`.
 
 <%= indent %>## Links
 | Resource   | URL |

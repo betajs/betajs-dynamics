@@ -1,29 +1,29 @@
 /*!
-betajs-dynamics - v0.0.31 - 2016-01-30
+betajs-dynamics - v0.0.33 - 2016-02-05
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 Apache 2.0 Software License.
 */
 /*!
-betajs-scoped - v0.0.6 - 2016-01-25
+betajs-scoped - v0.0.6 - 2016-02-03
 Copyright (c) Oliver Friedmann
 Apache 2.0 Software License.
 */
 var Scoped = function () {
 	var Globals = {
 
-		get: function (key) {
+		get: function (key /* : string */) {
 			if (typeof window !== "undefined") return window[key];
 			if (typeof global !== "undefined") return global[key];
 			return null;
 		},
 
-		set: function (key, value) {
+		set: function (key /* : string */, value) {
 			if (typeof window !== "undefined") window[key] = value;
 			if (typeof global !== "undefined") global[key] = value;
 			return value;
 		},
 
-		setPath: function (path, value) {
+		setPath: function (path /* : string */, value) {
 			var args = path.split(".");
 			if (args.length == 1) return this.set(path, value);
 			var current = this.get(args[0]) || this.set(args[0], {});
@@ -35,7 +35,7 @@ var Scoped = function () {
 			return value;
 		},
 
-		getPath: function (path) {
+		getPath: function (path /* : string */) {
 			var args = path.split(".");
 			if (args.length == 1) return this.get(path);
 			var current = this.get(args[0]);
@@ -47,6 +47,11 @@ var Scoped = function () {
 		}
 
 	};
+	/*::
+ declare module Helper {
+ 	declare function extend<A, B>(a: A, b: B): A & B;
+ }
+ */
 
 	var Helper = {
 
@@ -98,7 +103,7 @@ var Scoped = function () {
 		__namespace: "Scoped",
 		__revert: null,
 
-		upgrade: function (namespace) {
+		upgrade: function (namespace /* : ?string */) {
 			var current = Globals.get(namespace || Attach.__namespace);
 			if (current && Helper.typeOf(current) == "object" && current.guid == this.guid && Helper.typeOf(current.version) == "string") {
 				var my_version = this.version.split(".");
@@ -112,7 +117,7 @@ var Scoped = function () {
 			} else return this.attach(namespace);
 		},
 
-		attach: function (namespace) {
+		attach: function (namespace /* : ?string */) {
 			if (namespace) Attach.__namespace = namespace;
 			var current = Globals.get(Attach.__namespace);
 			if (current == this) return this;
@@ -130,7 +135,7 @@ var Scoped = function () {
 			return this;
 		},
 
-		detach: function (forceDetach) {
+		detach: function (forceDetach /* : ?boolean */) {
 			if (forceDetach) Globals.set(Attach.__namespace, null);
 			if (typeof Attach.__revert != "undefined") Globals.set(Attach.__namespace, Attach.__revert);
 			delete Attach.__revert;
@@ -146,15 +151,31 @@ var Scoped = function () {
 
 	};
 
-	function newNamespace(opts) {
+	function newNamespace(opts /* : {tree ?: boolean, global ?: boolean, root ?: Object} */) {
 
-		var options = {
+		var options /* : {
+              tree: boolean,
+              global: boolean,
+              root: Object
+              } */ = {
 			tree: typeof opts.tree === "boolean" ? opts.tree : false,
 			global: typeof opts.global === "boolean" ? opts.global : false,
 			root: typeof opts.root === "object" ? opts.root : {}
 		};
 
-		function initNode(options) {
+		/*::
+  type Node = {
+  	route: ?string,
+  	parent: ?Node,
+  	children: any,
+  	watchers: any,
+  	data: any,
+  	ready: boolean,
+  	lazy: any
+  };
+  */
+
+		function initNode(options) /* : Node */{
 			return {
 				route: typeof options.route === "string" ? options.route : null,
 				parent: typeof options.parent === "object" ? options.parent : null,
@@ -179,7 +200,7 @@ var Scoped = function () {
 			} else nsRoot.data = options.root;
 		}
 
-		function nodeDigest(node) {
+		function nodeDigest(node /* : Node */) {
 			if (node.ready) return;
 			if (node.parent && !node.parent.ready) {
 				nodeDigest(node.parent);
@@ -194,7 +215,7 @@ var Scoped = function () {
 			}
 		}
 
-		function nodeEnforce(node) {
+		function nodeEnforce(node /* : Node */) {
 			if (node.ready) return;
 			if (node.parent && !node.parent.ready) nodeEnforce(node.parent);
 			node.ready = true;
@@ -205,7 +226,7 @@ var Scoped = function () {
 			node.watchers = [];
 		}
 
-		function nodeSetData(node, value) {
+		function nodeSetData(node /* : Node */, value) {
 			if (typeof value == "object" && node.ready) {
 				for (var key in value) node.data[key] = value[key];
 			} else node.data = value;
@@ -218,13 +239,13 @@ var Scoped = function () {
 			for (var k in node.children) nodeDigest(node.children[k]);
 		}
 
-		function nodeClearData(node) {
+		function nodeClearData(node /* : Node */) {
 			if (node.ready && node.data) {
 				for (var key in node.data) delete node.data[key];
 			}
 		}
 
-		function nodeNavigate(path) {
+		function nodeNavigate(path /* : ?String */) {
 			if (!path) return nsRoot;
 			var routes = path.split(".");
 			var current = nsRoot;
@@ -241,7 +262,7 @@ var Scoped = function () {
 			return current;
 		}
 
-		function nodeAddWatcher(node, callback, context) {
+		function nodeAddWatcher(node /* : Node */, callback, context) {
 			if (node.ready) callback.call(context || this, node.data);else {
 				node.watchers.push({
 					callback: callback,
@@ -260,7 +281,7 @@ var Scoped = function () {
 			}
 		}
 
-		function nodeUnresolvedWatchers(node, base, result) {
+		function nodeUnresolvedWatchers(node /* : Node */, base, result) {
 			node = node || nsRoot;
 			result = result || [];
 			if (!node.ready) result.push(base);
@@ -579,7 +600,7 @@ var Scoped = function () {
 	var Public = Helper.extend(rootScope, {
 
 		guid: "4b6878ee-cb6a-46b3-94ac-27d91f58d666",
-		version: '32.1453754118896',
+		version: '35.1454518325486',
 
 		upgrade: Attach.upgrade,
 		attach: Attach.attach,
@@ -608,7 +629,7 @@ var Scoped = function () {
 }.call(this);
 
 /*!
-betajs-dynamics - v0.0.31 - 2016-01-30
+betajs-dynamics - v0.0.33 - 2016-02-05
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 Apache 2.0 Software License.
 */
@@ -625,7 +646,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '211.1454134939731'
+		version: '220.1454658831581'
 	};
 });
 
@@ -1041,14 +1062,14 @@ Scoped.define("module:Data.Scope", [
 	    "base:Classes.ObjectIdMixin",
 	    "base:Functions",
 	    "base:Types",
+	    "base:Strings",
 	    "base:Objs",
 	    "base:Ids",
 	    "base:Properties.Properties",
 	    "base:Collections.Collection",
-	    "base:Strings",
 	    "module:Data.ScopeManager",
 	    "module:Data.MultiScope"
-	], function (Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Objs, Ids, Properties, Collection, Strings, ScopeManager, MultiScope, scoped) {
+	], function (Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, ScopeManager, MultiScope, scoped) {
 	return Class.extend({scoped: scoped}, [EventsMixin, ListenMixin, ObjectIdMixin, function (inherited) {
 		return {
 				
@@ -1062,7 +1083,8 @@ Scoped.define("module:Data.Scope", [
 					attrs: {},
 					extendables: [],
 					collections: {},
-					computed: {}
+					computed: {},
+					events: {}
 				}, options);
 				if (options.bindings)
 					options.bind = Objs.extend(options.bind, options.bindings);
@@ -1096,8 +1118,11 @@ Scoped.define("module:Data.Scope", [
 					this.bind(this.scope(value.substring(0, i)), key, {secondKey: value.substring(i + 1)});
 				}, this);
 				Objs.iter(options.computed, function (value, key) {
-					var splt = Strings.splitHead(":");
+					var splt = Strings.splitFirst(key, ":");
 					this.__properties.compute(splt.head, value, splt.tail.split(","));
+				}, this);
+				Objs.iter(options.events, function (value, key) {
+					this.on(key, value, this);
 				}, this);
 			},
 			
@@ -3140,7 +3165,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events"
         ],
 		
 		canonicName: function () {

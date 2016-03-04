@@ -6,9 +6,8 @@ Scoped.define("module:Partials.RepeatPartial", [
         "base:Objs",
         "jquery:",
         "module:Parser",
-        "base:Strings",
         "module:Registries"
-	], function (Partial, Properties, Collection, FilteredCollection, Objs, $, Parser, Strings, Registries, scoped) {
+	], function (Partial, Properties, Collection, FilteredCollection, Objs, $, Parser, Registries, scoped) {
 	  /**
 	   * @name ba-repeat
 	   *
@@ -33,11 +32,11 @@ Scoped.define("module:Partials.RepeatPartial", [
  				inherited.constructor.apply(this, arguments);
  				this.__registered = false;
  				args = args.split("~");
- 				this.__repeatArg = Strings.trim(args[0]);
+ 				this.__repeatArg = args[0].trim();
  				this._destroyCollection = false;
  				this._destroyValueCollection = false;
  				if (args.length > 1) {
- 					this.__repeatFilter = Parser.parseCode(Strings.trim(args[1]));
+ 					this.__repeatFilter = Parser.parseCode(args[1].trim());
  					var self = this;
  					node.mesh().watch(this.__repeatFilter.dependencies, function () {
  						self.__filterChanged();
@@ -83,6 +82,10 @@ Scoped.define("module:Partials.RepeatPartial", [
 				}, true);
  			},
  			
+ 			_iterateCollection: function (callback) {
+ 				this._collection.iterate(callback, this);
+ 			},
+ 			
  			__register: function () {
  				this.__unregister();
  				this._isArray = !Collection.is_instance_of(this._value);
@@ -97,7 +100,7 @@ Scoped.define("module:Partials.RepeatPartial", [
 					context: this
 				}) : this._valueCollection;
 				this._collectionChildren = {};
-				this._collection.iterate(this.__addItem, this);
+				this._iterateCollection(this.__addItem);
 				this._collection.on("add", this.__addItem, this);
 				this._collection.on("remove", this.__removeItem, this);
 				this._collection.on("reindexed", function (item) {
@@ -114,7 +117,7 @@ Scoped.define("module:Partials.RepeatPartial", [
  			__unregister: function () {
  				if (!this._collection)
  					return;
- 				this._collection.iterate(this.__removeItem, this);
+ 				this._iterateCollection(this.__removeItem);
  				var $element = this._node._$element;
  				this._node._removeChildren();
  				$element.html("");

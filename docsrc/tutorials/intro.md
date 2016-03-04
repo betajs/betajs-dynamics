@@ -1,11 +1,10 @@
 
 ## BetaJS Dynamics Overview
 
-BetaJS Dynamics is a Javascript frontend framework to build the V and C in an MVC framework.
-It has two parts:
+BetaJS Dynamics is a JavaScript frontend framework. It generally has two parts:
 
-*    "Dynamics" : a Javascript Controller
-*    HTML Part : HTML Template/Element containing "pseudo code" so called Partials and Handlebars
+*   _Dynamics_ : a JavaScript Controller interface
+*   _HTML Templates_ : HTML Template / Element containing a fragment of JS, so called partials, handlebars and subdynamics
 
 
 ## Example
@@ -14,8 +13,8 @@ The Javascript Controller:
 
 ```js
 
-    dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $("some_element"),
+    var dynamic = new BetaJS.Dynamics.Dynamic({
+        element: $("some_element").html(),
         initial : {
             attrs : {
                 some_attribute : "This is some Text",
@@ -29,9 +28,9 @@ The Javascript Controller:
 The HTML Element:
 
 ```html
-
+<script type='text/template'>
     <some_element ba-if="{{some_boolean}}">{{some_attribute}}</some_element>
-
+</script>
 ```
 
 Will evaluate to
@@ -42,9 +41,3 @@ Will evaluate to
     <some_element>This is some Text</some_element>
 
 ```
-
-## Decpendencies:
-
-*   Jquery
-*   BetaJS Scoped
-*   BetaJS

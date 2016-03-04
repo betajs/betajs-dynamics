@@ -1,12 +1,6 @@
+Our "Hello World" a one-page html that loads the BetaJS framework and some other required files in the head. And runs a very basic "Hello World" script in the body.
 
-Before we start we assume that you know the basics of HTML,
-Javascript, Jquery and how to use these locally in your Browser.
-
-Our "Hello World" File is one HTML that loads the BetaJS Framework and some other required files in the head.
-And runs a very basic "Hello World" Script in the body.
-
-If everything is set up correctly you should see "Hello World"
-if you load the helloworld.html displayed in the box below in the Browser.
+If everything is set up correctly you should see "Hello World" if you load the helloworld.html displayed in the box below in the your browser, and making sure that all the assets are present as well.
 
 ```html
 
@@ -15,9 +9,9 @@ if you load the helloworld.html displayed in the box below in the Browser.
 	<head lang="en">
 		<meta charset="UTF-8">
 		<title>Hello World</title>
-			<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-			<script src="vendors/beta.js"></script>
-			<script src="vendors/betajs-browser-noscoped.js"></script>
+		<script src="vendors/jquery.min.js"></script>
+		<script src="vendors/beta.js"></script>
+		<script src="vendors/betajs-browser-noscoped.js"></script>
 		<script src="vendors/betajs-dynamics.js"></script>
 	</head>
 	<body>
@@ -26,7 +20,7 @@ if you load the helloworld.html displayed in the box below in the Browser.
 
 		<script>
 
-			dynamic = new BetaJS.Dynamics.Dynamic({
+			var dynamic = new BetaJS.Dynamics.Dynamic({
 				element: $("#helloworld")
 			});
 
@@ -40,7 +34,7 @@ if you load the helloworld.html displayed in the box below in the Browser.
 
 ```
 
-#### Now lets go briefly trough the individual parts:
+#### Now lets go briefly through the individual parts:
 
 
 ```html
@@ -49,7 +43,7 @@ if you load the helloworld.html displayed in the box below in the Browser.
 
 ```
 
-Inside {{}} ist an attribute property that we can control from other parts of the Program
+Inside {{}} ist an attribute property that we can control from other parts of the application.
 
 ```js
 
@@ -59,16 +53,8 @@ Inside {{}} ist an attribute property that we can control from other parts of th
 
 ```
 
-Here we create a new BetaJS Dynamic,
-what that means and what you can do with that
-we will explore in more details in the rest of this Tutorial
+Here, we are creating a new dynamic, and make it responsible for handling the subtree under the dom node ``#helloworld``.
 
-The element part links the Javascript code of the Dynamic with the #helloworld element.
-And hence we can have the control the BetaJS Dynamics provides over the #helloworld div
-and its contents. We can then control the #helloworld div within our Javascript files
-with the dynamic variable (Because of "dynamic = new BetaJS.Dynamics.Dynamic({").
-
-An example on how to use this is the next line:
 
 ```js
 
@@ -76,13 +62,11 @@ An example on how to use this is the next line:
 
 ```
 
-Here we create a the property within the dynamic which is called "replaced_value"
-and give it the value "Hello World". When the dynamic is loaded the attribute property
-{{replaced_value}} will be replaced by its value in the HTML so that we see "Hello World"
-on the actual site.
-Properties are similar to variables in that they store data, more on BetaJS Properties can be found here: ...
-One of the benefits of using a property here is that when we changed the value of "replaced_value"
-the HTML view will update itself automatically.
+Here, we create set an attribute "replaced_value" and give it the value "Hello World". When the dynamic is loaded, the handlebars {{replaced_value}} will be replaced by its value in the DOM so that we see "Hello World" on the actual site.
+
+Dynamic attributes are a key value store based on the BetaJS Properties class.
+
+The HTML view will update itself automatically when attributes in the dynamic are changed.
 
 
 ```js
@@ -91,4 +75,4 @@ the HTML view will update itself automatically.
 
 ```
 
-This last part activates the dynamic and actually links the HTML with the Javascript.
+This last part activates the dynamic and binds the HTML to the JS controller.

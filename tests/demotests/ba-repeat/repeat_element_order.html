@@ -1,0 +1,39 @@
+<html>
+<head>
+    
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="../../../vendors/scoped.js"></script>
+    <script src="../../../vendors/beta-noscoped.js"></script>
+    <script src="../../../vendors/betajs-browser-noscoped.js"></script>
+    <script src="../../../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+
+<div id="test">
+	<div ba-repeat-element="{{item :: items}}">
+		{{item}}
+	</div>
+</div>
+
+<script>
+    var root = $("#test");
+
+    var dynamic = new BetaJS.Dynamics.Dynamic({
+        element: root,
+       	attrs: {
+       		items: [1,2,3,4,5]
+       	}
+    });
+    dynamic.activate();
+
+    function test() {
+    	var items = dynamic.get("items");
+        QUnit.equal(root.children().length, items.length + 1);
+        for (var i = 0; i < items.length; ++i)
+        	QUnit.equal(items[i], $(root.children().get(i + 1)).html().trim());
+    }
+</script>
+
+</body>
+</html>

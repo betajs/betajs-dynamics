@@ -1,19 +1,19 @@
 
 
-Here is a quick overview and explanation of both this Tutorial and the BetaJS Dynamics Framework:
+Here is a quick overview and explanation of both this guide as well as the dynamics framework.
 
 
-### Blueprints
+#### Blueprints
 
-A quick way to see many of the most used functionalities as code at a glance.
+A quick way to see many of the most used functionalities as code at a glance. Ideal for copy&paste.
 
 *   Javascript
 *   HMTL
 
 
-### Dynamics
+#### Dynamics
 
-More detailed documentation for the specific parts of the Framework.
+More detailed documentation for the specific parts of the framework.
 
 
 #### Template

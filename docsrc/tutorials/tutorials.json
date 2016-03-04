@@ -4,8 +4,7 @@
     "title": "Introduction",
     "children" : {
       "helloworld": {
-        "title": "Hello World Example",
-        "dependencies" : ["betajs:dynamics_basics","betajs:properties", "extern:HTML", "external:","external:Javascript"]
+        "title": "Hello World Example"
       },
       "core_concepts": {
         "title": "Core Concepts"

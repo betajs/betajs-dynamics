@@ -1,5 +1,5 @@
 
-Scoped.define("module:Partials.OnPartial", ["module:Handlers.Partial", "base:Strings"], function (Partial, Strings, scoped) {
+Scoped.define("module:Partials.OnPartial", ["module:Handlers.Partial"], function (Partial, Strings, scoped) {
   /**
    * @name ba-on
    *
@@ -26,7 +26,7 @@ Scoped.define("module:Partials.OnPartial", ["module:Handlers.Partial", "base:Str
  				inherited.constructor.apply(this, arguments);
  				var self = this;
  				this._node._$element.on(postfix + "." + this.cid(), function () {
- 					self._execute(Strings.trim(value));
+ 					self._execute(value.trim());
  				});
  			},
  			

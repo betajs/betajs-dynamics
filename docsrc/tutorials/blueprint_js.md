@@ -22,12 +22,21 @@ BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Dynamictemplate", {
 
 
     attrs : {
-        some_attribute: true
+        some_attribute: true,
+        computed_attribute : 'default value',
+        dependency1 : 'Hel',
+        dependency2 : 'lo'
+        
     },
     collections : {
         some_collection: ['one','two']
     },
 
+    computed : {
+        'computed_attribute:dependency1,dependency2' : function () {
+            return dependency1 + dependency2;
+        }
+    }
 
     create : {
         //Reading and writing attribute values

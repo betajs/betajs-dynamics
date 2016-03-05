@@ -5,7 +5,7 @@ benchmark({
         for (var i = 0; i < 100; ++i)
             items.push({title: "Title " + i});
         BetaJS.Dynamics.Dynamic.extend(null, {
-            template: '<button>{{title}}</button>',
+            template: '<button>{{title}}</button>'
         }).register("ba-inner");
         BetaJS.Dynamics.Dynamic.extend(null, {
             template: '<div ba-repeat="{{item::items}}"><ba-inner ba-title="{{item.title}}"></ba-inner></div>',

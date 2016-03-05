@@ -1,12 +1,72 @@
-# betajs-dynamics 0.0.33
+# betajs-dynamics 0.0.37
 [![Build Status](https://api.travis-ci.org/betajs/betajs-dynamics.svg?branch=master)](https://travis-ci.org/betajs/betajs-dynamics)
 [![Code Climate](https://codeclimate.com/github/betajs/betajs-dynamics/badges/gpa.svg)](https://codeclimate.com/github/betajs/betajs-dynamics)
+
 
 BetaJS-Dynamics is a dynamic DOM templating engine.
 
 
-## Status
-Active, In Development
+
+## Getting Started
+
+
+You can use the library in the browser and compile it as well.
+
+#### Browser
+
+```javascript
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+	<script src="betajs/dist/betajs.min.js"></script>
+	<script src="betajs-browser/dist/betajs-browser.min.js"></script>
+	<script src="betajs-dynamics/dist/betajs-dynamics.min.js"></script>
+``` 
+
+#### Compile
+
+```javascript
+	git clone https://github.com/betajs/betajs-dynamics.git
+	npm install
+	grunt
+```
+
+
+
+## Basic Usage
+
+
+The Javascript Controller:
+
+```js
+
+    dynamic = new BetaJS.Dynamics.Dynamic({
+        element: $("some_element"),
+        initial : {
+            attrs : {
+                some_attribute : "This is some Text",
+                some_boolean : true
+            }
+        }
+    });
+
+```
+
+The HTML Element:
+
+```html
+
+    <some_element ba-if="{{some_boolean}}">{{some_attribute}}</some_element>
+
+```
+
+Will evaluate to
+
+
+```html
+
+    <some_element>This is some Text</some_element>
+
+```
+
 
 
 ## Links
@@ -15,13 +75,16 @@ Active, In Development
 | Homepage   | [http://betajs.com](http://betajs.com) |
 | Git        | [git://github.com/betajs/betajs-dynamics.git](git://github.com/betajs/betajs-dynamics.git) |
 | Repository | [http://github.com/betajs/betajs-dynamics](http://github.com/betajs/betajs-dynamics) |
+| Blog       | [http://blog.betajs.com](http://blog.betajs.com) | 
+| Twitter    | [http://twitter.com/thebetajs](http://twitter.com/thebetajs) | 
 
 
-## Compatability (Tested)
+
+## Compatability
 | Target | Versions |
 | :----- | -------: |
 | Firefox | 4 - Latest |
-| Chrome | 14 - Latest |
+| Chrome | 15 - Latest |
 | Safari | 4 - Latest |
 | Opera | 12 - Latest |
 | Internet Explorer | 8 - Latest |
@@ -60,12 +123,12 @@ Active, In Development
 
 ## Contributors
 
-- Oliver Friedmann
 - Victor Lingenthal
+- Oliver Friedmann
 
 
 ## License
 
-Apache 2.0
+Apache-2.0
 
 

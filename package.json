@@ -1,67 +1,89 @@
 {
-  "name": "betajs-dynamics",
-  "version": "0.0.33",
-  "description": "BetaJS-Dynamics is a dynamic DOM templating engine.",
-  "homepage": "http://betajs.com",
-  "contributors": [
-    "Oliver Friedmann",
-    "Victor Lingenthal"
-  ],
-  "license": "Apache 2.0",
-  "devDependencies": {
-    "grunt": "",
-    "grunt-contrib-jshint": "",
-    "grunt-contrib-nodeunit": "",
-    "grunt-contrib-concat": "",
-    "grunt-contrib-uglify": "",
-    "grunt-contrib-clean": "",
-    "grunt-preprocess": "",
-    "grunt-git-revision-count": "",
-    "grunt-closure-tools": "",
-    "grunt-node-qunit": "",
-    "grunt-contrib-jshint": "",
-    "grunt-contrib-connect": "",
-    "grunt-wget": "",
-    "grunt-jsdoc": "",
-    "grunt-shell": "",
-    "grunt-template": "",
-    "grunt-betajs-docs-compile": "",
-    "jsdom": ""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/betajs/betajs-dynamics.git"
-  },
-  "scripts": {
-	  "test": "grunt check-node"
-  },
-  "meta": {
-    "status": "Active, In Development",
-    "weakDependencies": {
-      "betajs-scoped": "https://github.com/betajs/betajs-scoped"
+    "homepage": "http://betajs.com",
+    "license": "Apache-2.0",
+    "licenses": [
+        {
+            "type": "Apache-2.0",
+            "url": "https://github.com/betajs/betajs-dynamics/blob/master/LICENSE"
+        }
+    ],
+    "author": {
+        "name": "BetaJS",
+        "email": "info@betajs.com"
     },
-    "dependencies": {
-      "betajs": "https://github.com/betajs/betajs",
-      "betajs-browser": "https://github.com/betajs/betajs-browser"
+    "bugs": {
+        "url": "https://github.com/betajs/betajs-dynamics/issues"
     },
-    "compatability": {
-      "Firefox": "4 - Latest",
-      "Chrome": "14 - Latest",
-      "Safari": "4 - Latest",
-      "Opera": "12 - Latest",
-      "Internet Explorer": "8 - Latest",
-      "Edge": "12 - Latest",
-      "iOS": "7.0 - Latest",
-      "Android": "4.0 - Latest"
+    "name": "betajs-dynamics",
+    "version": "0.0.37",
+    "description": "BetaJS-Dynamics is a dynamic DOM templating engine.",
+    "contributors": [
+        "Victor Lingenthal",
+        "Oliver Friedmann"
+    ],
+    "devDependencies": {
+        "grunt": "",
+        "grunt-contrib-jshint": "",
+        "grunt-contrib-concat": "",
+        "grunt-contrib-uglify": "",
+        "grunt-contrib-clean": "",
+        "grunt-preprocess": "",
+        "grunt-git-revision-count": "",
+        "grunt-closure-tools": "",
+        "grunt-node-qunit": "",
+        "qunit": "",
+        "grunt-contrib-connect": "",
+        "grunt-wget": "",
+        "grunt-jsdoc": "",
+        "grunt-shell": "",
+        "grunt-template": "",
+        "grunt-betajs-docs-compile": "",
+        "jsdom": "",
+        "betajs-compile": "betajs/betajs-compile"
     },
-    "tests": {
-      "Test Suite": "http://rawgit.com/betajs/betajs-dynamics/master/tests/tests.html"
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/betajs/betajs-dynamics.git"
     },
-    "cdn": {
-      "betajs-dynamics.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics.js",
-      "betajs-dynamics.min.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics.min.js",
-      "betajs-dynamics-noscoped.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics-noscoped.js",
-      "betajs-dynamics-noscoped.min.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics-noscoped.min.js"
+    "scripts": {
+        "test": "grunt check-node"
+    },
+    "meta": {
+        "blog": "http://blog.betajs.com",
+        "twitter": "http://twitter.com/thebetajs",
+        "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
+        "installdoc": "docsrc/common/install.md",
+        "summarydoc": "docsrc/common/summary.md",
+        "badges": {
+            "codeclimate": true,
+            "travis": true,
+            "npm": false
+        },
+        "weakDependencies": {
+            "betajs-scoped": "https://github.com/betajs/betajs-scoped"
+        },
+        "dependencies": {
+            "betajs": "https://github.com/betajs/betajs",
+            "betajs-browser": "https://github.com/betajs/betajs-browser"
+        },
+        "compatability": {
+            "Firefox": "4 - Latest",
+            "Chrome": "15 - Latest",
+            "Safari": "4 - Latest",
+            "Opera": "12 - Latest",
+            "Internet Explorer": "8 - Latest",
+            "Edge": "12 - Latest",
+            "iOS": "7.0 - Latest",
+            "Android": "4.0 - Latest"
+        },
+        "tests": {
+            "Test Suite": "http://rawgit.com/betajs/betajs-dynamics/master/tests/tests.html"
+        },
+        "cdn": {
+            "betajs-dynamics.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics.js",
+            "betajs-dynamics.min.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics.min.js",
+            "betajs-dynamics-noscoped.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics-noscoped.js",
+            "betajs-dynamics-noscoped.min.js": "http://cdn.rawgit.com/betajs/betajs-dynamics/master/dist/betajs-dynamics-noscoped.min.js"
+        }
     }
-  }
 }

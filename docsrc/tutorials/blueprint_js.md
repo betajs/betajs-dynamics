@@ -4,9 +4,6 @@
 
 BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Dynamictemplate", {
 
-	//Creates one dynamics instance
-	dynamic = new BetaJS.Dynamics.Dynamic({
-
     //Only use one of the following three concurrently
     templateUrl : "templates/template.html",
     template : "<div>Internal Template {{some_attribute}}</div>",

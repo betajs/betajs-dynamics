@@ -1,37 +1,29 @@
 {
-
   "intro": {
     "title": "Introduction",
-    "children" : {
+    "children": {
       "helloworld": {
         "title": "Hello World Example"
       },
       "core_concepts": {
         "title": "Core Concepts"
-      },
-      "overview": {
-        "title": "Overview"
       }
     }
   },
-
   "blueprint": {
     "title": "Blueprints",
-    "children" : {
+    "children": {
       "blueprint_js": {
         "title": "Javascript"
       },
-      "blueprint_html" : {
+      "blueprint_html": {
         "title": "HTML"
       }
     }
   },
-
   "dyn_js": {
-    "title" : "Dynamics Javascript",
-    "collapsible": "true",
-
-    "children" : {
+    "title": "Dynamics Javascript",
+    "children": {
       "initialize": {
         "title": "Initializing Dynamics"
       },
@@ -49,49 +41,39 @@
       }
     }
   },
-
   "html-attributes": {
-    "title" : "DOM Partials",
-    "collapsible" : "true",
-
-    "children" : {
-      "ba-click" : {
+    "title": "DOM Partials",
+    "children": {
+      "ba-click": {
         "title": "ba-click"
       },
-      "ba-tap" : {
-        "title" : "ba-tap"
+      "ba-tap": {
+        "title": "ba-tap"
       },
-      "ba-class" : {
-        "title" : "ba-class"
+      "ba-class": {
+        "title": "ba-class"
       },
-      "ba-show" : {
-        "title" : "ba-show"
+      "ba-show": {
+        "title": "ba-show"
       },
-      "ba-if" : {
-        "title" : "ba-if"
+      "ba-if": {
+        "title": "ba-if"
       },
-      "ba-ignore" : {
-        "title" : "ba-ignore"
+      "ba-ignore": {
+        "title": "ba-ignore"
       },
-      "ba-repeat" : {
-        "title" : "ba-repeat"
+      "ba-repeat": {
+        "title": "ba-repeat"
       },
-      "ba-attrs" : {
-        "title" : "ba-attrs"
+      "ba-attrs": {
+        "title": "ba-attrs"
       },
-      "ba-on" : {
-        "title" : "ba-on"
+      "ba-on": {
+        "title": "ba-on"
       },
-      "ba-return" : {
-        "title" : "ba-return"
-      },
-      "ba-template-url" : {
-        "title" : "ba-template-url"
-      },
-      "ba-a" : {
-        "title" : "ba-a"
+      "ba-return": {
+        "title": "ba-return"
       }
     }
   }
-
 }

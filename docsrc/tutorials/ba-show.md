@@ -1,21 +1,19 @@
 
 
-The ba-show Partial is used to automatically show or hide DOM Elements depending on the
-boolean value of a given condition.
+The ba-show partial is used to automatically show or hide DOM Elements depending on the boolean value of a given condition.
 
 #### Note
-Ba-if is really just a convenience method to show/hide DOM elements.
+ba-show is really just a convenience method to show/hide DOM elements.
 
-If ba-show evaluates to false it will apply the css property "display: none" to the DOM element it is placed on.
-In comparison if ba-if evaluates to false it will also free all the resources of all underlying dynamics.
+If ba-show evaluates to false it will apply the css property "display: none" to the DOM element it is placed on. In comparison, if ba-if evaluates to false it will also free all the resources of all underlying dynamics.
 
 ba-if:
-+ Less memory usage
-- Potentially slower loading time
+- (+) Less memory usage
+- (-) Potentially slower loading time
 
 ba-show:
-+ Faster loading time
-- More memory
+- (+) Faster loading time
+- (-) More memory
 
 
 #### Example 1:
@@ -54,10 +52,8 @@ Will evaluate to
 ```js
     some_dynamic = new BetaJS.Dynamics.Dynamic({
         element: $(".some_class"),
-        initial:  {
-            attrs : {
-                some_attribute: true
-            }
+        attrs : {
+            some_attribute: true
         }
     });
 ```

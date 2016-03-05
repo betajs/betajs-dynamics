@@ -1,7 +1,4 @@
-
-
-The ba-click Partial executes the code passed into it when the User clicks on the related DOM element.
-(or calls a function from the related Dynamic).
+The ba-click partial executes the code passed into it when the user clicks on the related DOM element. (or calls a function defined in the dynamic)
 
 
 #### Example 1:
@@ -15,7 +12,7 @@ Will call an alert pop-up
 
 #### Example 2:
 
-Will Show/Hide the "<h1>Hi</h1>"  element when you click on the surrounding div element.
+Will Show/Hide the h1-element when you click on the surrounding div element.
 
 ```html
 <div class="some_class" ba-click="boolean != boolean">
@@ -26,10 +23,8 @@ Will Show/Hide the "<h1>Hi</h1>"  element when you click on the surrounding div 
 ```js
     some_dynamic = new BetaJS.Dynamics.Dynamic({
         element: $(".some_class"),
-        initial:  {
-            attrs : {
-                boolean : true
-            }
+        attrs : {
+            boolean : true
         }
     });
 ```
@@ -47,11 +42,9 @@ Will also call an alert pop-up
 ```js
     some_dynamic = new BetaJS.Dynamics.Dynamic({
         element: $(".some_class"),
-        initial:  {
-            functions : {
-                some_function : function () {
-                    alert('Another alert');
-                }
+        functions : {
+            some_function : function () {
+                alert('Another alert');
             }
         }
     });

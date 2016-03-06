@@ -110,7 +110,10 @@ Scoped.define("module:Data.Scope", [
 				this.__data = options.data;
 				this.setAll(Types.is_function(options.attrs) ? options.attrs() : options.attrs);
 				Objs.iter(options.collections, function (value, key) {
-					this.set(key, new Collection({objects: value}));
+					this.set(key, this.auto_destroy(new Collection({
+						objects: value,
+						release_references: true
+					})));
 				}, this);
 				if (parent)
 					parent.__add(this);

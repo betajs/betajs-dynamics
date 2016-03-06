@@ -19,6 +19,9 @@
                 template: "{{title}}"
             }).register("ba-inner-item");
 
+			var instanceRegex = /.*Properties.*/;			
+			var instanceMonitor = BetaJSDebug.Instances.monitorInstances(BetaJS.Class, BetaJSDebug.Instances.ancestryFilter(BetaJSDebug.Instances.regexFilter(instanceRegex)));
+
 			var dynamic = new BetaJS.Dynamics.Dynamic({
 				element: root.get(0),
 				collections: {
@@ -35,6 +38,9 @@
 					var item = dynamic.get("items").getByIndex(i);
 					QUnit.equal(item.get("title"), dynamic.scope(">[id='" + item.cid() + "']").get("title"));
 				}				
+				dynamic.destroy();
+				BetaJSDebug.Instances.unmonitorInstances(instanceMonitor);
+				QUnit.deepEqual(instanceMonitor.instances, {}, "Memory Leak");
 			}			
 		</script>
 	</body>

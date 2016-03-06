@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '234.1457307366977'
+		version: '235.1457307852360'
 	};
 });
 
@@ -477,7 +477,10 @@ Scoped.define("module:Data.Scope", [
 				this.__data = options.data;
 				this.setAll(Types.is_function(options.attrs) ? options.attrs() : options.attrs);
 				Objs.iter(options.collections, function (value, key) {
-					this.set(key, new Collection({objects: value}));
+					this.set(key, this.auto_destroy(new Collection({
+						objects: value,
+						release_references: true
+					})));
 				}, this);
 				if (parent)
 					parent.__add(this);

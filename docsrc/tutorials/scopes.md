@@ -11,16 +11,12 @@ Basic Usage Example:
 
 		template : "<div>{{text}}</div>"
 
-		initial : {
+		attrs : {text: "Hello World!"}
 
-			attrs : {text: "Hello World!"}
-
-			functions : {
-				call_me : function () {
-					alert("You wanted an alert?");
-				}
+		functions : {
+			call_me : function () {
+				alert("You wanted an alert?");
 			}
-
 		}
 
 	});
@@ -30,107 +26,65 @@ Basic Usage Example:
 
 		template : "<ba-childdynamic><ba-childdynamics>"
 
-		initial : {
+		scopes : {
+			child_dynamic: ">[tagname='ba-childdynamic']",
+		},
 
-			scopes : {
-				child_dynamic: ">[tagname='ba-childdynamic']",
-			},
+		create : {
+			//Examples of Accessing another Dynamics
+			var child_text = this.scopes.child_dynamic.get('text');
+			// child_text will evaluate to "Hello World"
 
-			create : {
-				//Examples of Accessing another Dynamics
-				var child_text = this.scopes.child_dynamic.get('text');
-				// child_text will evaluate to "Hello World"
+			this.scopes.child_dynamic.set('text','New Hello World Text');
+			//The child dynamic evaluation will now be changed from
+			//"<div>Hello World</div> to
+			//"<div>New Hello World Text</div> to
 
-				this.scopes.child_dynamic.set('text','New Hello World Text');
-				//The child dynamic evaluation will now be changed from
-				//"<div>Hello World</div> to
-				//"<div>New Hello World Text</div> to
+			this.scopes.child_dynamic.call('call_me');
+			// This will call the alert in the childdynamic (You wanted an alert?)
 
-				this.scopes.child_dynamic.call('call_me');
-				// This will call the alert in the childdynamic (You wanted an alert?)
-
-			},
+		}
 
 	});
 
 
 ```
 
-More Examples of valid Syntax
+More examples:
 
 ```js
 
 	BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.ScopeExample", {
 
-	dynamic = new BetaJS.Dynamics.Dynamic({
+		scopes : {
+			//This gives you the Dynamic
+			parent_dynamic: "<",
+			specific_child: ">[tagname='ba-tagname']",
+			specific_in_all_children: ">+[tagname='ba-tagname']"
 
-		initial : {
+			//This gives you a query result of the Dynamics
+			child_dynamics: ">",
+			all_children: ">+",
+			parents_children_dynamics: "<>",
+			parents_childrens_children_dynamics: "<>>",
+		},
 
-			scopes : {
-				//This gives you the Dynamic
-				parent_dynamic: "<",
-				specific_child: ">[tagname='ba-tagname']",
-				specific_in_all_children: ">+[tagname='ba-tagname']"
+		create : {
 
-				//This gives you a query result of the Dynamics
-				child_dynamics: ">",
-				all_children: ">+",
-				parents_children_dynamics: "<>",
-				parents_childrens_children_dynamics: "<>>",
-			},
+			//Examples of Accessing other Dynamics
 
-			create : {
+			//Directly
+			var scope_attr = this.scopes.parent_dynamic.get('attribute_in_parent_dynamic');
+			// scope_attr is an attribute from the parent_dynamic
 
-				//Examples of Accessing other Dynamics
+			//Query Collection
+			var json_data = this.scopes.child_dynamics.get(0);
+			// json_data is a JSON object that contains the attribute values from the first child_dynamic
+			var json_data = this.scopes.child_dynamics.get(0).materialize();
 
-				//Directly
-				var scope_attr = this.scopes.parent_dynamic.get('attribute_in_parent_dynamic');
-				// scope_attr is an attribute from the parent_dynamic
-
-				//Query Collection
-				var json_data = this.scopes.child_dynamics.get(0);
-				// json_data is a JSON object that contains the attribute values from the first child_dynamic
-				var json_data = this.scopes.child_dynamics.get(0).materialize();
-
-			},
+		}
 
 	});
 
 
 ```
-
-
-//TODO:
-Access Scope from Outside.
-
-BetaJS.Dynamics.Dynamic.extend(null, {
-
-    template:   '<div>{{text}}</div>'
-
-    initial: {
-
-        attrs : {text : 'Hello'}
-
-    }
-
-}).register(“ba-test");
-
-var test_text = ???;
-
-var dynamic = new BetaJS.Dynamics.Dynamic({
-
-    element: $(‘body’)
-
-});
-
-dynamic.activate();
-
-HTML:
-
-<body>
-
-    <ba-test></ba-test>
-
-</body>
-
-dynamic.scope(“>”).get(“attr”)

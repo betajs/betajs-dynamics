@@ -1,11 +1,4 @@
-
-
-The ba-tap partial is similar to the ba-click and is meant to be used with touchscreen interfaces,
-it executes the code passed into it, or calls a function from the related Dynamic when the user taps on the screen.
-
-#### Note
-
-In particular this partial is useful when the ba-click experiences a delay on touchscreen surfaces.
+The ba-tap partial is similar to the ba-click and is meant to be used with touchscreen interfaces for faster click response times.
 
 
 #### Example 1:
@@ -19,7 +12,7 @@ Will call an alert pop-up
 
 #### Example 2:
 
-Will Show/Hide the Heading element when you click on the surrounding div element.
+Will toggle the heading element when you click on the surrounding div element.
 
 ```html
 <div class="some_class" ba-tap="boolean != boolean">
@@ -30,10 +23,8 @@ Will Show/Hide the Heading element when you click on the surrounding div element
 ```js
     some_dynamic = new BetaJS.Dynamics.Dynamic({
         element: $(".some_class"),
-        initial:  {
-            attrs : {
-                boolean : true
-            }
+        attrs : {
+            boolean : true
         }
     });
 ```
@@ -51,11 +42,9 @@ Will call an alert pop-up
 ```js
     some_dynamic = new BetaJS.Dynamics.Dynamic({
         element: $(".some_class"),
-        initial:  {
-            functions : {
-                some_function : function () {
-                    alert('Another alert');
-                }
+        functions : {
+            some_function : function () {
+                alert('Another alert');
             }
         }
     });

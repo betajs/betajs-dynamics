@@ -7,8 +7,9 @@ You can create Dynamics both as instances and as classes which can be instantiat
 
 ```js
 
-	dynamic = new BetaJS.Dynamics.Dynamic({
+	var dynamic = new BetaJS.Dynamics.Dynamic({
 		templateUrl : "templates/template.html",
+		element: document.body
 	});
 
 	//This is only necessary if this dynamic is stand-alone
@@ -19,7 +20,7 @@ You can create Dynamics both as instances and as classes which can be instantiat
 
 #### Class
 
-You can create new Dynamics classes using the code below:
+You can create new dynamics classes using the code below:
 
 ```js
 
@@ -49,9 +50,9 @@ or by just adding the DOM tagname :
 
 ```
 
-#### Conveniencemethods:
+#### Convenience Methods:
 
-These Codesnippets are for rapid deployment and easy code-maintainment:
+These code snippets can be quickly copy&pasted:
 
 - templateUrl matching the classname
 

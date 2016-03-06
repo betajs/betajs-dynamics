@@ -29,3 +29,13 @@ test("data/mesh : nested properties", function () {
 	outer.set("inner", inner2);
 	QUnit.equal(counter, 2);
 });
+
+test("data/mesh : nested properties 2", function () {
+	var outer = new BetaJS.Properties.Properties();
+	var inner = new BetaJS.Properties.Properties();
+	outer.set("inner", inner);
+	inner.set("attr", "value");
+	var mesh = new BetaJS.Dynamics.Data.Mesh([outer], outer);
+	mesh.write("inner.attr", "foobar");
+	QUnit.equal(inner.get("attr"), "foobar");
+});

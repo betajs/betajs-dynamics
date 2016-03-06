@@ -1,7 +1,7 @@
 
-### Introduction
+#### Introduction
 
-The ba-repeat partial repeats the containing DOM elements of the DOM Elements it is placed a certain number of times.
+The ba-repeat partial repeats the containing DOM elements of the DOM Elements it is placed in a certain number of times.
 
 ##### Example 1:
 
@@ -25,13 +25,11 @@ Evaluates to
 ```js
     dynamic = new BetaJS.Dynamics.Dynamic({
         element: $(".some_class"),
-        initial:  {
-            collections : {
-                named_collection: [
-                    {item_name : "Apple", item_index : "1"},
-                    {item_name : "Orange", item_index : "2"},
-                ]
-            }
+        collections : {
+            named_collection: [
+                {item_name : "Apple", item_index : "1"},
+                {item_name : "Orange", item_index : "2"},
+            ]
         }
     });
 ```
@@ -60,11 +58,11 @@ Evaluates to
 </div>
 ```
 
-### Advanced
+#### Advanced
 
-#### Filters
+##### Filters
 
-Filters are a way of defining rules to limit the number of items shown by the ba-repeat Partial.
+Filters are a way of defining rules to limit the number of items shown by the ba-repeat partial.
 
 ##### Example 1:
 
@@ -87,13 +85,11 @@ Evaluates to
 ```js
     dynamic = new BetaJS.Dynamics.Dynamic({
         element: $(".some_class"),
-        initial:  {
-            collections : {
-                named_collection: [
-                    {item_name : "Apple", item_index : "1"},
-                    {item_name : "Orange", item_index : "2"},
-                ]
-            }
+        collections : {
+            named_collection: [
+                {item_name : "Apple", item_index : "1"},
+                {item_name : "Orange", item_index : "2"},
+            ]
         }
     });
 ```
@@ -120,7 +116,7 @@ Evaluates to
 
 #### Sort
 
-Sort is a way to define a sorting Algorithm for collection in the ba-repeat Partial.
+Sort is a way to define a sorting algorithm for collection in the ba-repeat partial.
 
 ##### Example 1:
 
@@ -155,16 +151,15 @@ Evaluates to
 
 
 
-### ba-repeat-element
+#### ba-repeat-element
 
-ba-repeat-element is a special form of ba-repeat, it repeats the element it is placed on itself.
-The ba-repeat is the preferred partial due to performance.
+ba-repeat-element is a special form of ba-repeat, it repeats the element it is placed on itself. The ba-repeat is the preferred partial due to performance.
 
 ##### Example :
 
 ```html
 <ul>
-    <li ba-repeat="{{ i :: [1,2] }}">{{i}}</li>
+    <li ba-repeat-element="{{ i :: [1,2] }}">{{i}}</li>
 </ul>
 ```
 

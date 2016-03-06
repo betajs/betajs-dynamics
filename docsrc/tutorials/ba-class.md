@@ -1,7 +1,5 @@
 
-
-The ba-class Partial dynamically sets the class of a given element based on
-the boolean value of a given expression
+The ba-class partial dynamically sets the css class of a given element based on the boolean value of a given expression
 
 
 #### Example
@@ -19,10 +17,8 @@ the boolean value of a given expression
 ```js
     some_dynamic = new BetaJS.Dynamics.Dynamic({
         element: $(".some_class"),
-        initial:  {
-            attrs : {
-                some_property : true
-            }
+        attrs : {
+            some_property : true
         }
     });
 ```

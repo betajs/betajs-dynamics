@@ -1,6 +1,6 @@
 
 
-The ba-on Partial executes the code passed into it when the specified DOM event is fired.
+The ba-on partial executes the code passed into it when the specified DOM event is fired.
 
 
 #### Example:

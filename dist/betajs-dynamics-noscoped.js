@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.40 - 2016-03-06
+betajs-dynamics - v0.0.41 - 2016-03-06
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '232.1457271433304'
+		version: '234.1457307366977'
 	};
 });
 
@@ -2327,7 +2327,9 @@ Scoped.define("module:Partials.RepeatPartial", [
  				this._valueCollection = this._destroyValueCollection ? new Collection({
  					objects: Objs.map(this._value, function (val) {
  						return new Properties({value: val});
- 					})}) : this._value;
+ 					}),
+ 					release_references: true
+ 				}) : this._value;
  				this._destroyCollection = !!this.__repeatFilter;
 				this._collection = this._destroyCollection ? new FilteredCollection(this._valueCollection, {
 					filter: this.__filterFunc,

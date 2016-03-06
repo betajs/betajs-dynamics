@@ -93,7 +93,9 @@ Scoped.define("module:Partials.RepeatPartial", [
  				this._valueCollection = this._destroyValueCollection ? new Collection({
  					objects: Objs.map(this._value, function (val) {
  						return new Properties({value: val});
- 					})}) : this._value;
+ 					}),
+ 					release_references: true
+ 				}) : this._value;
  				this._destroyCollection = !!this.__repeatFilter;
 				this._collection = this._destroyCollection ? new FilteredCollection(this._valueCollection, {
 					filter: this.__filterFunc,

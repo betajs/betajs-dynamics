@@ -1,4 +1,4 @@
-Scoped.define("module:Registries", ["base:Classes.ClassRegistry", "base:Strings", "jquery:"], function (ClassRegistry, Strings, $) {
+Scoped.define("module:Registries", ["base:Classes.ClassRegistry", "jquery:"], function (ClassRegistry, $) {
 	return {		
 		
 		handler: new ClassRegistry({}, true),
@@ -10,7 +10,7 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry", "base:Strings"
 			cache: {},
 			
 			create: function (template) {
-				template = Strings.trim(template);
+				template = template.trim();
 				var cached = this.cache[template];
 				if (cached)
 					return cached.clone();

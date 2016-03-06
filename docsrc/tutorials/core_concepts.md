@@ -1,19 +1,16 @@
 
-## Dynamics
+#### Dynamics
 
-Dynamics are at the very core of this Framework.
-They are View Components that have been transformed into objects
-and offer many ways of dealing with objects inherited from the BetaJS Core Framework
-as well as functionality specific to the view.
+Dynamics are at the very core of this framework, representing its view components.
 
 
 
 
-## Handlebars
+#### Handlebars
 
 Handlebars are a way to do one of two things:
-- Evaluate simple expressions
-- Put Strings(Text) from the Javascipt into the DOM at the relevant parts
+- Evaluate simple JavaScript expressions
+- Put variables (text) from the Javascipt dynamic into the DOM at the relevant places
 
 
 ```html
@@ -23,10 +20,9 @@ Handlebars are a way to do one of two things:
 ```
 
 
-## Partials
+#### Partials
 
-Partials are a form of pseudocode that allow you to write often used functions
-directly into the DOM/view.
+Partials are a form of pseudocode that allow you to attach particular behaviour to nodes in the DOM/view.
 
 ```html
 

@@ -1,6 +1,6 @@
 Scoped.define("module:Parser", [
-    "base:Types", "base:Objs", "base:JavaScript", "base:Strings"
-], function (Types, Objs, JavaScript, Strings) {
+    "base:Types", "base:Objs", "base:JavaScript"
+], function (Types, Objs, JavaScript) {
 	return {		
 		
 		parseText: function (text) {
@@ -43,7 +43,7 @@ Scoped.define("module:Parser", [
 					});
 					return s;
 				},
-				dependencies: Objs.keys(dependencies)
+				dependencies: Object.keys(dependencies)
 			};
 		},
 		
@@ -56,7 +56,7 @@ Scoped.define("module:Parser", [
 			var i = code.indexOf("::");
 			var args = null;
 			if (i >= 0) {
-				args = Strings.trim(code.substring(0, i));
+				args = code.substring(0, i).trim();
 				code = code.substring(i + 2);
 			}
 			return {
@@ -65,7 +65,7 @@ Scoped.define("module:Parser", [
 				variable: bidirectional ? code : null,
 				/*jslint evil: true */
 				func: new Function ("obj", "with (obj) { return " + code + "; }"),
-				dependencies: Objs.keys(Objs.objectify(JavaScript.extractIdentifiers(code, true)))
+				dependencies: Object.keys(Objs.objectify(JavaScript.extractIdentifiers(code, true)))
 			};
 		}
 	

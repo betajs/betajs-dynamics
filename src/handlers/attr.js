@@ -118,7 +118,7 @@ Scoped.define("module:Handlers.Attr", [
 						this._partial.change(value, old);
 					if (this._attrName === "value" && this._element.value !== value)
 						this.__inputVal(this._element, value);
-					if (this._tagHandler && this._dyn)
+					if (this._tagHandler && this._dyn && !this._partial)
 						this._tagHandler.properties().set(Strings.first_after(this._attrName, "-"), value);
 				}
 			},

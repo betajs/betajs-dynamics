@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.41 - 2016-03-06
+betajs-dynamics - v0.0.41 - 2016-04-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -16,7 +16,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '235.1457307852360'
+		version: '236.1460476496016'
 	};
 });
 
@@ -1141,7 +1141,7 @@ Scoped.define("module:Handlers.Attr", [
 						this._partial.change(value, old);
 					if (this._attrName === "value" && this._element.value !== value)
 						this.__inputVal(this._element, value);
-					if (this._tagHandler && this._dyn)
+					if (this._tagHandler && this._dyn && !this._partial)
 						this._tagHandler.properties().set(Strings.first_after(this._attrName, "-"), value);
 				}
 			},

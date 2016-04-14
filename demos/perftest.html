@@ -30,8 +30,8 @@
 		}
 	});
 	mainDynamic.activate();
-	BetaJSDebug.Hooks.hookPrototypeMethod("__setChanged", BetaJS.Properties.Properties, function () {
-		console.log("SetChanged", arguments, mainDynamic.scope(">").materialize(true).properties().data());
+	BetaJSDebug.Hooks.hookPrototypeMethod("trigger", BetaJS.Properties.Properties, function () {
+		console.log(arguments);
 	});
 </script>
 </body>

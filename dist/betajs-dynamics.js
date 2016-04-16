@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.43 - 2016-04-13
+betajs-dynamics - v0.0.44 - 2016-04-16
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -693,7 +693,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.43 - 2016-04-13
+betajs-dynamics - v0.0.44 - 2016-04-16
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -710,7 +710,7 @@ Scoped.binding("jquery", "global:jQuery");
 Scoped.define("module:", function () {
 	return {
 		guid: "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-		version: '237.1460594038580'
+		version: '238.1460827567109'
 	};
 });
 
@@ -1577,6 +1577,8 @@ Scoped.define("module:Dynamic", [
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
+   			
+   			supportsGc: true,
 
 		   	_notifications: {
 				_activate: "__createActivate"
@@ -2367,7 +2369,7 @@ Scoped.define("module:Handlers.Node", [
 						attr.unbindTagHandler(this._tagHandler);
 					}, this);
 					this.off(null, null, this._tagHandler);
-					this._tagHandler.destroy();
+					this._tagHandler.weakDestroy();
 					this._tagHandler = null;
 				}
 			},
@@ -2713,6 +2715,21 @@ Scoped.define("module:Partials.FunctionsPartial", ["module:Handlers.Partial", "b
  		};
  	});
  	Cls.register("ba-functions");
+	return Cls;
+});
+
+Scoped.define("module:Partials.GcPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+ 		return {
+			
+ 			bindTagHandler: function (handler) {
+ 				if (this._value) 
+ 					handler.enableGc(this._value);
+ 			}
+ 		
+ 		};
+ 	});
+ 	Cls.register("ba-gc");
 	return Cls;
 });
 

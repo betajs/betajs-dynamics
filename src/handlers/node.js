@@ -129,7 +129,7 @@ Scoped.define("module:Handlers.Node", [
 						attr.unbindTagHandler(this._tagHandler);
 					}, this);
 					this.off(null, null, this._tagHandler);
-					this._tagHandler.destroy();
+					this._tagHandler.weakDestroy();
 					this._tagHandler = null;
 				}
 			},

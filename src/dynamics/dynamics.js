@@ -11,6 +11,8 @@ Scoped.define("module:Dynamic", [
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
+   			
+   			supportsGc: true,
 
 		   	_notifications: {
 				_activate: "__createActivate"

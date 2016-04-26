@@ -155,12 +155,16 @@ Scoped.define("module:Handlers.Node", [
 						attr.updateElement(this._element);
 					}, this);
 				}
-				this._tagHandler = Registries.handler.create(tagv, {
+				var createArguments = {
 					parentElement: this._$element.get(0),
 					parentHandler: this._handler,
 					autobind: false,
 					tagName: tagv					
-				});
+				};
+				Objs.iter(this._attrs, function (attr) {
+					attr.prepareTagHandler(createArguments);
+				}, this);
+				this._tagHandler = Registries.handler.create(tagv, createArguments);
 				//this._$element.append(this._tagHandler.element());
 				Objs.iter(this._attrs, function (attr) {
 					attr.bindTagHandler(this._tagHandler);

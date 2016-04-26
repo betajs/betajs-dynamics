@@ -99,7 +99,8 @@ Scoped.define("module:Data.Scope", [
 				this.__root = parent ? parent.root() : this;
 				this.__children = {};
 				this.__extendables = Objs.objectify(options.extendables);
-				this.__properties = new Properties();
+				this.__properties = options.properties || new Properties();
+				this.__properties.increaseRef();
 				this.__properties.on("change", function (key, value, oldValue) {
 					this.trigger("change:" + key, value, oldValue);
 				}, this);
@@ -108,12 +109,18 @@ Scoped.define("module:Data.Scope", [
 				}, this);
 				this.__scopes = {};
 				this.__data = options.data;
-				this.setAll(Types.is_function(options.attrs) ? options.attrs() : options.attrs);
+				Objs.iter(Types.is_function(options.attrs) ? options.attrs() : options.attrs, function (value, key) {
+					if (!this.__properties.has(key))
+						this.set(key, value);
+				}, this);
+				this.setAll();
 				Objs.iter(options.collections, function (value, key) {
-					this.set(key, this.auto_destroy(new Collection({
-						objects: value,
-						release_references: true
-					})));
+					if (!this.__properties.has(key)) {
+						this.set(key, this.auto_destroy(new Collection({
+							objects: value,
+							release_references: true
+						})));
+					}
 				}, this);
 				if (parent)
 					parent.__add(this);
@@ -141,7 +148,7 @@ Scoped.define("module:Data.Scope", [
 				Objs.iter(this.__children, function (child) {
 					child.destroy();
 				});
-				this.__properties.destroy();
+				this.__properties.decreaseRef();
 				if (this.__parent)
 					this.__parent.__remove(this);
 				inherited.destroy.call(this);

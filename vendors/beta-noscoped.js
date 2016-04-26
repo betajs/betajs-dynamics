@@ -1,5 +1,5 @@
 /*!
-betajs - v1.0.40 - 2016-03-02
+betajs - v1.0.51 - 2016-04-26
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 Apache-2.0 Software License.
 */
@@ -10,7 +10,7 @@ Scoped.binding('module', 'global:BetaJS');
 Scoped.define("module:", function () {
 	return {
     "guid": "71366f7a-7da3-4e55-9a0b-ea0e4e2a9e79",
-    "version": "477.1456966715651"
+    "version": "496.1461691891323"
 };
 });
 Scoped.require(['module:'], function (mod) {
@@ -47,8 +47,8 @@ Scoped.define("module:Class", ["module:Types", "module:Objs", "module:Functions"
 				result = obj.constructor;
 		});
 		var has_constructor = Types.is_defined(result);
-		if (!Types.is_defined(result))
-			result = function () { parent.apply(this, arguments); };
+		if (!has_constructor)
+			result = function () { parent.prototype.constructor.apply(this, arguments); };
 	
 		// Add Parent Statics
 		Objs.extend(result, parent);
@@ -109,9 +109,12 @@ Scoped.define("module:Class", ["module:Types", "module:Objs", "module:Functions"
 		
 		// Setup Prototype
 		result.__notifications = {};
+		result.__implements = {};
 		
 		if (parent.__notifications)
 			Objs.extend(result.__notifications, parent.__notifications, 1);		
+		if (parent.__implements)
+			Objs.extend(result.__implements, parent.__implements, 1);		
 	
 		Objs.iter(objects, function (object) {
 			for (var objkey in object)
@@ -129,8 +132,14 @@ Scoped.define("module:Class", ["module:Types", "module:Objs", "module:Functions"
 					result.__notifications[key].push(object._notifications[key]);
 				}
 			}
+			if (object._implements) {
+				Objs.iter(Types.is_string(object._implements) ? [object._implements] : object._implements, function (impl) {
+					result.__implements[impl] = true;
+				});
+			}
 		});	
 		delete result.prototype._notifications;
+		delete result.prototype._implements;
 	
 		if (!has_constructor)
 			result.prototype.constructor = parent.prototype.constructor;
@@ -209,6 +218,8 @@ Scoped.define("module:Class", ["module:Types", "module:Objs", "module:Functions"
 	
 	Class.prototype.__class_instance_guid = "e6b0ed30-80ee-4b28-af02-7d52430ba45f";
 	
+	//Class.prototype.supportsGc = false;
+	
 	Class.prototype.constructor = function () {
 		this._notify("construct");
 	};
@@ -233,12 +244,30 @@ Scoped.define("module:Class", ["module:Types", "module:Objs", "module:Functions"
 	};
 	
 	Class.prototype.weakDestroy = function () {
-		if (!this.destroyed())
+		if (!this.destroyed()) {
+			if (this.__gc) {
+				this.__gc.queue(this);
+				return;
+			}
 			this.destroy();
+		}
 	};
 
 	Class.prototype.__destroyedDestroy = function () {
 		throw ("Trying to destroy destroyed object " + this.cid() + ": " + this.cls.classname + ".");
+	};
+	
+	Class.prototype.enableGc = function (gc) {
+		if (this.supportsGc)
+			this.__gc = gc; 
+	};
+	
+	Class.prototype.dependDestroy = function (other) {
+		if (other.destroyed)
+			return;
+		if (this.__gc)
+			other.enableGc();
+		other.weakDestroy();
 	};
 	
 	Class.prototype.cid = function () {
@@ -252,13 +281,15 @@ Scoped.define("module:Class", ["module:Types", "module:Objs", "module:Functions"
 	};
 	
 	Class.prototype.auto_destroy = function (obj) {
-		if (!this.__auto_destroy_list)
-			this.__auto_destroy_list = [];
-		var target = obj;
-		if (!Types.is_array(target))
-		   target = [target];
-		for (var i = 0; i < target.length; ++i)
-		   this.__auto_destroy_list.push(target[i]);
+		if (obj) {
+			if (!this.__auto_destroy_list)
+				this.__auto_destroy_list = [];
+			var target = obj;
+			if (!Types.is_array(target))
+			   target = [target];
+			for (var i = 0; i < target.length; ++i)
+			   this.__auto_destroy_list.push(target[i]);
+		}
 		return obj;
 	};
 	
@@ -274,9 +305,25 @@ Scoped.define("module:Class", ["module:Types", "module:Objs", "module:Functions"
 		}, this);
 	};
 	
+	Class.prototype.impl = function (identifier) {
+		return !!(this.cls.__implements && this.cls.__implements[Types.is_string(identifier) ? identifier : identifier._implements]);
+	};
+	
 	Class.prototype.instance_of = function (cls) {
 		return this.cls.ancestor_of(cls);
 	};
+	
+	Class.prototype.increaseRef = function () {
+		this.__referenceCount = this.__referenceCount || 0;
+		this.__referenceCount++;
+	};
+	
+	Class.prototype.decreaseRef = function () {
+		this.__referenceCount = this.__referenceCount || 0;
+		this.__referenceCount--;
+		if (this.__referenceCount <= 0)
+			this.weakDestroy();
+	};	
 	
 	Class.prototype.inspect = function () {
 		return {
@@ -363,105 +410,6 @@ Scoped.define("module:Classes.InvokerMixin", ["module:Objs", "module:Types", "mo
 });
 
 
-Scoped.define("module:Classes.ModuleMixin", ["module:Objs"], function (Objs) {
-	return {
-	
-		_notifications : {
-			construct : function() {
-				this.__modules = {};
-			},
-			destroy : function() {
-				Objs.iter(this.__modules, this.remove_module, this);
-			}
-		},
-	
-		add_module : function(module) {
-			if (module.cid() in this.__modules)
-				return;
-			this.__modules[module.cid()] = module;
-			module.register(this);
-			this._notify("add_module", module);
-		},
-	
-		remove_module : function(module) {
-			if (!(module.cid() in this.__modules))
-				return;
-			delete this.__modules[module.cid()];
-			module.unregister(this);
-			this._notify("remove_module", module);
-		}
-		
-	};
-});
-
-
-Scoped.define("module:Classes.Module", ["module:Class", "module:Objs", "module:Ids", "module:Types"], function (Class, Objs, Ids, Types, scoped) {
-	return Class.extend({scoped: scoped}, function (inherited) {
-		return {
-
-			constructor : function(options) {
-				inherited.constructor.call(this);
-				this._objects = {};
-				this.__auto_destroy = "auto_destroy" in options ? options.auto_destroy : true;
-			},
-		
-			destroy : function() {
-				Objs.iter(this._objects, this.unregister, this);
-				inherited.destroy.call(this);
-			},
-		
-			register : function(object) {
-				var id = Ids.objectId(object);
-				if ( id in this._objects)
-					return;
-				var data = {};
-				this._objects[id] = {
-					object : object,
-					data : data
-				};
-				object.add_module(this);
-				this._register(object, data);
-			},
-		
-			_register : function(object) {
-			},
-		
-			unregister : function(object) {
-				var id = Ids.objectId(object);
-				if (!( id in this._objects))
-					return;
-				var data = this._objects[id].data;
-				this._unregister(object, data);
-				delete this._objects[id];
-				object.remove_module(this);
-				if ("off" in object)
-					object.off(null, null, this);
-				if (this.__auto_destroy && Types.is_empty(this._objects))
-					this.destroy();
-			},
-		
-			_unregister : function(object) {
-			},
-		
-			_data : function(object) {
-				return this._objects[Ids.objectId(object)].data;
-			}
-			
-		};
-	}, {
-	
-		__instance : null,
-	
-		singleton : function() {
-			if (!this.__instance)
-				this.__instance = new this({
-					auto_destroy : false
-				});
-			return this.__instance;
-		}
-	
-	});
-});
 
 
 Scoped.define("module:Classes.HelperClassMixin", ["module:Objs", "module:Types", "module:Functions", "module:Promise"], function (Objs, Types, Functions, Promise) {
@@ -583,56 +531,6 @@ Scoped.define("module:Classes.MultiDelegatable", ["module:Class", "module:Objs"]
 });
 
 
-Scoped.define("module:Classes.ClassRegistry", [
-    "module:Class",
-    "module:Types",
-    "module:Functions",
-    "module:Objs"
-], function (Class, Types, Functions, Objs, scoped) {
-	return Class.extend({scoped: scoped}, function (inherited) {
-		return {
-
-			constructor: function (classes, lowercase) {
-				inherited.constructor.call(this);
-				this._classes = Types.is_array(classes) ? classes : [classes || {}];
-				this._lowercase = lowercase;
-			},
-			
-			_sanitize: function (key) {
-				return this._lowercase ? key.toLowerCase() : key;
-			},
-			
-			register: function (key, cls) {
-				this._classes[this._classes.length - 1][this._sanitize(key)] = cls;
-			},
-			
-			get: function (key) {
-				if (!Types.is_string(key))
-					return key;
-				key = this._sanitize(key);
-				for (var i = this._classes.length - 1; i >= 0; --i)
-					if (key in this._classes[i])
-						return this._classes[i][key];
-				return null;
-			},
-			
-			create: function (key) {
-				var cons = Functions.newClassFunc(this.get(key));
-				return cons.apply(this, Functions.getArguments(arguments, 1));
-			},
-			
-			classes: function () {
-				var result = {};
-				Objs.iter(this._classes, function (classes) {
-					result = Objs.extend(result, classes);
-				});
-				return result;
-			}
-			
-		};
-	});
-});
-
 
 Scoped.define("module:Classes.ObjectIdScopeMixin", function () {
 	return {
@@ -687,92 +585,25 @@ Scoped.define("module:Classes.ObjectIdMixin", ["module:Classes.ObjectIdScope", "
 
 
 
-Scoped.define("module:Classes.ContextRegistry", [
-    "module:Class",
-    "module:Ids",
-    "module:Types",
-    "module:Iterators.MappedIterator",
-    "module:Iterators.ObjectValuesIterator"
-], function (Class, Ids, Types, MappedIterator, ObjectValuesIterator, scoped) {
-	return Class.extend({scoped: scoped}, function (inherited) {
-		return {
-			
-			constructor: function (serializer, serializerContext) {
-				inherited.constructor.apply(this);
-				this.__data = {};
-				this.__contexts = {};
-				this.__serializer = serializer || this.__defaultSerializer;
-				this.__serializerContext = serializerContext || this;
-			},
-			
-			__defaultSerializer: function (data) {
-				return Types.is_object(data) ? Ids.objectId(data) : data;
-			},
-			
-			_serializeContext: function (ctx) {
-				return ctx ? Ids.objectId(ctx) : null;
-			},
-			
-			_serializeData: function (data) {
-				return this.__serializer.call(this.__serializerContext, data);
-			},
-			
-			get: function (data) {
-				var serializedData = this._serializeData(data);
-				return this.__data[serializedData];
-			},
-			
-			register: function (data, context) {
-				var serializedData = this._serializeData(data);
-				var serializedCtx = this._serializeContext(context);
-				var result = false;
-				if (!(serializedData in this.__data)) {
-					this.__data[serializedData] = {
-						data: data,
-						contexts: {}
-					};
-					result = true;
-				}
-				this.__data[serializedData].contexts[serializedCtx] = true;
-				return result ? this.__data[serializedData] : null;
-			},
-			
-			unregister: function (data, context) {
-				var serializedData = this.__serializer.call(this.__serializerContext, data);
-				if (!this.__data[serializedData])
-					return null;
-				if (context) {
-					var serializedCtx = this._serializeContext(context);
-					delete this.__data[serializedData].contexts[serializedCtx];
-				}
-				if (!context || Types.is_empty(this.__data[serializedData].contexts)) {
-					var oldData = this.__data[serializedData];
-					return oldData;
-				}
-				return null;
-			},
-			
-			customIterator: function () {
-				return new ObjectValuesIterator(this.__data);
-			},
-			
-			iterator: function () {
-				return new MappedIterator(this.customIterator(), function (item) {
-					return item.data;
-				});
-			}
-
-		};
-	});
-});
-
-
-
 
 
 Scoped.define("module:Comparators", ["module:Types", "module:Properties.Properties"], function (Types, Properties) {
+
+	/**
+	 * Comparator Functions
+	 * 
+	 * @module BetaJS.Comparators
+	 */
 	return {		
 		
+		
+		/**
+		 * Creates a function that compares two json object w.r.t. a json object, mapping keys to a comparison order,
+		 * e.g. {'last_name': 1, 'first_name': -1, 'age': -1 }  
+		 * 
+		 * @param {json} object comparison object
+		 * @return {function} function for comparing two objects w.r.t. the comparison object
+		 */
 		byObject: function (object) {
 			var self = this;
 			return function (left, right) {
@@ -788,7 +619,15 @@ Scoped.define("module:Comparators", ["module:Types", "module:Properties.Properti
 				return 0;
 			};
 		},
+
 		
+		/**
+		 * Compares to variables by the natural order in JS.
+		 * 
+		 * @param a value A
+		 * @param b value B
+		 * @return {int} 1 if a > b, -1 if a < b and 0 otherwise
+		 */
 		byValue: function (a, b) {
 			if (Types.is_string(a))
 				return a.localeCompare(b);
@@ -799,6 +638,15 @@ Scoped.define("module:Comparators", ["module:Types", "module:Properties.Properti
 			return 0;
 		},
 		
+
+		/**
+		 * Compares two values a and b recursively.
+		 * 
+		 * @param a value A
+		 * @param b value B
+		 * @param {int} depth depth limit for the recursion, leave blank for infinite recursion
+		 * @return {bool} true if both values are equal
+		 */
 		deepEqual: function (a, b, depth) {
 			if (depth === 0)
 				return true;
@@ -825,12 +673,21 @@ Scoped.define("module:Comparators", ["module:Types", "module:Properties.Properti
 				return a === b;
 		},
 		
+		
+		/**
+		 * Determines whether two lists are equal. Two lists are considered equal if their elements are equal.
+		 * 
+		 * @param a list A
+		 * @param b list B
+		 * @return {bool} true if both lists are equal
+		 */
 		listEqual: function (a, b) {
 			return this.deepEqual(a, b, 2);
 		}
 			
 	};
 });
+
 Scoped.define("module:Events.EventsMixin", [
                                             "module:Timers.Timer",
                                             "module:Async",
@@ -841,6 +698,18 @@ Scoped.define("module:Events.EventsMixin", [
                                             ], function (Timer, Async, LinkedList, Functions, Types, Objs) {
 
 	return {
+		
+		_implements: "3d63b44f-c9f0-4aa7-b39e-7cbf195122b4",
+
+		_notifications: {
+			"construct": function () {
+			    this.__suspendedEvents = 0;
+			    this.__suspendedEventsQueue = [];			    				
+			},
+			"destroy": function () {
+				this.off(null, null, null);
+			} 
+		},
 
 		EVENT_SPLITTER: /\s+/,
 
@@ -1048,9 +917,6 @@ Scoped.define("module:Events.EventsMixin", [
 			}
 	    },
 	    
-	    __suspendedEvents: 0,
-	    __suspendedEventsQueue: [],
-	    
 	    suspendEvents: function () {
 	    	this.__suspendedEvents++;
 	    },
@@ -1203,15 +1069,20 @@ Scoped.extend("module:Exceptions.Exception", ["module:Exceptions"], ["module:Exc
 });
 
 Scoped.define("module:Functions", ["module:Types"], function (Types) {
-	/** Function and Function Argument Support
+	
+	/**
+	 * Function and Function Argument Support
+	 * 
 	 * @module BetaJS.Functions
 	 */
 	return {
 	
-	    /** Takes a function and an instance and returns the method call as a function
+		
+	    /**
+	     * Takes a function and an instance and returns the method call as a function
 	     * 
-	     * @param func function
-	     * @param instance instance
+	     * @param {function} func function
+	     * @param {object} instance instance
 	     * @return method call 
 	     */
 		as_method: function (func, instance) {
@@ -1220,9 +1091,11 @@ Scoped.define("module:Functions", ["module:Types"], function (Types) {
 			};
 		},
 		
-	    /** Takes a function and returns a function that calls the original function on the first call and returns the return value on all subsequent call. In other words a lazy function cache.
+		
+	    /**
+	     * Takes a function and returns a function that calls the original function on the first call and returns the return value on all subsequent call. In other words a lazy function cache.
 	     * 
-	     * @param func function
+	     * @param {function} func function
 	     * @return cached function 
 	     */
 		once: function (func) {
@@ -1238,21 +1111,26 @@ Scoped.define("module:Functions", ["module:Types"], function (Types) {
 			};
 		},
 		
-	    /** Converts some other function's arguments to an array
+		
+	    /**
+	     * Converts some other function's arguments to an array
 	     * 
 	     * @param args function arguments
-	     * @param slice number of arguments to be omitted (default: 0)
-	     * @return arguments as array 
+	     * @param {integer} slice number of arguments to be omitted (default: 0)
+	     * @return {array} arguments as array 
 	     */	
 		getArguments: function (args, slice) {
 			return Array.prototype.slice.call(args, slice || 0);
 		},
 		
-	    /** Matches functions arguments against some pattern
+		
+	    /**
+	     * Matches functions arguments against some pattern
 	     * 
 	     * @param args function arguments
-	     * @param pattern typed pattern
-	     * @return matched arguments as associative array 
+	     * @param {integer} skip number of arguments to be omitted (default: 0) 
+	     * @param {object} pattern typed pattern
+	     * @return {object} matched arguments as associative array 
 	     */	
 		matchArgs: function (args, skip, pattern) {
 			if (arguments.length < 3) {
@@ -1277,7 +1155,14 @@ Scoped.define("module:Functions", ["module:Types"], function (Types) {
 			return result;
 		},
 		
-		/** @suppress {checkTypes} */
+		
+		/**
+		 * Creates a function for creating new instances of a class.
+		 *  
+		 * @param {object} cls Class
+		 * @return {function} class instantiation function 
+		 * @suppress {checkTypes}
+		 */
 		newClassFunc: function (cls) {
 			return function () {
 				var args = arguments;
@@ -1289,10 +1174,25 @@ Scoped.define("module:Functions", ["module:Types"], function (Types) {
 			};
 		},
 		
+
+		/**
+		 * Creates a new class instance with arguments.
+		 *  
+		 * @param {object} cls Class
+		 * @return {function} class instance 
+		 */
 		newClass: function (cls) {
 			return this.newClassFunc(cls).apply(this, this.getArguments(arguments, 1));
 		},
 		
+
+		/**
+		 * Call an object method.
+		 *  
+		 * @param {object} context object instance
+		 * @param method function or string of method
+		 * @return result of function call 
+		 */
 		callWithin: function (context, method) {
 			if (Types.is_string(method))
 				method = context[method];
@@ -1303,27 +1203,34 @@ Scoped.define("module:Functions", ["module:Types"], function (Types) {
 });
 
 Scoped.define("module:Ids", function () {
-	/** Id Generation
+	
+	/**
+	 * Id Generation
+	 * 
 	 * @module BetaJS.Ids
 	 */
 	return {
 	
 		__uniqueId: 0,
 		
-	    /** Returns a unique identifier
+		
+	    /**
+	     * Returns a unique identifier
 	     * 
-	     * @param prefix a prefix string for the identifier (optional)
-	     * @return unique identifier
+	     * @param {string} prefix a prefix string for the identifier (optional)
+	     * @return {string} unique identifier
 	     */
 		uniqueId: function (prefix) {
 			return (prefix || "") + (this.__uniqueId++);
 		},
 		
-	    /** Returns the object's unique identifier or sets it
+		
+	    /**
+	     * Returns the object's unique identifier or sets it
 	     * 
-	     * @param object the object
-	     * @param id (optional)
-	     * @return object's unique identifier
+	     * @param {object} object the object
+	     * @param {string} id (optional)
+	     * @return {string} object's unique identifier
 	     */
 		objectId: function (object, id) {
 			if (typeof id != "undefined")
@@ -1423,6 +1330,11 @@ Scoped.define("module:IdGenerators.TimedIdGenerator", ["module:IdGenerators.IdGe
 
 
 Scoped.define("module:JavaScript", ["module:Objs"], function (Objs) {
+	/**
+	 * JavaScript Simple Parse Functions
+	 * 
+	 * @module JavaScript
+	 */
 	return {
 		
 		STRING_SINGLE_QUOTATION_REGEX: /'[^']*'/g,
@@ -1431,22 +1343,47 @@ Scoped.define("module:JavaScript", ["module:Objs"], function (Objs) {
 		IDENTIFIER_REGEX: /[a-zA-Z_][a-zA-Z_0-9]*/g,
 		IDENTIFIER_SCOPE_REGEX: /[a-zA-Z_][a-zA-Z_0-9\.]*/g,
 	
-		RESERVED: Objs.objectify(
-			["if", "then", "else", "return", "var"],
-			true),
+		RESERVED: Objs.objectify([
+	        "if", "then", "else", "return", "var"
+	    ], true),
 		
+	    /**
+	     * Is string a JS-reserved keyword?
+	     * 
+	     * @param {string} key string in question
+	     * @return {boolean} true if reserved
+	     */
 		isReserved: function (key) {
 			return key in this.RESERVED;
 		},
 		
+		/**
+		 * Is string a valid JS identifier?
+		 * 
+		 * @param {string} key string in question
+		 * @return {boolean} true if identifier
+		 */
 		isIdentifier: function (key) {
 			return !this.isReserved(key);
 		},
 		
+		/**
+		 * Remove string definitions from JS code.
+		 * 
+		 * @param {string} code input code
+		 * @return {string} code without strings
+		 */
 		removeStrings: function (code) {
 			return code.replace(this.STRING_SINGLE_QUOTATION_REGEX, "").replace(this.STRING_DOUBLE_QUOTATION_REGEX, "");
 		},	
-		
+
+		/**
+		 * Return JS identifiers from a piece of code.
+		 * 
+		 * @param {string} code input code
+		 * @param {boolean} keepScopes keep scopes, e.g. `foo.bar` instead of `foo` and `bar` (default: false)
+		 * @return {array} array of extracted identifiers
+		 */
 		extractIdentifiers: function (code, keepScopes) {
 			var regex = keepScopes ? this.IDENTIFIER_SCOPE_REGEX : this.IDENTIFIER_REGEX;
 			code = this.removeStrings(code);
@@ -2743,6 +2680,8 @@ Scoped.define("module:Properties.PropertiesMixin", [
 		__setChanged: function (key, value, oldValue, notStrong) {
 			this.trigger("change", key, value, oldValue);
 			this._afterSet(key, value);
+			if (this.destroyed())
+				return;
 			var keys = key ? key.split(".") : [];
 			var current = this.__properties.watchers;
 			var head = "";
@@ -2960,17 +2899,36 @@ Scoped.define("module:Sort", [
 });
 
 Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
-	/** String Utilities
+	/**
+	 * String Utilities
+	 * 
 	 * @module BetaJS.Strings
 	 */
 	return {
 		
+		/**
+		 * Pads a string from the left with characters if necessary.
+		 * 
+		 * @param {string} s string that should be padded
+		 * @param {string} padding padding string that should be used (e.g. whitespace)
+		 * @param {int} length minimum length of result string
+		 * 
+		 * @return {string} padded string
+		 */
 		padLeft: function (s, padding, length) {
 			while (s.length < length)
 				s = padding + s;
 			return s;
 		},
 		
+		/**
+		 * Pads a string from the left with zeros ('0') if necessary.
+		 * 
+		 * @param {string} s string that should be padded
+		 * @param {int} length minimum length of result string
+		 * 
+		 * @return {string} zero-padded string
+		 */
 		padZeros: function (s, length) {
 			return this.padLeft(s + "", "0", length);
 		},
@@ -3051,7 +3009,8 @@ Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
 			return this.starts_with(s, needle) ? s.substring(needle.length) : s;
 		},
 		
-		/** Returns the complete remaining part of a string after a the last occurrence of a sub string
+		/**
+		 * Returns the complete remaining part of a string after the last occurrence of a sub string
 		 *
 		 * @param s string in question
 		 * @param needle sub string
@@ -3061,6 +3020,13 @@ Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
 			return this.splitLast(s, needle).tail;
 		},
 		
+		/**
+		 * Returns the complete remaining part of a string after the first occurrence of a sub string
+		 *
+		 * @param s string in question
+		 * @param needle sub string
+		 * @return remaining part of the string in question after the first occurrence of the sub string
+		 */
 		first_after: function (s, needle) {
 			return s.substring(s.indexOf(needle) + 1, s.length);
 		},
@@ -3093,28 +3059,6 @@ Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
 			return result;
 		},
 		
-		splitFirst: function (s, delimiter) {
-			var i = s.indexOf(delimiter);
-			return {
-				head: i >= 0 ? s.substring(0, i) : s,
-				tail: i >= 0 ? s.substring(i + delimiter.length) : ""
-			};
-		},
-		
-		splitLast: function (s, delimiter) {
-			var i = s.lastIndexOf(delimiter);
-			return {
-				head: i >= 0 ? s.substring(0, i) : "",
-				tail: i >= 0 ? s.substring(i + delimiter.length) : s
-			};
-		},
-		
-		replaceAll: function (s, sub, wth) {
-			while (s.indexOf(sub) >= 0)
-				s = s.replace(sub, wth);
-			return s;
-		},
-	
 		/** Trims all trailing and leading whitespace and removes block indentations
 		 *
 		 * @param s string
@@ -3139,12 +3083,41 @@ Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
 			return a.join("\n").trim();
 		},
 	
+		/**
+		 * Replaces all occurrences of a substring with something else.
+		 * 
+		 * @param {string} s input string
+		 * @param {string} sub search string
+		 * @param {string} wth replacement string
+		 * 
+		 * @return {string} input with all occurrences of the search string replaced by the replacement string
+		 */
+		replaceAll: function (s, sub, wth) {
+			while (s.indexOf(sub) >= 0)
+				s = s.replace(sub, wth);
+			return s;
+		},
+	
+		/**
+		 * Capitalizes all first characters of all words in a string.
+		 * 
+		 * @param {string} input input string
+		 * 
+		 * @return {string} input with all first characters capitalized
+		 */
 		capitalize : function(input) {
 			return input.replace(/\w\S*/g, function(txt) {
 				return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
 			});
 		},
 	
+		/**
+		 * Extracts the name from an email address name string (e.g. 'Foo Bar <foobar@domain.com>')
+		 * 
+		 * @param {string} input email address name input string
+		 * 
+		 * @return {string} name included in the string
+		 */
 		email_get_name : function(input) {
 		    input = input || "";
 			var temp = input.split("<");
@@ -3157,6 +3130,13 @@ Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
 			return this.capitalize(input);
 		},
 	
+		/**
+		 * Extracts the email from an email address name string (e.g. 'Foo Bar <foobar@domain.com>')
+		 * 
+		 * @param {string} input email address name input string
+		 * 
+		 * @return {string} email included in the string
+		 */
 		email_get_email : function(input) {
 	        input = input || "";
 			var temp = input.split("<");
@@ -3169,11 +3149,57 @@ Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
 			return input;
 		},
 	
+		/**
+		 * Extracts the salutatory name from an email address name string (normally the first name)
+		 * 
+		 * @param {string} input email address name input string
+		 * 
+		 * @return {string} salutatory name
+		 */
 		email_get_salutatory_name : function(input) {
-	        input = input || "";
-			return (this.email_get_name(input).split(" "))[0];
+			return (this.email_get_name(input || "").split(" "))[0];
 		},
 		
+		/**
+		 * Splits a string into two by the first occurrence of a delimiter
+		 * 
+		 * @param {string} s input string
+		 * @param {string} delimiter delimiter string
+		 * 
+		 * @return {object} a json object, mapping 'head' to the region left and 'tail' to region right to the delimiter
+		 */
+		splitFirst: function (s, delimiter) {
+			var i = s.indexOf(delimiter);
+			return {
+				head: i >= 0 ? s.substring(0, i) : s,
+				tail: i >= 0 ? s.substring(i + delimiter.length) : ""
+			};
+		},
+		
+		/**
+		 * Splits a string into two by the last occurrence of a delimiter
+		 * 
+		 * @param {string} s input string
+		 * @param {string} delimiter delimiter string
+		 * 
+		 * @return {object} a json object, mapping 'head' to the region left and 'tail' to region right to the delimiter
+		 */
+		splitLast: function (s, delimiter) {
+			var i = s.lastIndexOf(delimiter);
+			return {
+				head: i >= 0 ? s.substring(0, i) : "",
+				tail: i >= 0 ? s.substring(i + delimiter.length) : s
+			};
+		},
+		
+		/**
+		 * Replace all groups in a regular expression string by string parameters.
+		 * 
+		 * @param {string} regex regular expression with groups as a string
+		 * @param {array} args array of string parameters
+		 * 
+		 * @return {string} regular expression with groups being replaced by string parameters
+		 */
 		regexReplaceGroups: function (regex, args) {
 			var findGroup = /\(.*?\)/;
 			var f = function (captured) {
@@ -3188,6 +3214,13 @@ Scoped.define("module:Strings", ["module:Objs"], function (Objs) {
 			return regex;
 		},
 		
+		/**
+		 * Given a regular expression with named capture groups (e.g. '(foobar:\d+)'), compute a normal regular expression with mappings to the named groups.
+		 * 
+		 * @param {string} regex regular expression with named capture groups
+		 * 
+		 * @return {object} mapping object
+		 */
 		namedCaptureRegex: function (regex) {
 			var groupMap = {};
 			var groupIdx = 0;
@@ -3827,6 +3860,7 @@ Scoped.define("module:Time", [], function () {
 
 });
 
+
 Scoped.define("module:TimeFormat", ["module:Time", "module:Strings", "module:Objs"], function (Time, Strings, Objs) {
 	return {
 		
@@ -4264,15 +4298,16 @@ Scoped.define("module:Trees.TreeQueryObject", ["module:Class", "module:Events.Ev
 });
 
 Scoped.define("module:Types", function () {
-	/** Type-Testing and Type-Parsing
+	/**
+	 * Type-Testing and Type-Parsing
+	 * 
 	 * @module BetaJS.Types
 	 */
 	return {
 		/**
 		 * Returns whether argument is an object
 		 * 
-		 * @param x
-		 *            argument
+		 * @param x argument
 		 * @return true if x is an object
 		 */
 		is_object : function(x) {
@@ -4282,8 +4317,7 @@ Scoped.define("module:Types", function () {
 		/**
 		 * Returns whether argument is an array
 		 * 
-		 * @param x
-		 *            argument
+		 * @param x argument
 		 * @return true if x is an array
 		 */
 		is_array : function(x) {
@@ -4294,8 +4328,7 @@ Scoped.define("module:Types", function () {
 		 * Returns whether argument is undefined (which is different from being
 		 * null)
 		 * 
-		 * @param x
-		 *            argument
+		 * @param x argument
 		 * @return true if x is undefined
 		 */
 		is_undefined : function(x) {
@@ -4306,8 +4339,7 @@ Scoped.define("module:Types", function () {
 		 * Returns whether argument is null (which is different from being
 		 * undefined)
 		 * 
-		 * @param x
-		 *            argument
+		 * @param x argument
 		 * @return true if x is null
 		 */
 		is_null : function(x) {
@@ -4317,8 +4349,7 @@ Scoped.define("module:Types", function () {
 		/**
 		 * Returns whether argument is undefined or null
 		 * 
-		 * @param x
-		 *            argument
+		 * @param x argument
 		 * @return true if x is undefined or null
 		 */
 		is_none : function(x) {
@@ -4328,8 +4359,7 @@ Scoped.define("module:Types", function () {
 		/**
 		 * Returns whether argument is defined (could be null)
 		 * 
-		 * @param x
-		 *            argument
+		 * @param x argument
 		 * @return true if x is defined
 		 */
 		is_defined : function(x) {
@@ -4340,8 +4370,7 @@ Scoped.define("module:Types", function () {
 		 * Returns whether argument is empty (undefined, null, an empty array or
 		 * an empty object)
 		 * 
-		 * @param x
-		 *            argument
+		 * @param x argument
 		 * @return true if x is empty
 		 */
 		is_empty : function(x) {
@@ -4360,8 +4389,7 @@ Scoped.define("module:Types", function () {
 		/**
 		 * Returns whether argument is a string
 		 * 
-		 * @param x
-		 *            argument
+		 * @param x argument
 		 * @return true if x is a a string
 		 */
 		is_string : function(x) {
@@ -4371,8 +4399,7 @@ Scoped.define("module:Types", function () {
 		/**
 		 * Returns whether argument is a function
 		 * 
-		 * @param x
-		 *            argument
+		 * @param x argument
 		 * @return true if x is a function
 		 */
 		is_function : function(x) {
@@ -4382,8 +4409,7 @@ Scoped.define("module:Types", function () {
 		/**
 		 * Returns whether argument is boolean
 		 * 
-		 * @param x
-		 *            argument
+		 * @param x argument
 		 * @return true if x is boolean
 		 */
 		is_boolean : function(x) {
@@ -4397,10 +4423,8 @@ Scoped.define("module:Types", function () {
 		 * arrays, we compare them recursively by their components. Otherwise,
 		 * we use localeCompare which compares strings.
 		 * 
-		 * @param x
-		 *            left value
-		 * @param y
-		 *            right value
+		 * @param x left value
+		 * @param y right value
 		 * @return 1 if x > y, -1 if x < y and 0 if x == y
 		 */
 		compare : function(x, y) {
@@ -4423,8 +4447,7 @@ Scoped.define("module:Types", function () {
 		/**
 		 * Parses a boolean string
 		 * 
-		 * @param x
-		 *            boolean as a string
+		 * @param x boolean as a string
 		 * @return boolean value
 		 */
 		parseBool : function(x) {
@@ -4440,8 +4463,7 @@ Scoped.define("module:Types", function () {
 		/**
 		 * Returns the type of a given expression
 		 * 
-		 * @param x
-		 *            expression
+		 * @param x expression
 		 * @return type string
 		 */
 		type_of : function(x) {
@@ -4450,6 +4472,13 @@ Scoped.define("module:Types", function () {
 			return typeof x;
 		},
 
+		/**
+		 * Parses a value given a specific type.
+		 * 
+		 * @param x value to be parsed
+		 * @param {string} type the specific type to be parsed (accepts: bool, boolean, int, integer, date, time, datetime, float, double)
+		 * @return parsed value
+		 */
 		parseType : function(x, type) {
 			if (!this.is_string(x))
 				return x;
@@ -4465,6 +4494,12 @@ Scoped.define("module:Types", function () {
 			return x;
 		},
 		
+		/**
+		 * Returns the specific type of a JavaScript object
+		 * 
+		 * @param {object} obj an object instance
+		 * @return {string} the object type
+		 */
 		objectType: function (obj) {
 			if (!this.is_object(obj))
 				return null;
@@ -4519,6 +4554,70 @@ Scoped.define("module:Channels.ReceiverSender", ["module:Channels.Sender"], func
 	});
 });
 
+
+Scoped.define("module:Classes.AbstractGarbageCollector", [
+    "module:Class"    
+], function (Class, scoped) {
+	return Class.extend({scoped: scoped}, function (inherited) {
+		return {
+			
+			constructor: function () {
+				inherited.constructor.call(this);
+				this.__classes = {};
+				this.__queue = [];
+			},
+			
+			queue: function (obj) {
+				if (!obj || obj.destroyed() || this.__classes[obj.cid()])
+					return;
+				this.__queue.push(obj);
+				this.__classes[obj.cid()] = obj;
+			},
+			
+			hasNext: function () {
+				return this.__queue.length > 0;
+			},
+			
+			destroyNext: function () {
+				var obj = this.__queue.shift();
+				delete this.__classes[obj.cid()];
+				if (!obj.destroyed())
+					obj.destroy();
+				delete obj.__gc;
+			}
+
+		};
+	});
+});
+
+
+Scoped.define("module:Classes.DefaultGarbageCollector", [
+    "module:Classes.AbstractGarbageCollector",
+    "module:Timers.Timer",
+    "module:Time"
+], function (Class, Timer, Time, scoped) {
+	return Class.extend({scoped: scoped}, function (inherited) {
+		return {
+			
+			constructor: function (delay, duration) {
+				inherited.constructor.call(this);
+				this.__duration = duration || 5;
+				this.auto_destroy(new Timer({
+					fire: this.__fire,
+					context: this,
+					delay: delay || 100
+				}));
+			},
+			
+			__fire: function () {
+				var t = Time.now() + this.__duration;
+				while (Time.now() < t && this.hasNext())
+					this.destroyNext();
+			}		
+
+		};
+	});
+});
 
 Scoped.define("module:Channels.SenderMultiplexer", ["module:Channels.Sender"], function (Sender, scoped) {
 	return Sender.extend({scoped: scoped}, function (inherited) {
@@ -4922,6 +5021,203 @@ Scoped.define("module:Classes.LocaleAggregator", [
         };
     }]);
 });
+Scoped.define("module:Classes.ClassRegistry", [
+    "module:Class",
+    "module:Types",
+    "module:Functions",
+    "module:Objs"
+], function (Class, Types, Functions, Objs, scoped) {
+	return Class.extend({scoped: scoped}, function (inherited) {
+		return {
+
+			constructor: function (classes, lowercase) {
+				inherited.constructor.call(this);
+				this._classes = Types.is_array(classes) ? classes : [classes || {}];
+				this._lowercase = lowercase;
+			},
+			
+			_sanitize: function (key) {
+				return this._lowercase ? key.toLowerCase() : key;
+			},
+			
+			register: function (key, cls) {
+				this._classes[this._classes.length - 1][this._sanitize(key)] = cls;
+			},
+			
+			get: function (key) {
+				if (!Types.is_string(key))
+					return key;
+				key = this._sanitize(key);
+				for (var i = this._classes.length - 1; i >= 0; --i)
+					if (key in this._classes[i])
+						return this._classes[i][key];
+				return null;
+			},
+			
+			create: function (key) {
+				var cons = Functions.newClassFunc(this.get(key));
+				return cons.apply(this, Functions.getArguments(arguments, 1));
+			},
+			
+			classes: function () {
+				var result = {};
+				Objs.iter(this._classes, function (classes) {
+					result = Objs.extend(result, classes);
+				});
+				return result;
+			}
+			
+		};
+	});
+});
+
+
+Scoped.define("module:Classes.ContextRegistry", [
+    "module:Class",
+    "module:Ids",
+    "module:Types",
+    "module:Objs",
+    "module:Iterators.MappedIterator",
+    "module:Iterators.ObjectValuesIterator"
+], function (Class, Ids, Types, Objs, MappedIterator, ObjectValuesIterator, scoped) {
+	return Class.extend({scoped: scoped}, function (inherited) {
+		return {
+			
+			constructor: function (serializer, serializerContext) {
+				inherited.constructor.apply(this);
+				this.__data = {};
+				this.__contexts = {};
+				this.__serializer = serializer || this.__defaultSerializer;
+				this.__serializerContext = serializerContext || this;
+			},
+			
+			__defaultSerializer: function (data) {
+				return Types.is_object(data) ? Ids.objectId(data) : data;
+			},
+			
+			_serializeContext: function (ctx) {
+				return ctx ? Ids.objectId(ctx) : null;
+			},
+			
+			_serializeData: function (data) {
+				return this.__serializer.call(this.__serializerContext, data);
+			},
+			
+			get: function (data) {
+				var serializedData = this._serializeData(data);
+				return this.__data[serializedData];
+			},
+			
+			/*
+			 * Registers data with respect to an optional context
+			 *
+			 * @param data - data (mandatory)
+			 * @param context - context (optional)
+			 * 
+			 * @return data if data was not registered before, null otherwise
+			 * 
+			 */
+			register: function (data, context) {
+				var serializedData = this._serializeData(data);
+				var serializedCtx = this._serializeContext(context);
+				var result = false;
+				if (!(serializedData in this.__data)) {
+					this.__data[serializedData] = {
+						data: data,
+						contexts: {}
+					};
+					result = true;
+				}
+				if (!(serializedCtx in this.__contexts)) {
+					this.__contexts[serializedCtx] = {
+						context: context,
+						datas: {}
+					};
+				}
+				this.__data[serializedData].contexts[serializedCtx] = true;
+				this.__contexts[serializedCtx].datas[serializedData] = true;
+				return result ? this.__data[serializedData].data : null;
+			},
+			
+			/*
+			 * Unregisters data with respect to a context.
+			 * If no data is given, all data with respect to the context is unregistered.
+			 * If no context is given, all context with respect to the data are unregistered.
+			 * If nothing is given, everything is unregistered.
+			 * 
+			 * @param data - data (optional)
+			 * @param context - context (optional)
+			 * 
+			 * @result unregistered data in an array
+			 */
+			
+			unregister: function (data, context) {
+				var result = [];
+				if (data) {
+					var serializedData = this.__serializer.call(this.__serializerContext, data);
+					if (this.__data[serializedData]) {
+						if (context) {
+							var serializedCtx = this._serializeContext(context);
+							if (this.__contexts[serializedCtx]) {
+								delete this.__contexts[serializedCtx].datas[serializedData];
+								if (Types.is_empty(this.__contexts[serializedCtx].datas))
+									delete this.__contexts[serializedCtx];
+							}
+							delete this.__data[serializedData].contexts[serializedCtx];
+							if (Types.is_empty(this.__data[serializedData].contexts)) {
+								result.push(this.__data[serializedData].data);
+								delete this.__data[serializedData];
+							}
+						} else {
+							Objs.iter(this.__data[serializedData].contexts, function (dummy, serializedCtx) {
+								if (this.__contexts[serializedCtx]) {
+									delete this.__contexts[serializedCtx].datas[serializedData];
+									if (Types.is_empty(this.__contexts[serializedCtx].datas))
+										delete this.__contexts[serializedCtx];
+								}
+							}, this);
+							result.push(this.__data[serializedData].data);
+							delete this.__data[serializedData];
+						}
+					}
+				} else if (context) {
+					var serializedCtx2 = this._serializeContext(context);
+					if (this.__contexts[serializedCtx2]) {
+						Objs.iter(this.__contexts[serializedCtx2].datas, function (dummy, serializedData) {
+							if (this.__data[serializedData]) {
+								delete this.__data[serializedData].contexts[serializedCtx2];
+								if (Types.is_empty(this.__data[serializedData].contexts)) {
+									result.push(this.__data[serializedData].data);
+									delete this.__data[serializedData];
+								}
+							}
+						}, this);
+						delete this.__contexts[serializedCtx2];
+					}
+				} else {
+					Objs.iter(this.__data, function (data) {
+						result.push(data.data);
+					}, this);
+					this.__data = {};
+					this.__contexts = [];
+				}
+				return result;
+			},
+			
+			customIterator: function () {
+				return new ObjectValuesIterator(this.__data);
+			},
+			
+			iterator: function () {
+				return new MappedIterator(this.customIterator(), function (item) {
+					return item.data;
+				});
+			}
+
+		};
+	});
+});
+
 Scoped.define("module:Classes.Taggable", [
     "module:Objs"
 ], function (Objs) {
@@ -5210,21 +5506,28 @@ Scoped.define("module:Collections.Collection", [
 				return ident;
 			},
 			
+			replace_object: function (oriObject) {
+				var is_prop = Class.is_class_instance(oriObject);
+				var object = is_prop ? oriObject : new Properties(oriObject);
+				if (this.exists(object)) {
+					var existing = this.getById(this.get_ident(object));
+					if (is_prop) {
+						this.remove(existing);
+						this.add(object);
+					} else {
+						existing.setAll(oriObject);
+						return existing;
+					}
+				} else
+					this.add(object);
+				return object;
+			},
+			
 			replace_objects: function (objects, keep_others) {
 				var ids = {};
 				Objs.iter(objects, function (oriObject) {
-					var is_prop = Class.is_class_instance(oriObject);
-					var object = is_prop ? oriObject : new Properties(oriObject);
+					var object = this.replace_object(oriObject);
 					ids[this.get_ident(object)] = true;
-					if (this.exists(object)) {
-						var existing = this.getById(this.get_ident(object));
-						if (is_prop) {
-							this.remove(existing);
-							this.add(object);
-						} else
-							existing.setAll(oriObject);
-					} else
-						this.add(object);
 				}, this);
 				if (!keep_others) {
 					var iterator = this.iterator();
@@ -6028,6 +6331,7 @@ Scoped.define("module:Promise", [
 });
 
 
+
 Scoped.define("module:Timers.Timer", [
     "module:Class",
     "module:Objs",
@@ -6044,7 +6348,7 @@ Scoped.define("module:Timers.Timer", [
 			 * bool start (optional, default true): should it start immediately
 			 * bool real_time (default false)
 			 * int duration (optional, default null)
-			 * int fire_max (optiona, default null)
+			 * int fire_max (optional, default null)
 			 * 
 			 */
 			constructor: function (options) {
@@ -6182,6 +6486,7 @@ Scoped.define("module:Iterators.ArrayIterator", ["module:Iterators.Iterator"], f
 				this.__i++;
 				return ret;
 			}
+			
 		};
 	}, {
 
@@ -6546,7 +6851,12 @@ Scoped.extend("module:Iterators", ["module:Types", "module:Iterators.Iterator", 
 });
 
 
-Scoped.define("module:Iterators.Iterator", ["module:Class", "module:Functions"], function (Class, Functions, scoped) {
+Scoped.define("module:Iterators.Iterator", [
+    "module:Class",
+    "module:Functions",
+    "module:Async",
+    "module:Promise"
+], function (Class, Functions, Async, Promise, scoped) {
 	return Class.extend({scoped: scoped}, {
 		
 		hasNext: function () {
@@ -6577,9 +6887,25 @@ Scoped.define("module:Iterators.Iterator", ["module:Class", "module:Functions"],
 			return arr;
 		},
 
-		iterate: function (callback, context) {
-			while (this.hasNext())
-				callback.call(context || this, this.next());
+		iterate: function (cb, ctx) {
+			while (this.hasNext()) {
+				var result = cb.call(ctx || this, this.next());
+				if (result === false)
+					return;
+			}
+		},
+		
+		asyncIterate: function (cb, ctx, time) {
+			if (!this.hasNext())
+				return Promise.value(true);
+			var result = cb.call(ctx || this, this.next());
+			if (result === false)
+				return Promise.value(true);
+			var promise = Promise.create();
+			Async.eventually(function () {
+				this.asyncIterate(cb, ctx, time).forwardCallback(promise);
+			}, this, time);
+			return promise;
 		}
 
 	});
@@ -7292,6 +7618,8 @@ Scoped.define("module:States.CompetingHost", ["module:States.Host"], function (H
 			},
 
 			_can_transition_to: function (state) {
+				if (!inherited._can_transition_to.call(this, state))
+					return false;
 				if (!this._composite)
 					return true;
 				var others = this._composite.other_hosts(this);
@@ -7428,9 +7756,9 @@ Scoped.define("module:Router.Router", [ "module:Class",
 	    function(inherited) {
 	    	return {
 
-	    		constructor : function() {
+	    		constructor : function(routes) {
 	    			inherited.constructor.call(this);
-	    			this._routeParser = new RouteParser();
+	    			this._routeParser = new RouteParser(routes);
 	    			this._current = null;
 	    		},
 
@@ -7686,6 +8014,7 @@ Scoped.define("module:States.Host", [
 				options = options || {};
 				this._stateRegistry = options.stateRegistry;
 				this._baseState = options.baseState;
+				this._enabled = true;
 			},
 
 			initialize: function (initial_state, initial_args) {
@@ -7718,6 +8047,14 @@ Scoped.define("module:States.Host", [
 			destroy: function () {
 				this.finalize();
 				inherited.destroy.call(this);
+			},
+			
+			enable: function () {
+				this._enabled = true;
+			},
+			
+			disable: function () {
+				this._enabled = false;
 			},
 
 			state: function () {
@@ -7764,7 +8101,7 @@ Scoped.define("module:States.Host", [
 			},
 
 			_can_transition_to: function (state) {
-				return true;
+				return this._enabled;
 			},
 
 			_stateEvent: function (state, s) {
@@ -7806,6 +8143,7 @@ Scoped.define("module:States.State", [
 			_locals: [],
 			_persistents: [],
 			_defaults: {},
+			_clonedDefaults: {},
 
 			_white_list: null,
 			
@@ -7820,7 +8158,7 @@ Scoped.define("module:States.State", [
 				inherited.constructor.call(this);
 				this.host = host;
 				this.transitionals = transitionals;
-				args = Objs.extend(Objs.clone(this._defaults || {}, 1), args);
+				args = Objs.extend(Objs.extend(Objs.clone(this._clonedDefaults || {}, -1), Objs.clone(this._defaults || {}, 1)), args);
 				this._locals = Types.is_function(this._locals) ? this._locals() : this._locals;
 				var used = {};
 				for (var i = 0; i < this._locals.length; ++i) {

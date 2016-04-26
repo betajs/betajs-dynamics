@@ -148,6 +148,11 @@ Scoped.define("module:Handlers.Attr", [
 				}
 			},
 			
+			prepareTagHandler: function (createArguments) {
+				if (this._partial)
+					this._partial.prepareTagHandler(createArguments);
+			},
+			
 			unbindTagHandler: function (handler) {
 				if (this._partial) {
 					this._partial.unbindTagHandler(handler);

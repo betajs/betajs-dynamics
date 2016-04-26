@@ -259,6 +259,8 @@ Scoped.define("module:Handlers.Partial", [
 			
 			unbindTagHandler: function (handler) {},
 			
+			prepareTagHandler: function (createArguments) {},
+			
 			_change: function (value, oldValue) {},
 			
 			_activate: function () {},

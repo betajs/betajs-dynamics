@@ -97,8 +97,10 @@ Scoped.define("module:Handlers.HandlerMixin", [
 				this.__element.append(compiled);
 			} else if (parentElement) {
 				this.__activeElement = $(parentElement);
+				this.__activeElement.children().each(function (child) {
+					$(child).remove();
+				});
 				this.__element = compiled;
-				this.__activeElement.html("");
 				this.__activeElement.append(compiled);
 			} else {
 				this.__element = compiled;

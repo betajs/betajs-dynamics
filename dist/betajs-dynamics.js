@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.47 - 2016-05-10
+betajs-dynamics - v0.0.48 - 2016-05-10
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -709,7 +709,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.47 - 2016-05-10
+betajs-dynamics - v0.0.48 - 2016-05-10
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -723,7 +723,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "241.1462880131408"
+    "version": "242.1462889528151"
 };
 });
 Scoped.assumeVersion('base:version', 496);
@@ -1152,9 +1152,10 @@ Scoped.define("module:Data.Scope", [
 	    "base:Ids",
 	    "base:Properties.Properties",
 	    "base:Collections.Collection",
+	    "base:Events.Events",
 	    "module:Data.ScopeManager",
 	    "module:Data.MultiScope"
-	], function (Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, ScopeManager, MultiScope, scoped) {
+	], function (Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, Events, ScopeManager, MultiScope, scoped) {
 	return Class.extend({scoped: scoped}, [EventsMixin, ListenMixin, ObjectIdMixin, function (inherited) {
 		return {
 				
@@ -1218,6 +1219,10 @@ Scoped.define("module:Data.Scope", [
 				}, this);
 				Objs.iter(options.events, function (value, key) {
 					this.on(key, value, this);
+				}, this);
+				Objs.iter(options.channels, function (value, key) {
+					var splt = Strings.splitFirst(key, ":");
+					this.listenOn(this.channel(splt.head), splt.tail, value, this);
 				}, this);
 			},
 			
@@ -1316,6 +1321,25 @@ Scoped.define("module:Data.Scope", [
 			
 			_eventChain: function () {
 				return this.parent();
+			},
+			
+			_channels: {},
+			__channelCache: {},
+			
+			registerChannel: function (s) {
+				this._channels[s] = this.auto_destroy(new Events());
+			},
+			
+			channel: function (s) {
+				if (!(s in this.__channelCache)) {
+					var result = null;
+					if (this._channels[s])
+						result = this._channels[s];
+					else if (this.__parent)
+						result = this.__parent.channel(s);
+					this.__channelCache[s] = result;
+				}
+				return this.__channelCache[s];
 			},
 			
 			root: function () {
@@ -1590,9 +1614,10 @@ Scoped.define("module:Dynamic", [
    	    "base:Strings",
    	    "base:Types",
    	    "base:Functions",
+   	    "base:Events.Events",
    	    "module:Registries",
    	    "jquery:"
-   	], function (Scope, HandlerMixin, Objs, Strings, Types, Functions, Registries, $, scoped) {
+   	], function (Scope, HandlerMixin, Objs, Strings, Types, Functions, Events, Registries, $, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -1633,6 +1658,7 @@ Scoped.define("module:Dynamic", [
 					}
 				}
 				inherited.constructor.call(this, options);
+				this._channels.global = this.cls.__globalEvents;
 				if (options.tagName) {
 					this._tagName = options.tagName;
 					this.data("tagname", this._tagName);
@@ -1687,8 +1713,10 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose", "channels"
         ],
+        
+        __globalEvents: new Events(),
 		
 		canonicName: function () {
 			return Strings.last_after(this.classname, ".").toLowerCase();

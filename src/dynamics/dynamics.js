@@ -5,9 +5,10 @@ Scoped.define("module:Dynamic", [
    	    "base:Strings",
    	    "base:Types",
    	    "base:Functions",
+   	    "base:Events.Events",
    	    "module:Registries",
    	    "jquery:"
-   	], function (Scope, HandlerMixin, Objs, Strings, Types, Functions, Registries, $, scoped) {
+   	], function (Scope, HandlerMixin, Objs, Strings, Types, Functions, Events, Registries, $, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -48,6 +49,7 @@ Scoped.define("module:Dynamic", [
 					}
 				}
 				inherited.constructor.call(this, options);
+				this._channels.global = this.cls.__globalEvents;
 				if (options.tagName) {
 					this._tagName = options.tagName;
 					this.data("tagname", this._tagName);
@@ -102,8 +104,10 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose", "channels"
         ],
+        
+        __globalEvents: new Events(),
 		
 		canonicName: function () {
 			return Strings.last_after(this.classname, ".").toLowerCase();

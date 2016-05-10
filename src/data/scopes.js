@@ -71,9 +71,10 @@ Scoped.define("module:Data.Scope", [
 	    "base:Ids",
 	    "base:Properties.Properties",
 	    "base:Collections.Collection",
+	    "base:Events.Events",
 	    "module:Data.ScopeManager",
 	    "module:Data.MultiScope"
-	], function (Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, ScopeManager, MultiScope, scoped) {
+	], function (Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, Events, ScopeManager, MultiScope, scoped) {
 	return Class.extend({scoped: scoped}, [EventsMixin, ListenMixin, ObjectIdMixin, function (inherited) {
 		return {
 				
@@ -137,6 +138,10 @@ Scoped.define("module:Data.Scope", [
 				}, this);
 				Objs.iter(options.events, function (value, key) {
 					this.on(key, value, this);
+				}, this);
+				Objs.iter(options.channels, function (value, key) {
+					var splt = Strings.splitFirst(key, ":");
+					this.listenOn(this.channel(splt.head), splt.tail, value, this);
 				}, this);
 			},
 			
@@ -235,6 +240,25 @@ Scoped.define("module:Data.Scope", [
 			
 			_eventChain: function () {
 				return this.parent();
+			},
+			
+			_channels: {},
+			__channelCache: {},
+			
+			registerChannel: function (s) {
+				this._channels[s] = this.auto_destroy(new Events());
+			},
+			
+			channel: function (s) {
+				if (!(s in this.__channelCache)) {
+					var result = null;
+					if (this._channels[s])
+						result = this._channels[s];
+					else if (this.__parent)
+						result = this.__parent.channel(s);
+					this.__channelCache[s] = result;
+				}
+				return this.__channelCache[s];
 			},
 			
 			root: function () {

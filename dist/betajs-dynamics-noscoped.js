@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "242.1462889528151"
+    "version": "243.1462928960148"
 };
 });
 Scoped.assumeVersion('base:version', 496);
@@ -464,6 +464,8 @@ Scoped.define("module:Data.Scope", [
 				}, options);
 				if (options.bindings)
 					options.bind = Objs.extend(options.bind, options.bindings);
+				this._channels = {};
+				this.__channelCache = {};				
 				var parent = options.parent;
 				this.__manager = parent ? parent.__manager : this._auto_destroy(new ScopeManager(this));
 				inherited.constructor.call(this);
@@ -512,7 +514,9 @@ Scoped.define("module:Data.Scope", [
 				}, this);
 				Objs.iter(options.channels, function (value, key) {
 					var splt = Strings.splitFirst(key, ":");
-					this.listenOn(this.channel(splt.head), splt.tail, value, this);
+					var channel = this.channel(splt.head);
+					if (channel)
+						this.listenOn(this.channel(splt.head), splt.tail, value, this);
 				}, this);
 			},
 			
@@ -612,9 +616,6 @@ Scoped.define("module:Data.Scope", [
 			_eventChain: function () {
 				return this.parent();
 			},
-			
-			_channels: {},
-			__channelCache: {},
 			
 			registerChannel: function (s) {
 				this._channels[s] = this.auto_destroy(new Events());

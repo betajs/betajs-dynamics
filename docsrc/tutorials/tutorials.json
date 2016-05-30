@@ -38,6 +38,9 @@
       },
       "scopes": {
         "title": "Accessing Dynamics"
+      },
+      "eventchannels": {
+        "title": "Event Channels"
       }
     }
   },

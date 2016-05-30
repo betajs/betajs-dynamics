@@ -19,6 +19,7 @@
         	
             BetaJS.Dynamics.Dynamic.extend(null, {
             	template: "<ba-middle></ba-middle>",            	
+            	registerchannels: ["middle"],
                	channels: {
                		"global:test": function () {
                			log.push("outer:global:test");
@@ -35,17 +36,13 @@
             }).register("ba-outer");
             BetaJS.Dynamics.Dynamic.extend(null, {
             	template: "<ba-inner></ba-inner>",
+            	registerchannels: ["middle"],
                	channels: {
                		"global:test": function () {
                			log.push("middle:global:test");
                		},
                		"middle:test": function () {
                			log.push("middle:middle:test");
-               		}
-               	},
-               	_notifications: {
-               		construct: function () {
-	               		this.registerChannel("middle");
                		}
                	}
             }).register("ba-middle");

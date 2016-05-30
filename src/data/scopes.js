@@ -89,7 +89,9 @@ Scoped.define("module:Data.Scope", [
 					extendables: [],
 					collections: {},
 					computed: {},
-					events: {}
+					events: {},
+					channels: {},
+					registerchannels: []
 				}, options);
 				if (options.bindings)
 					options.bind = Objs.extend(options.bind, options.bindings);
@@ -141,6 +143,7 @@ Scoped.define("module:Data.Scope", [
 				Objs.iter(options.events, function (value, key) {
 					this.on(key, value, this);
 				}, this);
+				Objs.iter(options.registerchannels, this.registerChannel, this);
 				Objs.iter(options.channels, function (value, key) {
 					var splt = Strings.splitFirst(key, ":");
 					var channel = this.channel(splt.head);

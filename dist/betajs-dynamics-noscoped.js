@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.48 - 2016-05-10
+betajs-dynamics - v0.0.49 - 2016-05-30
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "243.1462928960148"
+    "version": "244.1464632689333"
 };
 });
 Scoped.assumeVersion('base:version', 496);
@@ -460,7 +460,9 @@ Scoped.define("module:Data.Scope", [
 					extendables: [],
 					collections: {},
 					computed: {},
-					events: {}
+					events: {},
+					channels: {},
+					registerchannels: []
 				}, options);
 				if (options.bindings)
 					options.bind = Objs.extend(options.bind, options.bindings);
@@ -512,6 +514,7 @@ Scoped.define("module:Data.Scope", [
 				Objs.iter(options.events, function (value, key) {
 					this.on(key, value, this);
 				}, this);
+				Objs.iter(options.registerchannels, this.registerChannel, this);
 				Objs.iter(options.channels, function (value, key) {
 					var splt = Strings.splitFirst(key, ":");
 					var channel = this.channel(splt.head);
@@ -1004,7 +1007,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose", "channels"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose", "channels", "registerchannels"
         ],
         
         __globalEvents: new Events(),

@@ -40,13 +40,10 @@ Scoped.define("module:Handlers.Attr", [
 			},
 			
 			__inputVal: function (el, value) {
-				if (arguments.length > 1) {
-					if (el.type == "checkbox")
-						el.checked = value;
-					else
-						el.value = value;
-				}
-				return el.type == "checkbox" ? el.checked : el.value;
+				var valueKey = el.type === 'checkbox' || el.type === 'radio' ? 'checked' : 'value';
+				if (arguments.length > 1) 
+					el[valueKey] = value;
+				return el[valueKey];
 			},
 			
 			updateElement: function (element, attribute) {

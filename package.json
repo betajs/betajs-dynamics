@@ -40,6 +40,7 @@
         "grunt-template": "",
         "grunt-betajs-docs-compile": "",
         "jsdom": "",
+        "betajs-scoped": "",
         "betajs-compile": "betajs/betajs-compile"
     },
     "repository": {

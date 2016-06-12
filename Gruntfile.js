@@ -30,7 +30,7 @@ module.exports = function(grunt) {
     .closureTask(null, ["./vendors/scoped.js", "./vendors/beta-noscoped.js",  "./vendors/betajs-browser-noscoped.js", "./dist/betajs-dynamics-noscoped.js"], null, { jquery: true })
     .browserstackTask(null, 'tests/tests.html', {desktop: true, mobile: false})
     .browserstackTask(null, 'tests/tests.html', {desktop: false, mobile: true})
-    .lintTask(null, ['./src/**/*.js', './dist/' + dist + '-noscoped.js', './dist/' + dist + '.js', './Gruntfile.js', './tests/**/*.js'])
+    .lintTask(null, ['./src/**/*.js', './dist/' + dist + '-noscoped.js', './dist/' + dist + '.js', './Gruntfile.js', './tests/**/*.js', './benchmarks/**/*.js'])
     
     /* External Configurations */
     .codeclimateTask()

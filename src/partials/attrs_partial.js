@@ -1,5 +1,9 @@
 
-Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.AttrsPartial", [
+    "module:Handlers.Partial",
+    "base:Objs",
+    "base:Class"
+], function (Partial, Objs, Class, scoped) {
   /**
    * @name ba-attrs
    *
@@ -24,7 +28,8 @@ Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], funct
 		},
 		
 		bindTagHandler: function (handler) {
-			this._apply(this._value);
+			for (var key in this._value)
+				handler.setArgumentAttr(key, Class.is_pure_json(this._value[key]) ? Objs.clone(this._value[key], 1) : this._value[key]);
 		}
 
  	});

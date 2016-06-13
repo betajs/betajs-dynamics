@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.50 - 2016-05-31
+betajs-dynamics - v0.0.51 - 2016-06-13
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "245.1464717629369"
+    "version": "248.1465835866648"
 };
 });
 Scoped.assumeVersion('base:version', 496);
@@ -1910,7 +1910,11 @@ Scoped.define("module:Partials.AssocPartial", ["module:Handlers.Partial"], funct
 });
 
 
-Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.AttrsPartial", [
+    "module:Handlers.Partial",
+    "base:Objs",
+    "base:Class"
+], function (Partial, Objs, Class, scoped) {
   /**
    * @name ba-attrs
    *
@@ -1935,7 +1939,8 @@ Scoped.define("module:Partials.AttrsPartial", ["module:Handlers.Partial"], funct
 		},
 		
 		bindTagHandler: function (handler) {
-			this._apply(this._value);
+			for (var key in this._value)
+				handler.setArgumentAttr(key, Class.is_pure_json(this._value[key]) ? Objs.clone(this._value[key], 1) : this._value[key]);
 		}
 
  	});

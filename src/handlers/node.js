@@ -69,8 +69,12 @@ Scoped.define("module:Handlers.Node", [
 					attr.destroy();
 				});
 				this._removeChildren();
-				if (this._tagHandler && !this._tagHandler.destroyed())
-					this._tagHandler.destroy();
+				if (this._tagHandler && !this._tagHandler.destroyed()) {
+					if (this._tagHandler.cacheable)
+						Registries.handlerCache.suspend(this._tagHandler, this._$element);
+					else
+						this._tagHandler.weakDestroy();
+				}
 				if (this._dyn)
 					this.properties().off(null, null, this._dyn);
 				if (this._parent)
@@ -129,7 +133,10 @@ Scoped.define("module:Handlers.Node", [
 						attr.unbindTagHandler(this._tagHandler);
 					}, this);
 					this.off(null, null, this._tagHandler);
-					this._tagHandler.weakDestroy();
+					if (this._tagHandler.cacheable)
+						Registries.handlerCache.suspend(this._tagHandler, this._$element);
+					else
+						this._tagHandler.weakDestroy();
 					this._tagHandler = null;
 				}
 			},
@@ -159,12 +166,16 @@ Scoped.define("module:Handlers.Node", [
 					parentElement: this._$element.get(0),
 					parentHandler: this._handler,
 					autobind: false,
+					cacheable: false,
 					tagName: tagv					
 				};
 				Objs.iter(this._attrs, function (attr) {
 					attr.prepareTagHandler(createArguments);
 				}, this);
-				this._tagHandler = Registries.handler.create(tagv, createArguments);
+				if (createArguments.cacheable)
+					this._tagHandler = Registries.handlerCache.resume(tagv, this._$element, this._handler);
+				if (!this._tagHandler)
+					this._tagHandler = Registries.handler.create(tagv, createArguments);
 				//this._$element.append(this._tagHandler.element());
 				Objs.iter(this._attrs, function (attr) {
 					attr.bindTagHandler(this._tagHandler);

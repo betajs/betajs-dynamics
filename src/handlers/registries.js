@@ -30,6 +30,34 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry", "jquery:"], fu
 			try {
 				console.log(s);
 			} catch (e) {}
+		},
+		
+		handlerCache: {
+			
+			cache: {},
+			
+			suspend: function (handler, element) {
+				var name = handler.data("tagname");
+				this.cache[name] = this.cache[name] || [];
+				this.cache[name].push({
+					handler: handler,
+					elements: element.children()
+				});
+				element.html("");
+			},
+			
+			resume: function (name, element, parentHandler) {
+				if (!this.cache[name] || this.cache[name].length === 0)
+					return null;
+				var record = this.cache[name].shift();
+				element.html(record.elements);
+				record.handler._handlerInitialize({
+					parentHandler: parentHandler,
+					parentElement: element
+				});
+				return record.handler;
+			} 
+			
 		}
 	
 	};

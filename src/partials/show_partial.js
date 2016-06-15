@@ -21,15 +21,18 @@ Scoped.define("module:Partials.ShowPartial", ["module:Handlers.Partial"], functi
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
+ 				this.__oldDisplay = null;
  				if (!value)
  					node._$element.hide();
  			},
  			
  			_apply: function (value) {
- 				if (value)
- 					this._node._$element.show();
- 				else
- 					this._node._$element.hide();
+ 				if (value) {
+ 					this._node._$element.css("display", this.__oldDisplay && this.__oldDisplay !== "none" ? this.__oldDisplay : "");
+ 				} else {
+ 					this.__oldDisplay = this._node._$element.css("display");
+ 					this._node._$element.css("display", "none");
+ 				}
  			}
  		
  		};

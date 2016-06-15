@@ -18,6 +18,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 		},
 		
 		__handlerConstruct: function () {
+			this.__activated = false;
 			this._mesh_extend = {
 				string: Functions.as_method(this.string, this)	
 			};
@@ -150,6 +151,9 @@ Scoped.define("module:Handlers.HandlerMixin", [
 		},
 		
 		activate: function () {
+			if (this.__activated)
+				return;
+			this.__activated = true;
 			/*
 			if (this.__deferActivate) {
 				this.__deferedActivate = true;

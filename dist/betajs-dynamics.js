@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.52 - 2016-06-14
+betajs-dynamics - v0.0.53 - 2016-06-15
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -709,7 +709,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.52 - 2016-06-14
+betajs-dynamics - v0.0.53 - 2016-06-15
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -723,7 +723,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "249.1465951254977"
+    "version": "250.1466011466927"
 };
 });
 Scoped.assumeVersion('base:version', 496);
@@ -3382,18 +3382,36 @@ Scoped.define("module:Partials.ShowPartial", ["module:Handlers.Partial"], functi
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
- 				this.__oldDisplay = null;
+ 				this.__oldDisplay = undefined;
+ 				this.__readOldDisplay = false;
+ 				this.__hidden = false;
  				if (!value)
- 					node._$element.hide();
+ 					this.__hide();
+ 			},
+ 			
+ 			__hide: function () {
+ 				if (this.__hidden)
+ 					return;
+ 				this.__hidden = true;
+ 				if (!this.__readOldDisplay) {
+ 					this.__oldDisplay = this._node._$element.get(0).style.display;
+ 					this.__readOldDisplay = true;
+ 				}
+ 				this._node._$element.get(0).style.display = "none";
+ 			},
+ 			
+ 			__show: function () {
+ 				if (!this.__hidden)
+ 					return;
+ 				this.__hidden = false;
+ 				this._node._$element.get(0).style.display = this.__oldDisplay && this.__oldDisplay !== 'none' ? this.__oldDisplay : "";
  			},
  			
  			_apply: function (value) {
- 				if (value) {
- 					this._node._$element.css("display", this.__oldDisplay && this.__oldDisplay !== "none" ? this.__oldDisplay : "");
- 				} else {
- 					this.__oldDisplay = this._node._$element.css("display");
- 					this._node._$element.css("display", "none");
- 				}
+ 				if (value)
+ 					this.__show();
+ 				else
+ 					this.__hide();
  			}
  		
  		};

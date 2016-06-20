@@ -35,15 +35,21 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry", "jquery:"], fu
 		handlerCache: {
 			
 			cache: {},
+			cacheDom: null,
 			
 			suspend: function (handler, element) {
+				if (!this.cacheDom)
+					this.cacheDom = $("<div ba-ignore style='display:none'></div>").appendTo(document.body);
+				var cacheDom = this.cacheDom;
 				var name = handler.data("tagname");
 				this.cache[name] = this.cache[name] || [];
 				this.cache[name].push({
 					handler: handler,
 					elements: element.children()
 				});
-				element.html("");
+				element.children().each(function () {
+					cacheDom.append(this);
+				});
 			},
 			
 			resume: function (name, element, parentHandler) {

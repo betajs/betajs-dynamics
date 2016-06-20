@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.53 - 2016-06-15
+betajs-dynamics - v0.0.54 - 2016-06-19
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,11 +13,11 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "250.1466011466927"
+    "version": "251.1466393258332"
 };
 });
-Scoped.assumeVersion('base:version', 496);
-Scoped.assumeVersion('browser:version', 76);
+Scoped.assumeVersion('base:version', 502);
+Scoped.assumeVersion('browser:version', 78);
 Scoped.define("module:Data.Mesh", [
 	    "base:Class",
 	    "base:Events.EventsMixin",
@@ -1904,15 +1904,21 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry", "jquery:"], fu
 		handlerCache: {
 			
 			cache: {},
+			cacheDom: null,
 			
 			suspend: function (handler, element) {
+				if (!this.cacheDom)
+					this.cacheDom = $("<div ba-ignore style='display:none'></div>").appendTo(document.body);
+				var cacheDom = this.cacheDom;
 				var name = handler.data("tagname");
 				this.cache[name] = this.cache[name] || [];
 				this.cache[name].push({
 					handler: handler,
 					elements: element.children()
 				});
-				element.html("");
+				element.children().each(function () {
+					cacheDom.append(this);
+				});
 			},
 			
 			resume: function (name, element, parentHandler) {

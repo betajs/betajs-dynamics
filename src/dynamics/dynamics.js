@@ -152,6 +152,12 @@ Scoped.define("module:Dynamic", [
 		},
 		
 		_extender: {
+			registerchannels: function (base, overwrite) {
+				return Objs.extend(Objs.clone(base, 1), overwrite);
+			},
+			channels: function (base, overwrite) {
+				return Objs.extend(Objs.clone(base, 1), overwrite);
+			},
 			attrs: function (base, overwrite) {
 				return Objs.extend(Objs.clone(base, 1), overwrite);
 			},

@@ -70,7 +70,7 @@ Scoped.define("module:Handlers.Node", [
 				});
 				this._removeChildren();
 				if (this._tagHandler && !this._tagHandler.destroyed()) {
-					if (this._tagHandler.cacheable)
+					if (this._tagHandler.cacheable && this._tagHandler.cls.cacheable)
 						Registries.handlerCache.suspend(this._tagHandler, this._$element);
 					else
 						this._tagHandler.weakDestroy();
@@ -133,7 +133,7 @@ Scoped.define("module:Handlers.Node", [
 						attr.unbindTagHandler(this._tagHandler);
 					}, this);
 					this.off(null, null, this._tagHandler);
-					if (this._tagHandler.cacheable)
+					if (this._tagHandler.cacheable && this._tagHandler.cls.cacheable)
 						Registries.handlerCache.suspend(this._tagHandler, this._$element);
 					else
 						this._tagHandler.weakDestroy();

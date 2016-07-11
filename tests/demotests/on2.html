@@ -12,10 +12,12 @@
 		
 		<script>
 			var clicked = 0;
+			var foundEvent = null;
 			BetaJS.Dynamics.Dynamic.extend(null, {
-				template: '<button onclick="{{clickme()}}">Clickme</button>',
+				template: '<button onclick="{{clickme(domEvent)}}">Clickme</button>',
 				functions: {
-					clickme : function () {
+					clickme : function (domEvent) {
+						foundEvent = domEvent;
 						clicked++;
 					}
 				}
@@ -34,6 +36,7 @@
 				root.find("button").click();
 			
 				QUnit.equal(clicked, 1);
+				QUnit.equal(!!foundEvent, true);
 			}
 		</script>
 	</body>

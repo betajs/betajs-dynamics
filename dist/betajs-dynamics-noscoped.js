@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.58 - 2016-07-12
+betajs-dynamics - v0.0.59 - 2016-07-13
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "256.1468377825079"
+    "version": "257.1468443097640"
 };
 });
 Scoped.assumeVersion('base:version', 502);
@@ -1119,7 +1119,7 @@ Scoped.define("module:Handlers.Attr", [
 			__inputVal: function (el, value) {
 				var valueKey = el.type === 'checkbox' || el.type === 'radio' ? 'checked' : 'value';
 				if (arguments.length > 1) 
-					el[valueKey] = value;
+					el[valueKey] = value === null || value === undefined ? "" : value;
 				return el[valueKey];
 			},
 			

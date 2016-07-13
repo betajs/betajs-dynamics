@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.56 - 2016-07-05
+betajs-dynamics - v0.0.58 - 2016-07-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -709,7 +709,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.56 - 2016-07-05
+betajs-dynamics - v0.0.58 - 2016-07-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -723,7 +723,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "254.1467726002025"
+    "version": "256.1468377825079"
 };
 });
 Scoped.assumeVersion('base:version', 502);
@@ -2973,7 +2973,7 @@ Scoped.define("module:Partials.InnerTemplatePartial",
 
 });
 
-Scoped.define("module:Partials.NoScope", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.NoScopePartial", ["module:Handlers.Partial"], function (Partial, scoped) {
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			 			 			
@@ -3360,7 +3360,7 @@ Scoped.define("module:Partials.ReturnPartial", ["module:Handlers.Partial"], func
 	return Cls;
 });
 
-Scoped.define("module:Partials.ShareScope", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.ShareScopePartial", ["module:Handlers.Partial"], function (Partial, scoped) {
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			

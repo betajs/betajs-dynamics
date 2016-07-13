@@ -1,4 +1,4 @@
-Scoped.define("module:Partials.ShareScope", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.ShareScopePartial", ["module:Handlers.Partial"], function (Partial, scoped) {
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
 			

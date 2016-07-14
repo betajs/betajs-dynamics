@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.59 - 2016-07-13
+betajs-dynamics - v0.0.60 - 2016-07-14
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "257.1468443097640"
+    "version": "258.1468523434684"
 };
 });
 Scoped.assumeVersion('base:version', 502);
@@ -1770,6 +1770,8 @@ Scoped.define("module:Handlers.Node", [
 				Objs.iter(this._attrs, function (attr) {
 					attr.prepareTagHandler(createArguments);
 				}, this);
+				if (createArguments.ignoreTagHandler)
+					return;
 				if (createArguments.cacheable)
 					this._tagHandler = Registries.handlerCache.resume(tagv, this._$element, this._handler);
 				if (!this._tagHandler)
@@ -2395,6 +2397,10 @@ Scoped.define("module:Partials.RepeatElementPartial", [
 				this._node._$element.after(element);
  				element["ba-handled"] = true;
  				return $(element);
+ 			},
+ 			
+ 			prepareTagHandler: function (createArguments) {
+ 				createArguments.ignoreTagHandler = true;
  			}
 
  		};

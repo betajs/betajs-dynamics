@@ -172,6 +172,8 @@ Scoped.define("module:Handlers.Node", [
 				Objs.iter(this._attrs, function (attr) {
 					attr.prepareTagHandler(createArguments);
 				}, this);
+				if (createArguments.ignoreTagHandler)
+					return;
 				if (createArguments.cacheable)
 					this._tagHandler = Registries.handlerCache.resume(tagv, this._$element, this._handler);
 				if (!this._tagHandler)

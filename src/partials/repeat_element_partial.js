@@ -53,6 +53,10 @@ Scoped.define("module:Partials.RepeatElementPartial", [
 				this._node._$element.after(element);
  				element["ba-handled"] = true;
  				return $(element);
+ 			},
+ 			
+ 			prepareTagHandler: function (createArguments) {
+ 				createArguments.ignoreTagHandler = true;
  			}
 
  		};

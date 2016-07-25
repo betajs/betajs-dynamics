@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.60 - 2016-07-14
+betajs-dynamics - v0.0.61 - 2016-07-24
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -709,7 +709,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.60 - 2016-07-14
+betajs-dynamics - v0.0.61 - 2016-07-24
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -723,7 +723,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "258.1468523434684"
+    "version": "259.1469413006683"
 };
 });
 Scoped.assumeVersion('base:version', 502);
@@ -3545,6 +3545,28 @@ Scoped.define("module:Partials.TemplateUrlPartial",
  	Cls.register("ba-template-url");
 	return Cls;
 
+});
+
+Scoped.define("module:Partials.WeakIfPartial", ["module:Partials.ShowPartial"], function (Partial, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+ 		return {
+			
+ 			constructor: function (node, args, value) {
+ 				inherited.constructor.apply(this, arguments);
+ 				if (!value)
+ 					node.deactivate();
+ 			},
+ 			
+ 			_apply: function (value) {
+ 				inherited._apply.call(this, value);
+ 				if (value)
+ 					this._node.activate();
+ 			}
+ 		
+ 		};
+ 	});
+ 	Cls.register("ba-weak-if");
+	return Cls;
 });
 
 }).call(Scoped);

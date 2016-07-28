@@ -1,0 +1,51 @@
+<html>
+<head>
+    
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="../../vendors/scoped.js"></script>
+    <script src="../../vendors/beta-noscoped.js"></script>
+    <script src="../../vendors/betajs-browser-noscoped.js"></script>
+    <script src="../../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+
+<div id="test">
+	<ba-subdyn ba-model.value="{{=value}}"></ba-subdyn>
+</div>
+
+<script>
+
+    var root = $("#test");
+
+	BetaJS.Dynamics.Dynamic.extend(null, {
+		template: "<div></div>",
+		attrs: {
+			model: {
+				value: "test"
+			}
+		}
+	}).register("ba-subdyn");
+
+	var dyn = new BetaJS.Dynamics.Dynamic({
+        element: root,
+        attrs: {
+        	value: "foobar"
+        }
+    });
+    dyn.activate();
+
+    function test() {
+    	var sub = dyn.scope(">").materialize();
+    	QUnit.equal(sub.length, 1);
+    	sub = sub[0];
+    	QUnit.equal(dyn.get("value"), "foobar");
+    	QUnit.equal(sub.getProp("model.value"), "foobar");
+    	sub.setProp("model.value", "xyz");
+    	QUnit.equal(dyn.get("value"), "xyz");
+    	QUnit.equal(sub.getProp("model.value"), "xyz");
+    }
+</script>
+
+</body>
+</html>

@@ -1,5 +1,20 @@
+Scoped.define("module:Exceptions.TagHandlerException", [
+	"base:Exceptions.Exception"
+], function (Exception, scoped) {
+	return Exception.extend({scoped: scoped}, function (inherited) {		
+		return {
+			
+			constructor: function (clsname, tag) {
+				inherited.constructor.call(this, clsname + " is expecting a tag handler, but no registered tag handler for " + tag + " has been found.");
+			}
+		
+		};
+	});
+});
+
 Scoped.define("module:Handlers.Attr", [
 	    "base:Class",
+	    "module:Exceptions.TagHandlerException",
 	    "module:Parser",
 	    "jquery:",
 	    "base:Types",
@@ -7,7 +22,7 @@ Scoped.define("module:Handlers.Attr", [
 	    "base:Strings",
 	    "module:Registries",
 	    "browser:Dom"
-	], function (Class, Parser, $, Types, Objs, Strings, Registries, Dom, scoped) {
+	], function (Class, TagHandlerException, Parser, $, Types, Objs, Strings, Registries, Dom, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, function (inherited) {
 		return {
@@ -162,7 +177,7 @@ Scoped.define("module:Handlers.Attr", [
 			activate: function () {
 				if (this._partial) {
 					if (this._partial.cls.meta.requires_tag_handler && !this._tagHandler) {
-						Registries.warning(this._partial.cls.classname + " is expecting a tag handler, but no registered tag handler for " + this._node.tag() + " has been found.");
+						Registries.throwException(new TagHandlerException(this._partial.cls.classname, this._node.tag()));
 						return;
 					}
 					this._partial.activate();

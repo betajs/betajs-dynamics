@@ -1,4 +1,8 @@
-Scoped.define("module:Registries", ["base:Classes.ClassRegistry", "jquery:"], function (ClassRegistry, $) {
+Scoped.define("module:Registries", [
+    "base:Classes.ClassRegistry",
+    "base:Exceptions.AsyncExceptionThrower",
+    "jquery:"
+], function (ClassRegistry, AsyncExceptionThrower, $) {
 	return {		
 		
 		handler: new ClassRegistry({}, true),
@@ -26,10 +30,12 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry", "jquery:"], fu
 			
 		},
 		
-		warning: function (s) {
+		throwException: function (e) {
 			try {
-				console.log(s);
-			} catch (e) {}
+				if (!this.exceptionThrower)
+					this.exceptionThrower = new AsyncExceptionThrower();
+				this.exceptionThrower.throwException(e);
+			} catch (ex) {}
 		},
 		
 		handlerCache: {

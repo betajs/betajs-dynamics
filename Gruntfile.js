@@ -14,8 +14,8 @@ module.exports = function(grunt) {
 		"browser": "global:BetaJS.Browser",
 		"jquery": "global:jQuery"
     }, {
-    	"base:version": 502,
-    	"browser:version": 78
+    	"base:version": 531,
+    	"browser:version": 79
     })	
     .concatTask('concat-scoped', ['vendors/scoped.js', 'dist/' + dist + '-noscoped.js'], 'dist/' + dist + '.js')
     .uglifyTask('uglify-noscoped', 'dist/' + dist + '-noscoped.js', 'dist/' + dist + '-noscoped.min.js')

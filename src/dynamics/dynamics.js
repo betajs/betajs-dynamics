@@ -1,6 +1,21 @@
+Scoped.define("module:Exceptions.DynamicsCallException", [
+    "base:Exceptions.Exception"
+], function (Exception, scoped) {
+	return Exception.extend({scoped: scoped}, function (inherited) {		
+		return {
+			
+			constructor: function (clsname, methodname, args, e) {
+				inherited.constructor.call(this, "Dynamics Exception in '" + clsname + "' calling method '" + methodname + "' : " + e);
+			}
+		
+		};
+	});
+});
+
 Scoped.define("module:Dynamic", [
    	    "module:Data.Scope",
    	    "module:Handlers.HandlerMixin",
+   	    "module:Exceptions.DynamicsCallException",
    	    "base:Objs",
    	    "base:Strings",
    	    "base:Types",
@@ -8,7 +23,7 @@ Scoped.define("module:Dynamic", [
    	    "base:Events.Events",
    	    "module:Registries",
    	    "jquery:"
-   	], function (Scope, HandlerMixin, Objs, Strings, Types, Functions, Events, Registries, $, scoped) {
+   	], function (Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Events, Registries, $, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -63,7 +78,7 @@ Scoped.define("module:Dynamic", [
 			},
 			
 			handle_call_exception: function (name, args, e) {
-				Registries.warning("Dynamics Exception in '" + this.cls.classname + "' calling method '" + name + "' : " + e);
+				Registries.throwException(new DynamicsCallException(this.cls.classname, name, args, e));
 				return null;
 			},
 			

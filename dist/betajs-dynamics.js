@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.61 - 2016-07-24
+betajs-dynamics - v0.0.61 - 2016-08-04
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -709,7 +709,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.61 - 2016-07-24
+betajs-dynamics - v0.0.61 - 2016-08-04
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -723,11 +723,11 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "259.1469413006683"
+    "version": "261.1470285674503"
 };
 });
-Scoped.assumeVersion('base:version', 502);
-Scoped.assumeVersion('browser:version', 78);
+Scoped.assumeVersion('base:version', 531);
+Scoped.assumeVersion('browser:version', 79);
 Scoped.define("module:Data.Mesh", [
 	    "base:Class",
 	    "base:Events.EventsMixin",
@@ -1611,9 +1611,24 @@ Scoped.define("module:DomObserver", [
 		
 	});
 });
+Scoped.define("module:Exceptions.DynamicsCallException", [
+    "base:Exceptions.Exception"
+], function (Exception, scoped) {
+	return Exception.extend({scoped: scoped}, function (inherited) {		
+		return {
+			
+			constructor: function (clsname, methodname, args, e) {
+				inherited.constructor.call(this, "Dynamics Exception in '" + clsname + "' calling method '" + methodname + "' : " + e);
+			}
+		
+		};
+	});
+});
+
 Scoped.define("module:Dynamic", [
    	    "module:Data.Scope",
    	    "module:Handlers.HandlerMixin",
+   	    "module:Exceptions.DynamicsCallException",
    	    "base:Objs",
    	    "base:Strings",
    	    "base:Types",
@@ -1621,7 +1636,7 @@ Scoped.define("module:Dynamic", [
    	    "base:Events.Events",
    	    "module:Registries",
    	    "jquery:"
-   	], function (Scope, HandlerMixin, Objs, Strings, Types, Functions, Events, Registries, $, scoped) {
+   	], function (Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Events, Registries, $, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -1676,7 +1691,7 @@ Scoped.define("module:Dynamic", [
 			},
 			
 			handle_call_exception: function (name, args, e) {
-				Registries.warning("Dynamics Exception in '" + this.cls.classname + "' calling method '" + name + "' : " + e);
+				Registries.throwException(new DynamicsCallException(this.cls.classname, name, args, e));
 				return null;
 			},
 			
@@ -1785,8 +1800,23 @@ Scoped.define("module:Dynamic", [
 	});
 	return Cls;
 });
+Scoped.define("module:Exceptions.TagHandlerException", [
+	"base:Exceptions.Exception"
+], function (Exception, scoped) {
+	return Exception.extend({scoped: scoped}, function (inherited) {		
+		return {
+			
+			constructor: function (clsname, tag) {
+				inherited.constructor.call(this, clsname + " is expecting a tag handler, but no registered tag handler for " + tag + " has been found.");
+			}
+		
+		};
+	});
+});
+
 Scoped.define("module:Handlers.Attr", [
 	    "base:Class",
+	    "module:Exceptions.TagHandlerException",
 	    "module:Parser",
 	    "jquery:",
 	    "base:Types",
@@ -1794,7 +1824,7 @@ Scoped.define("module:Handlers.Attr", [
 	    "base:Strings",
 	    "module:Registries",
 	    "browser:Dom"
-	], function (Class, Parser, $, Types, Objs, Strings, Registries, Dom, scoped) {
+	], function (Class, TagHandlerException, Parser, $, Types, Objs, Strings, Registries, Dom, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, function (inherited) {
 		return {
@@ -1949,7 +1979,7 @@ Scoped.define("module:Handlers.Attr", [
 			activate: function () {
 				if (this._partial) {
 					if (this._partial.cls.meta.requires_tag_handler && !this._tagHandler) {
-						Registries.warning(this._partial.cls.classname + " is expecting a tag handler, but no registered tag handler for " + this._node.tag() + " has been found.");
+						Registries.throwException(new TagHandlerException(this._partial.cls.classname, this._node.tag()));
 						return;
 					}
 					this._partial.activate();
@@ -2588,7 +2618,11 @@ Scoped.define("module:Handlers.Node", [
 	}]);
 	return Cls;
 });
-Scoped.define("module:Registries", ["base:Classes.ClassRegistry", "jquery:"], function (ClassRegistry, $) {
+Scoped.define("module:Registries", [
+    "base:Classes.ClassRegistry",
+    "base:Exceptions.AsyncExceptionThrower",
+    "jquery:"
+], function (ClassRegistry, AsyncExceptionThrower, $) {
 	return {		
 		
 		handler: new ClassRegistry({}, true),
@@ -2616,10 +2650,12 @@ Scoped.define("module:Registries", ["base:Classes.ClassRegistry", "jquery:"], fu
 			
 		},
 		
-		warning: function (s) {
+		throwException: function (e) {
 			try {
-				console.log(s);
-			} catch (e) {}
+				if (!this.exceptionThrower)
+					this.exceptionThrower = new AsyncExceptionThrower();
+				this.exceptionThrower.throwException(e);
+			} catch (ex) {}
 		},
 		
 		handlerCache: {

@@ -223,9 +223,11 @@ Scoped.define("module:Handlers.Handler", [
 
 Scoped.define("module:Handlers.Partial", [
  	    "base:Class",
+ 	    "base:JavaScript",
+ 	    "base:Functions",
  	    "module:Parser",
  	    "module:Registries"
- 	], function (Class, Parser, Registries, scoped) {
+ 	], function (Class, JavaScript, Functions, Parser, Registries, scoped) {
  	return Class.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -276,6 +278,16 @@ Scoped.define("module:Handlers.Partial", [
 			_execute: function (code) {
 				var dyn = Parser.parseCode(code || this._value);
 				this._node.__executeDyn(dyn);
+			},
+			
+			_valueExecute: function (args) {
+				var value = this._value.trim();
+				if (JavaScript.isProperIdentifier(value)) {
+					args = Functions.getArguments(args);
+					args.unshift(value);
+					this._node._handler.execute.apply(this._node._handler, args);
+				} else
+					this._execute(value);			
 			}
 			
 			

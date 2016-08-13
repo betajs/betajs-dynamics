@@ -1,5 +1,5 @@
 /*!
-betajs - v1.0.68 - 2016-08-03
+betajs - v1.0.72 - 2016-08-12
 Copyright (c) Oliver Friedmann,Victor Lingenthal
 Apache-2.0 Software License.
 */
@@ -10,7 +10,7 @@ Scoped.binding('module', 'global:BetaJS');
 Scoped.define("module:", function () {
 	return {
     "guid": "71366f7a-7da3-4e55-9a0b-ea0e4e2a9e79",
-    "version": "531.1470275573092"
+    "version": "536.1470996361230"
 };
 });
 Scoped.require(['module:'], function (mod) {
@@ -1372,6 +1372,7 @@ Scoped.define("module:JavaScript", ["module:Objs"], function (Objs) {
 		STRING_SINGLE_QUOTATION_REGEX: /'[^']*'/g,
 		STRING_DOUBLE_QUOTATION_REGEX: /"[^"]*"/g,
 		
+		PROPER_IDENTIFIER_REGEX: /^[a-zA-Z_][a-zA-Z_0-9]*$/,
 		IDENTIFIER_REGEX: /[a-zA-Z_][a-zA-Z_0-9]*/g,
 		IDENTIFIER_SCOPE_REGEX: /[a-zA-Z_][a-zA-Z_0-9\.]*/g,
 	
@@ -1399,6 +1400,16 @@ Scoped.define("module:JavaScript", ["module:Objs"], function (Objs) {
 			return !this.isReserved(key);
 		},
 		
+		/**
+		 * Is string a valid proper JS identifier?
+		 * 
+		 * @param {string} key string in question
+		 * @return {boolean} true if identifier
+		 */
+		isProperIdentifier: function (key) {
+			return this.isIdentifier(key) && this.PROPER_IDENTIFIER_REGEX.test(key);
+		},
+
 		/**
 		 * Remove string definitions from JS code.
 		 * 
@@ -2236,6 +2247,103 @@ Scoped.define("module:Objs", [
 			return null;
 		},
 
+		/**
+		 * Iterates over an object or array, calling a callback function for each item.
+		 * 
+		 * @param obj object or array
+		 * @param {function} f callback function
+		 * @param {object} context optional callback context
+		 * 
+		 */
+		iter: function (obj, f, context) {
+			var result = null;
+			if (Types.is_array(obj)) {
+				for (var i = 0; i < obj.length; ++i) {
+					result = context ? f.apply(context, [obj[i], i]) : f(obj[i], i);
+					if (Types.is_defined(result) && !result)
+						return false;
+				}
+			} else {
+				for (var key in obj) {
+					result = context ? f.apply(context, [obj[key], key]) : f(obj[key], key);
+					if (Types.is_defined(result) && !result)
+						return false;
+				}
+			}
+			return true;
+		},
+
+		/**
+		 * Creates the intersection object of two objects.
+		 * 
+		 * @param {object} a object one
+		 * @param {object} b object two
+		 * 
+		 * @return {object} intersection object
+		 */
+		intersect: function (a, b) {
+			var c = {};
+			for (var key in a) {
+				if (key in b)
+					c[key] = a[key];
+			}
+			return c;
+		},
+		
+		/**
+		 * Creates the difference object of two objects.
+		 * 
+		 * @param {object} a object one
+		 * @param {object} b object two
+		 * 
+		 * @return {object} difference object
+		 */
+		diff: function (a, b) {
+			var c = {};
+			for (var key in a)
+				if (!(key in b) || a[key] !== b[key])
+					c[key] = a[key];
+			return c;
+		},
+		
+		/**
+		 * Determines whether a key exists in an array or object.
+		 * 
+		 * @param obj object or array
+		 * @param key search key
+		 * 
+		 * @return {boolean} true if key is contained in obj
+		 */
+		contains_key: function (obj, key) {
+			if (Types.is_array(obj))
+				return Types.is_defined(obj[key]);
+			else
+				return key in obj;
+		},
+
+		/**
+		 * Determines whether a value exists in an array or object.
+		 * 
+		 * @param obj object or array
+		 * @param value search value
+		 * 
+		 * @return {boolean} true if value is contained in obj
+		 */
+		contains_value: function (obj, value) {
+			if (Types.is_array(obj)) {
+				for (var i = 0; i < obj.length; ++i) {
+					if (obj[i] === value)
+						return true;
+				}
+			} else {
+				for (var key in obj) {
+					if (obj[key] === value)
+						return true;
+				}
+			}
+			return false;
+		},
+
 		merge: function (secondary, primary, options) {
 			secondary = secondary || {};
 			primary = primary || {};
@@ -2328,63 +2436,6 @@ Scoped.define("module:Objs", [
 				return true;
 			} else
 				return obj1 == obj2;
-		},
-
-		iter: function (obj, f, context) {
-			var result = null;
-			if (Types.is_array(obj)) {
-				for (var i = 0; i < obj.length; ++i) {
-					result = context ? f.apply(context, [obj[i], i]) : f(obj[i], i);
-					if (Types.is_defined(result) && !result)
-						return false;
-				}
-			} else {
-				for (var key in obj) {
-					result = context ? f.apply(context, [obj[key], key]) : f(obj[key], key);
-					if (Types.is_defined(result) && !result)
-						return false;
-				}
-			}
-			return true;
-		},
-
-		intersect: function (a, b) {
-			var c = {};
-			for (var key in a) {
-				if (key in b)
-					c[key] = a[key];
-			}
-			return c;
-		},
-		
-		diff: function (a, b) {
-			var c = {};
-			for (var key in a)
-				if (!(key in b) || a[key] !== b[key])
-					c[key] = a[key];
-			return c;
-		},
-		
-		contains_key: function (obj, key) {
-			if (Types.is_array(obj))
-				return Types.is_defined(obj[key]);
-			else
-				return key in obj;
-		},
-
-		contains_value: function (obj, value) {
-			if (Types.is_array(obj)) {
-				for (var i = 0; i < obj.length; ++i) {
-					if (obj[i] === value)
-						return true;
-				}
-			} else {
-				for (var key in obj) {
-					if (obj[key] === value)
-						return true;
-				}
-			}
-			return false;
 		},
 
 		objectify: function (arr, f, context) {
@@ -4439,7 +4490,7 @@ Scoped.define("module:TimeFormat", ["module:Time", "module:Strings", "module:Obj
 				return Time.timeModulo(t, "second", "floor");
 			},
 			"mmm": function (t) {
-				return (new Date(t)).toDateString().substring(4,7);
+				return ((new Date(t)).toUTCString().split(" "))[2];
 			},
 			"mm": function (t) {
 				return Strings.padZeros(Time.timeComponentGet(t, "month"), 2);
@@ -4452,16 +4503,16 @@ Scoped.define("module:TimeFormat", ["module:Time", "module:Strings", "module:Obj
 			},
 			"dddd": function (t) {
 				var map = {2: "s", 3: "nes", 4: "rs", 6: "ur"};
-				return (new Date(t)).toDateString().substring(0,3) + (map[Time.timeComponentGet(t, "weekday")] || "") + "day";
+				return (new Date(t)).toUTCString().substring(0,3) + (map[Time.timeComponentGet(t, "weekday")] || "") + "day";
 			},
 			"ddd": function (t) {
-				return (new Date(t)).toDateString().substring(0,3);
+				return (new Date(t)).toUTCString().substring(0,3);
 			},
 			"dd": function (t) {
 				return Strings.padZeros(Time.timeComponentGet(t, "day"), 2);
 			},
 			"d": function (t) {
-				return Time.timeComponentGet(t, "day");
+				return Time.timeComponentGet(t, "day") + 1;
 			},
 			"yyyy": function (t) {
 				return Time.timeComponentGet(t, "year");
@@ -6827,6 +6878,7 @@ Scoped.define("module:Collections.GroupedCollection", [
 				options = options || {};
 				delete options.objects;
 				this.__groupby = options.groupby;
+				this.__keepEmptyGroups = options.keepEmptyGroups;
 				this.__insertCallback = options.insert;
 				this.__removeCallback = options.remove;
 				this.__callbackContext = options.context || this;
@@ -6847,51 +6899,46 @@ Scoped.define("module:Collections.GroupedCollection", [
 				inherited.destroy.call(this);
 			},
 			
-			__addParentObject: function (object) {
-				var group = this.__objectToGroup(object);
-				if (!group) {
+			touchGroup: function (data, create) {
+				data = Properties.is_instance_of(data) ? data.data() : data;
+				var query = {};
+				Objs.iter(this.__groupby, function (key) {
+					query[key] = data[key];
+				});
+				var group = this.query(query).nextOrNull();
+				if (!group && create) {
 					group = this.__createProperties ? this.__createProperties.call(this.__callbackContext) : new this.__propertiesClass();
-					group.objects = {};
-					group.object_count = 0;
+					group.items = group.auto_destroy(new Collection());
 					Objs.iter(this.__groupby, function (key) {
-						group.set(key, object.get(key));
+						group.set(key, data[key]);
 					});
-					this.__addObjectToGroup(object, group);
 					this.add(group);
-				} else
-					this.__addObjectToGroup(object, group);
+				}
+				return group;
+			},
+			
+			__addParentObject: function (object) {
+				var group = this.touchGroup(object, true);
+				this.__addObjectToGroup(object, group);
 			},
 			
 			__removeParentObject: function (object) {
-				var group = this.__objectToGroup(object);
+				var group = this.touchGroup(object);
 				if (group) {
 					this.__removeObjectFromGroup(object, group);
-					if (group.object_count === 0)
+					if (!this.__keepEmptyGroups && group.items.count() === 0)
 						this.remove(group);
 				}
 			},
 			
-			__objectToGroup: function (object) {
-				var query = {};
-				Objs.iter(this.__groupby, function (key) {
-					query[key] = object.get(key);
-				});
-				return this.query(query).nextOrNull();
-			},
-			
 			__addObjectToGroup: function (object, group) {
-				group.objects[this.__parent.get_ident(object)] = object;
-				group.object_count++;
+				group.items.add(object);
 				this.__insertObject(object, group);
 			},
 			
 			__removeObjectFromGroup: function (object, group) {
-				if (!(this.__parent.get_ident(object) in group.objects))
-					return;
-				delete group.objects[this.__parent.get_ident(object)];
-				group.object_count--;
-				if (group.object_count > 0)
-					this.__removeObject(object, group);
+				group.items.remove(object);
+				this.__removeObject(object, group);
 			},
 			
 			/**
@@ -7094,12 +7141,12 @@ Scoped.define("module:Exceptions.AsyncExceptionThrower", [
 
 Scoped.define("module:Exceptions.ConsoleExceptionThrower", [
 	"module:Exceptions.ExceptionThrower",
-	"module:Exceptions"
-], function (ExceptionThrower, Exceptions, scoped) {
+	"module:Exceptions.NativeException"
+], function (ExceptionThrower, NativeException, scoped) {
 	return ExceptionThrower.extend({scoped: scoped}, {
 		
 		_throwException: function (e) {
-			console.log("Exception", Exceptions.ensure(e).json());
+			console.log("Exception", NativeException.ensure(e).json());
 		}
 			
 	});
@@ -7225,12 +7272,14 @@ Scoped.define("module:Exceptions.Exception", [
 		 * Ensures that a given exception is an instance of an Exception class
 		 * 
 		 * @param e Exception
-		 * @return {object} Exception instance, possibly wrapping e as a NativeException
+		 * @return {object} Exception instance
 		 */
 		ensure: function (e) {
-			throw "Should be overwritten via Scoped.";
+			if (!this.is_instance_of(e))
+				throw "Unasserted Exception " + e;
+			return e;
 		}
-		
+
 	});
 });
 
@@ -7295,30 +7344,10 @@ Scoped.define("module:Exceptions.NativeException", [
 				var j = inherited.json.call(this);
 				j.data = this.data();
 				return j;
-			},
-			
+			}			
 
 		};
-	});
-	
-	Exception.ensure = function (e) {
-		return Exception.is_instance_of(e) ? e : new NativeException(e);
-	};
-	
-	return NativeException;
-});
-
-
-Scoped.extend("module:Exceptions", [
-    "module:Exceptions.Exception"
-], function (Exception) {
-	
-	/**
-	 * The Exception module
-	 * 
-	 * @module BetaJS.Exceptions
-	 */
-	return {
+	}, {
 		
 		/**
 		 * Ensures that a given exception is an instance of an Exception class
@@ -7327,11 +7356,14 @@ Scoped.extend("module:Exceptions", [
 		 * @return {object} Exception instance, possibly wrapping e as a NativeException
 		 */
 		ensure: function (e) {
-			return Exception.ensure(e);
+			return NativeException.is_instance_of(e) ? e : new NativeException(e);
 		}
-
-	};
+		
+	});
+	
+	return NativeException;
 });
+
 Scoped.define("module:Async", ["module:Types", "module:Functions"], function (Types, Functions) {
 	
 	var __eventuallyOnce = {};

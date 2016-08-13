@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.61 - 2016-08-04
+betajs-dynamics - v0.0.62 - 2016-08-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -709,7 +709,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.61 - 2016-08-04
+betajs-dynamics - v0.0.62 - 2016-08-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -723,7 +723,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "261.1470285674503"
+    "version": "262.1470996549580"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -2221,9 +2221,11 @@ Scoped.define("module:Handlers.Handler", [
 
 Scoped.define("module:Handlers.Partial", [
  	    "base:Class",
+ 	    "base:JavaScript",
+ 	    "base:Functions",
  	    "module:Parser",
  	    "module:Registries"
- 	], function (Class, Parser, Registries, scoped) {
+ 	], function (Class, JavaScript, Functions, Parser, Registries, scoped) {
  	return Class.extend({scoped: scoped}, function (inherited) {
  		return {
 			
@@ -2274,6 +2276,16 @@ Scoped.define("module:Handlers.Partial", [
 			_execute: function (code) {
 				var dyn = Parser.parseCode(code || this._value);
 				this._node.__executeDyn(dyn);
+			},
+			
+			_valueExecute: function (args) {
+				var value = this._value.trim();
+				if (JavaScript.isProperIdentifier(value)) {
+					args = Functions.getArguments(args);
+					args.unshift(value);
+					this._node._handler.execute.apply(this._node._handler, args);
+				} else
+					this._execute(value);			
 			}
 			
 			
@@ -2872,12 +2884,14 @@ Scoped.define("module:Partials.DataPartial", ["module:Handlers.Partial"], functi
 	return Cls;
 });
 
-Scoped.define("module:Partials.EventPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.EventPartial", [
+    "module:Handlers.Partial"
+], function (Partial, scoped) {
   	var Cls = Partial.extend({scoped: scoped}, {
 			
 		bindTagHandler: function (handler) {
-			handler.on(this._postfix, function (arg1, arg2, arg3, arg4) {
-				this._node._handler.call(this._value, arg1, arg2, arg3, arg4);
+			handler.on(this._postfix, function () {
+				this._valueExecute(arguments);
 			}, this);
 		}
  		

@@ -91,17 +91,19 @@ Scoped.define("module:Dynamic", [
 					var source = ev.length === 1 ? this.activeElement() : this.activeElement().find(ev[1]);
 					this.__registered_dom_events.push(source);
 					source.on(ev[0] + "." + this.cid() + "-domevents", function (eventData) {
-						self.call(target, eventData);
+						self.execute(target, eventData, $(this));
 					});
 				}, this);
 				Objs.iter(this.windowevents, function (target, event) {
 					$(window).on(event + "." + this.cid() + "-windowevents", function (eventData) {
-						self.call(target, eventData);
+						self.execute(target, eventData, $(this));
 					});
 				}, this);
 			},
 			
 			destroy: function () {
+				if (this.free)
+					this.free();
 				Objs.iter(this.__dispose, function (attr) {
 					var obj = this.get(attr);
 					this.set(attr, null);

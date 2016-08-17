@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.62 - 2016-08-12
+betajs-dynamics - v0.0.63 - 2016-08-17
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "262.1470996549580"
+    "version": "263.1471468402953"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -994,17 +994,19 @@ Scoped.define("module:Dynamic", [
 					var source = ev.length === 1 ? this.activeElement() : this.activeElement().find(ev[1]);
 					this.__registered_dom_events.push(source);
 					source.on(ev[0] + "." + this.cid() + "-domevents", function (eventData) {
-						self.call(target, eventData);
+						self.execute(target, eventData, $(this));
 					});
 				}, this);
 				Objs.iter(this.windowevents, function (target, event) {
 					$(window).on(event + "." + this.cid() + "-windowevents", function (eventData) {
-						self.call(target, eventData);
+						self.execute(target, eventData, $(this));
 					});
 				}, this);
 			},
 			
 			destroy: function () {
+				if (this.free)
+					this.free();
 				Objs.iter(this.__dispose, function (attr) {
 					var obj = this.get(attr);
 					this.set(attr, null);
@@ -2369,6 +2371,34 @@ Scoped.define("module:Partials.OnPartial", ["module:Handlers.Partial"], function
  		};
  	});
  	Cls.register("ba-on");
+	return Cls;
+});
+
+Scoped.define("module:Partials.RadioGroupPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+ 		return {
+			
+ 			constructor: function (node, args, value) {
+ 				inherited.constructor.apply(this, arguments);
+ 				var self = this;
+ 				value = value.trim();
+ 				this._node._$element.prop("checked", self._node._$element.val() === this._node.properties().get(value));
+ 				this._node._$element.on("change." + this.cid(), function () {
+ 					self._node.properties().set(value, self._node._$element.val());
+ 				});
+ 				self._node.properties().on("change:" + value, function () {
+ 					this._node._$element.prop("checked", self._node._$element.val() === this._node.properties().get(value)); 					
+ 				}, this);
+ 			},
+ 			
+ 			destroy: function () {
+ 				this._node._$element.off("change." + this.cid());
+ 				inherited.destroy.call(this);
+ 			}
+ 		
+ 		};
+ 	});
+ 	Cls.register("ba-radio-group");
 	return Cls;
 });
 

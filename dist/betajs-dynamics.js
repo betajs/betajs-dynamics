@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.63 - 2016-08-17
+betajs-dynamics - v0.0.63 - 2016-08-23
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -709,7 +709,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.63 - 2016-08-17
+betajs-dynamics - v0.0.63 - 2016-08-23
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -723,7 +723,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "263.1471468402953"
+    "version": "264.1471904448510"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -2164,6 +2164,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 				this._handlerInitializeTemplate(this.template, this._parentElement);
 			else {
 				if (this.templateUrl) {
+					this.__activated = false;
 					Loader.loadHtml(this.templateUrl, function (template) {
 						this.templateUrl = null;
 						this.template = template;

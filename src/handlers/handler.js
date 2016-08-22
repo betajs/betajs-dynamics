@@ -164,6 +164,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 				this._handlerInitializeTemplate(this.template, this._parentElement);
 			else {
 				if (this.templateUrl) {
+					this.__activated = false;
 					Loader.loadHtml(this.templateUrl, function (template) {
 						this.templateUrl = null;
 						this.template = template;

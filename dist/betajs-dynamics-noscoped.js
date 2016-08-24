@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.63 - 2016-08-23
+betajs-dynamics - v0.0.65 - 2016-08-24
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "264.1471904448510"
+    "version": "265.1472066690064"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -206,7 +206,7 @@ Scoped.define("module:Data.Mesh", [
 					return base;
 				var splt = Strings.splitFirst(tail, ".");
 				var hd = head ? head + "." + splt.head : splt.head;
-				if (Properties.is_instance_of(current)) {
+				if (Properties.is_instance_of(current) && !current.destroyed()) {
 					if (current.has(splt.head))
 						return this._sub_navigate(current, splt.head, splt.tail, current, current.get(splt.head));
 					else if (splt.head in current)

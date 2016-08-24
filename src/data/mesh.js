@@ -186,7 +186,7 @@ Scoped.define("module:Data.Mesh", [
 					return base;
 				var splt = Strings.splitFirst(tail, ".");
 				var hd = head ? head + "." + splt.head : splt.head;
-				if (Properties.is_instance_of(current)) {
+				if (Properties.is_instance_of(current) && !current.destroyed()) {
 					if (current.has(splt.head))
 						return this._sub_navigate(current, splt.head, splt.tail, current, current.get(splt.head));
 					else if (splt.head in current)

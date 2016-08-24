@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.65 - 2016-08-24
+betajs-dynamics - v0.0.66 - 2016-08-24
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "265.1472066690064"
+    "version": "266.1472078189621"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -1174,7 +1174,7 @@ Scoped.define("module:Handlers.Attr", [
 				if (this._dyn) {
 					var self = this;
 					if (this._dyn.bidirectional && this._attrName == "value") {
-						this._$element.on("change keyup keypress keydown blur focus update", function () {
+						this._$element.on("change keyup keypress keydown blur focus update input", function () {
 							self._node.mesh().write(self._dyn.variable, self.__inputVal(self._element));
 						});
 					}

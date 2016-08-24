@@ -80,7 +80,7 @@ Scoped.define("module:Handlers.Attr", [
 				if (this._dyn) {
 					var self = this;
 					if (this._dyn.bidirectional && this._attrName == "value") {
-						this._$element.on("change keyup keypress keydown blur focus update", function () {
+						this._$element.on("change keyup keypress keydown blur focus update input", function () {
 							self._node.mesh().write(self._dyn.variable, self.__inputVal(self._element));
 						});
 					}

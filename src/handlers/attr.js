@@ -20,9 +20,10 @@ Scoped.define("module:Handlers.Attr", [
 	    "base:Types",
 	    "base:Objs",
 	    "base:Strings",
+	    "base:Async",
 	    "module:Registries",
 	    "browser:Dom"
-	], function (Class, TagHandlerException, Parser, $, Types, Objs, Strings, Registries, Dom, scoped) {
+	], function (Class, TagHandlerException, Parser, $, Types, Objs, Strings, Async, Registries, Dom, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, function (inherited) {
 		return {
@@ -56,8 +57,15 @@ Scoped.define("module:Handlers.Attr", [
 			
 			__inputVal: function (el, value) {
 				var valueKey = el.type === 'checkbox' || el.type === 'radio' ? 'checked' : 'value';
-				if (arguments.length > 1) 
-					el[valueKey] = value === null || value === undefined ? "" : value;
+				if (arguments.length > 1)  {
+					value = value === null || value === undefined ? "" : value;
+					if (el.type === "select-one") {
+						Async.eventually(function () {
+							el[valueKey] = value;
+						});
+					} else 
+						el[valueKey] = value;
+				}
 				return el[valueKey];
 			},
 			

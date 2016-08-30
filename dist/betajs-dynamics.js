@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.66 - 2016-08-24
+betajs-dynamics - v0.0.66 - 2016-08-30
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -709,7 +709,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.66 - 2016-08-24
+betajs-dynamics - v0.0.66 - 2016-08-30
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -723,7 +723,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "266.1472078189621"
+    "version": "267.1472594178779"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -1824,9 +1824,10 @@ Scoped.define("module:Handlers.Attr", [
 	    "base:Types",
 	    "base:Objs",
 	    "base:Strings",
+	    "base:Async",
 	    "module:Registries",
 	    "browser:Dom"
-	], function (Class, TagHandlerException, Parser, $, Types, Objs, Strings, Registries, Dom, scoped) {
+	], function (Class, TagHandlerException, Parser, $, Types, Objs, Strings, Async, Registries, Dom, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, function (inherited) {
 		return {
@@ -1860,8 +1861,15 @@ Scoped.define("module:Handlers.Attr", [
 			
 			__inputVal: function (el, value) {
 				var valueKey = el.type === 'checkbox' || el.type === 'radio' ? 'checked' : 'value';
-				if (arguments.length > 1) 
-					el[valueKey] = value === null || value === undefined ? "" : value;
+				if (arguments.length > 1)  {
+					value = value === null || value === undefined ? "" : value;
+					if (el.type === "select-one") {
+						Async.eventually(function () {
+							el[valueKey] = value;
+						});
+					} else 
+						el[valueKey] = value;
+				}
 				return el[valueKey];
 			},
 			

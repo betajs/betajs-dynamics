@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.66 - 2016-08-30
+betajs-dynamics - v0.0.68 - 2016-09-01
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "267.1472594178779"
+    "version": "268.1472764452332"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -2924,6 +2924,25 @@ Scoped.define("module:Partials.TemplateUrlPartial",
  	Cls.register("ba-template-url");
 	return Cls;
 
+});
+
+Scoped.define("module:Partials.TogglePartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+ 		return {
+			
+ 			constructor: function (node, args, value, postfix) {
+ 				inherited.constructor.apply(this, arguments);
+ 				node._$element.prop(postfix, value ? postfix : null);
+ 			},
+ 			
+ 			_apply: function (value) {
+ 				this._node._$element.prop(this._postfix, value ? this._postfix : null);
+ 			}
+ 		
+ 		};
+ 	});
+ 	Cls.register("ba-toggle");
+	return Cls;
 });
 
 Scoped.define("module:Partials.WeakIfPartial", ["module:Partials.ShowPartial"], function (Partial, scoped) {

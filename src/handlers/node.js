@@ -156,11 +156,14 @@ Scoped.define("module:Handlers.Node", [
 				if (!Registries.handler.get(tagv))
 					return false;
 				if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9) {
+					var isActiveElement = this._$element.get(0) === this._handler.activeElement().get(0);
 					this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
 					this._element = this._$element.get(0);
 					Objs.iter(this._attrs, function (attr) {
 						attr.updateElement(this._element);
 					}, this);
+					if (isActiveElement)
+						this._handler._updateActiveElement(this._$element);
 				}
 				var createArguments = {
 					parentElement: this._$element.get(0),

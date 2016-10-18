@@ -150,6 +150,17 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			return this.__activeElement;
 		},
 		
+		_updateActiveElement: function (activeElement) {
+			this.__activeElement = activeElement;
+			if (this.__removeObserver) {
+				this.__removeObserver.weakDestroy();
+				this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement.get(0)));
+				this.__removeObserver.on("node-removed", function () {
+					this.weakDestroy();
+				}, this);				
+			}
+		},
+		
 		activate: function () {
 			if (this.__activated)
 				return;

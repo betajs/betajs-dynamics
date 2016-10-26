@@ -45,7 +45,8 @@
 		"npm": false
 	},
     "weakDependencies": {
-      "betajs-scoped": "https://github.com/betajs/betajs-scoped"
+      "betajs-scoped": "https://github.com/betajs/betajs-scoped",
+      "betajs-shims": "https://github.com/betajs/betajs-shims"
     },
     "dependencies": {
       "betajs": "https://github.com/betajs/betajs",

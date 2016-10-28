@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.69 - 2016-10-17
+betajs-dynamics - v0.0.70 - 2016-10-27
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "270.1476760819985"
+    "version": "272.1477622573863"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -1082,7 +1082,11 @@ Scoped.define("module:Dynamic", [
 				return Objs.extend(Objs.clone(base, 1), overwrite);
 			},
 			attrs: function (base, overwrite) {
-				return Objs.extend(Objs.clone(base, 1), overwrite);
+				return Objs.extend(Objs.clone(
+					Types.is_function(base) ? base() : base,
+				1), 
+					Types.is_function(overwrite) ? overwrite() : overwrite
+				);
 			},
 			dispose: function (first, second) {
 				return (first || []).concat(second || []);

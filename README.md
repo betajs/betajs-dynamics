@@ -1,4 +1,4 @@
-# betajs-dynamics 0.0.69
+# betajs-dynamics 0.0.70
 [![Build Status](https://api.travis-ci.org/betajs/betajs-dynamics.svg?branch=master)](https://travis-ci.org/betajs/betajs-dynamics)
 [![Code Climate](https://codeclimate.com/github/betajs/betajs-dynamics/badges/gpa.svg)](https://codeclimate.com/github/betajs/betajs-dynamics)
 
@@ -119,6 +119,7 @@ Will evaluate to
 | Name | URL |
 | :----- | -------: |
 | betajs-scoped | [Open](https://github.com/betajs/betajs-scoped) |
+| betajs-shims | [Open](https://github.com/betajs/betajs-shims) |
 
 
 ## Contributors

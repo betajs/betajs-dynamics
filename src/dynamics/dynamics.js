@@ -179,7 +179,11 @@ Scoped.define("module:Dynamic", [
 				return Objs.extend(Objs.clone(base, 1), overwrite);
 			},
 			attrs: function (base, overwrite) {
-				return Objs.extend(Objs.clone(base, 1), overwrite);
+				return Objs.extend(Objs.clone(
+					Types.is_function(base) ? base() : base,
+				1), 
+					Types.is_function(overwrite) ? overwrite() : overwrite
+				);
 			},
 			dispose: function (first, second) {
 				return (first || []).concat(second || []);

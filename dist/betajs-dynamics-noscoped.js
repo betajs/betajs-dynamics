@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.70 - 2016-10-27
+betajs-dynamics - v0.0.71 - 2016-10-31
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "272.1477622573863"
+    "version": "273.1477956786489"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -1038,7 +1038,10 @@ Scoped.define("module:Dynamic", [
 		},
 		
 		findByElement: function (element) {
-			return $(element).get(0).dynamicshandler;
+			if (!element)
+				return null;
+			element = $(element).get(0);
+			return element && element.dynamicshandler ? element.dynamicshandler : null; 
 		},
 		
 		register: function (key, registry) {
@@ -1082,11 +1085,22 @@ Scoped.define("module:Dynamic", [
 				return Objs.extend(Objs.clone(base, 1), overwrite);
 			},
 			attrs: function (base, overwrite) {
-				return Objs.extend(Objs.clone(
-					Types.is_function(base) ? base() : base,
-				1), 
-					Types.is_function(overwrite) ? overwrite() : overwrite
-				);
+				if (Types.is_function(base))
+					if (Types.is_function(overwrite)) {
+						return function () {
+							return Objs.extend(base(), overwrite());
+						};
+					} else {
+						return function () {
+							return Objs.extend(base(), overwrite);
+						};
+					}
+				else if (Types.is_function(overwrite)) {
+					return function () {
+						return Objs.extend(Objs.clone(base, 1), overwrite());
+					};
+				} else
+					return Objs.extend(Objs.clone(base, 1), overwrite);
 			},
 			dispose: function (first, second) {
 				return (first || []).concat(second || []);
@@ -1697,7 +1711,7 @@ Scoped.define("module:Handlers.Node", [
 				this._tagHandler = null;
 				
 				this._$element = $(element);
-				this._template = Dom.outerHTML(element);
+				this._template = element.outerHTML;
 				this._innerTemplate = element.innerHTML;
 				this._locals = locals || {};
 				this._active = true;
@@ -2484,7 +2498,7 @@ Scoped.define("module:Partials.RepeatElementPartial", [
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
- 				this.__filteredTemplate = Dom.outerHTML($(node._template).removeAttr("ba-repeat-element").get(0));
+ 				this.__filteredTemplate = $(node._template).removeAttr("ba-repeat-element").get(0).outerHTML;
  			},
  			
  			_activate: function () {

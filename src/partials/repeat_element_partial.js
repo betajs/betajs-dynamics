@@ -33,7 +33,7 @@ Scoped.define("module:Partials.RepeatElementPartial", [
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
- 				this.__filteredTemplate = Dom.outerHTML($(node._template).removeAttr("ba-repeat-element").get(0));
+ 				this.__filteredTemplate = $(node._template).removeAttr("ba-repeat-element").get(0).outerHTML;
  			},
  			
  			_activate: function () {

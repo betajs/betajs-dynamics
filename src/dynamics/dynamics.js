@@ -135,7 +135,10 @@ Scoped.define("module:Dynamic", [
 		},
 		
 		findByElement: function (element) {
-			return $(element).get(0).dynamicshandler;
+			if (!element)
+				return null;
+			element = $(element).get(0);
+			return element && element.dynamicshandler ? element.dynamicshandler : null; 
 		},
 		
 		register: function (key, registry) {
@@ -179,11 +182,22 @@ Scoped.define("module:Dynamic", [
 				return Objs.extend(Objs.clone(base, 1), overwrite);
 			},
 			attrs: function (base, overwrite) {
-				return Objs.extend(Objs.clone(
-					Types.is_function(base) ? base() : base,
-				1), 
-					Types.is_function(overwrite) ? overwrite() : overwrite
-				);
+				if (Types.is_function(base))
+					if (Types.is_function(overwrite)) {
+						return function () {
+							return Objs.extend(base(), overwrite());
+						};
+					} else {
+						return function () {
+							return Objs.extend(base(), overwrite);
+						};
+					}
+				else if (Types.is_function(overwrite)) {
+					return function () {
+						return Objs.extend(Objs.clone(base, 1), overwrite());
+					};
+				} else
+					return Objs.extend(Objs.clone(base, 1), overwrite);
 			},
 			dispose: function (first, second) {
 				return (first || []).concat(second || []);

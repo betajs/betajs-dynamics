@@ -31,7 +31,7 @@ Scoped.define("module:Handlers.Node", [
 				this._tagHandler = null;
 				
 				this._$element = $(element);
-				this._template = Dom.outerHTML(element);
+				this._template = element.outerHTML;
 				this._innerTemplate = element.innerHTML;
 				this._locals = locals || {};
 				this._active = true;

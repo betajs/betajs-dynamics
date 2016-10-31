@@ -1,5 +1,5 @@
 /*!
-betajs-browser - v1.0.47 - 2016-10-24
+betajs-browser - v1.0.49 - 2016-10-31
 Copyright (c) Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('resumablejs', 'global:Resumable');
 Scoped.define("module:", function () {
 	return {
     "guid": "02450b15-9bbf-4be2-b8f6-b483bc015d06",
-    "version": "98.1477334995947"
+    "version": "100.1477956720020"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -1084,8 +1084,8 @@ Scoped.define("module:Info", [
 		
 		__cache: {},
 		
-		__cached: function (key, value_func) {
-			if (!(key in this.__cache)) {
+		__cached: function (key, value_func, force) {
+			if (!(key in this.__cache) || force) {
 				var n = this.getNavigator();
 				this.__cache[key] = value_func.call(this, n, n.userAgent, n.userAgent.toLowerCase());
 			}
@@ -1103,10 +1103,10 @@ Scoped.define("module:Info", [
 			});
 		},
 	
-		flash: function () {
+		flash: function (force) {
 			return this.__cached("flash", function () {
 				return new FlashDetect();
-			});
+			}, force);
 		},
 		
 		isiOS: function () {
@@ -1755,12 +1755,6 @@ Scoped.define("module:Dom", [
 		
 		/* Rest depends on jQuery */
 		
-		outerHTML: function (element) {
-           if (!Info.isFirefox() || Info.firefoxVersion() >= 11)
-               return element.outerHTML;
-           return $('<div>').append($(element).clone()).html();
-        },
-			              
 		unbox: function (element) {
 			return $(element).get(0);
 		},

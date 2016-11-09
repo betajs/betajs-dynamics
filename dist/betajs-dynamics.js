@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.71 - 2016-10-31
+betajs-dynamics - v0.0.72 - 2016-11-08
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1004,7 +1004,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.71 - 2016-10-31
+betajs-dynamics - v0.0.72 - 2016-11-08
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1018,7 +1018,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "273.1477956786489"
+    "version": "274.1478607512701"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -1824,15 +1824,15 @@ Scoped.define("module:DomObserver", [
     "browser:DomMutation.NodeInsertObserver",
     "module:Registries",
     "module:Dynamic",
-    "jquery:"
-], function (Class, Objs, NodeInsertObserver, Registries, Dynamic, $, scoped) {
+    "browser:Dom"
+], function (Class, Objs, NodeInsertObserver, Registries, Dynamic, Dom, scoped) {
 	return Class.extend({scoped: scoped}, function (inherited) {
 		return {
 			
 			constructor: function (options) {
 				inherited.constructor.call(this);
 				options = options || {};
-				this.__root = options.root || document.body;
+				this.__root = Dom.unbox(options.root || document.body);
 				this.__persistent_dynamics = !!options.persistent_dynamics;
 				this.__allowed_dynamics = options.allowed_dynamics ? Objs.objectify(options.allowed_dynamics) : null;
 				this.__forbidden_dynamics = options.forbidden_dynamics ? Objs.objectify(options.forbidden_dynamics) : null;
@@ -1843,12 +1843,12 @@ Scoped.define("module:DomObserver", [
 							return;
 						if (this.__allowed_dynamics && !this.__allowed_dynamics[key])
 							return;
-						var self = this;
-						$(this.__root).find(key).each(function () {
-							if (this.dynamicshandler)
-								return;
-							self.__nodeInserted(this);
-						});
+						var tags = this.__root.getElementsByTagName(key.toUpperCase());
+						for (var i = 0; i < tags.length; ++i) {
+							var elem = tags[i];
+							if (!elem.dynamicshandler)
+								this.__nodeInserted(elem);
+						}
 					}, this);
 				}
 				this.__observer = NodeInsertObserver.create({

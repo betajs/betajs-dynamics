@@ -1,4 +1,4 @@
-# betajs-dynamics 0.0.71
+# betajs-dynamics 0.0.72
 [![Build Status](https://api.travis-ci.org/betajs/betajs-dynamics.svg?branch=master)](https://travis-ci.org/betajs/betajs-dynamics)
 [![Code Climate](https://codeclimate.com/github/betajs/betajs-dynamics/badges/gpa.svg)](https://codeclimate.com/github/betajs/betajs-dynamics)
 
@@ -122,14 +122,23 @@ Will evaluate to
 | betajs-shims | [Open](https://github.com/betajs/betajs-shims) |
 
 
-## Contributors
+## Main Contributors
 
 - Victor Lingenthal
 - Oliver Friedmann
 
-
 ## License
 
 Apache-2.0
+
+
+
+
+
+
+## Sponsors
+
+- Ziggeo
+- Browserstack
 
 

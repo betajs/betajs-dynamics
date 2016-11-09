@@ -1,6 +1,6 @@
 {
   "name": "betajs-dynamics",
-  "version": "0.0.71",
+  "version": "0.0.72",
   "description": "BetaJS-Dynamics is a dynamic DOM templating engine.",
   "contributors": [
     "Victor Lingenthal",
@@ -36,6 +36,7 @@
 	  "test": "grunt check-node"
   },
   "meta": {
+  	"sponsors": ["Ziggeo", "Browserstack"],
 	"guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
 		"installdoc": "docsrc/common/install.md",
 		"summarydoc": "docsrc/common/summary.md",

@@ -43,7 +43,9 @@ Scoped.define("module:Partials.RepeatPartial", [
  					}, this.__repeatFilter);
  				}
  				node._expandChildren = false;
- 				node._$element.html("");
+ 				try {
+ 					node._element.innerHTML = "";
+ 				} catch (e) {}
  			},
 
  			destroy: function () {
@@ -120,9 +122,9 @@ Scoped.define("module:Partials.RepeatPartial", [
  				if (!this._collection)
  					return;
  				this._iterateCollection(this.__removeItem);
- 				var $element = this._node._$element;
+ 				var element = this._node._element;
  				this._node._removeChildren();
- 				$element.html("");
+ 				element.innerHTML = "";
  				this._collection.off(null, null, this);
  				this._valueCollection.off(null, null, this);
  				if (this._destroyCollection)

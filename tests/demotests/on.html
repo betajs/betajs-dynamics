@@ -72,11 +72,13 @@
 			function test() {
 				QUnit.equal(dynamic.get("test"), false);
 			
-				root.find("button").mouseover();
+				//root.find("button").mouseover();
+				BetaJS.Browser.Dom.triggerDomEvent(root.find("button").get(0), "mouseover");
 			
 				QUnit.equal(dynamic.get("test"), true);
 
-				root.find("button").mouseleave();
+				//root.find("button").mouseleave();
+				BetaJS.Browser.Dom.triggerDomEvent(root.find("button").get(0), "mouseleave");
 
 				QUnit.equal(dynamic.get("test"), false);
 			

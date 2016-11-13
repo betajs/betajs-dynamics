@@ -1,5 +1,8 @@
 
-Scoped.define("module:Partials.OnPartial", ["module:Handlers.Partial"], function (Partial, Strings, scoped) {
+Scoped.define("module:Partials.OnPartial", [
+	"module:Handlers.Partial",
+	"browser:Events"
+], function (Partial, Events, scoped) {
   /**
    * @name ba-on
    *
@@ -24,15 +27,10 @@ Scoped.define("module:Partials.OnPartial", ["module:Handlers.Partial"], function
 			
  			constructor: function (node, args, value, postfix) {
  				inherited.constructor.apply(this, arguments);
- 				var self = this;
- 				this._node._$element.on(postfix + "." + this.cid(), function () {
- 					self._execute(value.trim());
- 				});
- 			},
- 			
- 			destroy: function () {
- 				this._node._$element.off(this._postfix + "." + this.cid());
- 				inherited.destroy.call(this);
+ 				var events = this.auto_destroy(new Events());
+ 				events.on(this._node._element, postfix.trim(), function () {
+ 					this._execute(value.trim());
+ 				}, this);
  			}
  		
  		};

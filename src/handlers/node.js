@@ -146,9 +146,9 @@ Scoped.define("module:Handlers.Node", [
 				var tagv = this.__tagValue();
 				if (!tagv)
 					return;
-				if (this._dynTag && this._$element.get(0).tagName.toLowerCase() != tagv.toLowerCase()) {
-					this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
-					this._element = this._$element.get(0);
+				if (this._dynTag && this._element.tagName.toLowerCase() != tagv.toLowerCase()) {
+					this._element = Dom.changeTag(this._element, tagv);
+					this._$element = $(this._element);
 					Objs.iter(this._attrs, function (attr) {
 						attr.updateElement(this._element);
 					}, this);
@@ -156,9 +156,9 @@ Scoped.define("module:Handlers.Node", [
 				if (!Registries.handler.get(tagv))
 					return false;
 				if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9) {
-					var isActiveElement = this._$element.get(0) === this._handler.activeElement().get(0);
-					this._$element = $(Dom.changeTag(this._$element.get(0), tagv));
-					this._element = this._$element.get(0);
+					var isActiveElement = this._element === this._handler.activeElement().get(0);
+					this._element = Dom.changeTag(this._element, tagv);
+					this._$element = $(this._element);
 					Objs.iter(this._attrs, function (attr) {
 						attr.updateElement(this._element);
 					}, this);
@@ -166,7 +166,7 @@ Scoped.define("module:Handlers.Node", [
 						this._handler._updateActiveElement(this._$element);
 				}
 				var createArguments = {
-					parentElement: this._$element.get(0),
+					parentElement: this._element,
 					parentHandler: this._handler,
 					autobind: false,
 					cacheable: false,
@@ -181,7 +181,6 @@ Scoped.define("module:Handlers.Node", [
 					this._tagHandler = Registries.handlerCache.resume(tagv, this._$element, this._handler);
 				if (!this._tagHandler)
 					this._tagHandler = Registries.handler.create(tagv, createArguments);
-				//this._$element.append(this._tagHandler.element());
 				Objs.iter(this._attrs, function (attr) {
 					attr.bindTagHandler(this._tagHandler);
 				}, this);
@@ -202,7 +201,7 @@ Scoped.define("module:Handlers.Node", [
 				var registered = this.__registerTagHandler();
 		        if (!registered && this._expandChildren) {
 		        	if (this._restoreInnerTemplate)
-		        		this._$element.html(this._innerTemplate);
+		        		this._element.innerHTML = this._innerTemplate;
 		        	this._touchedInner = true;
 		        	if (this._element.nodeType == 3) {
 		        		this._dyn = Parser.parseText(this._$element.text());
@@ -217,7 +216,6 @@ Scoped.define("module:Handlers.Node", [
 						if (!this._element.childNodes[i]["ba-handled"])
 							this._registerChild(this._element.childNodes[i]);
 				}
-				// this._$element.css("display", "");
 				Objs.iter(this._attrs, function (attr) {
 					attr.activate();
 				});
@@ -270,7 +268,7 @@ Scoped.define("module:Handlers.Node", [
 					this._dyn = null;
 				}
 				if (this._touchedInner)
-					this._$element.html("");
+					this._element.innerHTML = "";
 				this._restoreInnerTemplate = true;
 				this._locked = false;
 			},	

@@ -27,14 +27,14 @@
 			
 			function test() {
 				QUnit.equal(dynamic.get("test"), false);
-				root.find("button").click();
+				BetaJS.Browser.Dom.triggerDomEvent(root.find("button").get(0), "click");
 				QUnit.equal(dynamic.get("test"), true);
-				root.find("button").click();
+				BetaJS.Browser.Dom.triggerDomEvent(root.find("button").get(0), "click");
 				QUnit.equal(dynamic.get("test"), false);
 
 				QUnit.equal(dynamic.get("outer"), false);
 				QUnit.equal(dynamic.get("inner"), false);
-				root.find("div#inner").click();
+				BetaJS.Browser.Dom.triggerDomEvent(root.find("div#inner").get(0), "click");
 				QUnit.equal(dynamic.get("outer"), false, "outer should be false");
 				QUnit.equal(dynamic.get("inner"), true, "inner should be true");
 			}			

@@ -13,17 +13,19 @@ Scoped.define("module:Exceptions.DynamicsCallException", [
 });
 
 Scoped.define("module:Dynamic", [
-   	    "module:Data.Scope",
-   	    "module:Handlers.HandlerMixin",
-   	    "module:Exceptions.DynamicsCallException",
-   	    "base:Objs",
-   	    "base:Strings",
-   	    "base:Types",
-   	    "base:Functions",
-   	    "base:Events.Events",
-   	    "module:Registries",
-   	    "jquery:"
-   	], function (Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Events, Registries, $, scoped) {
+    "module:Data.Scope",
+    "module:Handlers.HandlerMixin",
+    "module:Exceptions.DynamicsCallException",
+    "base:Objs",
+    "base:Strings",
+    "base:Types",
+    "base:Functions",
+    "base:Events.Events",
+    "module:Registries",
+    "browser:Dom",
+    "browser:Events",
+    "jquery:"
+], function (Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Events, Registries, Dom, DomEvents, $, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -72,9 +74,9 @@ Scoped.define("module:Dynamic", [
 				this.functions = this.__functions;
 				this._handlerInitialize(options);
 				this.__createActivate = options.create || function () {};
-				this.__registered_dom_events = [];
 				this.dom_events = {};
 				this.window_events = {};
+				this.__domEvents = new DomEvents();
 			},
 			
 			handle_call_exception: function (name, args, e) {
@@ -83,19 +85,20 @@ Scoped.define("module:Dynamic", [
 			},
 			
 			_afterActivate: function (activeElement) {
-				this.activeElement().off("." + this.cid() + "-domevents");
-				$(window).off("." + this.cid() + "-windowevents");
+				this.__domEvents.clear();
 				var self = this;
 				Objs.iter(this.domevents, function (target, event) {
 					var ev = event.split(" ");
 					var source = ev.length === 1 ? this.activeElement() : this.activeElement().find(ev[1]);
-					this.__registered_dom_events.push(source);
-					source.on(ev[0] + "." + this.cid() + "-domevents", function (eventData) {
+					var f = function (eventData) {
 						self.execute(target, eventData, $(this));
-					});
+					};
+					for (var i = 0; i < source.length; ++i) {
+						this.__domEvents.on(source.get(i), ev[0], f);
+					}
 				}, this);
 				Objs.iter(this.windowevents, function (target, event) {
-					$(window).on(event + "." + this.cid() + "-windowevents", function (eventData) {
+					this.__domEvents.on(window, event, function (eventData) {
 						self.execute(target, eventData, $(this));
 					});
 				}, this);
@@ -110,10 +113,7 @@ Scoped.define("module:Dynamic", [
 					if (obj && obj.weakDestroy)
 						obj.weakDestroy();
 				}, this);
-				Objs.iter(this.__registered_dom_events, function (source) {
-					source.off("." + this.cid() + "-domevents");
-				}, this);
-				$(window).off("." + this.cid() + "-windowevents");
+				this.__domEvents.destroy();
 				inherited.destroy.call(this);
 			}
 				
@@ -137,7 +137,7 @@ Scoped.define("module:Dynamic", [
 		findByElement: function (element) {
 			if (!element)
 				return null;
-			element = $(element).get(0);
+			element = Dom.unbox(element);
 			return element && element.dynamicshandler ? element.dynamicshandler : null; 
 		},
 		

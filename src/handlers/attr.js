@@ -13,17 +13,18 @@ Scoped.define("module:Exceptions.TagHandlerException", [
 });
 
 Scoped.define("module:Handlers.Attr", [
-	    "base:Class",
-	    "module:Exceptions.TagHandlerException",
-	    "module:Parser",
-	    "jquery:",
-	    "base:Types",
-	    "base:Objs",
-	    "base:Strings",
-	    "base:Async",
-	    "module:Registries",
-	    "browser:Dom"
-	], function (Class, TagHandlerException, Parser, $, Types, Objs, Strings, Async, Registries, Dom, scoped) {
+    "base:Class",
+    "module:Exceptions.TagHandlerException",
+    "module:Parser",
+    "jquery:",
+    "base:Types",
+    "base:Objs",
+    "base:Strings",
+    "base:Async",
+    "module:Registries",
+    "browser:Dom",
+    "browser:Events"
+], function (Class, TagHandlerException, Parser, $, Types, Objs, Strings, Async, Registries, Dom, Events, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, function (inherited) {
 		return {
@@ -69,6 +70,12 @@ Scoped.define("module:Handlers.Attr", [
 				return el[valueKey];
 			},
 			
+			_events: function () {
+				if (!this.__events) 
+					this.__events = this.auto_destroy(new Events());
+				return this.__events;
+			},
+			
 			updateElement: function (element, attribute) {
 				this._element = element;
 				this._$element = $(element);
@@ -86,23 +93,22 @@ Scoped.define("module:Handlers.Attr", [
 						this._attribute.value = "";
 				}
 				if (this._dyn) {
-					var self = this;
 					if (this._dyn.bidirectional && this._attrName == "value") {
-						this._$element.on("change keyup keypress keydown blur focus update input", function () {
-							self._node.mesh().write(self._dyn.variable, self.__inputVal(self._element));
-						});
+						this._events().on(this._element, "change keyup keypress keydown blur focus update input", function () {
+							this._node.mesh().write(this._dyn.variable, this.__inputVal(this._element));
+						}, this);
 					}
 					if (this._isEvent) {
 						this._attribute.value = '';
-						this._$element.on(this._attrName.substring(2), function () {
+						this._events().on(this._element, this._attrName.substring(2), function () {
 							// Ensures the domEvent does not continue to
 							// overshadow another variable after the __executeDyn call ends.
-							var oldDomEvent = self._node._locals.domEvent;
-							self._node._locals.domEvent = arguments;
-							self._node.__executeDyn(self._dyn);
-							if (self._node && self._node._locals)
-								self._node._locals.domEvent = oldDomEvent;
-						});
+							var oldDomEvent = this._node._locals.domEvent;
+							this._node._locals.domEvent = arguments;
+							this._node.__executeDyn(this._dyn);
+							if (this._node && this._node._locals)
+								this._node._locals.domEvent = oldDomEvent;
+						}, this);
 					}
 				}
 			},

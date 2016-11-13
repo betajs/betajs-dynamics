@@ -1,4 +1,7 @@
-Scoped.define("module:Partials.ReturnPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.ReturnPartial", [
+	"module:Handlers.Partial",
+	"browser:Events"
+], function (Partial, Events, scoped) {
   /**
    * @name ba-return
    *
@@ -18,11 +21,11 @@ Scoped.define("module:Partials.ReturnPartial", ["module:Handlers.Partial"], func
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
- 				var self = this;
- 				this._node._$element.on("keypress", function (event) {
- 					if (event.which === 13)
- 						self._execute();
- 				});        
+ 				var events = this.auto_destroy(new Events());
+ 				events.on(this._node._element, "keypress", function (e) {
+ 					if (e.which === 13)
+ 						this._execute();
+ 				}, this);
  			}
  		
  		};

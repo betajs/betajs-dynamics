@@ -1,5 +1,9 @@
 
-Scoped.define("module:Partials.TapPartial", ["module:Handlers.Partial", "browser:Info"], function (Partial, Info, scoped) {
+Scoped.define("module:Partials.TapPartial", [
+	"module:Handlers.Partial",
+	"browser:Info",
+	"browser:Events"
+], function (Partial, Info, Events, scoped) {
   /**
    * @name ba-tap
    *
@@ -18,11 +22,11 @@ Scoped.define("module:Partials.TapPartial", ["module:Handlers.Partial", "browser
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
- 				var self = this;
- 				this._node._$element.on(Info.isMobile() ? "touchstart" : "click", function (e) {
+ 				var events = this.auto_destroy(new Events());
+ 				events.on(this._node._element, Info.isMobile() ? "touchstart" : "click", function (e) {
  					e.stopPropagation();
- 					self._execute();
- 				});
+ 					this._execute();
+ 				}, this);
  			}
  		
  		};

@@ -33,17 +33,17 @@ Scoped.define("module:Partials.ShowPartial", ["module:Handlers.Partial"], functi
  					return;
  				this.__hidden = true;
  				if (!this.__readOldDisplay) {
- 					this.__oldDisplay = this._node._$element.get(0).style.display;
+ 					this.__oldDisplay = this._node._element.style.display;
  					this.__readOldDisplay = true;
  				}
- 				this._node._$element.get(0).style.display = "none";
+ 				this._node._element.style.display = "none";
  			},
  			
  			__show: function () {
  				if (!this.__hidden)
  					return;
  				this.__hidden = false;
- 				this._node._$element.get(0).style.display = this.__oldDisplay && this.__oldDisplay !== 'none' ? this.__oldDisplay : "";
+ 				this._node._element.style.display = this.__oldDisplay && this.__oldDisplay !== 'none' ? this.__oldDisplay : "";
  			},
  			
  			_apply: function (value) {

@@ -3,7 +3,7 @@ Scoped.define("module:Partials.StylesPartial", ["module:Handlers.Partial"], func
 		
 		_apply: function (value) {
 			for (var key in value)
-				this._node._$element.css(key, value[key]);
+				this._node._element.style[key] = value[key];
 		}
 
  	});

@@ -1,4 +1,7 @@
-Scoped.define("module:Partials.ClickPartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.ClickPartial", [
+	"module:Handlers.Partial",
+	"browser:Events"
+], function (Partial, Events, scoped) {
   /**
    * @name ba-click
    *
@@ -25,11 +28,11 @@ Scoped.define("module:Partials.ClickPartial", ["module:Handlers.Partial"], funct
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
- 				var self = this;
- 				this._node._$element.on("click", function (e) {
+ 				var events = this.auto_destroy(new Events());
+ 				events.on(this._node.element(), "click", function (e) {
  					e.stopPropagation();
- 					self._execute();
- 				});
+ 					this._execute();
+ 				}, this);
  			}
  		
  		};

@@ -37,7 +37,7 @@ Scoped.define("module:Partials.RepeatElementPartial", [
  			},
  			
  			_activate: function () {
- 				this._node._$element.hide();
+ 				this._node.element().style.display = "none";
  				inherited._activate.call(this);
  			},
  			

@@ -19,9 +19,9 @@ Scoped.define("module:Partials.TemplateUrlPartial",
 			constructor: function (node, args, value) {
 				inherited.constructor.apply(this, arguments);
 				node._expandChildren = false;
-				node._$element.html("");
+				node._element.innerHTML = "";
 				Loader.loadHtml(value, function (template) {
-					node._$element.html(template);
+					node._element.innerHTML = template;
 					node._$element.children().each(function () {
 	 					node._registerChild(this);
 	 				});

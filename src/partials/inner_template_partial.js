@@ -6,7 +6,7 @@ Scoped.define("module:Partials.InnerTemplatePartial",
 
 			constructor: function (node, args, value) {
 				inherited.constructor.apply(this, arguments);
-				node._$element.html(value);
+				node._element.innerHTML = value;
 			}
 
  		};

@@ -26,10 +26,10 @@ Scoped.define("module:Handlers.HandlerMixin", [
 	
 		__handlerDestruct: function () {
 			Objs.iter(this.__rootNodes, function (node) {
-				var $element = node.$element();
+				var element = node.element();
 				node.destroy();
 				if (this.remove_on_destroy)
-					$element.html("");
+					element.innerHTML = "";
 			}, this);
 		},
 		
@@ -68,26 +68,6 @@ Scoped.define("module:Handlers.HandlerMixin", [
 				}, this);
 			}
 			this.__activeElement.get(0).dynamicshandler = this;
-			
-			/*
-			if (this.template)
-				this._handlerInitializeTemplate(this.template, this._parentElement);
-			else {
-				if (this.templateUrl) {
-					this.__deferActivate = true;
-					if (this.__element)
-						this.__element.html("");
-					else if (this._parentElement)
-						$(this._parentElement).html("");
-					Loader.loadHtml(this.templateUrl, function (template) {
-						this.__deferActivate = false;
-						this._handlerInitializeTemplate(template, this._parentElement);
-						if (this.__deferedActivate)
-							this.activate();
-					}, this);
-				}
-			}
-			*/
 		},
 		
 		_handlerInitializeTemplate: function (template, parentElement) {

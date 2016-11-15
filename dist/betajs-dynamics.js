@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.72 - 2016-11-13
+betajs-dynamics - v0.0.72 - 2016-11-14
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1004,7 +1004,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.72 - 2016-11-13
+betajs-dynamics - v0.0.72 - 2016-11-14
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1018,7 +1018,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "275.1479041734269"
+    "version": "276.1479174800794"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -3402,6 +3402,22 @@ Scoped.define("module:Partials.OnPartial", [
  		};
  	});
  	Cls.register("ba-on");
+	return Cls;
+});
+
+
+Scoped.define("module:Partials.PropPartial", [
+	"module:Handlers.Partial"
+], function (Partial, Events, scoped) {
+ 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
+ 		return {
+			
+ 			_apply: function (value) {
+ 				this._node.$element().prop(this._postfix, value);
+ 			} 		
+ 		};
+ 	});
+ 	Cls.register("ba-prop");
 	return Cls;
 });
 

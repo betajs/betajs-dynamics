@@ -8,8 +8,9 @@ Scoped.define("module:Handlers.HandlerMixin", [
     "module:Handlers.Node",
     "module:Registries",
     "module:Handlers.HandlerNameRegistry",
-    "browser:DomMutation.NodeRemoveObserver"
-], function (Objs, Strings, Functions, Types, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver) {
+    "browser:DomMutation.NodeRemoveObserver",
+    "browser:Dom"
+], function (Objs, Strings, Functions, Types, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver, Dom) {
 	return {		
 		
 		_notifications: {
@@ -59,7 +60,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			if (this.templateUrl)
 				this.templateUrl = Strings.replaceAll(this.templateUrl, "%", Strings.last_after(this.cls.classname, ".").toLowerCase());
 			this.__element = options.element ? $(options.element) : null;
-			this.initialContent = this.__element ? this.__element.html() : $(this._parentElement).html();
+			this.initialContent = Dom.unbox(this.__element ? this.__element : this._parentElement).innerHTML;
 			this.__activeElement = this.__element ? this.__element : $(this._parentElement);
 			if (options.remove_observe) {
 				this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement.get(0)));

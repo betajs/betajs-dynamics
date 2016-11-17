@@ -15,7 +15,7 @@
         "url": "https://github.com/betajs/betajs-dynamics/issues"
     },
     "name": "betajs-dynamics",
-    "version": "0.0.73",
+    "version": "0.0.74",
     "description": "BetaJS-Dynamics is a dynamic DOM templating engine.",
     "contributors": [
         "Victor Lingenthal",
@@ -74,14 +74,14 @@
             "betajs-browser": "https://github.com/betajs/betajs-browser"
         },
         "compatability": {
-            "Firefox": "4 - Latest",
+            "Firefox": "6 - Latest",
             "Chrome": "15 - Latest",
             "Safari": "4 - Latest",
             "Opera": "12 - Latest",
             "Internet Explorer": "8 - Latest",
             "Edge": "12 - Latest",
-            "iOS": "7.0 - Latest",
-            "Android": "4.0 - Latest"
+            "iOS": "3.0 - Latest",
+            "Android": "2.2 - Latest"
         },
         "tests": {
             "Test Suite": "http://rawgit.com/betajs/betajs-dynamics/master/tests/tests.html"

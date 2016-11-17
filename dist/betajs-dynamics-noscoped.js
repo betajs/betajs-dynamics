@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.72 - 2016-11-14
+betajs-dynamics - v0.0.74 - 2016-11-17
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "276.1479174800794"
+    "version": "277.1479399550451"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -1330,8 +1330,9 @@ Scoped.define("module:Handlers.HandlerMixin", [
     "module:Handlers.Node",
     "module:Registries",
     "module:Handlers.HandlerNameRegistry",
-    "browser:DomMutation.NodeRemoveObserver"
-], function (Objs, Strings, Functions, Types, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver) {
+    "browser:DomMutation.NodeRemoveObserver",
+    "browser:Dom"
+], function (Objs, Strings, Functions, Types, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver, Dom) {
 	return {		
 		
 		_notifications: {
@@ -1381,7 +1382,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			if (this.templateUrl)
 				this.templateUrl = Strings.replaceAll(this.templateUrl, "%", Strings.last_after(this.cls.classname, ".").toLowerCase());
 			this.__element = options.element ? $(options.element) : null;
-			this.initialContent = this.__element ? this.__element.html() : $(this._parentElement).html();
+			this.initialContent = Dom.unbox(this.__element ? this.__element : this._parentElement).innerHTML;
 			this.__activeElement = this.__element ? this.__element : $(this._parentElement);
 			if (options.remove_observe) {
 				this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement.get(0)));

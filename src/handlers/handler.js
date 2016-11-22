@@ -106,6 +106,10 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			delete this.__assocs[name];
 		},
 		
+		activated: function () {
+			return this.__activated;
+		},
+		
 		assoc: function (name) {
 			return this.byName(this.__assocs[name] || name);
 		},

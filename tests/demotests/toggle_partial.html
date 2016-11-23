@@ -1,0 +1,27 @@
+<html>
+	<head>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="../../vendors/scoped.js"></script><script src="../../vendors/beta-noscoped.js"></script>
+        <script src="../../vendors/betajs-browser-noscoped.js"></script>
+		<script src="../../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+		<div id=test>
+			<input type="text" ba-toggle:readonly="{{readonly}}" />		  
+		</div>
+		<script>
+			var root = $("#test");
+
+			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root });
+		
+			dynamic.activate();
+			
+			
+			function test() {
+				QUnit.equal(!!root.find("input").prop("readonly"), false);
+				dynamic.set("readonly", true);
+				QUnit.equal(!!root.find("input").prop("readonly"), true);
+			}
+		</script>
+	</body>
+</html>

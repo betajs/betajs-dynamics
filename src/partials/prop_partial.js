@@ -6,7 +6,7 @@ Scoped.define("module:Partials.PropPartial", [
  		return {
 			
  			_apply: function (value) {
- 				this._node.$element().prop(this._postfix, value);
+ 				this._node.element()[this._postfix] = value;
  			} 		
  		};
  	});

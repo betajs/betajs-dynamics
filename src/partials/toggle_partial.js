@@ -1,14 +1,18 @@
 Scoped.define("module:Partials.TogglePartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+	var mapping = {
+		readonly: "readOnly"
+	};
+	
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
-			
+ 			
  			constructor: function (node, args, value, postfix) {
  				inherited.constructor.apply(this, arguments);
- 				node._$element.prop(postfix, value ? postfix : null);
+ 				this._apply(value);
  			},
  			
  			_apply: function (value) {
- 				this._node._$element.prop(this._postfix, value ? this._postfix : null);
+ 				this._node.element()[mapping[this._postfix] || this._postfix] = value ? this._postfix : null;
  			}
  		
  		};

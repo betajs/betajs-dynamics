@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.75 - 2016-11-22
+betajs-dynamics - v0.0.76 - 2016-11-23
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "278.1479849863710"
+    "version": "279.1479909459234"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -2413,7 +2413,7 @@ Scoped.define("module:Partials.PropPartial", [
  		return {
 			
  			_apply: function (value) {
- 				this._node.$element().prop(this._postfix, value);
+ 				this._node.element()[this._postfix] = value;
  			} 		
  		};
  	});
@@ -2972,16 +2972,20 @@ Scoped.define("module:Partials.TemplateUrlPartial",
 });
 
 Scoped.define("module:Partials.TogglePartial", ["module:Handlers.Partial"], function (Partial, scoped) {
+	var mapping = {
+		readonly: "readOnly"
+	};
+	
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {
  		return {
-			
+ 			
  			constructor: function (node, args, value, postfix) {
  				inherited.constructor.apply(this, arguments);
- 				node._$element.prop(postfix, value ? postfix : null);
+ 				this._apply(value);
  			},
  			
  			_apply: function (value) {
- 				this._node._$element.prop(this._postfix, value ? this._postfix : null);
+ 				this._node.element()[mapping[this._postfix] || this._postfix] = value ? this._postfix : null;
  			}
  		
  		};

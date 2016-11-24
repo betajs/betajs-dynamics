@@ -105,7 +105,7 @@ Scoped.define("module:Data.Scope", [
 				this.__children = {};
 				this.__extendables = Objs.objectify(options.extendables);
 				this.__properties = options.properties || new Properties();
-				this.__properties.increaseRef();
+				this.__properties.increaseRef(this);
 				this.__properties.on("change", function (key, value, oldValue) {
 					this.trigger("change:" + key, value, oldValue);
 				}, this);
@@ -160,7 +160,7 @@ Scoped.define("module:Data.Scope", [
 				Objs.iter(this.__children, function (child) {
 					child.destroy();
 				});
-				this.__properties.decreaseRef();
+				this.__properties.decreaseRef(this);
 				if (this.__parent)
 					this.__parent.__remove(this);
 				inherited.destroy.call(this);

@@ -24,8 +24,9 @@ Scoped.define("module:Dynamic", [
     "module:Registries",
     "browser:Dom",
     "browser:Events",
+    "base:Class",
     "jquery:"
-], function (Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Events, Registries, Dom, DomEvents, $, scoped) {
+], function (Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Events, Registries, Dom, DomEvents, Class, $, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -66,6 +67,18 @@ Scoped.define("module:Dynamic", [
 					}
 				}
 				inherited.constructor.call(this, options);
+				this.__references = options.references;
+				Objs.iter(this.__references, function (reference) {
+					this.on("change:" + reference, function (newReference, oldReference) {
+						if (oldReference && Class.is_class_instance(oldReference) && !oldReference.destroyed())
+							oldReference.decreaseRef(this);
+						if (newReference && Class.is_class_instance(newReference) && !newReference.destroyed())
+							newReference.increaseRef(this);
+					}, this);
+					var ref = this.get(reference);
+					if (ref && Class.is_class_instance(ref) && !ref.destroyed())
+						ref.increaseRef(this);
+				}, this);
 				this._channels.global = this.cls.__globalEvents;
 				if (options.tagName) {
 					this._tagName = options.tagName;
@@ -107,6 +120,11 @@ Scoped.define("module:Dynamic", [
 			destroy: function () {
 				if (this.free)
 					this.free();
+				Objs.iter(this.__references, function (reference) {
+					var ref = this.get(reference);
+					if (ref && Class.Class.is_class_instance(ref) && !ref.destroyed())
+						ref.decreaseRef(this);
+				}, this);
 				Objs.iter(this.__dispose, function (attr) {
 					var obj = this.get(attr);
 					this.set(attr, null);
@@ -121,7 +139,7 @@ Scoped.define("module:Dynamic", [
 	}], {
 		
 		__initialForward: [
-		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose", "channels", "registerchannels"
+		    "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose", "channels", "registerchannels", "references"
         ],
         
         __globalEvents: new Events(),
@@ -200,6 +218,9 @@ Scoped.define("module:Dynamic", [
 					return Objs.extend(Objs.clone(base, 1), overwrite);
 			},
 			dispose: function (first, second) {
+				return (first || []).concat(second || []);
+			},
+			references: function (first, second) {
 				return (first || []).concat(second || []);
 			}
 		}

@@ -1,4 +1,6 @@
 # betajs-dynamics 0.0.77
+
+[![Join the chat at https://gitter.im/betajs/betajs-dynamics](https://badges.gitter.im/betajs/betajs-dynamics.svg)](https://gitter.im/betajs/betajs-dynamics?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://api.travis-ci.org/betajs/betajs-dynamics.svg?branch=master)](https://travis-ci.org/betajs/betajs-dynamics)
 [![Code Climate](https://codeclimate.com/github/betajs/betajs-dynamics/badges/gpa.svg)](https://codeclimate.com/github/betajs/betajs-dynamics)
 

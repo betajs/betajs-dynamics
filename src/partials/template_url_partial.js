@@ -19,12 +19,12 @@ Scoped.define("module:Partials.TemplateUrlPartial",
 			constructor: function (node, args, value) {
 				inherited.constructor.apply(this, arguments);
 				node._expandChildren = false;
-				node._element.innerHTML = "";
+				node.element().innerHTML = "";
 				Loader.loadHtml(value, function (template) {
-					node._element.innerHTML = template;
-					node._$element.children().each(function () {
-	 					node._registerChild(this);
-	 				});
+					node.element().innerHTML = template;
+					var children = node.element().childNodes;
+					for (var i = 0; i < children.length; ++i)
+						node._registerChild(children[i]);
 				}, this);
 			}
 

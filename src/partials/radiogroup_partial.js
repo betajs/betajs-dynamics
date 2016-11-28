@@ -9,12 +9,12 @@ Scoped.define("module:Partials.RadioGroupPartial", [
  				inherited.constructor.apply(this, arguments);
  				var events = this.auto_destroy(new Events());
  				value = value.trim();
- 				this._node._$element.prop("checked", this._node._$element.val() === this._node.properties().get(value));
- 				events.on(this._node.element(), "change", function () {
- 					this._node.properties().set(value, this._node._$element.val());
+ 				this._node.element().checked = this._node.element().value === this._node.properties().get(value);
+ 				events.on(this._node.element(), "click change", function () {
+ 					this._node.properties().set(value, this._node.element().value);
  				}, this);
  				this._node.properties().on("change:" + value, function () {
- 					this._node._$element.prop("checked", this._node._$element.val() === this._node.properties().get(value)); 					
+ 					this._node.element().checked = this._node.element().value === this._node.properties().get(value); 					
  				}, this);
  			}
  		

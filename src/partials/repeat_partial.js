@@ -160,9 +160,10 @@ Scoped.define("module:Partials.RepeatPartial", [
  				if (!this._collectionChildren[item.cid()])
  					return;
 				Objs.iter(this._collectionChildren[item.cid()].nodes, function (node) {
-					var ele = node.$element();
+					var ele = node.element();
 					node.destroy();
-					ele.remove();
+					if (ele.parentNode)
+						ele.parentNode.removeChild(ele);
 				}, this);
 				delete this._collectionChildren[item.cid()];
  			},

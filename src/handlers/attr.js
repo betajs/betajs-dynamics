@@ -16,7 +16,6 @@ Scoped.define("module:Handlers.Attr", [
     "base:Class",
     "module:Exceptions.TagHandlerException",
     "module:Parser",
-    "jquery:",
     "base:Types",
     "base:Objs",
     "base:Strings",
@@ -24,7 +23,7 @@ Scoped.define("module:Handlers.Attr", [
     "module:Registries",
     "browser:Dom",
     "browser:Events"
-], function (Class, TagHandlerException, Parser, $, Types, Objs, Strings, Async, Registries, Dom, Events, scoped) {
+], function (Class, TagHandlerException, Parser, Types, Objs, Strings, Async, Registries, Dom, Events, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, function (inherited) {
 		return {
@@ -78,7 +77,6 @@ Scoped.define("module:Handlers.Attr", [
 			
 			updateElement: function (element, attribute) {
 				this._element = element;
-				this._$element = $(element);
 				attribute = attribute || element.attributes[this._attrName];
 				this._attribute = attribute;
 				this.__updateAttr();

@@ -18,10 +18,15 @@ Scoped.define("module:Partials.ClassPartial", ["module:Handlers.Partial"], funct
 		
 		_apply: function (value) {
 			for (var key in value) {
-				if (value[key])
-					this._node._$element.addClass(key);
-				else
-					this._node._$element.removeClass(key);
+				var className = this._node.element().className;
+				var hasClass = className.indexOf(key) >= 0;
+				if (value[key] !== hasClass) {
+					if (value[key])
+						className += " " + key;
+					else
+						className = className.replace(key, "").replace("  ", " ");
+					this._node.element().className = className.trim();
+				}
 			}
 		}
 

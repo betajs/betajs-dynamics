@@ -1,6 +1,6 @@
 {
   "name": "betajs-dynamics",
-  "version": "0.0.77",
+  "version": "0.0.78",
   "description": "BetaJS-Dynamics is a dynamic DOM templating engine.",
   "contributors": [
     "Victor Lingenthal",
@@ -43,7 +43,8 @@
 	"badges": {
 		"codeclimate": true,
 		"travis": true,
-		"npm": false
+		"npm": false,
+		"gitter": true
 	},
     "weakDependencies": {
       "betajs-scoped": "https://github.com/betajs/betajs-scoped",

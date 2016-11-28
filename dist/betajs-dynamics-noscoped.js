@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.77 - 2016-11-24
+betajs-dynamics - v0.0.78 - 2016-11-27
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -13,7 +13,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "280.1480017314358"
+    "version": "281.1480260462966"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -1149,7 +1149,6 @@ Scoped.define("module:Handlers.Attr", [
     "base:Class",
     "module:Exceptions.TagHandlerException",
     "module:Parser",
-    "jquery:",
     "base:Types",
     "base:Objs",
     "base:Strings",
@@ -1157,7 +1156,7 @@ Scoped.define("module:Handlers.Attr", [
     "module:Registries",
     "browser:Dom",
     "browser:Events"
-], function (Class, TagHandlerException, Parser, $, Types, Objs, Strings, Async, Registries, Dom, Events, scoped) {
+], function (Class, TagHandlerException, Parser, Types, Objs, Strings, Async, Registries, Dom, Events, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, function (inherited) {
 		return {
@@ -1211,7 +1210,6 @@ Scoped.define("module:Handlers.Attr", [
 			
 			updateElement: function (element, attribute) {
 				this._element = element;
-				this._$element = $(element);
 				attribute = attribute || element.attributes[this._attrName];
 				this._attribute = attribute;
 				this.__updateAttr();
@@ -2152,10 +2150,15 @@ Scoped.define("module:Partials.ClassPartial", ["module:Handlers.Partial"], funct
 		
 		_apply: function (value) {
 			for (var key in value) {
-				if (value[key])
-					this._node._$element.addClass(key);
-				else
-					this._node._$element.removeClass(key);
+				var className = this._node.element().className;
+				var hasClass = className.indexOf(key) >= 0;
+				if (value[key] !== hasClass) {
+					if (value[key])
+						className += " " + key;
+					else
+						className = className.replace(key, "").replace("  ", " ");
+					this._node.element().className = className.trim();
+				}
 			}
 		}
 
@@ -2453,12 +2456,12 @@ Scoped.define("module:Partials.RadioGroupPartial", [
  				inherited.constructor.apply(this, arguments);
  				var events = this.auto_destroy(new Events());
  				value = value.trim();
- 				this._node._$element.prop("checked", this._node._$element.val() === this._node.properties().get(value));
- 				events.on(this._node.element(), "change", function () {
- 					this._node.properties().set(value, this._node._$element.val());
+ 				this._node.element().checked = this._node.element().value === this._node.properties().get(value);
+ 				events.on(this._node.element(), "click change", function () {
+ 					this._node.properties().set(value, this._node.element().value);
  				}, this);
  				this._node.properties().on("change:" + value, function () {
- 					this._node._$element.prop("checked", this._node._$element.val() === this._node.properties().get(value)); 					
+ 					this._node.element().checked = this._node.element().value === this._node.properties().get(value); 					
  				}, this);
  			}
  		
@@ -2717,9 +2720,10 @@ Scoped.define("module:Partials.RepeatPartial", [
  				if (!this._collectionChildren[item.cid()])
  					return;
 				Objs.iter(this._collectionChildren[item.cid()].nodes, function (node) {
-					var ele = node.$element();
+					var ele = node.element();
 					node.destroy();
-					ele.remove();
+					if (ele.parentNode)
+						ele.parentNode.removeChild(ele);
 				}, this);
 				delete this._collectionChildren[item.cid()];
  			},
@@ -2976,12 +2980,12 @@ Scoped.define("module:Partials.TemplateUrlPartial",
 			constructor: function (node, args, value) {
 				inherited.constructor.apply(this, arguments);
 				node._expandChildren = false;
-				node._element.innerHTML = "";
+				node.element().innerHTML = "";
 				Loader.loadHtml(value, function (template) {
-					node._element.innerHTML = template;
-					node._$element.children().each(function () {
-	 					node._registerChild(this);
-	 				});
+					node.element().innerHTML = template;
+					var children = node.element().childNodes;
+					for (var i = 0; i < children.length; ++i)
+						node._registerChild(children[i]);
 				}, this);
 			}
 

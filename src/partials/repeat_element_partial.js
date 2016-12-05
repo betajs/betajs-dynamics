@@ -50,7 +50,7 @@ Scoped.define("module:Partials.RepeatElementPartial", [
  			_newItemElements: function () {
  				var template = this.__filteredTemplate.trim();
 				var element = $(template).get(0);
-				this._node._$element.after(element);
+				this._node.element().parentNode.insertBefore(element, this._node.element().nextSibling);
  				element["ba-handled"] = true;
  				return $(element);
  			},

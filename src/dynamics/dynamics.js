@@ -24,9 +24,8 @@ Scoped.define("module:Dynamic", [
     "module:Registries",
     "browser:Dom",
     "browser:Events",
-    "base:Class",
-    "jquery:"
-], function (Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Events, Registries, Dom, DomEvents, Class, $, scoped) {
+    "base:Class"
+], function (Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Events, Registries, Dom, DomEvents, Class, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -104,7 +103,7 @@ Scoped.define("module:Dynamic", [
 					var ev = event.split(" ");
 					var source = ev.length === 1 ? this.activeElement() : this.activeElement().find(ev[1]);
 					var f = function (eventData) {
-						self.execute(target, eventData, $(this));
+						self.execute(target, eventData, this);
 					};
 					for (var i = 0; i < source.length; ++i) {
 						this.__domEvents.on(source.get(i), ev[0], f);
@@ -112,7 +111,7 @@ Scoped.define("module:Dynamic", [
 				}, this);
 				Objs.iter(this.windowevents, function (target, event) {
 					this.__domEvents.on(window, event, function (eventData) {
-						self.execute(target, eventData, $(this));
+						self.execute(target, eventData, this);
 					});
 				}, this);
 			},

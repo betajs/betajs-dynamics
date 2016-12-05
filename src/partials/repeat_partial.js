@@ -4,10 +4,9 @@ Scoped.define("module:Partials.RepeatPartial", [
         "base:Collections.Collection",
         "base:Collections.FilteredCollection",
         "base:Objs",
-        "jquery:",
         "module:Parser",
         "module:Registries"
-	], function (Partial, Properties, Collection, FilteredCollection, Objs, $, Parser, Registries, scoped) {
+	], function (Partial, Properties, Collection, FilteredCollection, Objs, Parser, Registries, scoped) {
 	  /**
 	   * @name ba-repeat
 	   *
@@ -178,7 +177,7 @@ Scoped.define("module:Partials.RepeatPartial", [
  					return null;
  				var result = [];
  				Objs.iter(itemData.nodes, function (node) {
- 					result.push(node.$element());
+ 					result.push(node.element());
  				});
  				return result;
  			},
@@ -189,7 +188,7 @@ Scoped.define("module:Partials.RepeatPartial", [
  				if (!baseDataElements || !itemDataElements)
  					return;
  				Objs.iter(itemDataElements, function (element) {
- 					element.insertBefore(baseDataElements[0]);
+ 					element.parentNode.insertBefore(element, baseDataElements[0]);
  				});
  			},
  			
@@ -200,13 +199,13 @@ Scoped.define("module:Partials.RepeatPartial", [
  					return;
  				var current = baseDataElements[baseDataElements.length - 1];
  				Objs.iter(itemDataElements, function (element) {
- 					current.after(element);
+ 					current.parentNode.insertBefore(element, current.nextSibling); 
  					current = element;
  				});
  			},
  			
  			_newItemElements: function () {
- 				return Registries.templates.create(this._node._innerTemplate).appendTo(this._node._$element);
+ 				return Registries.templates.create(this._node._innerTemplate).appendTo(this._node.element());
  			}
  			
  		};

@@ -30,7 +30,6 @@ Scoped.define("module:Handlers.Node", [
 				this._dynTag = Parser.parseText(this._tag);
 				this._tagHandler = null;
 				
-				this._$element = $(element);
 				this._template = element.outerHTML;
 				this._innerTemplate = element.innerHTML;
 				this._locals = locals || {};
@@ -71,7 +70,7 @@ Scoped.define("module:Handlers.Node", [
 				this._removeChildren();
 				if (this._tagHandler && !this._tagHandler.destroyed()) {
 					if (this._tagHandler.cacheable && this._tagHandler.cls.cacheable)
-						Registries.handlerCache.suspend(this._tagHandler, this._$element);
+						Registries.handlerCache.suspend(this._tagHandler, this._element);
 					else
 						this._tagHandler.weakDestroy();
 				}
@@ -98,10 +97,6 @@ Scoped.define("module:Handlers.Node", [
 				return this._element;
 			},
 			
-			$element: function () {
-				return this._$element;
-			},
-		
 			__dynOff: function (dyn) {
 				this._mesh.unwatch(dyn.dependencies, dyn);
 			},
@@ -134,7 +129,7 @@ Scoped.define("module:Handlers.Node", [
 					}, this);
 					this.off(null, null, this._tagHandler);
 					if (this._tagHandler.cacheable && this._tagHandler.cls.cacheable)
-						Registries.handlerCache.suspend(this._tagHandler, this._$element);
+						Registries.handlerCache.suspend(this._tagHandler, this._element);
 					else
 						this._tagHandler.weakDestroy();
 					this._tagHandler = null;
@@ -148,7 +143,6 @@ Scoped.define("module:Handlers.Node", [
 					return;
 				if (this._dynTag && this._element.tagName.toLowerCase() != tagv.toLowerCase()) {
 					this._element = Dom.changeTag(this._element, tagv);
-					this._$element = $(this._element);
 					Objs.iter(this._attrs, function (attr) {
 						attr.updateElement(this._element);
 					}, this);
@@ -158,12 +152,11 @@ Scoped.define("module:Handlers.Node", [
 				if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9) {
 					var isActiveElement = this._element === this._handler.activeElement().get(0);
 					this._element = Dom.changeTag(this._element, tagv);
-					this._$element = $(this._element);
 					Objs.iter(this._attrs, function (attr) {
 						attr.updateElement(this._element);
 					}, this);
 					if (isActiveElement)
-						this._handler._updateActiveElement(this._$element);
+						this._handler._updateActiveElement(this._element);
 				}
 				var createArguments = {
 					parentElement: this._element,
@@ -178,7 +171,7 @@ Scoped.define("module:Handlers.Node", [
 				if (createArguments.ignoreTagHandler)
 					return;
 				if (createArguments.cacheable)
-					this._tagHandler = Registries.handlerCache.resume(tagv, this._$element, this._handler);
+					this._tagHandler = Registries.handlerCache.resume(tagv, this._element, this._handler);
 				if (!this._tagHandler)
 					this._tagHandler = Registries.handler.create(tagv, createArguments);
 				Objs.iter(this._attrs, function (attr) {
@@ -204,7 +197,7 @@ Scoped.define("module:Handlers.Node", [
 		        		this._element.innerHTML = this._innerTemplate;
 		        	this._touchedInner = true;
 		        	if (this._element.nodeType == 3) {
-		        		this._dyn = Parser.parseText(this._$element.text());
+		        		this._dyn = Parser.parseText($(this._element).text());
 						if (this._dyn) {
 							this.__dynOn(this._dyn, function () {
 								this.__updateDyn();
@@ -234,7 +227,7 @@ Scoped.define("module:Handlers.Node", [
 						this._element.data = Dom.entitiesToUnicode(value === null ? "" : value);
 					else {
 						// OF: Not clear if this is ever executed and whether it actually does something meaningful.
-						this._$element.replaceWith(value);
+						$(this._element).replaceWith(value);
 					}
 				}
 			},

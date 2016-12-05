@@ -136,7 +136,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 		},
 		
 		_updateActiveElement: function (activeElement) {
-			this.__activeElement = activeElement;
+			this.__activeElement = $(activeElement);
 			if (this.__removeObserver) {
 				this.__removeObserver.weakDestroy();
 				this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement.get(0)));

@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.78 - 2016-11-27
+betajs-dynamics - v0.0.79 - 2016-12-04
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1004,7 +1004,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.78 - 2016-11-27
+betajs-dynamics - v0.0.79 - 2016-12-04
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1018,7 +1018,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "281.1480260462966"
+    "version": "282.1480901341568"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -1932,9 +1932,8 @@ Scoped.define("module:Dynamic", [
     "module:Registries",
     "browser:Dom",
     "browser:Events",
-    "base:Class",
-    "jquery:"
-], function (Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Events, Registries, Dom, DomEvents, Class, $, scoped) {
+    "base:Class"
+], function (Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Events, Registries, Dom, DomEvents, Class, scoped) {
 	var Cls;
 	Cls = Scope.extend({scoped: scoped}, [HandlerMixin, function (inherited) {
    		return {
@@ -2012,7 +2011,7 @@ Scoped.define("module:Dynamic", [
 					var ev = event.split(" ");
 					var source = ev.length === 1 ? this.activeElement() : this.activeElement().find(ev[1]);
 					var f = function (eventData) {
-						self.execute(target, eventData, $(this));
+						self.execute(target, eventData, this);
 					};
 					for (var i = 0; i < source.length; ++i) {
 						this.__domEvents.on(source.get(i), ev[0], f);
@@ -2020,7 +2019,7 @@ Scoped.define("module:Dynamic", [
 				}, this);
 				Objs.iter(this.windowevents, function (target, event) {
 					this.__domEvents.on(window, event, function (eventData) {
-						self.execute(target, eventData, $(this));
+						self.execute(target, eventData, this);
 					});
 				}, this);
 			},
@@ -2482,7 +2481,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 		},
 		
 		_updateActiveElement: function (activeElement) {
-			this.__activeElement = activeElement;
+			this.__activeElement = $(activeElement);
 			if (this.__removeObserver) {
 				this.__removeObserver.weakDestroy();
 				this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement.get(0)));
@@ -2725,7 +2724,6 @@ Scoped.define("module:Handlers.Node", [
 				this._dynTag = Parser.parseText(this._tag);
 				this._tagHandler = null;
 				
-				this._$element = $(element);
 				this._template = element.outerHTML;
 				this._innerTemplate = element.innerHTML;
 				this._locals = locals || {};
@@ -2766,7 +2764,7 @@ Scoped.define("module:Handlers.Node", [
 				this._removeChildren();
 				if (this._tagHandler && !this._tagHandler.destroyed()) {
 					if (this._tagHandler.cacheable && this._tagHandler.cls.cacheable)
-						Registries.handlerCache.suspend(this._tagHandler, this._$element);
+						Registries.handlerCache.suspend(this._tagHandler, this._element);
 					else
 						this._tagHandler.weakDestroy();
 				}
@@ -2793,10 +2791,6 @@ Scoped.define("module:Handlers.Node", [
 				return this._element;
 			},
 			
-			$element: function () {
-				return this._$element;
-			},
-		
 			__dynOff: function (dyn) {
 				this._mesh.unwatch(dyn.dependencies, dyn);
 			},
@@ -2829,7 +2823,7 @@ Scoped.define("module:Handlers.Node", [
 					}, this);
 					this.off(null, null, this._tagHandler);
 					if (this._tagHandler.cacheable && this._tagHandler.cls.cacheable)
-						Registries.handlerCache.suspend(this._tagHandler, this._$element);
+						Registries.handlerCache.suspend(this._tagHandler, this._element);
 					else
 						this._tagHandler.weakDestroy();
 					this._tagHandler = null;
@@ -2843,7 +2837,6 @@ Scoped.define("module:Handlers.Node", [
 					return;
 				if (this._dynTag && this._element.tagName.toLowerCase() != tagv.toLowerCase()) {
 					this._element = Dom.changeTag(this._element, tagv);
-					this._$element = $(this._element);
 					Objs.iter(this._attrs, function (attr) {
 						attr.updateElement(this._element);
 					}, this);
@@ -2853,12 +2846,11 @@ Scoped.define("module:Handlers.Node", [
 				if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9) {
 					var isActiveElement = this._element === this._handler.activeElement().get(0);
 					this._element = Dom.changeTag(this._element, tagv);
-					this._$element = $(this._element);
 					Objs.iter(this._attrs, function (attr) {
 						attr.updateElement(this._element);
 					}, this);
 					if (isActiveElement)
-						this._handler._updateActiveElement(this._$element);
+						this._handler._updateActiveElement(this._element);
 				}
 				var createArguments = {
 					parentElement: this._element,
@@ -2873,7 +2865,7 @@ Scoped.define("module:Handlers.Node", [
 				if (createArguments.ignoreTagHandler)
 					return;
 				if (createArguments.cacheable)
-					this._tagHandler = Registries.handlerCache.resume(tagv, this._$element, this._handler);
+					this._tagHandler = Registries.handlerCache.resume(tagv, this._element, this._handler);
 				if (!this._tagHandler)
 					this._tagHandler = Registries.handler.create(tagv, createArguments);
 				Objs.iter(this._attrs, function (attr) {
@@ -2899,7 +2891,7 @@ Scoped.define("module:Handlers.Node", [
 		        		this._element.innerHTML = this._innerTemplate;
 		        	this._touchedInner = true;
 		        	if (this._element.nodeType == 3) {
-		        		this._dyn = Parser.parseText(this._$element.text());
+		        		this._dyn = Parser.parseText($(this._element).text());
 						if (this._dyn) {
 							this.__dynOn(this._dyn, function () {
 								this.__updateDyn();
@@ -2929,7 +2921,7 @@ Scoped.define("module:Handlers.Node", [
 						this._element.data = Dom.entitiesToUnicode(value === null ? "" : value);
 					else {
 						// OF: Not clear if this is ever executed and whether it actually does something meaningful.
-						this._$element.replaceWith(value);
+						$(this._element).replaceWith(value);
 					}
 				}
 			},
@@ -3022,6 +3014,7 @@ Scoped.define("module:Registries", [
 			cacheDom: null,
 			
 			suspend: function (handler, element) {
+				element = $(element);
 				if (!this.cacheDom)
 					this.cacheDom = $("<div ba-ignore style='display:none'></div>").appendTo(document.body);
 				var cacheDom = this.cacheDom;
@@ -3037,6 +3030,7 @@ Scoped.define("module:Registries", [
 			},
 			
 			resume: function (name, element, parentHandler) {
+				element = $(element);
 				if (!this.cache[name] || this.cache[name].length === 0)
 					return null;
 				var record = this.cache[name].shift();
@@ -3548,7 +3542,7 @@ Scoped.define("module:Partials.RepeatElementPartial", [
  			_newItemElements: function () {
  				var template = this.__filteredTemplate.trim();
 				var element = $(template).get(0);
-				this._node._$element.after(element);
+				this._node.element().parentNode.insertBefore(element, this._node.element().nextSibling);
  				element["ba-handled"] = true;
  				return $(element);
  			},
@@ -3569,10 +3563,9 @@ Scoped.define("module:Partials.RepeatPartial", [
         "base:Collections.Collection",
         "base:Collections.FilteredCollection",
         "base:Objs",
-        "jquery:",
         "module:Parser",
         "module:Registries"
-	], function (Partial, Properties, Collection, FilteredCollection, Objs, $, Parser, Registries, scoped) {
+	], function (Partial, Properties, Collection, FilteredCollection, Objs, Parser, Registries, scoped) {
 	  /**
 	   * @name ba-repeat
 	   *
@@ -3743,7 +3736,7 @@ Scoped.define("module:Partials.RepeatPartial", [
  					return null;
  				var result = [];
  				Objs.iter(itemData.nodes, function (node) {
- 					result.push(node.$element());
+ 					result.push(node.element());
  				});
  				return result;
  			},
@@ -3754,7 +3747,7 @@ Scoped.define("module:Partials.RepeatPartial", [
  				if (!baseDataElements || !itemDataElements)
  					return;
  				Objs.iter(itemDataElements, function (element) {
- 					element.insertBefore(baseDataElements[0]);
+ 					element.parentNode.insertBefore(element, baseDataElements[0]);
  				});
  			},
  			
@@ -3765,13 +3758,13 @@ Scoped.define("module:Partials.RepeatPartial", [
  					return;
  				var current = baseDataElements[baseDataElements.length - 1];
  				Objs.iter(itemDataElements, function (element) {
- 					current.after(element);
+ 					current.parentNode.insertBefore(element, current.nextSibling); 
  					current = element;
  				});
  			},
  			
  			_newItemElements: function () {
- 				return Registries.templates.create(this._node._innerTemplate).appendTo(this._node._$element);
+ 				return Registries.templates.create(this._node._innerTemplate).appendTo(this._node.element());
  			}
  			
  		};

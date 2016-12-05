@@ -44,6 +44,7 @@ Scoped.define("module:Registries", [
 			cacheDom: null,
 			
 			suspend: function (handler, element) {
+				element = $(element);
 				if (!this.cacheDom)
 					this.cacheDom = $("<div ba-ignore style='display:none'></div>").appendTo(document.body);
 				var cacheDom = this.cacheDom;
@@ -59,6 +60,7 @@ Scoped.define("module:Registries", [
 			},
 			
 			resume: function (name, element, parentHandler) {
+				element = $(element);
 				if (!this.cache[name] || this.cache[name].length === 0)
 					return null;
 				var record = this.cache[name].shift();

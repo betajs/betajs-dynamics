@@ -50,7 +50,7 @@ Scoped.define("module:Partials.RepeatPartial", [
  			destroy: function () {
  				this.__unregister();
  				if (this.__repeatFilter)
- 					node.mesh().unwatch(this.__repeatFilter.dependencies, this.__repeatFilter);
+ 					this._node.mesh().unwatch(this.__repeatFilter.dependencies, this.__repeatFilter);
  				inherited.destroy.call(this);
  			},
  			

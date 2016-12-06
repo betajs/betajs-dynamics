@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.79 - 2016-12-04
+betajs-dynamics - v0.0.80 - 2016-12-06
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1004,7 +1004,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.79 - 2016-12-04
+betajs-dynamics - v0.0.80 - 2016-12-06
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1018,7 +1018,7 @@ Scoped.binding('jquery', 'global:jQuery');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "282.1480901341568"
+    "version": "283.1481065304009"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -3609,7 +3609,7 @@ Scoped.define("module:Partials.RepeatPartial", [
  			destroy: function () {
  				this.__unregister();
  				if (this.__repeatFilter)
- 					node.mesh().unwatch(this.__repeatFilter.dependencies, this.__repeatFilter);
+ 					this._node.mesh().unwatch(this.__repeatFilter.dependencies, this.__repeatFilter);
  				inherited.destroy.call(this);
  			},
  			

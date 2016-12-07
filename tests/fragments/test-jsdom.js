@@ -6,9 +6,6 @@ test("jsdom", function () {
 		global.document = window.document;
 		global.jQuery = window.$;
 		global.$ = window.$;
-		Scoped.define("global:jQuery", function () {
-			return window.$;
-		});
 		ok(true);
 		start();
 		var democases = [

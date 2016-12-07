@@ -3,14 +3,13 @@ Scoped.define("module:Handlers.HandlerMixin", [
     "base:Strings",
     "base:Functions",
 	"base:Types",
-    "jquery:",
     "browser:Loader",
     "module:Handlers.Node",
     "module:Registries",
     "module:Handlers.HandlerNameRegistry",
     "browser:DomMutation.NodeRemoveObserver",
     "browser:Dom"
-], function (Objs, Strings, Functions, Types, $, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver, Dom) {
+], function (Objs, Strings, Functions, Types, Loader, Node, Registries, HandlerNameRegistry, NodeRemoveObserver, Dom) {
 	return {		
 		
 		_notifications: {
@@ -59,32 +58,36 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			this.templateUrl = options.templateUrl || this.templateUrl;
 			if (this.templateUrl)
 				this.templateUrl = Strings.replaceAll(this.templateUrl, "%", Strings.last_after(this.cls.classname, ".").toLowerCase());
-			this.__element = options.element ? $(options.element) : null;
-			this.initialContent = Dom.unbox(this.__element ? this.__element : this._parentElement).innerHTML;
-			this.__activeElement = this.__element ? this.__element : $(this._parentElement);
+			this.__elements = options.element ? [Dom.unbox(options.element)] : [];
+			this.initialContent = Dom.unbox(options.element ? options.element : this._parentElement).innerHTML;
+			this.__activeElement = options.element ? Dom.unbox(options.element) : Dom.unbox(this._parentElement);
 			if (options.remove_observe) {
-				this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement.get(0)));
+				this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement));
 				this.__removeObserver.on("node-removed", function () {
 					this.weakDestroy();
 				}, this);
 			}
-			this.__activeElement.get(0).dynamicshandler = this;
+			this.__activeElement.dynamicshandler = this;
 		},
 		
 		_handlerInitializeTemplate: function (template, parentElement) {
 			var compiled = Registries.templates.create(template);
-			if (this.__element) {
-				this.__activeElement = this.__element;
-				this.__element.html("");
-				this.__element.append(compiled);
+			if (this.__elements.length > 0) {
+				this.__activeElement = this.__elements[0];
+				this.__elements[0].innerHTML = "";
+				compiled.forEach(function (child) {
+					this.__elements[0].appendChild(child);
+				}, this);				
 			} else if (parentElement) {
-				this.__activeElement = $(parentElement);
-				this.__element = compiled;
-				this.__activeElement.html("");
-				this.__activeElement.append(compiled);
+				this.__activeElement = Dom.unbox(parentElement);
+				this.__elements = compiled;
+				this.__activeElement.innerHTML = "";
+				compiled.forEach(function (child) {
+					this.__activeElement.appendChild(child);
+				}, this);				
 			} else {
-				this.__element = compiled;
-				this.__activeElement = this.__element.parent();
+				this.__elements = compiled;
+				this.__activeElement = this.__elements[0].parentNode;
 			}
 		},
 		
@@ -127,19 +130,20 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			return !!this._argumentAttrs[key];
 		},
 		
-		element: function () {
-			return this.__element;
-		},
-		
 		activeElement: function () {
 			return this.__activeElement;
 		},
 		
+		// Deprecated
+		element: function () {
+			return this.__elements;
+		},
+		
 		_updateActiveElement: function (activeElement) {
-			this.__activeElement = $(activeElement);
+			this.__activeElement = Dom.unbox(activeElement);
 			if (this.__removeObserver) {
 				this.__removeObserver.weakDestroy();
-				this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement.get(0)));
+				this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement));
 				this.__removeObserver.on("node-removed", function () {
 					this.weakDestroy();
 				}, this);				
@@ -172,10 +176,10 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			
 			this._notify("_activate");
 			this.__rootNodes = [];
-			var self = this;			
-			this.__element.each(function () {
-				self.__rootNodes.push(new Node(self, null, this));
-			});
+			this.__elements.forEach(function (element) {
+				this.__rootNodes.push(new Node(this, null, element));
+			}, this);
+			this._preAfterActivate(this.__activeElement);
 			this._afterActivate(this.__activeElement);
 		},
 		

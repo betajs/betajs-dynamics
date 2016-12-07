@@ -141,11 +141,10 @@ Scoped.define("module:Partials.RepeatPartial", [
  				if (this.__repeatArg)
  					locals[this.__repeatArg] = this._isArray ? item.get("value") : item;
  				var result = [];
- 				var self = this;
  				var elements = this._newItemElements();
- 				elements.each(function () {
- 					result.push(self._node._registerChild(this, locals));
- 				});
+ 				elements.forEach(function (element) {
+ 					result.push(this._node._registerChild(element, locals));
+ 				}, this);
  				this._collectionChildren[item.cid()] = {
 					item: item,
 					nodes: result
@@ -205,7 +204,12 @@ Scoped.define("module:Partials.RepeatPartial", [
  			},
  			
  			_newItemElements: function () {
- 				return Registries.templates.create(this._node._innerTemplate).appendTo(this._node.element());
+ 				var elements = Registries.templates.create(this._node._innerTemplate);
+ 				var parent = this._node.element();
+ 				elements.forEach(function (element) {
+ 					parent.appendChild(element);
+ 				});
+ 				return elements;
  			}
  			
  		};

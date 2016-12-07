@@ -1,4 +1,4 @@
-# betajs-dynamics 0.0.80
+# betajs-dynamics 0.0.81
 [![Build Status](https://api.travis-ci.org/betajs/betajs-dynamics.svg?branch=master)](https://travis-ci.org/betajs/betajs-dynamics)
 [![Code Climate](https://codeclimate.com/github/betajs/betajs-dynamics/badges/gpa.svg)](https://codeclimate.com/github/betajs/betajs-dynamics)
 [![Gitter Chat](https://badges.gitter.im/betajs/betajs-dynamics.svg)](https://gitter.im/betajs/betajs-dynamics)
@@ -15,7 +15,6 @@ You can use the library in the browser and compile it as well.
 #### Browser
 
 ```javascript
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 	<script src="betajs/dist/betajs.min.js"></script>
 	<script src="betajs-browser/dist/betajs-browser.min.js"></script>
 	<script src="betajs-dynamics/dist/betajs-dynamics.min.js"></script>

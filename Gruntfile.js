@@ -11,8 +11,7 @@ module.exports = function(grunt) {
 	.scopedclosurerevisionTask(null, "src/**/*.js", "dist/" + dist + "-noscoped.js", {
 		"module": "global:BetaJS.Dynamics",
 		"base": "global:BetaJS",
-		"browser": "global:BetaJS.Browser",
-		"jquery": "global:jQuery"
+		"browser": "global:BetaJS.Browser"
     }, {
     	"base:version": 531,
     	"browser:version": 79
@@ -27,7 +26,7 @@ module.exports = function(grunt) {
     .qunitTask(null, './dist/' + dist + '-noscoped.js',
     		         grunt.file.expand(["./tests/fragments/test-jsdom.js", "./tests/data/*.js"]),
     		         ['./tests/fragments/init-jsdom.js', './vendors/scoped.js', './vendors/betajs-debug-noscoped.js', './vendors/beta-noscoped.js', './vendors/betajs-browser-noscoped.js'])
-    .closureTask(null, ["./vendors/scoped.js", "./vendors/beta-noscoped.js",  "./vendors/betajs-browser-noscoped.js", "./dist/betajs-dynamics-noscoped.js"], null, { jquery: true })
+    .closureTask(null, ["./vendors/scoped.js", "./vendors/beta-noscoped.js",  "./vendors/betajs-browser-noscoped.js", "./dist/betajs-dynamics-noscoped.js"], null, { })
     .browserstackTask(null, 'tests/tests.html', {desktop: true, mobile: true})
     .lintTask(null, ['./src/**/*.js', './dist/' + dist + '-noscoped.js', './dist/' + dist + '.js', './Gruntfile.js', './tests/**/*.js', './benchmarks/**/*.js'])
     

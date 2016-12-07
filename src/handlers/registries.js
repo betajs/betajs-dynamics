@@ -1,8 +1,8 @@
 Scoped.define("module:Registries", [
     "base:Classes.ClassRegistry",
     "base:Exceptions.AsyncExceptionThrower",
-    "jquery:"
-], function (ClassRegistry, AsyncExceptionThrower, $) {
+    "browser:Dom"
+], function (ClassRegistry, AsyncExceptionThrower, Dom) {
 	return {		
 		
 		handler: new ClassRegistry({}, true),
@@ -16,16 +16,16 @@ Scoped.define("module:Registries", [
 			create: function (template) {
 				template = template.trim();
 				var cached = this.cache[template];
-				if (cached)
-					return cached.clone();
-				var compiled;
-				try {
-					compiled = $(template);
-				} catch (e) {
-					compiled = $(document.createTextNode(template));
+				if (!cached) {
+					if (template.indexOf("<") === 0)
+						cached = Dom.elementsByTemplate(template);
+					else
+						cached = [document.createTextNode(template)];
+					this.cache[template] = cached;
 				}
-				this.cache[template] = compiled;
-				return compiled.clone();
+				return cached.map(function (element) {
+					return element.cloneNode(true);
+				});
 			}
 			
 		},
@@ -44,27 +44,36 @@ Scoped.define("module:Registries", [
 			cacheDom: null,
 			
 			suspend: function (handler, element) {
-				element = $(element);
-				if (!this.cacheDom)
-					this.cacheDom = $("<div ba-ignore style='display:none'></div>").appendTo(document.body);
-				var cacheDom = this.cacheDom;
+				element = Dom.unbox(element);
+				if (!this.cacheDom) {
+					this.cacheDom = document.createElement("div");
+					this.cacheDom.setAttribute("ba-ignore", "");
+					this.cacheDom.style.display = "none";
+					document.body.appendChild(this.cacheDom);
+				}
 				var name = handler.data("tagname");
 				this.cache[name] = this.cache[name] || [];
+				var children = [];
+				for (var i = 0; i < element.children.length; ++i)
+					children.push(element.children[i]);
 				this.cache[name].push({
 					handler: handler,
-					elements: element.children()
+					elements: children
 				});
-				element.children().each(function () {
-					cacheDom.append(this);
-				});
+				children.forEach(function (child) {
+					this.cacheDom.appendChild(child);
+				}, this);
 			},
 			
 			resume: function (name, element, parentHandler) {
-				element = $(element);
+				element = Dom.unbox(element);
 				if (!this.cache[name] || this.cache[name].length === 0)
 					return null;
 				var record = this.cache[name].shift();
-				element.html(record.elements);
+				element.innerHTML = "";
+				record.elements.forEach(function (child) {
+					element.appendChild(child);
+				});
 				record.handler._handlerInitialize({
 					parentHandler: parentHandler,
 					parentElement: element

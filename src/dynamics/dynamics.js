@@ -96,17 +96,19 @@ Scoped.define("module:Dynamic", [
 				return null;
 			},
 			
-			_afterActivate: function (activeElement) {
+			_preAfterActivate: function (activeElement) {
 				this.__domEvents.clear();
 				var self = this;
 				Objs.iter(this.domevents, function (target, event) {
 					var ev = event.split(" ");
-					var source = ev.length === 1 ? this.activeElement() : this.activeElement().find(ev[1]);
+					var source = [activeElement];
+					if (ev.length > 1)
+						source = activeElement.querySelectorAll(ev[1]);
 					var f = function (eventData) {
 						self.execute(target, eventData, this);
 					};
 					for (var i = 0; i < source.length; ++i) {
-						this.__domEvents.on(source.get(i), ev[0], f);
+						this.__domEvents.on(source[i], ev[0], f);
 					}
 				}, this);
 				Objs.iter(this.windowevents, function (target, event) {

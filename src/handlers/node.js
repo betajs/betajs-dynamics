@@ -5,13 +5,12 @@ Scoped.define("module:Handlers.Node", [
 	    "browser:Dom",
 	    "browser:Info",
 	    "module:Parser",
-	    "jquery:",
 	    "module:Data.Mesh",
 	    "base:Objs",
 	    "base:Types",
 	    "module:Registries",
 	    "module:Handlers.Attr"
-	], function (Class, EventsMixin, Ids, Dom, Info, Parser, $, Mesh, Objs, Types, Registries, Attr, scoped) {
+	], function (Class, EventsMixin, Ids, Dom, Info, Parser, Mesh, Objs, Types, Registries, Attr, scoped) {
 	var Cls;
 	Cls = Class.extend({scoped: scoped}, [EventsMixin, function (inherited) {
 		return {
@@ -150,7 +149,7 @@ Scoped.define("module:Handlers.Node", [
 				if (!Registries.handler.get(tagv))
 					return false;
 				if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9) {
-					var isActiveElement = this._element === this._handler.activeElement().get(0);
+					var isActiveElement = this._element === this._handler.activeElement();
 					this._element = Dom.changeTag(this._element, tagv);
 					Objs.iter(this._attrs, function (attr) {
 						attr.updateElement(this._element);
@@ -197,7 +196,7 @@ Scoped.define("module:Handlers.Node", [
 		        		this._element.innerHTML = this._innerTemplate;
 		        	this._touchedInner = true;
 		        	if (this._element.nodeType == 3) {
-		        		this._dyn = Parser.parseText($(this._element).text());
+		        		this._dyn = Parser.parseText(this._element.textContent || this._element.innerText || this._element.nodeValue);
 						if (this._dyn) {
 							this.__dynOn(this._dyn, function () {
 								this.__updateDyn();
@@ -221,14 +220,13 @@ Scoped.define("module:Handlers.Node", [
 				var value = this.__executeDyn(this._dyn);
 				if (force || value != this._dyn.value) {
 					this._dyn.value = value;
+					var converted = Dom.entitiesToUnicode(value === null ? "" : value);
 					if ("textContent" in this._element)
-						this._element.textContent = Dom.entitiesToUnicode(value);
-					else if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9 && ("data" in this._element))
-						this._element.data = Dom.entitiesToUnicode(value === null ? "" : value);
-					else {
-						// OF: Not clear if this is ever executed and whether it actually does something meaningful.
-						$(this._element).replaceWith(value);
-					}
+						this._element.textContent = converted;
+					if ("innerText" in this._element)
+						this._element.innerText = converted;
+					if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9 && ("data" in this._element))
+						this._element.data = converted;
 				}
 			},
 				

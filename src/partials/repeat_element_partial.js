@@ -3,11 +3,10 @@ Scoped.define("module:Partials.RepeatElementPartial", [
         "base:Collections.Collection",
         "base:Collections.FilteredCollection",
         "base:Objs",
-        "jquery:",
         "module:Parser",
         "base:Properties.Properties",
         "browser:Dom"
-	], function (Partial, Collection, FilteredCollection, Objs, $, Parser, Properties, Dom, scoped) {
+	], function (Partial, Collection, FilteredCollection, Objs, Parser, Properties, Dom, scoped) {
   /**
    * @name ba-repeat-element
    *
@@ -33,7 +32,9 @@ Scoped.define("module:Partials.RepeatElementPartial", [
 			
  			constructor: function (node, args, value) {
  				inherited.constructor.apply(this, arguments);
- 				this.__filteredTemplate = $(node._template).removeAttr("ba-repeat-element").get(0).outerHTML;
+ 				var temp = Dom.elementByTemplate(node._template);
+ 				temp.removeAttribute("ba-repeat-element");
+ 				this.__filteredTemplate = temp.outerHTML.trim();
  			},
  			
  			_activate: function () {
@@ -48,11 +49,10 @@ Scoped.define("module:Partials.RepeatElementPartial", [
  			},
  			
  			_newItemElements: function () {
- 				var template = this.__filteredTemplate.trim();
-				var element = $(template).get(0);
+				var element = Dom.elementByTemplate(this.__filteredTemplate);
 				this._node.element().parentNode.insertBefore(element, this._node.element().nextSibling);
  				element["ba-handled"] = true;
- 				return $(element);
+ 				return [element];
  			},
  			
  			prepareTagHandler: function (createArguments) {

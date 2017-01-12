@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.81 - 2016-12-07
+betajs-dynamics - v0.0.82 - 2017-01-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1004,7 +1004,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.81 - 2016-12-07
+betajs-dynamics - v0.0.82 - 2017-01-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1017,7 +1017,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "284.1481131018020"
+    "version": "286.1484222824643"
 };
 });
 Scoped.assumeVersion('base:version', 531);
@@ -1495,7 +1495,7 @@ Scoped.define("module:Data.Scope", [
 				}, this);
 				this.setAll();
 				Objs.iter(options.collections, function (value, key) {
-					if (!this.__properties.has(key)) {
+					if (!this.__properties.has(key) || (Class.is_instance_of(this.__properties.get(key)) && this.__properties.get(key).destroyed())) {
 						this.set(key, this.auto_destroy(new Collection({
 							objects: value,
 							release_references: true

@@ -120,7 +120,7 @@ Scoped.define("module:Data.Scope", [
 				}, this);
 				this.setAll();
 				Objs.iter(options.collections, function (value, key) {
-					if (!this.__properties.has(key)) {
+					if (!this.__properties.has(key) || (Class.is_instance_of(this.__properties.get(key)) && this.__properties.get(key).destroyed())) {
 						this.set(key, this.auto_destroy(new Collection({
 							objects: value,
 							release_references: true

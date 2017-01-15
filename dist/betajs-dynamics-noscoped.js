@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.82 - 2017-01-12
+betajs-dynamics - v0.0.83 - 2017-01-15
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,11 +12,11 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "286.1484222824643"
+    "version": "0.0.83"
 };
 });
-Scoped.assumeVersion('base:version', 531);
-Scoped.assumeVersion('browser:version', 79);
+Scoped.assumeVersion('base:version', '~1.0.96');
+Scoped.assumeVersion('browser:version', '~1.0.61');
 Scoped.define("module:Data.Mesh", [
 	    "base:Class",
 	    "base:Events.EventsMixin",

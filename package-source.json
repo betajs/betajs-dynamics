@@ -1,6 +1,6 @@
 {
   "name": "betajs-dynamics",
-  "version": "0.0.82",
+  "version": "0.0.83",
   "description": "BetaJS-Dynamics is a dynamic DOM templating engine.",
   "contributors": [
     "Victor Lingenthal",
@@ -14,20 +14,23 @@
     "grunt-contrib-uglify": "",
     "grunt-contrib-clean": "",
     "grunt-preprocess": "",
-    "grunt-git-revision-count": "",
     "grunt-closure-tools": "",
     "grunt-node-qunit": "",
     "qunit": "",
     "grunt-contrib-connect": "",
-    "grunt-wget": "",
     "grunt-jsdoc": "",
     "grunt-shell": "",
     "grunt-template": "",
-    "grunt-betajs-docs-compile": "",
     "jsdom": "",
-	"betajs-scoped": "",
-	"betajs-compile": "betajs/betajs-compile"
+    "grunt-betajs-docs-compile":"~0.0.19",
+    "betajs-scoped": "~0.0.13",
+    "betajs-compile": "~0.0.28",
+    "betajs": "~1.0.96",
+	"betajs-shims": "~0.0.12",
+    "betajs-browser": "~1.0.61",
+    "betajs-debug": "~0.0.12"
   },
+  "main": "dist/betajs-dynamics.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/betajs/betajs-dynamics.git"

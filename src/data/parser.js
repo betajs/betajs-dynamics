@@ -51,30 +51,30 @@ Scoped.define("module:Parser", [
 		
 		parseCode: function (code) {
 			var result = this.__cache[code];
-			if (result)
-				return result;
-			var bidirectional = false;
-			var c = code;
-			if (c.charAt(0) == "=") {
-				bidirectional = true;
-				c = c.substring(1);
+			if (!result) {
+				var bidirectional = false;
+				var c = code;
+				if (c.charAt(0) == "=") {
+					bidirectional = true;
+					c = c.substring(1);
+				}
+				var i = c.indexOf("::");
+				var args = null;
+				if (i >= 0) {
+					args = c.substring(0, i).trim();
+					c = c.substring(i + 2);
+				}
+				result = {
+					bidirectional: bidirectional,
+					args: args,
+					variable: bidirectional ? c : null,
+					/*jslint evil: true */
+					func: new Function ("obj", "with (obj) { return " + c + "; }"),
+					dependencies: Object.keys(Objs.objectify(JavaScript.extractIdentifiers(c, true)))
+				};
+				this.__cache[code] = result;
 			}
-			var i = c.indexOf("::");
-			var args = null;
-			if (i >= 0) {
-				args = c.substring(0, i).trim();
-				c = c.substring(i + 2);
-			}
-			result = {
-				bidirectional: bidirectional,
-				args: args,
-				variable: bidirectional ? c : null,
-				/*jslint evil: true */
-				func: new Function ("obj", "with (obj) { return " + c + "; }"),
-				dependencies: Object.keys(Objs.objectify(JavaScript.extractIdentifiers(c, true)))
-			};
-			this.__cache[code] = result;
-			return result;
+			return Objs.clone(result, 1);
 		}
 	
 	};

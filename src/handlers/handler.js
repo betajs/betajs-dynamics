@@ -57,7 +57,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
 			this.template = options.template || this.template;
 			this.templateUrl = options.templateUrl || this.templateUrl;
 			if (this.templateUrl)
-				this.templateUrl = Strings.replaceAll(this.templateUrl, "%", Strings.last_after(this.cls.classname, ".").toLowerCase());
+				this.templateUrl = Strings.replaceAll(this.templateUrl, "%", Strings.last_after(this.cls.classname || "", ".").toLowerCase());
 			this.__elements = options.element ? [Dom.unbox(options.element)] : [];
 			this.initialContent = Dom.unbox(options.element ? options.element : this._parentElement).innerHTML;
 			this.__activeElement = options.element ? Dom.unbox(options.element) : Dom.unbox(this._parentElement);

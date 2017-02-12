@@ -120,6 +120,10 @@ Scoped.define("module:Data.Scope", [
 				}, this);
 				this.setAll();
 				Objs.iter(options.collections, function (value, key) {
+					if (Types.is_array(options.collections)) {
+						key = value;
+						value = [];
+					}
 					if (!this.__properties.has(key) || (Class.is_instance_of(this.__properties.get(key)) && this.__properties.get(key).destroyed())) {
 						this.set(key, this.auto_destroy(new Collection({
 							objects: value,
@@ -399,7 +403,12 @@ Scoped.define("module:Data.MultiScope", [
 				return this;
 			},
 			
+			/* Deprecated */
 			call: function (name) {
+				return this.execute.apply(this, arguments);
+			},
+			
+			execute: function (name) {
 				var iter = this.iterator();
 				var result = null;
 				while (iter.hasNext()) {

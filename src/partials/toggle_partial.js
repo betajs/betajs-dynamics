@@ -1,6 +1,7 @@
 Scoped.define("module:Partials.TogglePartial", ["module:Handlers.Partial"], function (Partial, scoped) {
 	var mapping = {
-		readonly: "readOnly"
+		readonly: "readOnly",
+		playsinline: "playsInline"
 	};
 	
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {

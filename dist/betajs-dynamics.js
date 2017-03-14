@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.85 - 2017-02-11
+betajs-dynamics - v0.0.86 - 2017-03-14
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1004,7 +1004,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.85 - 2017-02-11
+betajs-dynamics - v0.0.86 - 2017-03-14
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1017,7 +1017,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.85"
+    "version": "0.0.86"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -4021,7 +4021,8 @@ Scoped.define("module:Partials.TemplateUrlPartial",
 
 Scoped.define("module:Partials.TogglePartial", ["module:Handlers.Partial"], function (Partial, scoped) {
 	var mapping = {
-		readonly: "readOnly"
+		readonly: "readOnly",
+		playsinline: "playsInline"
 	};
 	
  	var Cls = Partial.extend({scoped: scoped}, function (inherited) {

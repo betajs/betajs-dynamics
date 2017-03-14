@@ -33,6 +33,7 @@ module.exports = function(grunt) {
     /* External Configurations */
     .codeclimateTask()
     .travisTask(null, "4.0")
+	.githookTask(null, "pre-commit", "check-node")
     
     /* Markdown Files */
 	.readmeTask()
@@ -43,7 +44,7 @@ module.exports = function(grunt) {
 
 	grunt.initConfig(gruntHelper.config);	
 
-	grunt.registerTask('default', ['package', 'readme', 'license', 'codeclimate', 'travis', 'scopedclosurerevision', 'concat-scoped', 'uglify-noscoped', 'uglify-scoped']);
+	grunt.registerTask('default', ['package', 'readme', 'license', 'githook', 'codeclimate', 'travis', 'scopedclosurerevision', 'concat-scoped', 'uglify-noscoped', 'uglify-scoped']);
 	grunt.registerTask('check-node', [ 'lint', 'qunit' ]);
 	grunt.registerTask('check', ['check-node', 'browserqunit']);
 

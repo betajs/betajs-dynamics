@@ -1,23 +1,24 @@
-Scoped.define("module:Partials.InnerTemplatePartial",
-	["module:Handlers.Partial"], function (Partial, scoped) {
+Scoped.define("module:Partials.InnerTemplatePartial", ["module:Handlers.Partial"], function(Partial, scoped) {
 
- 	var Cls = Partial.extend({scoped: scoped}, function (inherited) {		
- 		return {
+    var Cls = Partial.extend({
+        scoped: scoped
+    }, function(inherited) {
+        return {
 
-			constructor: function (node, args, value) {
-				inherited.constructor.apply(this, arguments);
-				node._element.innerHTML = value;
-			}
+            constructor: function(node, args, value) {
+                inherited.constructor.apply(this, arguments);
+                node._element.innerHTML = value;
+            }
 
- 		};
- 	}, {
- 		
- 		meta: {
- 			value_hidden: true
- 		}
- 		
- 	});
- 	Cls.register("ba-inner-template");
-	return Cls;
+        };
+    }, {
+
+        meta: {
+            value_hidden: true
+        }
+
+    });
+    Cls.register("ba-inner-template");
+    return Cls;
 
 });

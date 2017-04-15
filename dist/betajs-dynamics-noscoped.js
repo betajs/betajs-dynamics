@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.87 - 2017-04-11
+betajs-dynamics - v0.0.88 - 2017-04-15
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.87"
+    "version": "0.0.88"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -944,12 +944,13 @@ Scoped.define("module:Dynamic", [
     "base:Strings",
     "base:Types",
     "base:Functions",
+    "base:Promise",
     "base:Events.Events",
     "module:Registries",
     "browser:Dom",
     "browser:Events",
     "base:Class"
-], function(Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Events, Registries, Dom, DomEvents, Class, scoped) {
+], function(Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Promise, Events, Registries, Dom, DomEvents, Class, scoped) {
     var Cls;
     Cls = Scope.extend({
         scoped: scoped
@@ -1084,6 +1085,20 @@ Scoped.define("module:Dynamic", [
                 return null;
             element = Dom.unbox(element);
             return element && element.dynamicshandler ? element.dynamicshandler : null;
+        },
+
+        findByElementPromise: function(element) {
+            if (!element)
+                return null;
+            element = Dom.unbox(element);
+            if (!element)
+                return null;
+            if (element.dynamicshandler)
+                return Promise.value(element.dynamicshandler);
+            element.dynamicshandlerpromise = element.dynamicshandlerpromise || [];
+            var promise = Promise.create();
+            element.dynamicshandlerpromise.push(promise);
+            return promise;
         },
 
         register: function(key, registry) {
@@ -1439,6 +1454,15 @@ Scoped.define("module:Handlers.HandlerMixin", [
                 }, this);
             }
             this.__activeElement.dynamicshandler = this;
+            if (this.__activeElement.dynamicshandlerpromise) {
+                this.__activeElement.dynamicshandlerpromise.forEach(function(promise) {
+                    promise.asyncSuccess(this.__activeElement.dynamicshandler);
+                }, this);
+                this.__activeElement.dynamicshandlerpromise = null;
+                try {
+                    delete this.__activeElement.dynamicshandlerpromise;
+                } catch (e) {}
+            }
         },
 
         _handlerInitializeTemplate: function(template, parentElement) {

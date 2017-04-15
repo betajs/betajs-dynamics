@@ -68,6 +68,15 @@ Scoped.define("module:Handlers.HandlerMixin", [
                 }, this);
             }
             this.__activeElement.dynamicshandler = this;
+            if (this.__activeElement.dynamicshandlerpromise) {
+                this.__activeElement.dynamicshandlerpromise.forEach(function(promise) {
+                    promise.asyncSuccess(this.__activeElement.dynamicshandler);
+                }, this);
+                this.__activeElement.dynamicshandlerpromise = null;
+                try {
+                    delete this.__activeElement.dynamicshandlerpromise;
+                } catch (e) {}
+            }
         },
 
         _handlerInitializeTemplate: function(template, parentElement) {

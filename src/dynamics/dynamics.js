@@ -22,12 +22,13 @@ Scoped.define("module:Dynamic", [
     "base:Strings",
     "base:Types",
     "base:Functions",
+    "base:Promise",
     "base:Events.Events",
     "module:Registries",
     "browser:Dom",
     "browser:Events",
     "base:Class"
-], function(Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Events, Registries, Dom, DomEvents, Class, scoped) {
+], function(Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Promise, Events, Registries, Dom, DomEvents, Class, scoped) {
     var Cls;
     Cls = Scope.extend({
         scoped: scoped
@@ -162,6 +163,20 @@ Scoped.define("module:Dynamic", [
                 return null;
             element = Dom.unbox(element);
             return element && element.dynamicshandler ? element.dynamicshandler : null;
+        },
+
+        findByElementPromise: function(element) {
+            if (!element)
+                return null;
+            element = Dom.unbox(element);
+            if (!element)
+                return null;
+            if (element.dynamicshandler)
+                return Promise.value(element.dynamicshandler);
+            element.dynamicshandlerpromise = element.dynamicshandlerpromise || [];
+            var promise = Promise.create();
+            element.dynamicshandlerpromise.push(promise);
+            return promise;
         },
 
         register: function(key, registry) {

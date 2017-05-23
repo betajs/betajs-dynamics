@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.88 - 2017-04-15
+betajs-dynamics - v0.0.89 - 2017-05-23
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1004,7 +1004,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.88 - 2017-04-15
+betajs-dynamics - v0.0.89 - 2017-05-23
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1017,7 +1017,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.88"
+    "version": "0.0.89"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -1524,7 +1524,7 @@ Scoped.define("module:Data.Scope", [
                 }, this);
                 Objs.iter(options.computed, function(value, key) {
                     var splt = Strings.splitFirst(key, ":");
-                    this.__properties.compute(splt.head, value, splt.tail.split(","));
+                    this.__properties.compute(splt.head, value, this, splt.tail.split(","));
                 }, this);
                 Objs.iter(options.events, function(value, key) {
                     this.on(key, value, this);
@@ -1797,7 +1797,7 @@ Scoped.define("module:Data.MultiScope", [
                 var result = null;
                 while (iter.hasNext()) {
                     var obj = iter.next();
-                    var local = obj.call.apply(obj, arguments);
+                    var local = obj.execute.apply(obj, arguments);
                     result = result || local;
                 }
                 return result;

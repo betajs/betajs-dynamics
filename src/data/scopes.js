@@ -147,7 +147,7 @@ Scoped.define("module:Data.Scope", [
                 }, this);
                 Objs.iter(options.computed, function(value, key) {
                     var splt = Strings.splitFirst(key, ":");
-                    this.__properties.compute(splt.head, value, splt.tail.split(","));
+                    this.__properties.compute(splt.head, value, this, splt.tail.split(","));
                 }, this);
                 Objs.iter(options.events, function(value, key) {
                     this.on(key, value, this);
@@ -420,7 +420,7 @@ Scoped.define("module:Data.MultiScope", [
                 var result = null;
                 while (iter.hasNext()) {
                     var obj = iter.next();
-                    var local = obj.call.apply(obj, arguments);
+                    var local = obj.execute.apply(obj, arguments);
                     result = result || local;
                 }
                 return result;

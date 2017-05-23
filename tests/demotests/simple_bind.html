@@ -34,9 +34,14 @@
         		this.set("changed", true);
         	}
         },
+		functions: {
+            test: function () {
+                return "!";
+			}
+		},
         computed: {
         	"outer2:outer": function () {
-        		return this.get("outer") + this.get("outer");
+        		return this.get("outer") + this.get("outer") + this.execute("test");
         	}
         }
     });
@@ -49,7 +54,7 @@
     	QUnit.equal(root.find("#inner").html().trim(), "foobar");
     	root.find("button").click();
     	QUnit.equal(root.find("#inner").html().trim(), "baz");
-    	QUnit.equal(root.find("#computed").html().trim(), "bazbaz");
+    	QUnit.equal(root.find("#computed").html().trim(), "bazbaz!");
     	QUnit.equal(dynamic.get("changed"), true);
     }
 </script>

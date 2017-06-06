@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.89 - 2017-05-23
+betajs-dynamics - v0.0.90 - 2017-06-06
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.89"
+    "version": "0.0.90"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -171,7 +171,7 @@ Scoped.define("module:Data.Mesh", [
                 this._write(this.__defaults.write || this.__environment[0], expression, value, true);
             },
 
-            call: function(expressions, callback, readonly) {
+            execute: function(expressions, callback, readonly) {
                 var data = {};
                 var exprs = [];
                 Objs.iter(expressions, function(expression) {
@@ -1454,15 +1454,6 @@ Scoped.define("module:Handlers.HandlerMixin", [
                 }, this);
             }
             this.__activeElement.dynamicshandler = this;
-            if (this.__activeElement.dynamicshandlerpromise) {
-                this.__activeElement.dynamicshandlerpromise.forEach(function(promise) {
-                    promise.asyncSuccess(this.__activeElement.dynamicshandler);
-                }, this);
-                this.__activeElement.dynamicshandlerpromise = null;
-                try {
-                    delete this.__activeElement.dynamicshandlerpromise;
-                } catch (e) {}
-            }
         },
 
         _handlerInitializeTemplate: function(template, parentElement) {
@@ -1576,6 +1567,15 @@ Scoped.define("module:Handlers.HandlerMixin", [
             }, this);
             this._preAfterActivate(this.__activeElement);
             this._afterActivate(this.__activeElement);
+            if (this.__activeElement.dynamicshandlerpromise) {
+                this.__activeElement.dynamicshandlerpromise.forEach(function(promise) {
+                    promise.asyncSuccess(this.__activeElement.dynamicshandler);
+                }, this);
+                this.__activeElement.dynamicshandlerpromise = null;
+                try {
+                    delete this.__activeElement.dynamicshandlerpromise;
+                } catch (e) {}
+            }
         },
 
         _afterActivate: function(activeElement) {}
@@ -1866,14 +1866,14 @@ Scoped.define("module:Handlers.Node", [
                 return this._mesh;
             },
 
-            __executeDyn: function(dyn) {
-                return Types.is_object(dyn) ? this._mesh.call(dyn.dependencies, dyn.func) : dyn;
+            __executeDyn: function(dyn, readonly) {
+                return Types.is_object(dyn) ? this._mesh.execute(dyn.dependencies, dyn.func, readonly) : dyn;
             },
 
             __tagValue: function() {
                 if (!this._dynTag)
                     return this._tag;
-                return this.__executeDyn(this._dynTag);
+                return this.__executeDyn(this._dynTag, true);
             },
 
             __unregisterTagHandler: function() {
@@ -2717,7 +2717,7 @@ Scoped.define("module:Partials.RepeatPartial", [
                 if (!filter)
                     return true;
                 var self = this;
-                return this._node.mesh().call(filter.dependencies, function(obj) {
+                return this._node.mesh().execute(filter.dependencies, function(obj) {
                     obj[self.__repeatArg] = self._isArray ? prop.get("value") : prop.data();
                     return filter.func.call(this, obj);
                 }, true);

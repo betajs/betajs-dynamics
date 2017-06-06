@@ -152,7 +152,7 @@ Scoped.define("module:Data.Mesh", [
                 this._write(this.__defaults.write || this.__environment[0], expression, value, true);
             },
 
-            call: function(expressions, callback, readonly) {
+            execute: function(expressions, callback, readonly) {
                 var data = {};
                 var exprs = [];
                 Objs.iter(expressions, function(expression) {

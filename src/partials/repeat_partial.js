@@ -79,7 +79,7 @@ Scoped.define("module:Partials.RepeatPartial", [
                 if (!filter)
                     return true;
                 var self = this;
-                return this._node.mesh().call(filter.dependencies, function(obj) {
+                return this._node.mesh().execute(filter.dependencies, function(obj) {
                     obj[self.__repeatArg] = self._isArray ? prop.get("value") : prop.data();
                     return filter.func.call(this, obj);
                 }, true);

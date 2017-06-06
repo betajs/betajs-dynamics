@@ -113,14 +113,14 @@ Scoped.define("module:Handlers.Node", [
                 return this._mesh;
             },
 
-            __executeDyn: function(dyn) {
-                return Types.is_object(dyn) ? this._mesh.call(dyn.dependencies, dyn.func) : dyn;
+            __executeDyn: function(dyn, readonly) {
+                return Types.is_object(dyn) ? this._mesh.execute(dyn.dependencies, dyn.func, readonly) : dyn;
             },
 
             __tagValue: function() {
                 if (!this._dynTag)
                     return this._tag;
-                return this.__executeDyn(this._dynTag);
+                return this.__executeDyn(this._dynTag, true);
             },
 
             __unregisterTagHandler: function() {

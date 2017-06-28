@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.90 - 2017-06-06
+betajs-dynamics - v0.0.91 - 2017-06-28
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.90"
+    "version": "0.0.91"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -1016,6 +1016,7 @@ Scoped.define("module:Dynamic", [
                 this.dom_events = {};
                 this.window_events = {};
                 this.__domEvents = new DomEvents();
+                this.inheritables = (this.parent() ? this.parent().inheritables : []).concat(this.inheritables || []);
             },
 
             handle_call_exception: function(name, args, e) {
@@ -1161,6 +1162,9 @@ Scoped.define("module:Dynamic", [
                     };
                 } else
                     return Objs.extend(Objs.clone(base, 1), overwrite);
+            },
+            inheritables: function(first, second) {
+                return (first || []).concat(second || []);
             },
             dispose: function(first, second) {
                 return (first || []).concat(second || []);
@@ -1928,6 +1932,9 @@ Scoped.define("module:Handlers.Node", [
                     this._tagHandler = Registries.handlerCache.resume(tagv, this._element, this._handler);
                 if (!this._tagHandler)
                     this._tagHandler = Registries.handler.create(tagv, createArguments);
+                Objs.iter(this._handler.inheritables, function(key) {
+                    this._tagHandler.set(key, this._handler.get(key));
+                }, this);
                 Objs.iter(this._attrs, function(attr) {
                     attr.bindTagHandler(this._tagHandler);
                 }, this);

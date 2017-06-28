@@ -175,6 +175,9 @@ Scoped.define("module:Handlers.Node", [
                     this._tagHandler = Registries.handlerCache.resume(tagv, this._element, this._handler);
                 if (!this._tagHandler)
                     this._tagHandler = Registries.handler.create(tagv, createArguments);
+                Objs.iter(this._handler.inheritables, function(key) {
+                    this._tagHandler.set(key, this._handler.get(key));
+                }, this);
                 Objs.iter(this._attrs, function(attr) {
                     attr.bindTagHandler(this._tagHandler);
                 }, this);

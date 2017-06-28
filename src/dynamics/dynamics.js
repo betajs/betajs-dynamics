@@ -94,6 +94,7 @@ Scoped.define("module:Dynamic", [
                 this.dom_events = {};
                 this.window_events = {};
                 this.__domEvents = new DomEvents();
+                this.inheritables = (this.parent() ? this.parent().inheritables : []).concat(this.inheritables || []);
             },
 
             handle_call_exception: function(name, args, e) {
@@ -239,6 +240,9 @@ Scoped.define("module:Dynamic", [
                     };
                 } else
                     return Objs.extend(Objs.clone(base, 1), overwrite);
+            },
+            inheritables: function(first, second) {
+                return (first || []).concat(second || []);
             },
             dispose: function(first, second) {
                 return (first || []).concat(second || []);

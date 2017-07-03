@@ -58,7 +58,7 @@ Scoped.define("module:Parser", [
                     bidirectional = true;
                     c = c.substring(1);
                 }
-                var i = c.indexOf("::");
+                var i = c.lastIndexOf("::");
                 var args = null;
                 if (i >= 0) {
                     args = c.substring(0, i).trim();

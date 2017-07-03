@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.91 - 2017-06-28
+betajs-dynamics - v0.0.92 - 2017-07-03
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1004,7 +1004,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.91 - 2017-06-28
+betajs-dynamics - v0.0.92 - 2017-07-03
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1017,7 +1017,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.91"
+    "version": "0.0.92"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -1354,7 +1354,7 @@ Scoped.define("module:Parser", [
                     bidirectional = true;
                     c = c.substring(1);
                 }
-                var i = c.indexOf("::");
+                var i = c.lastIndexOf("::");
                 var args = null;
                 if (i >= 0) {
                     args = c.substring(0, i).trim();
@@ -3650,13 +3650,14 @@ Scoped.define("module:Partials.RepeatElementPartial", [
 });
 Scoped.define("module:Partials.RepeatPartial", [
     "module:Handlers.Partial",
+    "base:Promise",
     "base:Properties.Properties",
     "base:Collections.Collection",
     "base:Collections.FilteredCollection",
     "base:Objs",
     "module:Parser",
     "module:Registries"
-], function(Partial, Properties, Collection, FilteredCollection, Objs, Parser, Registries, scoped) {
+], function(Partial, Promise, Properties, Collection, FilteredCollection, Objs, Parser, Registries, scoped) {
     /**
      * @name ba-repeat
      *
@@ -3682,6 +3683,10 @@ Scoped.define("module:Partials.RepeatPartial", [
             constructor: function(node, args, value) {
                 inherited.constructor.apply(this, arguments);
                 this.__registered = false;
+                args = args.split("::");
+                if (args.length > 1)
+                    this.__dynOpts = Parser.parseCode(args[0].trim());
+                args = args[args.length - 1];
                 args = args.split("~");
                 this.__repeatArg = args[0].trim();
                 this._destroyCollection = false;
@@ -3708,6 +3713,8 @@ Scoped.define("module:Partials.RepeatPartial", [
 
             _activate: function() {
                 this.__register();
+                if (this.__dynOpts)
+                    this.__dynOptsCache = this._node.mesh().execute(this.__dynOpts.dependencies, this.__dynOpts.func);
             },
 
             _deactivate: function() {
@@ -3813,9 +3820,16 @@ Scoped.define("module:Partials.RepeatPartial", [
                     return;
                 Objs.iter(this._collectionChildren[item.cid()].nodes, function(node) {
                     var ele = node.element();
-                    node.destroy();
-                    if (ele.parentNode)
-                        ele.parentNode.removeChild(ele);
+                    var removePromise = Promise.create();
+                    if (this.__dynOptsCache && this.__dynOptsCache.onremove)
+                        this.__dynOptsCache.onremove.call(this._handler, item, ele).forwardCallback(removePromise);
+                    else
+                        removePromise.asyncSuccess(true);
+                    removePromise.success(function() {
+                        node.destroy();
+                        if (ele.parentNode)
+                            ele.parentNode.removeChild(ele);
+                    });
                 }, this);
                 delete this._collectionChildren[item.cid()];
             },

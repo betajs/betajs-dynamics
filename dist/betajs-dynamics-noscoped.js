@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.92 - 2017-07-03
+betajs-dynamics - v0.0.92 - 2017-07-05
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -977,6 +977,11 @@ Scoped.define("module:Dynamic", [
                     } else
                         options[key] = this[key];
                 }, this);
+                if (options.typedAttrs && options.types) {
+                    Objs.iter(options.typedAttrs, function(value, key) {
+                        options.attrs[key] = options.types[key] ? Types.parseType(value, options.types[key]) : value;
+                    });
+                }
                 this.__dispose = options.dispose;
                 Objs.iter(this.object_functions, function(key) {
                     this[key] = function() {

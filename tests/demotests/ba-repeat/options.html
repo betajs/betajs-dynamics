@@ -23,11 +23,11 @@
 					    onremove: function (item, element) {
 							var promise = BetaJS.Promise.create();
 							//console.log(item, element);
-                            $(element).fadeOut(2000);
-							setTimeout(function () {
-                                promise.asyncSuccess(true);
-							}, 1000);
-                            //promise.asyncSuccess(true);
+                            //$(element).fadeOut(2000);
+							//setTimeout(function () {
+                            //    promise.asyncSuccess(true);
+							//}, 1000);
+                            promise.asyncSuccess(true);
 							return promise;
 						}
 					}
@@ -48,9 +48,7 @@
 			    var list = root.find("ul");
                 QUnit.equal(list.children().length, 4);
                 $("#test button").click();
-                setTimeout(function () {
-                    QUnit.equal(list.children().length, 3);
-				}, 1500);
+				QUnit.equal(list.children().length, 3);
 			}
 		</script>
 	</body>

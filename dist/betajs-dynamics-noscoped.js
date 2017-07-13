@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.92 - 2017-07-05
+betajs-dynamics - v0.0.94 - 2017-07-13
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.92"
+    "version": "0.0.94"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -25,8 +25,9 @@ Scoped.define("module:Data.Mesh", [
     "base:Types",
     "base:Strings",
     "base:Ids",
-    "base:Functions"
-], function(Class, EventsMixin, Properties, Objs, Types, Strings, Ids, Functions, scoped) {
+    "base:Functions",
+    "base:Classes.SharedObjectFactory"
+], function(Class, EventsMixin, Properties, Objs, Types, Strings, Ids, Functions, SharedObjectFactory, scoped) {
     return Class.extend({
         scoped: scoped
     }, [EventsMixin, function(inherited) {
@@ -38,11 +39,15 @@ Scoped.define("module:Data.Mesh", [
                 this.__defaults = defaults;
                 this.__context = context;
                 this.__watchers = {};
+                this.__acquiredProperties = {};
             },
 
             destroy: function() {
                 Objs.iter(this.__watchers, function(watcher) {
                     this.__destroyWatcher(watcher);
+                }, this);
+                Objs.iter(this.__acquiredProperties, function(prop) {
+                    prop.decreaseRef(this);
                 }, this);
                 inherited.destroy.call(this);
             },
@@ -207,6 +212,10 @@ Scoped.define("module:Data.Mesh", [
                     return base;
                 var splt = Strings.splitFirst(tail, ".");
                 var hd = head ? head + "." + splt.head : splt.head;
+                if (SharedObjectFactory.is_instance_of(current) && !current.destroyed()) {
+                    current = current.acquire(this);
+                    this.__acquiredProperties[current.cid()] = current;
+                }
                 if (Properties.is_instance_of(current) && !current.destroyed()) {
                     if (current.has(splt.head))
                         return this._sub_navigate(current, splt.head, splt.tail, current, current.get(splt.head));
@@ -2655,9 +2664,10 @@ Scoped.define("module:Partials.RepeatPartial", [
     "base:Collections.Collection",
     "base:Collections.FilteredCollection",
     "base:Objs",
+    "base:Classes.SharedObjectFactory",
     "module:Parser",
     "module:Registries"
-], function(Partial, Promise, Properties, Collection, FilteredCollection, Objs, Parser, Registries, scoped) {
+], function(Partial, Promise, Properties, Collection, FilteredCollection, Objs, SharedObjectFactory, Parser, Registries, scoped) {
     /**
      * @name ba-repeat
      *
@@ -2690,7 +2700,7 @@ Scoped.define("module:Partials.RepeatPartial", [
                 args = args.split("~");
                 this.__repeatArg = args[0].trim();
                 this._destroyCollection = false;
-                this._destroyValueCollection = false;
+                this._releaseValueCollection = false;
                 if (args.length > 1) {
                     this.__repeatFilter = Parser.parseCode(args[1].trim());
                     var self = this;
@@ -2748,16 +2758,22 @@ Scoped.define("module:Partials.RepeatPartial", [
 
             __register: function() {
                 this.__unregister();
-                this._isArray = !Collection.is_instance_of(this._value);
-                this._destroyValueCollection = !Collection.is_instance_of(this._value);
-                this._valueCollection = this._destroyValueCollection ? new Collection({
-                    objects: Objs.map(this._value, function(val) {
-                        return new Properties({
-                            value: val
-                        });
-                    }),
-                    release_references: true
-                }) : this._value;
+                if (SharedObjectFactory.is_instance_of(this._value)) {
+                    this._isArray = false;
+                    this._releaseValueCollection = true;
+                    this._valueCollection = this._value.acquire();
+                } else {
+                    this._isArray = !Collection.is_instance_of(this._value);
+                    this._releaseValueCollection = !Collection.is_instance_of(this._value);
+                    this._valueCollection = this._releaseValueCollection ? new Collection({
+                        objects: Objs.map(this._value, function(val) {
+                            return new Properties({
+                                value: val
+                            });
+                        }),
+                        release_references: true
+                    }) : this._value;
+                }
                 this._destroyCollection = !!this.__repeatFilter;
                 this._collection = this._destroyCollection ? new FilteredCollection(this._valueCollection, {
                     filter: this.__filterFunc,
@@ -2789,8 +2805,8 @@ Scoped.define("module:Partials.RepeatPartial", [
                 this._valueCollection.off(null, null, this);
                 if (this._destroyCollection)
                     this._collection.destroy();
-                if (this._destroyValueCollection)
-                    this._valueCollection.destroy();
+                if (this._releaseValueCollection)
+                    this._valueCollection.decreaseRef();
                 this._valueCollection = null;
                 this._collection = null;
             },

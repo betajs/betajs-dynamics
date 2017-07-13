@@ -6,8 +6,9 @@ Scoped.define("module:Data.Mesh", [
     "base:Types",
     "base:Strings",
     "base:Ids",
-    "base:Functions"
-], function(Class, EventsMixin, Properties, Objs, Types, Strings, Ids, Functions, scoped) {
+    "base:Functions",
+    "base:Classes.SharedObjectFactory"
+], function(Class, EventsMixin, Properties, Objs, Types, Strings, Ids, Functions, SharedObjectFactory, scoped) {
     return Class.extend({
         scoped: scoped
     }, [EventsMixin, function(inherited) {
@@ -19,11 +20,15 @@ Scoped.define("module:Data.Mesh", [
                 this.__defaults = defaults;
                 this.__context = context;
                 this.__watchers = {};
+                this.__acquiredProperties = {};
             },
 
             destroy: function() {
                 Objs.iter(this.__watchers, function(watcher) {
                     this.__destroyWatcher(watcher);
+                }, this);
+                Objs.iter(this.__acquiredProperties, function(prop) {
+                    prop.decreaseRef(this);
                 }, this);
                 inherited.destroy.call(this);
             },
@@ -188,6 +193,10 @@ Scoped.define("module:Data.Mesh", [
                     return base;
                 var splt = Strings.splitFirst(tail, ".");
                 var hd = head ? head + "." + splt.head : splt.head;
+                if (SharedObjectFactory.is_instance_of(current) && !current.destroyed()) {
+                    current = current.acquire(this);
+                    this.__acquiredProperties[current.cid()] = current;
+                }
                 if (Properties.is_instance_of(current) && !current.destroyed()) {
                     if (current.has(splt.head))
                         return this._sub_navigate(current, splt.head, splt.tail, current, current.get(splt.head));

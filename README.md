@@ -1,4 +1,4 @@
-# betajs-dynamics 0.0.92
+# betajs-dynamics 0.0.94
 [![Build Status](https://api.travis-ci.org/betajs/betajs-dynamics.svg?branch=master)](https://travis-ci.org/betajs/betajs-dynamics)
 [![Code Climate](https://codeclimate.com/github/betajs/betajs-dynamics/badges/gpa.svg)](https://codeclimate.com/github/betajs/betajs-dynamics)
 [![NPM](https://img.shields.io/npm/v/betajs-dynamics.svg?style=flat)](https://www.npmjs.com/package/betajs-dynamics)

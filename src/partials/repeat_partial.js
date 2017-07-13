@@ -5,9 +5,10 @@ Scoped.define("module:Partials.RepeatPartial", [
     "base:Collections.Collection",
     "base:Collections.FilteredCollection",
     "base:Objs",
+    "base:Classes.SharedObjectFactory",
     "module:Parser",
     "module:Registries"
-], function(Partial, Promise, Properties, Collection, FilteredCollection, Objs, Parser, Registries, scoped) {
+], function(Partial, Promise, Properties, Collection, FilteredCollection, Objs, SharedObjectFactory, Parser, Registries, scoped) {
     /**
      * @name ba-repeat
      *
@@ -40,7 +41,7 @@ Scoped.define("module:Partials.RepeatPartial", [
                 args = args.split("~");
                 this.__repeatArg = args[0].trim();
                 this._destroyCollection = false;
-                this._destroyValueCollection = false;
+                this._releaseValueCollection = false;
                 if (args.length > 1) {
                     this.__repeatFilter = Parser.parseCode(args[1].trim());
                     var self = this;
@@ -98,16 +99,22 @@ Scoped.define("module:Partials.RepeatPartial", [
 
             __register: function() {
                 this.__unregister();
-                this._isArray = !Collection.is_instance_of(this._value);
-                this._destroyValueCollection = !Collection.is_instance_of(this._value);
-                this._valueCollection = this._destroyValueCollection ? new Collection({
-                    objects: Objs.map(this._value, function(val) {
-                        return new Properties({
-                            value: val
-                        });
-                    }),
-                    release_references: true
-                }) : this._value;
+                if (SharedObjectFactory.is_instance_of(this._value)) {
+                    this._isArray = false;
+                    this._releaseValueCollection = true;
+                    this._valueCollection = this._value.acquire();
+                } else {
+                    this._isArray = !Collection.is_instance_of(this._value);
+                    this._releaseValueCollection = !Collection.is_instance_of(this._value);
+                    this._valueCollection = this._releaseValueCollection ? new Collection({
+                        objects: Objs.map(this._value, function(val) {
+                            return new Properties({
+                                value: val
+                            });
+                        }),
+                        release_references: true
+                    }) : this._value;
+                }
                 this._destroyCollection = !!this.__repeatFilter;
                 this._collection = this._destroyCollection ? new FilteredCollection(this._valueCollection, {
                     filter: this.__filterFunc,
@@ -139,8 +146,8 @@ Scoped.define("module:Partials.RepeatPartial", [
                 this._valueCollection.off(null, null, this);
                 if (this._destroyCollection)
                     this._collection.destroy();
-                if (this._destroyValueCollection)
-                    this._valueCollection.destroy();
+                if (this._releaseValueCollection)
+                    this._valueCollection.decreaseRef();
                 this._valueCollection = null;
                 this._collection = null;
             },

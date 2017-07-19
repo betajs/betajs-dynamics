@@ -59,7 +59,10 @@ Scoped.define("module:Handlers.HandlerMixin", [
             if (this.templateUrl)
                 this.templateUrl = Strings.replaceAll(this.templateUrl, "%", Strings.last_after(this.cls.classname || "", ".").toLowerCase());
             this.__elements = options.element ? [Dom.unbox(options.element)] : [];
-            this.initialContent = Dom.unbox(options.element ? options.element : this._parentElement).innerHTML;
+            var initialContentElement = Dom.unbox(options.element ? options.element : this._parentElement);
+            if (!initialContentElement)
+                throw (this.cls.classname + " requires an existing DOM element to attach to.");
+            this.initialContent = initialContentElement.innerHTML;
             this.__activeElement = options.element ? Dom.unbox(options.element) : Dom.unbox(this._parentElement);
             if (options.remove_observe) {
                 this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement));

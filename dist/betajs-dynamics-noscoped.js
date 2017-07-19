@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.94 - 2017-07-13
+betajs-dynamics - v0.0.95 - 2017-07-18
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.94"
+    "version": "0.0.95"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -1463,7 +1463,10 @@ Scoped.define("module:Handlers.HandlerMixin", [
             if (this.templateUrl)
                 this.templateUrl = Strings.replaceAll(this.templateUrl, "%", Strings.last_after(this.cls.classname || "", ".").toLowerCase());
             this.__elements = options.element ? [Dom.unbox(options.element)] : [];
-            this.initialContent = Dom.unbox(options.element ? options.element : this._parentElement).innerHTML;
+            var initialContentElement = Dom.unbox(options.element ? options.element : this._parentElement);
+            if (!initialContentElement)
+                throw (this.cls.classname + " requires an existing DOM element to attach to.");
+            this.initialContent = initialContentElement.innerHTML;
             this.__activeElement = options.element ? Dom.unbox(options.element) : Dom.unbox(this._parentElement);
             if (options.remove_observe) {
                 this.__removeObserver = this.auto_destroy(NodeRemoveObserver.create(this.__activeElement));

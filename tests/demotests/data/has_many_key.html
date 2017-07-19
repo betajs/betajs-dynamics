@@ -24,48 +24,47 @@
                     scheme.value = {
                         type: "string"
                     };
+                    scheme.foreign = {
+                        type: "id"
+                    };
                     return scheme;
                 }
             });
             var store2 = new BetaJS.Data.Stores.MemoryStore();
             store2.insert_all([{
                 id: 1,
-                value: "A"
+                value: "A",
+                foreign: 11
             }, {
                 id: 2,
-                value: "B"
+                value: "B",
+                foreign: 12
             }, {
                 id: 3,
-                value: "C"
+                value: "C",
+                foreign: 11
             }]);
             var table2 = new BetaJS.Data.Modelling.Table(store2, Model2, {});
             var Model1 = BetaJS.Data.Modelling.Model.extend("Model1", {
                 _initializeAssociations: function () {
                     var assocs = this._inherited(Model1, "_initializeAssociations");
-                    assocs.items = new BetaJS.Data.Modelling.Associations.HasManyThroughArrayAssociation(
+                    assocs.items = new BetaJS.Data.Modelling.Associations.HasManyKeyAssociation(
                         this,
                         table2,
-                        "items", {
+                        "foreign", {
                             collectionOptions: {
-                                auto: true
+                                auto: true,
+                                active: true
                             }
                         }
                     );
                     return assocs;
                 }
-            }, {
-                _initializeScheme: function () {
-                    var scheme = this._inherited(Model1, "_initializeScheme");
-                    scheme.items = {
-                        type: "array"
-                    };
-                    return scheme;
-                }
             });
             var store1 = new BetaJS.Data.Stores.MemoryStore();
             var table1 = new BetaJS.Data.Modelling.Table(store1, Model1, {});
             var model = table1.newModel({
-                items: [1, 3]
+                id: 11
             });
             model.save();
 
@@ -81,13 +80,10 @@
             function test() {
             	QUnit.equal($("#test div p:nth-child(1)").html(), "A");
                 QUnit.equal($("#test div p:nth-child(2)").html(), "C");
-                model.set("items", [1, 2]);
-                QUnit.equal($("#test div p:nth-child(1)").html(), "A");
-                QUnit.equal($("#test div p:nth-child(2)").html(), "B");
                 model.assocs.items.remove(model.assocs.items.collection.value().first());
-                QUnit.equal($("#test div p:nth-child(1)").html(), "B");
-                model.assocs.items.add(table2.findById(3).value());
-                QUnit.equal($("#test div p:nth-child(2)").html(), "C");
+                QUnit.equal($("#test div p:nth-child(1)").html(), "C");
+                model.assocs.items.add(table2.findById(2).value());
+                QUnit.equal($("#test div p:nth-child(2)").html(), "B");
             }
         </script>
 

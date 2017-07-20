@@ -153,16 +153,16 @@ Scoped.define("module:Handlers.HandlerMixin", [
             }
         },
 
+        _deferActivate: function() {
+            return false;
+        },
+
         activate: function() {
+            if (this._deferActivate())
+                return;
             if (this.__activated)
                 return;
             this.__activated = true;
-            /*
-            if (this.__deferActivate) {
-            	this.__deferedActivate = true;
-            	return;
-            }
-            */
             if (this.template)
                 this._handlerInitializeTemplate(this.template, this._parentElement);
             else {

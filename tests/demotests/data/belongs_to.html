@@ -1,0 +1,89 @@
+<html>
+    <head>
+        
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script>
+        <script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
+        <script src="../../../node_modules/betajs-data/dist/betajs-data-noscoped.js"></script>
+        <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
+        <script src="../../../dist/betajs-dynamics.js"></script>
+    </head>
+    <body>
+
+        <div id="test">
+            <p>{{model.assocs.item.active.model ? model.assocs.item.active.model.value : ""}}</p>
+        </div>
+
+        <script>
+            var Model2 = BetaJS.Data.Modelling.Model.extend("Model2", {}, {
+                _initializeScheme: function () {
+                    var scheme = this._inherited(Model2, "_initializeScheme");
+                    scheme.value = {
+                        type: "string"
+                    };
+                    return scheme;
+                }
+            });
+            var store2 = new BetaJS.Data.Stores.MemoryStore();
+            store2.insert_all([{
+                id: 1,
+                value: "A"
+            }, {
+                id: 2,
+                value: "B"
+            }, {
+                id: 3,
+                value: "C"
+            }]);
+            var table2 = new BetaJS.Data.Modelling.Table(store2, Model2, {});
+            var Model1 = BetaJS.Data.Modelling.Model.extend("Model1", {
+                _initializeAssociations: function () {
+                    var assocs = this._inherited(Model1, "_initializeAssociations");
+                    assocs.item = new BetaJS.Data.Modelling.Associations.BelongsToAssociation(
+                        this,
+                        table2,
+                        "item"
+                    );
+                    return assocs;
+                }
+            }, {
+                _initializeScheme: function () {
+                    var scheme = this._inherited(Model1, "_initializeScheme");
+                    scheme.item = {
+                        type: "id"
+                    };
+                    return scheme;
+                }
+            });
+            var store1 = new BetaJS.Data.Stores.MemoryStore();
+            var table1 = new BetaJS.Data.Modelling.Table(store1, Model1, {});
+            var model = table1.newModel({
+                item: 2
+            });
+            model.save();
+
+            var main = new BetaJS.Dynamics.Dynamic({
+                element: $("#test"),
+                attrs: {
+                    model: model
+                }
+            });
+
+            main.activate();
+
+            function test() {
+            	QUnit.equal($("#test p").html(), "B");
+            	model.set("item", 1);
+                QUnit.equal($("#test p").html(), "A");
+                model.set("item", null);
+                QUnit.equal($("#test p").html(), "");
+                model.assocs.item.set(table2.findById(3).value());
+                QUnit.equal($("#test p").html(), "C");
+                model.assocs.item.unset();
+                QUnit.equal($("#test p").html(), "");
+            }
+        </script>
+
+    </body>
+</html>

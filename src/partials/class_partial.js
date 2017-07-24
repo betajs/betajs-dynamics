@@ -22,8 +22,9 @@ Scoped.define("module:Partials.ClassPartial", ["module:Handlers.Partial"], funct
             for (var key in value) {
                 var className = this._node.element().className;
                 var hasClass = className.indexOf(key) >= 0;
-                if (value[key] !== hasClass) {
-                    if (value[key])
+                var newHasClass = !!value[key];
+                if (newHasClass !== hasClass) {
+                    if (newHasClass)
                         className += " " + key;
                     else
                         className = className.replace(key, "").replace("  ", " ");

@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.96 - 2017-07-20
+betajs-dynamics - v0.0.96 - 2017-07-24
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -2247,8 +2247,9 @@ Scoped.define("module:Partials.ClassPartial", ["module:Handlers.Partial"], funct
             for (var key in value) {
                 var className = this._node.element().className;
                 var hasClass = className.indexOf(key) >= 0;
-                if (value[key] !== hasClass) {
-                    if (value[key])
+                var newHasClass = !!value[key];
+                if (newHasClass !== hasClass) {
+                    if (newHasClass)
                         className += " " + key;
                     else
                         className = className.replace(key, "").replace("  ", " ");

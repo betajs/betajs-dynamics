@@ -70,7 +70,7 @@
             model.save();
 
             var main = new BetaJS.Dynamics.Dynamic({
-                element: $("#test"),
+                element: document.querySelector("#test"),
                 attrs: {
                     model: model
                 }
@@ -79,15 +79,15 @@
             main.activate();
 
             function test() {
-            	QUnit.equal($("#test div p:nth-child(1)").html(), "A");
-                QUnit.equal($("#test div p:nth-child(2)").html(), "C");
+            	QUnit.equal(document.querySelector("#test div p:nth-child(1)").innerHTML, "A");
+                QUnit.equal(document.querySelector("#test div p:nth-child(2)").innerHTML, "C");
                 model.set("items", [1, 2]);
-                QUnit.equal($("#test div p:nth-child(1)").html(), "A");
-                QUnit.equal($("#test div p:nth-child(2)").html(), "B");
+                QUnit.equal(document.querySelector("#test div p:nth-child(1)").innerHTML, "A");
+                QUnit.equal(document.querySelector("#test div p:nth-child(2)").innerHTML, "B");
                 model.assocs.items.remove(model.assocs.items.collection.value().first());
-                QUnit.equal($("#test div p:nth-child(1)").html(), "B");
+                QUnit.equal(document.querySelector("#test div p:nth-child(1)").innerHTML, "B");
                 model.assocs.items.add(table2.findById(3).value());
-                QUnit.equal($("#test div p:nth-child(2)").html(), "C");
+                QUnit.equal(document.querySelector("#test div p:nth-child(2)").innerHTML, "C");
             }
         </script>
 

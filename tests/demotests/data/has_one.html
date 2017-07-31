@@ -62,7 +62,7 @@
             model.save();
 
             var main = new BetaJS.Dynamics.Dynamic({
-                element: $("#test"),
+                element: document.querySelector("#test"),
                 attrs: {
                     model: model
                 }
@@ -72,9 +72,9 @@
 
             function test() {
                 model.assocs.item.set(table2.findById(3).value());
-                QUnit.equal($("#test p").html(), "C");
+                QUnit.equal(document.querySelector("#test p").innerHTML, "C");
                 model.assocs.item.unset();
-                QUnit.equal($("#test p").html(), "");
+                QUnit.equal(document.querySelector("#test p").innerHTML, "");
             }
         </script>
 

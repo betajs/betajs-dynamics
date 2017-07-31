@@ -24,12 +24,10 @@
 		</div>
 
 		<script>
-			//Elements
-			var root = $("#test");
 
 			//Dynamics
 			var outer = new BetaJS.Dynamics.Dynamic({
-				element: root.find("#outer"),
+				element: document.querySelector("#test #outer"),
 				attrs: {
 					value: "Show Binding",
 					showbinding: true
@@ -66,7 +64,7 @@
 			}
 
 			function test() {
-				QUnit.equal(root.children().length, 2);
+				QUnit.equal(root.childElementCount, 2);
 			}
 
 		</script>

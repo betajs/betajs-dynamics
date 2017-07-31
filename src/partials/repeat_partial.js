@@ -136,17 +136,18 @@ Scoped.define("module:Partials.RepeatPartial", [
             },
 
             __unregister: function() {
-                if (!this._collection)
-                    return;
-                this._iterateCollection(this.__removeItem);
+                if (this._collection && !this._collection.destroyed())
+                    this._iterateCollection(this.__removeItem);
                 var element = this._node._element;
                 this._node._removeChildren();
                 element.innerHTML = "";
-                this._collection.off(null, null, this);
-                this._valueCollection.off(null, null, this);
-                if (this._destroyCollection)
-                    this._collection.destroy();
-                if (this._releaseValueCollection)
+                if (this._collection && !this._collection.destroyed())
+                    this._collection.off(null, null, this);
+                if (this._valueCollection && !this._valueCollection.destroyed())
+                    this._valueCollection.off(null, null, this);
+                if (this._destroyCollection && this._collection)
+                    this._collection.weakDestroy();
+                if (this._releaseValueCollection && this._valueCollection && !this._valueCollection.destroyed())
                     this._valueCollection.decreaseRef();
                 this._valueCollection = null;
                 this._collection = null;

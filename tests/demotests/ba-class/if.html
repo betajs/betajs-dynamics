@@ -54,7 +54,7 @@
 			var global = window;
 
 			//Elements
-			var root = $("#test");
+			var root = document.querySelector("#test");
 
 			//Messages
 			var external_message = "This is an external Message";
@@ -64,7 +64,7 @@
 
 			//Dynamics
 			var showbinding = new BetaJS.Dynamics.Dynamic({
-				element: root.find("#baifsimple"),
+				element: root.querySelector("#baifsimple"),
 				attrs: {
 					value: "Show Binding",
 					showbinding: true
@@ -79,22 +79,22 @@
 
 
 			function test() {
-				QUnit.equal(root.children().length, 2);
+				QUnit.equal(root.childElementCount, 2);
 
 				//Initial values
 				showbinding.set("value", "Hello");
-				QUnit.equal($("#baifsimple").find("#inner").html().trim(), showbinding.get("value"));
-				QUnit.equal($("#showbinding").css("display"),"block");
-				QUnit.equal($("#hidebinding").css("display"),"none");
-				QUnit.equal($("#showbinding").attr("class"), "green");
-				QUnit.ok(!$("#hidebinding").attr("class"));
+				QUnit.equal(document.querySelector("#baifsimple #inner").innerHTML.trim(), showbinding.get("value"));
+				QUnit.equal(document.querySelector("#showbinding").style.display,"");
+				QUnit.equal(document.querySelector("#hidebinding").style.display,"none");
+				QUnit.equal(document.querySelector("#showbinding").className, "green");
+				QUnit.ok(!document.querySelector("#hidebinding").className);
 
 				//After change
 				showbinding.call("change_showbinding");
-				QUnit.equal($("#showbinding").css("display"),"none");
-				QUnit.equal($("#hidebinding").css("display"),"block");
-				QUnit.ok(!$("#showbinding").attr("class"));
-				QUnit.equal($("#hidebinding").attr("class"), "red");
+				QUnit.equal(document.querySelector("#showbinding").style.display,"none");
+				QUnit.equal(document.querySelector("#hidebinding").style.display,"");
+				QUnit.ok(!document.querySelector("#showbinding").className);
+				QUnit.equal(document.querySelector("#hidebinding").className, "red");
 			}
 		</script>
 

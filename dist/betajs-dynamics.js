@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.96 - 2017-07-24
+betajs-dynamics - v0.0.98 - 2017-07-31
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1007,7 +1007,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.96 - 2017-07-24
+betajs-dynamics - v0.0.98 - 2017-07-31
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1020,7 +1020,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.96"
+    "version": "0.0.98"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -3807,17 +3807,18 @@ Scoped.define("module:Partials.RepeatPartial", [
             },
 
             __unregister: function() {
-                if (!this._collection)
-                    return;
-                this._iterateCollection(this.__removeItem);
+                if (this._collection && !this._collection.destroyed())
+                    this._iterateCollection(this.__removeItem);
                 var element = this._node._element;
                 this._node._removeChildren();
                 element.innerHTML = "";
-                this._collection.off(null, null, this);
-                this._valueCollection.off(null, null, this);
-                if (this._destroyCollection)
-                    this._collection.destroy();
-                if (this._releaseValueCollection)
+                if (this._collection && !this._collection.destroyed())
+                    this._collection.off(null, null, this);
+                if (this._valueCollection && !this._valueCollection.destroyed())
+                    this._valueCollection.off(null, null, this);
+                if (this._destroyCollection && this._collection)
+                    this._collection.weakDestroy();
+                if (this._releaseValueCollection && this._valueCollection && !this._valueCollection.destroyed())
                     this._valueCollection.decreaseRef();
                 this._valueCollection = null;
                 this._collection = null;

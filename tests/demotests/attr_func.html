@@ -17,8 +17,6 @@
 </div>
 
 <script>
-    var root = $("#test");
-    
     BetaJS.Dynamics.Dynamic.extend(null, {
 		template : '<div></div>',
         attrs: function () {
@@ -31,7 +29,7 @@
 	}).register("ba-innertest");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
-        element: root
+        element: document.getElementById("test")
     });
     dynamic.activate();
     var sub = dynamic.scope(">");

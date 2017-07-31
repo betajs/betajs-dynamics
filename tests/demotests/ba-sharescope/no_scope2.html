@@ -20,7 +20,7 @@
         	var root = $("#test");
 
             var parent_dynamic = new BetaJS.Dynamics.Dynamic({
-                element: $(".some_class"),
+                element: document.querySelector(".some_class"),
                 attrs : {
                     some_attribute : "This is from the Parent Dynamic",
                     property: new BetaJS.Properties.Properties({

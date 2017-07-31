@@ -46,9 +46,9 @@
 			</table>
 		</div>
 		<script>
-			var root = $("#test");
+			var root = document.querySelector("#test");
 			var dynamic = new BetaJS.Dynamics.Dynamic({
-				element: root.get(0),
+				element: root,
 				create: function () {
 					this.set("a", false);
 				},
@@ -76,41 +76,41 @@
 			dynamic.set("d", property);
 			dynamic.activate();
 			
-			var button_a = root.find("#a");
-			var button_b = root.find("#b");
-			var button_c = root.find("#c");
-			var button_d = root.find("#d");
+			var button_a = root.querySelector("#a");
+			var button_b = root.querySelector("#b");
+			var button_c = root.querySelector("#c");
+			var button_d = root.querySelector("#d");
 
 			function test() {
-				QUnit.equal(button_a.hasClass("a"), false);
-				QUnit.equal(button_b.hasClass("b"), false);
-				QUnit.equal(button_c.hasClass("c"), false);
-				QUnit.equal(button_d.hasClass("d"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
 				dynamic.set("a", true);
-				QUnit.equal(button_a.hasClass("a"), true);
-				QUnit.equal(button_b.hasClass("b"), false);
-				QUnit.equal(button_c.hasClass("c"), false);
-				QUnit.equal(button_d.hasClass("d"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), true);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
 				dynamic.set("a", false);
-				QUnit.equal(button_a.hasClass("a"), false);
-				QUnit.equal(button_b.hasClass("b"), false);
-				QUnit.equal(button_a.hasClass("c"), false);
-				QUnit.equal(button_d.hasClass("d"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "c"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
 				dynamic.set("b.v", true);
-				QUnit.equal(button_a.hasClass("a"), false);
-				QUnit.equal(button_b.hasClass("b"), true);
-				QUnit.equal(button_c.hasClass("c"), false);
-				QUnit.equal(button_d.hasClass("d"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), true);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
 				dynamic.get("c").set("v", true);
-				QUnit.equal(button_a.hasClass("a"), false);
-				QUnit.equal(button_b.hasClass("b"), true);
-				QUnit.equal(button_c.hasClass("c"), true);
-				QUnit.equal(button_d.hasClass("d"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), true);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), true);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
 				property.set("v", true);
-				QUnit.equal(button_a.hasClass("a"), false);
-				QUnit.equal(button_b.hasClass("b"), true);
-				QUnit.equal(button_c.hasClass("c"), true);
-				QUnit.equal(button_d.hasClass("d"), true);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), true);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), true);
+				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), true);
 			}
 		</script>
 	</body>

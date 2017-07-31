@@ -33,7 +33,7 @@
             }).register("outertest");
 
             var main = new BetaJS.Dynamics.Dynamic({
-                element: $("#test")
+                element: document.querySelector("#test")
             });
 
             main.activate();
@@ -43,7 +43,7 @@
             	main.on("foobar", function () {
             		clicked = true;
             	});
-                $("#test button").click();
+                BetaJS.Browser.Dom.triggerDomEvent(document.querySelector('#test button'), "click");
                 QUnit.equal(clicked, true);
             }
         </script>

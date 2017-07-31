@@ -32,7 +32,7 @@
 
 		<script>
 			//Elements
-			var root = $("#test");
+			var root = document.querySelector("#test");
 			var testvalue = 'Test Value'
 			var intial_value = 'Value of initial String';
 			var changed_value = 'Value of changed String';
@@ -45,7 +45,7 @@
 
 			//Dynamics
 			var showbinding = new BetaJS.Dynamics.Dynamic({
-				element: root.find('#set_get_basic'),
+				element: root.querySelector('#set_get_basic'),
 				attrs: {
 					some_attr: intial_value,
 					showbinding: true,
@@ -73,15 +73,15 @@
 			showbinding.activate();
 
 			function test() {
-				QUnit.equal(root.children().length, 2);
+				QUnit.equal(root.childElementCount, 2);
 
-				QUnit.equal($('#test_binding').html().trim(), testvalue);
+				QUnit.equal(document.querySelector('#test_binding').innerHTML.trim(), testvalue);
 
-				QUnit.equal($('#attr').html().trim(), intial_value);
-				QUnit.equal($('#value').html().trim(), intial_value);
-				QUnit.equal($('#prop_value').html().trim(), intial_value);
-				QUnit.equal($('#prop_initialize').html().trim(), intial_value);
-				QUnit.equal($('#prop_later').html().trim(), intial_value);
+				QUnit.equal(document.querySelector('#attr').innerHTML.trim(), intial_value);
+				QUnit.equal(document.querySelector('#value').innerHTML.trim(), intial_value);
+				QUnit.equal(document.querySelector('#prop_value').innerHTML.trim(), intial_value);
+				QUnit.equal(document.querySelector('#prop_initialize').innerHTML.trim(), intial_value);
+				QUnit.equal(document.querySelector('#prop_later').innerHTML.trim(), intial_value);
 
 				showbinding.set('some_attr',changed_value);
 				showbinding.set('value',changed_value);
@@ -89,17 +89,17 @@
 				property.set('string_initialize',changed_value);
 				property.set('string_later',changed_value);
 
-				QUnit.equal($('#attr').html().trim(), changed_value);
-				QUnit.equal($('#value').html().trim(), changed_value);
-				QUnit.equal($('#prop_value').html().trim(), changed_value);
-				QUnit.equal($('#prop_initialize').html().trim(), changed_value);
-				QUnit.equal($('#prop_later').html().trim(), changed_value);
+				QUnit.equal(document.querySelector('#attr').innerHTML.trim(), changed_value);
+				QUnit.equal(document.querySelector('#value').innerHTML.trim(), changed_value);
+				QUnit.equal(document.querySelector('#prop_value').innerHTML.trim(), changed_value);
+				QUnit.equal(document.querySelector('#prop_initialize').innerHTML.trim(), changed_value);
+				QUnit.equal(document.querySelector('#prop_later').innerHTML.trim(), changed_value);
 
 				// showbinding.get('prop').set('value',another_value);
 
-				// QUnit.equal($('#prop_value').html().trim(), another_value);
-				QUnit.equal($('#value_a').html().trim(), value_a);
-				QUnit.equal($('#value_b').html().trim(), value_b);
+				// QUnit.equal(document.querySelector('#prop_value').innerHTML.trim(), another_value);
+				QUnit.equal(document.querySelector('#value_a').innerHTML.trim(), value_a);
+				QUnit.equal(document.querySelector('#value_b').innerHTML.trim(), value_b);
 
 			}
 

@@ -10,7 +10,7 @@ test("handlers/attr : prevent variable overshadowing on event", function(assert)
    * domEvent is the name of the temporarily overshadowed variable.
    */
   var dynamic = new BetaJS.Dynamics.Dynamic({
-    element: $("div#qunit-fixture"),
+    element: document.querySelector("div#qunit-fixture"),
     template: "<div id='attr-test' onkeyup='{{test(domEvent)}}' ba-repeat='{{ domEvent :: [1,2,3] }}'>{{domEvent}}</div>",
     functions: {
     	test: function (domEvent) {}
@@ -18,15 +18,15 @@ test("handlers/attr : prevent variable overshadowing on event", function(assert)
   });
   dynamic.activate();
 
-  var root = $("div#attr-test");
+  var root = document.querySelector("div#attr-test");
 
-  assert.equal(root.html(), "123");
+  assert.equal(root.innerHTML, "123");
 
   /**
    * Triggering the keyup will execute attr#updateElement. This method is where
    * the overshadowing occurs.
    */
-  root.keyup();
+  BetaJS.Browser.Dom.triggerDomEvent(root, "keyup");
 
-  assert.equal(root.html(), "123");
+  assert.equal(root.innerHTML, "123");
 });

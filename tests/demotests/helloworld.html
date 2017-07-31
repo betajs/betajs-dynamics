@@ -10,7 +10,7 @@
 <script>
 
     dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $("#helloworld")
+        element: document.querySelector("#helloworld")
     });
 
     dynamic.set("replaced_value", "Hello World");
@@ -24,7 +24,7 @@
 <script>
     var root = $("#test");
     var dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $("#helloworld")
+        element: document.querySelector("#helloworld")
     });
     dynamic.set("replaced_value", "Hello World");
     

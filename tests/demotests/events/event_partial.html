@@ -28,7 +28,7 @@
             }).register("innertest");
 
             var main = new BetaJS.Dynamics.Dynamic({
-                element: $("#test"),
+                element: document.querySelector("#test"),
                 attrs: {
                     triggered: false
                 },
@@ -43,7 +43,7 @@
 
             function test() {
             	QUnit.equal(main.get("triggered"), false);
-                $("#test button").click();
+            	BetaJS.Browser.Dom.triggerDomEvent(document.querySelector('#test button'), "click");
                 QUnit.equal(main.get("triggered"), true);
             }
         </script>

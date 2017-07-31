@@ -16,7 +16,7 @@
         <script>
 
             var main = new BetaJS.Dynamics.Dynamic({
-                element: $("#test"),
+                element: document.querySelector("#test"),
                 attrs: {
                     factory: new BetaJS.Classes.SharedObjectFactory(function () {
                         return new BetaJS.Properties.Properties({

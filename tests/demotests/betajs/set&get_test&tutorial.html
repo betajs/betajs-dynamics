@@ -84,11 +84,11 @@
 
 		<script>
 			//Elements
-			var root = $("#test");
+			var root = document.querySelector("#test");
 
 			//Dynamics
 			var showbinding = new BetaJS.Dynamics.Dynamic({
-				element: root.find("#set_get_basic"),
+				element: root.querySelector("#set_get_basic"),
 				attrs: {
 					value: "Show Binding",
 					showbinding: true,
@@ -111,7 +111,7 @@
 			showbinding.activate();
 
 			function test() {
-				QUnit.equal(root.children().length, 2);
+				QUnit.equal(root.childElementCount, 2);
 			}
 
 		</script>

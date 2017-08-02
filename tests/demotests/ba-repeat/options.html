@@ -24,14 +24,17 @@
 							var promise = BetaJS.Promise.create();
 
 							//Slow for Testing in Browser
-//							var fadetime = 1000
-//                            $(element).fadeOut(fadetime);
-//							setTimeout(function () {
-//                                promise.asyncSuccess(true);
-//							}, fadetime+1);
+							var fadetime = 1000;
+                            Object.assign(element.style, {
+                                "-webkit-transition": "opacity " + fadetime/1000 + "s linear",
+                                opacity: 0
+                            });
+							setTimeout(function () {
+                                promise.asyncSuccess(true);
+							}, fadetime+1);
 
 							//Fast, for Qunit
-							promise.asyncSuccess(true);
+//							promise.asyncSuccess(true);
 
 							return promise;
 						}

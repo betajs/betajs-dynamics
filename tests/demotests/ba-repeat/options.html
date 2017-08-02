@@ -15,6 +15,7 @@
 		</div>
 		<script>
 			var root = $("#test");
+			var useQunit = false;
 
 			var dynamic = new BetaJS.Dynamics.Dynamic({
 				element: root.get(0),
@@ -22,12 +23,21 @@
 					opts: {
 					    onremove: function (item, element) {
 							var promise = BetaJS.Promise.create();
-							//console.log(item, element);
-                            //$(element).fadeOut(2000);
-							//setTimeout(function () {
-                            //    promise.asyncSuccess(true);
-							//}, 1000);
-                            promise.asyncSuccess(true);
+
+							//Slow for Testing in Browser
+							var fadetime = 1000;
+                            Object.assign(element.style, {
+                                "-webkit-transition": "opacity " + fadetime/1000 + "s linear",
+                                opacity: 0
+                            });
+                            if (useQunit)
+                                promise.asyncSuccess(true);
+                            else {
+                                setTimeout(function () {
+                                    promise.asyncSuccess(true);
+                                }, fadetime + 1);
+                            }
+							
 							return promise;
 						}
 					}
@@ -45,6 +55,7 @@
 			dynamic.activate();
 			
 			function test() {
+                useQunit = true;
 			    var list = root.find("ul");
                 QUnit.equal(list.children().length, 4);
                 $("#test button").click();

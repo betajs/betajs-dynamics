@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.98 - 2017-07-31
+betajs-dynamics - v0.0.99 - 2017-08-02
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1007,7 +1007,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.98 - 2017-07-31
+betajs-dynamics - v0.0.99 - 2017-08-02
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1020,7 +1020,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.98"
+    "version": "0.0.99"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -1506,7 +1506,7 @@ Scoped.define("module:Data.Scope", [
                 }, this);
                 this.__scopes = {};
                 this.__data = options.data;
-                Objs.iter(Types.is_function(options.attrs) ? options.attrs() : options.attrs, function(value, key) {
+                Objs.iter(Types.is_function(options.attrs) ? options.attrs.call(this) : options.attrs, function(value, key) {
                     if (!this.__properties.has(key))
                         this.set(key, value);
                 }, this);
@@ -2171,16 +2171,16 @@ Scoped.define("module:Dynamic", [
                 if (Types.is_function(base))
                     if (Types.is_function(overwrite)) {
                         return function() {
-                            return Objs.extend(base(), overwrite());
+                            return Objs.extend(base.call(this), overwrite.call(this));
                         };
                     } else {
                         return function() {
-                            return Objs.extend(base(), overwrite);
+                            return Objs.extend(base.call(this), overwrite);
                         };
                     }
                 else if (Types.is_function(overwrite)) {
                     return function() {
-                        return Objs.extend(Objs.clone(base, 1), overwrite());
+                        return Objs.extend(Objs.clone(base, 1), overwrite.call(this));
                     };
                 } else
                     return Objs.extend(Objs.clone(base, 1), overwrite);

@@ -117,7 +117,7 @@ Scoped.define("module:Data.Scope", [
                 }, this);
                 this.__scopes = {};
                 this.__data = options.data;
-                Objs.iter(Types.is_function(options.attrs) ? options.attrs() : options.attrs, function(value, key) {
+                Objs.iter(Types.is_function(options.attrs) ? options.attrs.call(this) : options.attrs, function(value, key) {
                     if (!this.__properties.has(key))
                         this.set(key, value);
                 }, this);

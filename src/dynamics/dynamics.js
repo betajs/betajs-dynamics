@@ -232,16 +232,16 @@ Scoped.define("module:Dynamic", [
                 if (Types.is_function(base))
                     if (Types.is_function(overwrite)) {
                         return function() {
-                            return Objs.extend(base(), overwrite());
+                            return Objs.extend(base.call(this), overwrite.call(this));
                         };
                     } else {
                         return function() {
-                            return Objs.extend(base(), overwrite);
+                            return Objs.extend(base.call(this), overwrite);
                         };
                     }
                 else if (Types.is_function(overwrite)) {
                     return function() {
-                        return Objs.extend(Objs.clone(base, 1), overwrite());
+                        return Objs.extend(Objs.clone(base, 1), overwrite.call(this));
                     };
                 } else
                     return Objs.extend(Objs.clone(base, 1), overwrite);

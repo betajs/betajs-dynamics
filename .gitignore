@@ -12,3 +12,4 @@ browserstack*.*
 BrowserStackLocal
 /docs
 jsdoc.conf.json
+*.log

@@ -136,8 +136,11 @@ Scoped.define("module:Partials.RepeatPartial", [
             },
 
             __unregister: function() {
-                if (this._collection && !this._collection.destroyed())
-                    this._iterateCollection(this.__removeItem);
+                if (this._collection && !this._collection.destroyed()) {
+                    this._iterateCollection(function(item) {
+                        this.__removeItem(item, true);
+                    }, this);
+                }
                 var element = this._node._element;
                 this._node._removeChildren();
                 element.innerHTML = "";
@@ -173,18 +176,18 @@ Scoped.define("module:Partials.RepeatPartial", [
                     this._prependItem(this._collection.getByIndex(idx + 1), item);
             },
 
-            __removeItem: function(item) {
+            __removeItem: function(item, instant) {
                 if (!this._collectionChildren[item.cid()])
                     return;
                 Objs.iter(this._collectionChildren[item.cid()].nodes, function(node) {
                     var ele = node.element();
                     var removePromise = Promise.create();
-                    if (this.__dynOptsCache && this.__dynOptsCache.onremove)
+                    if (this.__dynOptsCache && this.__dynOptsCache.onremove && !instant)
                         this.__dynOptsCache.onremove.call(this._handler, item, ele).forwardCallback(removePromise);
                     else
                         removePromise.asyncSuccess(true);
                     removePromise.success(function() {
-                        node.destroy();
+                        node.weakDestroy();
                         if (ele.parentNode)
                             ele.parentNode.removeChild(ele);
                     });

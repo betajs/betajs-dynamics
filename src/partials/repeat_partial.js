@@ -99,6 +99,8 @@ Scoped.define("module:Partials.RepeatPartial", [
 
             __register: function() {
                 this.__unregister();
+                if (Collection.is_instance_of(this._value) && this._value.destroyed())
+                    return;
                 if (SharedObjectFactory.is_instance_of(this._value)) {
                     this._isArray = false;
                     this._releaseValueCollection = true;

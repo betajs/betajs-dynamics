@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.100 - 2017-08-04
+betajs-dynamics - v0.0.101 - 2017-08-04
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.100"
+    "version": "0.0.101"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -2762,6 +2762,8 @@ Scoped.define("module:Partials.RepeatPartial", [
 
             __register: function() {
                 this.__unregister();
+                if (Collection.is_instance_of(this._value) && this._value.destroyed())
+                    return;
                 if (SharedObjectFactory.is_instance_of(this._value)) {
                     this._isArray = false;
                     this._releaseValueCollection = true;

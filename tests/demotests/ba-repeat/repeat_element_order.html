@@ -2,7 +2,7 @@
 <head>
     
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
     <script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script>
     <script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
     <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
@@ -11,13 +11,13 @@
 <body>
 
 <div id="test">
-	<div ba-repeat-element="{{item :: items}}">
+	<span ba-repeat-element="{{item :: items}}">
 		{{item}}
-	</div>
+	</span>
 </div>
 
 <script>
-    var root = $("#test");
+    var root = document.querySelector("#test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
         element: root,
@@ -27,11 +27,12 @@
     });
     dynamic.activate();
 
-    function test() {
+    function test(assert) {
     	var items = dynamic.get("items");
-        QUnit.equal(root.children().length, items.length + 1);
+        var children = root.querySelectorAll("span");
+        assert.equal(root.children.length, items.length + 1);
         for (var i = 0; i < items.length; ++i)
-        	QUnit.equal(items[i], $(root.children().get(i + 1)).html().trim());
+        	assert.equal(items[i], children[i+1].innerHTML.trim());
     }
 </script>
 

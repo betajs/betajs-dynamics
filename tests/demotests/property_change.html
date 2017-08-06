@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
@@ -24,8 +24,8 @@
 			</div>
 		</div>
 		<script>
-			var root = $("#test");
-			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
+			var root = document.querySelector("#test");
+			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root });
 
 			// Initial Values
 			var intial_value1 = "Initial Value 1";
@@ -44,23 +44,23 @@
 			}));
 			dynamic.activate();
 			
-			function test() {
-				QUnit.equal(root.children().length, 3);
+			function test(assert) {
+				assert.equal(root.children.length, 3);
 
-				QUnit.equal(root.find("#value1").html().trim(), intial_value1);
+				assert.equal(root.querySelector("#value1").innerHTML.trim(), intial_value1);
 				dynamic.set("value1", changed_value1);
-				QUnit.equal(root.find("#value1").html().trim(), changed_value1);
+				assert.equal(root.querySelector("#value1").innerHTML.trim(), changed_value1);
 
-				QUnit.equal(root.find("#value2").html().trim(), intial_value2);
+				assert.equal(root.querySelector("#value2").innerHTML.trim(), intial_value2);
 				dynamic.get("prop").set("value2", changed_value2);
-				QUnit.equal(root.find("#value2").html().trim(), changed_value2);
+				assert.equal(root.querySelector("#value2").innerHTML.trim(), changed_value2);
 
 				// The sub property notation is not enabled outside of templates so far.
 				// We might add that feature later.
 				//
-				// QUnit.equal(root.find("#value3").html().trim(), intial_value3);
+				// assert.equal(root.querySelector("#value3").innerHTML.trim(), intial_value3);
 				// dynamic.set("prop.value3", changed_value3);
-				// QUnit.equal(root.find("#value3").html().trim(), changed_value3);
+				// assert.equal(root.querySelector("#value3").innerHTML.trim(), changed_value3);
 			}			
 		</script>
 	</body>

@@ -1,6 +1,6 @@
 <html>
     <head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../../node_modules/betajs/dist/beta.js"></script>
         <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
         <script src="../../../dist/betajs-dynamics.js"></script>
@@ -41,10 +41,10 @@
 
             main.activate();
 
-            function test() {
-            	QUnit.equal(main.get("triggered"), false);
+            function test(assert) {
+            	assert.equal(main.get("triggered"), false);
             	BetaJS.Browser.Dom.triggerDomEvent(document.querySelector('#test button'), "click");
-                QUnit.equal(main.get("triggered"), true);
+                assert.equal(main.get("triggered"), true);
             }
         </script>
 

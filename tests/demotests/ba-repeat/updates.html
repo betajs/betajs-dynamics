@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
@@ -12,10 +12,10 @@
 			</ul>
 		</div>
 		<script>
-			var root = $("#test");
+			var root = document.querySelector("#test");
 
 			var dynamic = new BetaJS.Dynamics.Dynamic({
-				element: root.get(0),
+				element: root,
 				attrs: {
 					comp: 'A'
 				},
@@ -26,29 +26,29 @@
 
 			dynamic.activate();
 			
-			function test() {
-				var list = root.find("ul");
+			function test(assert) {
+				var list = root.querySelector("ul");
 				var coll = dynamic.get("items");
 				var knownChildren = function () {
 					var knownCount = 0;
-					list.children().each(function () {
-						if (this.known)
+					for (var i = 0; i < list.childNodes.length; ++i) {
+						if (list.childNodes[i].known)
 							knownCount++;
-						this.known = true;					
-					});
+                        list.childNodes[i].known = true;
+					}
 					return knownCount;
 				};
-				QUnit.equal(list.children().length, 4);
-				QUnit.equal(knownChildren(), 0);
+				assert.equal(list.children.length, 4);
+				assert.equal(knownChildren(), 0);
 				coll.add({test: "E"});
-				QUnit.equal(list.children().length, 5);
-				QUnit.equal(knownChildren(), 4);
+				assert.equal(list.children.length, 5);
+				assert.equal(knownChildren(), 4);
 				coll.remove(coll.getByIndex(0));
-				QUnit.equal(list.children().length, 4);
-				QUnit.equal(knownChildren(), 4);
+				assert.equal(list.children.length, 4);
+				assert.equal(knownChildren(), 4);
 				dynamic.set('comp', "C");
-				QUnit.equal(list.children().length, 3);
-				QUnit.equal(knownChildren(), 3);
+				assert.equal(list.children.length, 3);
+				assert.equal(knownChildren(), 3);
 								
 			}			
 		</script>

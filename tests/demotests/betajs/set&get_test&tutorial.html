@@ -1,7 +1,7 @@
 
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../../node_modules/betajs/dist/beta.js"></script>
         <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../../dist/betajs-dynamics.js"></script>
@@ -110,8 +110,8 @@
 			});
 			showbinding.activate();
 
-			function test() {
-				QUnit.equal(root.childElementCount, 2);
+			function test(assert) {
+				assert.equal(root.children.length, 2);
 			}
 
 		</script>

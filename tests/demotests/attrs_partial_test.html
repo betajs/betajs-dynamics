@@ -2,7 +2,7 @@
 <head>
     
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
     <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
     <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
     <script src="../../dist/betajs-dynamics.js"></script>
@@ -34,21 +34,21 @@
         }
 	}).register("ba-innertest");
 
-    var root = $("#test");
+    var root = document.querySelector("#test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
         element: root
     });
     dynamic.activate();
 
-    function test() {
-        QUnit.equal(root.find("#testouter").html().trim(), "xyz");
-        QUnit.equal(root.find("#testinner").html().trim(), "");
-        QUnit.equal(root.find("#some_set_attr").html().trim(), "changed");
-        //QUnit.equal(root.find("another_set_attr").html().trim(), "anotherchanged");
+    function test(assert) {
+        assert.equal(root.querySelector("#testouter").innerHTML.trim(), "xyz");
+        assert.equal(root.querySelector("#testinner").innerHTML.trim(), "");
+        assert.equal(root.querySelector("#some_set_attr").innerHTML.trim(), "changed");
+        //assert.equal(root.querySelector("another_set_attr").innerHTML.trim(), "anotherchanged");
 
-        QUnit.equal(root.find("#outer").html().trim(), "");
-        QUnit.equal(root.find("#inner").html().trim(), "abc");
+        assert.equal(root.querySelector("#outer").innerHTML.trim(), "");
+        assert.equal(root.querySelector("#inner").innerHTML.trim(), "abc");
     }
 </script>
 

@@ -1,6 +1,6 @@
 <html>
     <head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../../node_modules/betajs/dist/beta.js"></script>
         <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
         <script src="../../../dist/betajs-dynamics.js"></script>
@@ -64,30 +64,30 @@
 
             main.activate();
 
-            function test() {
+            function test(assert) {
             	var outer = main.scope(">").materialize(true);
             	var middle = outer.scope(">").materialize(true);
             	var inner = middle.scope(">").materialize(true);
             	main.channel("global").trigger("test");
-            	QUnit.deepEqual(log, ["outer:global:test", "middle:global:test", "inner:global:test"]);
+            	assert.deepEqual(log, ["outer:global:test", "middle:global:test", "inner:global:test"]);
             	log = [];
             	outer.channel("global").trigger("test");
-            	QUnit.deepEqual(log, ["outer:global:test", "middle:global:test", "inner:global:test"]);
+            	assert.deepEqual(log, ["outer:global:test", "middle:global:test", "inner:global:test"]);
             	log = [];
             	middle.channel("global").trigger("test");
-            	QUnit.deepEqual(log, ["outer:global:test", "middle:global:test", "inner:global:test"]);
+            	assert.deepEqual(log, ["outer:global:test", "middle:global:test", "inner:global:test"]);
             	log = [];
             	inner.channel("global").trigger("test");
-            	QUnit.deepEqual(log, ["outer:global:test", "middle:global:test", "inner:global:test"]);
+            	assert.deepEqual(log, ["outer:global:test", "middle:global:test", "inner:global:test"]);
             	log = [];
             	outer.channel("middle").trigger("test");
-            	QUnit.deepEqual(log, ["outer:middle:test"]);
+            	assert.deepEqual(log, ["outer:middle:test"]);
             	log = [];
             	middle.channel("middle").trigger("test");
-            	QUnit.deepEqual(log, ["middle:middle:test", "inner:middle:test"]);
+            	assert.deepEqual(log, ["middle:middle:test", "inner:middle:test"]);
             	log = [];
             	inner.channel("middle").trigger("test");
-            	QUnit.deepEqual(log, ["middle:middle:test", "inner:middle:test"]);
+            	assert.deepEqual(log, ["middle:middle:test", "inner:middle:test"]);
             }
         </script>
 

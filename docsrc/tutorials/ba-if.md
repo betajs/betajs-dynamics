@@ -50,7 +50,7 @@ Will evaluate to
 
 ```js
     some_dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $(".some_class"),
+        element: document.querySelector(".some_class"),
         attrs : {
             some_attribute: true
         }

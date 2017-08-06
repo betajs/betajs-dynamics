@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
@@ -50,7 +50,7 @@
 		</div>
 
 		<script>
-			var root = $("#test");
+			var root = document.querySelector("#test");
 
 			//Messages
 			var external_initial = "This is an External Property";
@@ -81,7 +81,7 @@
 			var external_property_array = [external_property];
 
 			var outer = new BetaJS.Dynamics.Dynamic({
-				element: root.get(0),
+				element: root,
 				attrs: {
 					array_items: ["A","B","C"],
 					internal_property: new BetaJS.Properties.Properties({v : internal_initial}),
@@ -128,25 +128,25 @@
 
 			outer.activate();
 outer.set("value", "Hello");
-			function test() {
+			function test(assert) {
 
 				//Attribute Test
-				QUnit.equal(root.find("#attr_test").html().trim(), test_value);
+				assert.equal(root.querySelector("#attr_test").innerHTML.trim(), test_value);
 
 				//Others
-//				QUnit.equal(!!inner.get('undef'), !!undefined);
-				QUnit.equal(root.find("#injected").html().trim(), outer.get("value"));
-				QUnit.equal(root.find("#prop :first-child").html().trim(), external_initial);
-				QUnit.equal(root.find("#arr :first-child").html().trim(), array_initial[0]);
+//				assert.equal(!!inner.get('undef'), !!undefined);
+				assert.equal(root.querySelector("#injected").innerHTML.trim(), outer.get("value"));
+				assert.equal(root.querySelector("#prop :first-child").innerHTML.trim(), external_initial);
+				assert.equal(root.querySelector("#arr :first-child").innerHTML.trim(), array_initial[0]);
 
 				outer.call("change_props");
-				QUnit.equal(root.find("#injected").html().trim(), outer.get("value"));
-				QUnit.equal(root.find("#prop :first-child").html().trim(), external_changed);
-				QUnit.equal(root.find("#arr :first-child").html().trim(), array_changed[0]);
+				assert.equal(root.querySelector("#injected").innerHTML.trim(), outer.get("value"));
+				assert.equal(root.querySelector("#prop :first-child").innerHTML.trim(), external_changed);
+				assert.equal(root.querySelector("#arr :first-child").innerHTML.trim(), array_changed[0]);
 				var inner = outer.scope(">").materialize()[0];
 				
-				QUnit.equal(inner.isArgumentAttr("overwrite"), true);
-				QUnit.equal(inner.isArgumentAttr("not_overwrite"), false);
+				assert.equal(inner.isArgumentAttr("overwrite"), true);
+				assert.equal(inner.isArgumentAttr("not_overwrite"), false);
 			}
 		</script>
 

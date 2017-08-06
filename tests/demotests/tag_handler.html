@@ -2,7 +2,7 @@
 <head>
     
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
     <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script>
     <script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
     <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
@@ -30,7 +30,7 @@
 		template: '<div class="inserted">{{arg}}</div>'
 	}).register("ba-taghandlertest");
 	
-    var root = $("#test");
+    var root = document.querySelector("#test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
         element: root,
@@ -45,25 +45,25 @@
     });
     dynamic.activate();
 
-    function test() {
-        QUnit.equal(!!root.find("ba-test").get(0), true);
-        QUnit.equal(!!root.find("ba-foo").get(0), false);
+    function test(assert) {
+        assert.equal(!!root.querySelector("ba-test"), true);
+        assert.equal(!!root.querySelector("ba-foo"), false);
         dynamic.set("handler", "foo");
-        QUnit.equal(!!root.find("ba-test").get(0), false);
-        QUnit.equal(!!root.find("ba-foo").get(0), true);
+        assert.equal(!!root.querySelector("ba-test"), false);
+        assert.equal(!!root.querySelector("ba-foo"), true);
         if (BetaJS.Browser.Info.internetExplorerVersion() < 9)
         	return;
-        root.find("ba-foo").click();
-        QUnit.equal(dynamic.get("clicker"), 2);
+        BetaJS.Browser.Dom.triggerDomEvent(root.querySelector("ba-foo"), "click");;
+        assert.equal(dynamic.get("clicker"), 2);
         
-        QUnit.equal(!!root.find("ba-foobar").get(0), true);
-        QUnit.equal(root.find("ba-foobar").html().trim(), "content");
+        assert.equal(!!root.querySelector("ba-foobar"), true);
+        assert.equal(root.querySelector("ba-foobar").innerHTML.trim(), "content");
         
-        QUnit.equal(!!root.find(".inserted").get(0), false);
+        assert.equal(!!root.querySelector(".inserted"), false);
         dynamic.set("component", "taghandlertest");
-        QUnit.equal(!!root.find(".inserted").get(0), true);
+        assert.equal(!!root.querySelector(".inserted"), true);
         dynamic.set("arg", "foobar");
-        QUnit.equal(root.find(".inserted").html().trim(), "foobar");
+        assert.equal(root.querySelector(".inserted").innerHTML.trim(), "foobar");
     }
 </script>
 

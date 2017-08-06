@@ -4,7 +4,7 @@ Instead of using templates, you can also link a dynamic to an already existing h
 ```js
 
 	dynamic = new BetaJS.Dynamics.Dynamic({
-		element : $(".someclass")
+		element : document.querySelector(".someclass")
 	});
 
 ```

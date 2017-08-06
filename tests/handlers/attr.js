@@ -5,7 +5,7 @@
  * This test is written in to ensure the updateElement does not cause a
  * permanent overshadowing of any variables in the Mesh layers.
  */
-test("handlers/attr : prevent variable overshadowing on event", function(assert) {
+QUnit.test("handlers/attr : prevent variable overshadowing on event", function(assert) {
   /**
    * domEvent is the name of the temporarily overshadowed variable.
    */

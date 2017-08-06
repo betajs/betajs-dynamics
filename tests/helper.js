@@ -9,8 +9,8 @@ BetaJS.Browser.Dom.ready(function () {
 		var src = democase.attributes.src.value;
 		src += (src.indexOf("?") >= 0 ? "&" : "?") + "rev=" + BetaJS.Time.now();
 		var title = BetaJS.Strings.splitLast(BetaJS.Strings.splitFirst(src, ".html").head, "/").tail.replace(/_/g, " ");
-		test("demotest : " + title, function () {
-			stop();
+		QUnit.test("demotest : " + title, function (assert) {
+			var done = assert.async();
 			BetaJS.Browser.Loader.loadHtml(src, function (content) {
 				var parsed = BetaJS.Browser.Dom.elementsByTemplate(content);
 				var template = "";
@@ -22,14 +22,19 @@ BetaJS.Browser.Dom.ready(function () {
 						code = elem.innerHTML;
 				});
 				/*jslint evil: true */
-				var f = new Function (code + "try {test();} catch (e) { QUnit.ok(false, e.toString()); }");
+				var f = new Function ("assert", code + "try {test(assert);} catch (e) { assert.ok(false, e.toString()); }");
 				var windowKeys = BetaJS.Objs.clone(window, 1);
-				f();
+				f(assert);
 				BetaJS.Objs.iter(window, function (value, key) {
-					if (!(key in windowKeys))
-						delete window[key];
+					if (!(key in windowKeys)) {
+						try {
+                            delete window[key];
+                        } catch (e) {
+							window[key] = null;
+						}
+                    }
 				});
-				start();
+				done();
 			});
 		});
 	});

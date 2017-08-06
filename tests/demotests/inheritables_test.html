@@ -2,7 +2,7 @@
     <head>
         
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
         <script src="../../dist/betajs-dynamics.js"></script>
@@ -10,6 +10,7 @@
     <body>
 
         <div id="test">
+            <hr />
         	<ba-level1 ba-foo="{{foo}}"></ba-level1>
         </div>
 
@@ -19,10 +20,10 @@
                 template: '<p>{{foo}}</p>'
             }).register("ba-level3");
             BetaJS.Dynamics.Dynamic.extend(null, {
-                template: '<ba-level3></ba-level3><p>{{foo}}</p>'
+                template: '<hr /><ba-level3></ba-level3><p>{{foo}}</p>'
             }).register("ba-level2");
             BetaJS.Dynamics.Dynamic.extend(null, {
-                template: '<ba-level2></ba-level2><p>{{foo}}</p>',
+                template: '<hr /><ba-level2></ba-level2><p>{{foo}}</p>',
                 inheritables: ["foo"]
             }).register("ba-level1");
 
@@ -35,8 +36,8 @@
 
             main.activate();
 
-            function test() {
-                QUnit.deepEqual(main.scope(">>>").get("foo"), "bar");
+            function test(assert) {
+                assert.deepEqual(main.scope(">>>").get("foo"), "bar");
             }
         </script>
 

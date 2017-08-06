@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
@@ -81,36 +81,36 @@
 			var button_c = root.querySelector("#c");
 			var button_d = root.querySelector("#d");
 
-			function test() {
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
+			function test(assert) {
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
 				dynamic.set("a", true);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), true);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), true);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
 				dynamic.set("a", false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "c"), false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "c"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
 				dynamic.set("b.v", true);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), true);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), true);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
 				dynamic.get("c").set("v", true);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), true);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), true);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), true);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), true);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), false);
 				property.set("v", true);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), true);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), true);
-				QUnit.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), true);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_a, "a"), false);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_b, "b"), true);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_c, "c"), true);
+				assert.equal(BetaJS.Browser.Dom.elementHasClass(button_d, "d"), true);
 			}
 		</script>
 	</body>

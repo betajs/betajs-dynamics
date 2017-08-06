@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
@@ -19,7 +19,7 @@
 			</div>
 		</div>
 		<script>
-			var root = $("#test");
+			var root = document.querySelector("#test");
 			var original_string = "Original String";
 
 			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root });
@@ -28,20 +28,21 @@
 			dynamic.activate();
 			
 			
-			function test() {
+			function test(assert) {
 				var changed_string = "Changed String";
 
-				QUnit.equal(root.find("#s1 p").html().trim(), original_string);
-				QUnit.equal(root.find("#s2 p").html().trim(), "");
-				
-				root.find("input").val(changed_string);
-				BetaJS.Browser.Dom.triggerDomEvent(root.find("input").get(0), "keypress");
-				BetaJS.Browser.Dom.triggerDomEvent(root.find("input").get(1), "keypress");
-				
-				QUnit.equal(dynamic.get("string1"), changed_string);
-				QUnit.equal(root.find("#s1 p").html().trim(), changed_string);
+				assert.equal(root.querySelector("#s1 p").innerHTML.trim(), original_string);
+				assert.equal(root.querySelector("#s2 p").innerHTML.trim(), "");
 
-				QUnit.equal(root.find("#s2 p").html().trim(), changed_string);
+				root.querySelector("#s1 input").value = changed_string;
+                root.querySelector("#s2 input").value = changed_string;
+				BetaJS.Browser.Dom.triggerDomEvent(root.querySelector("#s1 input"), "keypress");
+				BetaJS.Browser.Dom.triggerDomEvent(root.querySelector("#s2 input"), "keypress");
+				
+				assert.equal(dynamic.get("string1"), changed_string);
+				assert.equal(root.querySelector("#s1 p").innerHTML.trim(), changed_string);
+
+				assert.equal(root.querySelector("#s2 p").innerHTML.trim(), changed_string);
 			}
 		</script>
 	</body>

@@ -1,6 +1,6 @@
 <html>
 <head>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
     <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script>
     <script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
     <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
@@ -14,7 +14,7 @@
     <div id="helloworld">{{replaced_value}}</div>
 </div>
 <script>
-    var root = $("#test");
+    var root = document.querySelector("#test");
 
     BetaJS.Dynamics.Dynamic.extend(null, {
         template:   '<force>{{force}}</force>',
@@ -44,7 +44,7 @@
     if (!window.QUnit)
     	execute();
 
-    function test() {
+    function test(assert) {
     	
     	var activateProfile = BetaJSDebug.Profiler.profilePrototypeMethod("activate", BetaJS.Dynamics.Dynamic); 
     	
@@ -52,8 +52,8 @@
         
         BetaJSDebug.Hooks.unhookMethod(activateProfile.hook);
         
-        QUnit.equal(dynamic.get("replaced_value"), $('#helloworld').html().trim());
-        QUnit.equal(activateProfile.profile.profile().enterCount, 1, "Activate should only be called once");
+        assert.equal(dynamic.get("replaced_value"), document.querySelector('#helloworld').innerHTML.trim());
+        assert.equal(activateProfile.profile.profile().enterCount, 1, "Activate should only be called once");
 
     }
 </script>

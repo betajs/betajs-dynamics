@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
@@ -18,10 +18,10 @@
 			</ul>
 		</div>
 		<script>
-			var root = $("#test");
+			var root = document.querySelector("#test");
 			var array = ['A','B','C'];
 			var dynamic = new BetaJS.Dynamics.Dynamic({
-				element: root.get(0),
+				element: root,
 				attrs: {
 					items: array,
 					placeholder: "Enter new element here",
@@ -40,22 +40,22 @@
 		
 			dynamic.activate();
 			
-			function test() {
-				//QUnit.equal(root.children().length, 1);
-				var elements = root.find("li");
+			function test(assert) {
+				//assert.equal(root.children.length, 1);
+				var elements = root.querySelectorAll("li");
 
-				QUnit.equal(elements.length, array.length);
+				assert.equal(elements.length, array.length);
 				for (var i = 0; i < elements.length; ++i)
-					QUnit.equal(elements.get(i).innerHTML, array[i]);
+					assert.equal(elements[i].innerHTML, array[i]);
 
 				var string = "Some String";
 				//array.push(string);
 				dynamic.call("add", string);
 
-				var elements = root.find("li");
-				QUnit.equal(elements.length, array.length);
+				var elements = root.querySelectorAll("li");
+				assert.equal(elements.length, array.length);
 				for (var i = 0; i < elements.length; ++i)
-					QUnit.equal(elements.get(i).innerHTML, array[i]);
+					assert.equal(elements[i].innerHTML, array[i]);
 
 			}			
 		</script>

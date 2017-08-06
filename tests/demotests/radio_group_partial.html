@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
@@ -11,23 +11,23 @@
 			<input type="radio" name="group" id="radio-bar" value="Bar" ba-radio-group="radiovalue" />
 		</div>
 		<script>
-			var root = $("#test");
+			var root = document.querySelector("#test");
 
 			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root, attrs: {radiovalue: "Bar"} });
 		
 			dynamic.activate();			
 			
-			function test() {
+			function test(assert) {
 				dynamic.set("radiovalue", "Bar");
-				QUnit.equal(root.find("#radio-foo").is(":checked"), false);
-				QUnit.equal(root.find("#radio-bar").is(":checked"), true);
+				assert.equal(root.querySelector("#radio-foo").checked, false);
+				assert.equal(root.querySelector("#radio-bar").checked, true);
 				dynamic.set("radiovalue", "Foo");
-				QUnit.equal(root.find("#radio-foo").is(":checked"), true);
-				QUnit.equal(root.find("#radio-bar").is(":checked"), false);
-				BetaJS.Browser.Dom.triggerDomEvent(root.find("#radio-bar").get(0), "click");
-				QUnit.equal(dynamic.get("radiovalue"), "Bar");
-				BetaJS.Browser.Dom.triggerDomEvent(root.find("#radio-foo").get(0), "click");
-				QUnit.equal(dynamic.get("radiovalue"), "Foo");
+				assert.equal(root.querySelector("#radio-foo").checked, true);
+				assert.equal(root.querySelector("#radio-bar").checked, false);
+				BetaJS.Browser.Dom.triggerDomEvent(root.querySelector("#radio-bar"), "click");
+				assert.equal(dynamic.get("radiovalue"), "Bar");
+				BetaJS.Browser.Dom.triggerDomEvent(root.querySelector("#radio-foo"), "click");
+				assert.equal(dynamic.get("radiovalue"), "Foo");
 			}
 		</script>
 	</body>

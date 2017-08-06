@@ -39,7 +39,7 @@ The Javascript Controller:
 ```js
 
     dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $("some_element"),
+        element: document.querySelector("some_element"),
         initial : {
             attrs : {
                 some_attribute : "This is some Text",

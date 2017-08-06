@@ -2,7 +2,7 @@
 <head>
     
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
     <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
     <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
     <script src="../../dist/betajs-dynamics.js"></script>
@@ -45,7 +45,7 @@
 <script>
 
     //Elements
-    var root = $("#test");
+    var root = document.querySelector("#test");
 
     //Components
     var internal_message = "This is an internal Message";
@@ -54,7 +54,7 @@
     var internal_property2 = new BetaJS.Properties.Properties({v : null});
 
     var outer = new BetaJS.Dynamics.Dynamic({
-        element: root.find("#outer"),
+        element: root.querySelector("#outer"),
         attrs: {
                 property_array : [
                     new BetaJS.Properties.Properties({v : null}),
@@ -98,25 +98,19 @@
 
     outer.activate();
 
-    function test() {
-        QUnit.equal(root.children().length, 2);
+    function test(assert) {
+        assert.equal(root.children.length, 2);
 
         //Arrays
-        QUnit.equal($("#normal_array").find("div").length, 2 * outer.get("normal_array").length);
-        QUnit.equal($("#property_array").find("div").length, 2 * outer.get("property_array").length);
+        assert.equal(document.querySelectorAll("#normal_array div").length, 2 * outer.get("normal_array").length);
+        assert.equal(document.querySelectorAll("#property_array div").length, 2 * outer.get("property_array").length);
 
-        //ba-repeat & Dynamic
-
-        //  -- there are not three instances of middle in there but one, because of the if
-//        QUnit.equal($($("#middle inner")[0]).html().trim(), "Inner: null");
-//        QUnit.equal($($("#middle inner")[1]).html().trim(), internal_message);
-
-        QUnit.equal($($("#middle .inner")[0]).html().trim(), "Inner: " + internal_message);
+        assert.equal(document.querySelector("#middle .inner").innerHTML.trim(), "Inner: " + internal_message);
 
         outer.call("change_array");
 
-        QUnit.equal($($("#middle .inner")[0]).html().trim(), "Inner: " + internal_message);
-        QUnit.equal($($("#middle ba-middle")[1]).css('display'), "none");
+        assert.equal(document.querySelector("#middle .inner").innerHTML.trim(), "Inner: " + internal_message);
+        assert.equal(document.querySelectorAll("#middle ba-middle")[1].style.display, "none");
 
     }
 </script>

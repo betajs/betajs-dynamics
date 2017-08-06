@@ -19,7 +19,7 @@ The ba-attrs Partial allows you to set initial property values for a dynamic fro
 	}).register("ba-innertest");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $('.some_class')
+        element: document.querySelector('.some_class')
     });
     dynamic.activate();
 ```

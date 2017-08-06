@@ -2,7 +2,7 @@
 <head>
     
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
     <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
     <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
     <script src="../../dist/betajs-dynamics.js"></script>
@@ -32,7 +32,7 @@
         }
 	}).register("ba-inner_test");
 
-    var root = $("#test");
+    var root = document.querySelector("#test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
         element: root,
@@ -44,20 +44,20 @@
     });
     dynamic.activate();
 
-    function test() {
+    function test(assert) {
 
-        QUnit.equal(root.find("#innerx").html().trim(), "true");
-        QUnit.equal(root.find("#outerx").html().trim(), "true");
-        root.find("#outer").click();
-        QUnit.equal(root.find("#innerx").html().trim(), "false");
-        QUnit.equal(root.find("#outerx").html().trim(), "false");
+        assert.equal(root.querySelector("#innerx").innerHTML.trim(), "true");
+        assert.equal(root.querySelector("#outerx").innerHTML.trim(), "true");
+        BetaJS.Browser.Dom.triggerDomEvent(root.querySelector("#outer"), "click");;
+        assert.equal(root.querySelector("#innerx").innerHTML.trim(), "false");
+        assert.equal(root.querySelector("#outerx").innerHTML.trim(), "false");
 
 
-        QUnit.equal(root.find("#innerx").html().trim(), "false");
-        QUnit.equal(root.find("#outerx").html().trim(), "false");
-        root.find("#inner").click();
-        QUnit.equal(root.find("#outerx").html().trim(), "true");
-        QUnit.equal(root.find("#innerx").html().trim(), "true");
+        assert.equal(root.querySelector("#innerx").innerHTML.trim(), "false");
+        assert.equal(root.querySelector("#outerx").innerHTML.trim(), "false");
+        BetaJS.Browser.Dom.triggerDomEvent(root.querySelector("#inner"), "click");;
+        assert.equal(root.querySelector("#outerx").innerHTML.trim(), "true");
+        assert.equal(root.querySelector("#innerx").innerHTML.trim(), "true");
 
     }
 </script>

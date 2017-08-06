@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
@@ -18,7 +18,7 @@
 				<div>Value: {{test}}</div>
 			</div><br>
 
-			<div id="DOMevent">
+			<div id="domevent">
 				<button onmouseover="enter()" ba-on:mouseleave="leave()">DOMevent Mouseover</button>
 
 				<script>
@@ -37,9 +37,9 @@
 
 		</div>
 		<script>
-			var root = $("#test");
+			var root = document.querySelector("#test");
 			var dynamic = new BetaJS.Dynamics.Dynamic({
-				element: root.find("#dynamic"),
+				element: root.querySelector("#dynamic"),
 				functions: {
 					mouseover : function () {
 						this.set('test',true);
@@ -51,7 +51,7 @@
 			});
 
 			DOMevent = new BetaJS.Dynamics.Dynamic({
-				element: root.find("#DOMevent"),
+				element: root.querySelector("#domevent"),
 				functions: {
 					mouseover : function () {
 						this.set('test',true);
@@ -69,18 +69,16 @@
 			DOMevent.activate();
 
 
-			function test() {
-				QUnit.equal(dynamic.get("test"), false);
+			function test(assert) {
+				assert.equal(dynamic.get("test"), false);
 			
-				//root.find("button").mouseover();
-				BetaJS.Browser.Dom.triggerDomEvent(root.find("button").get(0), "mouseover");
+				BetaJS.Browser.Dom.triggerDomEvent(root.querySelector("button"), "mouseover");
 			
-				QUnit.equal(dynamic.get("test"), true);
+				assert.equal(dynamic.get("test"), true);
 
-				//root.find("button").mouseleave();
-				BetaJS.Browser.Dom.triggerDomEvent(root.find("button").get(0), "mouseleave");
+				BetaJS.Browser.Dom.triggerDomEvent(root.querySelector("button"), "mouseleave");
 
-				QUnit.equal(dynamic.get("test"), false);
+				assert.equal(dynamic.get("test"), false);
 			
 			}
 		</script>

@@ -7,7 +7,7 @@ BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Dynamictemplate", {
     //Only use one of the following three concurrently
     templateUrl : "templates/template.html",
     template : "<div>Internal Template {{some_attribute}}</div>",
-    element : $(".someclass"),
+    element : document.querySelector(".someclass"),
 
 
     bindings : {
@@ -62,8 +62,7 @@ BetaJS.Dynamics.Dynamic.extend("BetaJS.Dynamics.Dynamictemplate", {
 
     _afterActivate : function (element) {
         console.log('This message is displayed after the dynamic is activated');
-        //element passes you the element where the Dynamic is active on as a Jquery Object/Element
-        element.find(".somechildnode");
+        //element passes you the element where the Dynamic is active on as a DOM element
     }
 
 });

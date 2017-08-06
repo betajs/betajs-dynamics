@@ -2,7 +2,7 @@
 	<head>
 		
 
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
@@ -101,8 +101,7 @@
 			var global = window;
 
 			//Elements
-			var root = $("#test");
-			var button = $("button");
+			var root = document.querySelector("#test");
 
 			//Messages
 			var external_message = "This is an External Property";
@@ -115,7 +114,7 @@
 
 			//Dynamics
 			var showbinding = new BetaJS.Dynamics.Dynamic({
-				element: root.find("#bashowsimple"),
+				element: root.querySelector("#bashowsimple"),
 				attrs: {
 					value: "Show Binding",
 					showbinding: true
@@ -129,7 +128,7 @@
 			showbinding.activate();
 
 			var special = new BetaJS.Dynamics.Dynamic({
-				element: root.find("#special"),
+				element: root.querySelector("#special"),
 				attrs: {
 					value_null: true,
 					value_undefined: true
@@ -141,7 +140,7 @@
 
 
 			var showlocal = new BetaJS.Dynamics.Dynamic({
-				element: root.find("#local"),
+				element: root.querySelector("#local"),
 				attrs: {
 					property : local_message
 				},
@@ -154,7 +153,7 @@
 			showlocal.activate();
 
 			var inject = new BetaJS.Dynamics.Dynamic({
-				element: root.find("#inject"),
+				element: root.querySelector("#inject"),
 				attrs: {
 					showinject: false,
 					internal_property: new BetaJS.Properties.Properties({v : internal_message}),
@@ -195,58 +194,51 @@
 
 			inject.activate();
 
-			function test() {
-				QUnit.equal(root.children().length, 5);
+			function test(assert) {
+				assert.equal(root.children.length, 5);
 
 				//Binding
 				showbinding.set("value", "Hello");
-				QUnit.equal($("#bashowsimple").find("div").html().trim(), showbinding.get("value"));
-				QUnit.equal($("#showbinding").css("display"),"block");
-				QUnit.equal($("#hidebinding").css("display"),"none");
-				$("#bashowsimple").find("button").trigger("click");
-				QUnit.equal($("#showbinding").css("display"),"none");
-				QUnit.equal($("#hidebinding").css("display"),"block");
+				assert.equal(document.querySelector("#bashowsimple div").innerHTML.trim(), showbinding.get("value"));
+				assert.equal(document.querySelector("#showbinding").style.display,"");
+				assert.equal(document.querySelector("#hidebinding").style.display, "none");
+				BetaJS.Browser.Dom.triggerDomEvent(document.querySelector("#bashowsimple button"), "click");
+				assert.equal(document.querySelector("#showbinding").style.display,"none");
+				assert.equal(document.querySelector("#hidebinding").style.display, "");
 				showbinding.call("change_showbinding");
-				QUnit.equal($("#showbinding").css("display"),"block");
-				QUnit.equal($("#hidebinding").css("display"),"none");
+				assert.equal(document.querySelector("#showbinding").style.display,"");
+				assert.equal(document.querySelector("#hidebinding").style.display, "none");
 
 				//Direct
-				QUnit.equal($("#direct_true").css("display"),"block");
-				QUnit.equal($("#direct_false").css("display"),"none");
-				QUnit.equal($("#direct_null").css("display"),"none");
-				QUnit.equal($("#direct_undefined").css("display"),"none");
+				assert.equal(document.querySelector("#direct_true").style.display, "");
+				assert.equal(document.querySelector("#direct_false").style.display, "none");
+				assert.equal(document.querySelector("#direct_null").style.display, "none");
+				assert.equal(document.querySelector("#direct_undefined").style.display, "none");
 
 				//Special
-				QUnit.equal($("#null").css("display"),"block");
+				assert.equal(document.querySelector("#null").style.display, "");
 				special.set("value_null",null);
-				QUnit.equal($("#null").css("display"),"none");
+				assert.equal(document.querySelector("#null").style.display, "none");
 
-				QUnit.equal($("#undefined").css("display"),"block");
+				assert.equal(document.querySelector("#undefined").style.display, "");
 				special.set("value_undefined",undefined);
-				QUnit.equal($("#undefined").css("display"),"none");
+				assert.equal(document.querySelector("#undefined").style.display, "none");
 
 				//Local Property
-				QUnit.equal($("#localvalue").html().trim(),local_message);
-				QUnit.equal($("#showlocal").css("display"),"block");
-				QUnit.equal($("#hidelocal").css("display"),"none");
+				assert.equal(document.querySelector("#localvalue").innerHTML.trim(),local_message);
+				assert.equal(document.querySelector("#showlocal").style.display, "");
+				assert.equal(document.querySelector("#hidelocal").style.display, "none");
 				showlocal.call("change_showlocal");
-				QUnit.equal($("#showlocal").css("display"),"none");
-				QUnit.equal($("#hidelocal").css("display"),"block");
-				$("#local").find("button").trigger("click");
-				QUnit.equal($("#showlocal").css("display"),"block");
-				QUnit.equal($("#hidelocal").css("display"),"none");
+				assert.equal(document.querySelector("#showlocal").style.display, "none");
+				assert.equal(document.querySelector("#hidelocal").style.display, "");
+				BetaJS.Browser.Dom.triggerDomEvent(document.querySelector("#local button"), "click");
+				assert.equal(document.querySelector("#showlocal").style.display, "");
+				assert.equal(document.querySelector("#hidelocal").style.display, "none");
 
 				//Inject
 
-				QUnit.equal($("#inject-boolean").find('.test1').parent().css("display"), "none");
+				assert.equal(document.querySelector("#inject-boolean .test1").parentNode.style.display, "none");
 
-//				QUnit.equal(root.find("#test2").html().trim(), inject.get("value"));
-//				QUnit.equal(root.find("#innertest").html().trim(), innertest);
-
-//				inject.call("change_props");
-//				button.trigger( "click" );
-//				QUnit.equal(root.find("#int").html().trim(), new_internal);
-//				QUnit.equal(root.find("#int").html().trim(), new_internal);
 
 			}			
 		</script>

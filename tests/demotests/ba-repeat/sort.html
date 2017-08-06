@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../../node_modules/betajs/dist/beta.js"></script>
         <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../../dist/betajs-dynamics.js"></script>
@@ -12,10 +12,10 @@
 			</ul>
 		</div>
 		<script>
-			var root = $("#test");
+			var root = document.querySelector("#test");
 
 			var dynamic = new BetaJS.Dynamics.Dynamic({
-				element: root.get(0),
+				element: root,
 				collections: {
 					items: [{test: "A"}, {test: "B"}, {test: "C"}, {test: "D"}]
 				}
@@ -27,18 +27,18 @@
 
 			dynamic.activate();
 			
-			function test() {
-				var list = root.find("ul");
+			function test(assert) {
+				var list = root.querySelector("ul")
 				var order = function () {
 					var s = '';
-					list.children().each(function () {
-						s += $(this).html().trim();
-					});
+                    for (var i = 0; i < list.childNodes.length; ++i) {
+                        s += list.childNodes[i].innerHTML;
+                    }
 					return s;
 				};
-				QUnit.equal(order(), "DCBA");
+				assert.equal(order(), "DCBA");
 				coll.add({test: "E"});
-				QUnit.equal(order(), "EDCBA");
+				assert.equal(order(), "EDCBA");
 				
 			}			
 		</script>

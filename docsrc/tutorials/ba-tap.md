@@ -22,7 +22,7 @@ Will toggle the heading element when you click on the surrounding div element.
 
 ```js
     some_dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $(".some_class"),
+        element: document.querySelector(".some_class"),
         attrs : {
             boolean : true
         }
@@ -41,7 +41,7 @@ Will call an alert pop-up
 
 ```js
     some_dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $(".some_class"),
+        element: document.querySelector(".some_class"),
         functions : {
             some_function : function () {
                 alert('Another alert');

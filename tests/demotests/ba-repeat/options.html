@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script>
 		<script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
@@ -14,11 +14,11 @@
 			<button ba-click="remove()">Remove</button>
 		</div>
 		<script>
-			var root = $("#test");
+			var root = document.querySelector("#test");
 			var useQunit = false;
 
 			var dynamic = new BetaJS.Dynamics.Dynamic({
-				element: root.get(0),
+				element: root,
 				attrs: {
 					opts: {
 					    onremove: function (item, element) {
@@ -26,13 +26,13 @@
 
 							//Slow for Testing in Browser
 							var fadetime = 1000;
-                            Object.assign(element.style, {
-                                "-webkit-transition": "opacity " + fadetime/1000 + "s linear",
-                                opacity: 0
-                            });
                             if (useQunit)
                                 promise.asyncSuccess(true);
                             else {
+                                Object.assign(element.style, {
+                                    "-webkit-transition": "opacity " + fadetime/1000 + "s linear",
+                                    opacity: 0
+                                });
                                 setTimeout(function () {
                                     promise.asyncSuccess(true);
                                 }, fadetime + 1);
@@ -54,12 +54,12 @@
 
 			dynamic.activate();
 			
-			function test() {
+			function test(assert) {
                 useQunit = true;
-			    var list = root.find("ul");
-                QUnit.equal(list.children().length, 4);
-                $("#test button").click();
-				QUnit.equal(list.children().length, 3);
+			    var list = root.querySelector("ul")
+                assert.equal(list.children.length, 4);
+                BetaJS.Browser.Dom.triggerDomEvent(document.querySelector("#test button"), "click");;
+				assert.equal(list.children.length, 3);
 			}
 		</script>
 	</body>

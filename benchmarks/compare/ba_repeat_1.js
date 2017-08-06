@@ -1,7 +1,7 @@
 (function () {
 	
 	window.f = function (Dynamics) {
-		$("fixture").html('<div ba-repeat="{{item::list}}"><ba-inner ba-item="{{item}}"></ba-inner></div>');
+		document.querySelector("fixture").innerHTML = '<div ba-repeat="{{item::list}}"><ba-inner ba-item="{{item}}"></ba-inner></div>';
 		var list = [];
 		for (var i = 0; i < 1000; ++i)
 			list.push({foobar: "Item " + i});
@@ -9,7 +9,7 @@
 			template: "<p>{{item.foobar}}</p>"
 		}).register("ba-inner");
 		var mainDynamic = new Dynamics.Dynamic({
-			element: $("fixture").get(0),
+			element: document.querySelector("fixture"),
 			attrs: {
 				list: list
 			}

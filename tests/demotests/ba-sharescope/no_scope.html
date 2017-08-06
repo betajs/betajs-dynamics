@@ -2,7 +2,7 @@
     <head>
         
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
         <script src="../../dist/betajs-dynamics.js"></script>
@@ -11,9 +11,9 @@
 
         <div id="test">
             <input value="{{=testvar}}" /><p>{{testvar}}</p>
-            <ba-innerfullbind ba-noscope>
+            <ba-innerfullbind id="first" ba-noscope>
             </ba-innerfullbind>
-            <ba-innerfullbind ba-sharescope="{{props}}">
+            <ba-innerfullbind id="second" ba-sharescope="{{props}}">
             </ba-innerfullbind>
         </div>
 
@@ -39,9 +39,9 @@
             main.activate();
 
 
-            function test() {
-                QUnit.equal($("#test").find("ba-innerfullbind:eq(0) input").val(), "Foobar");
-                QUnit.equal($("#test").find("ba-innerfullbind:eq(1) input").val(), "Coolbar");
+            function test(assert) {
+                assert.equal(document.querySelector("#test #first input").value, "Foobar");
+                assert.equal(document.querySelector("#test #second input").value, "Coolbar");
             }
         </script>
 

@@ -2,7 +2,7 @@
     <head>
         
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script>
         <script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../../node_modules/betajs-data/dist/betajs-data-noscoped.js"></script>
@@ -78,16 +78,17 @@
 
             main.activate();
 
-            function test() {
-            	QUnit.equal(document.querySelector("#test div p:nth-child(1)").innerHTML, "A");
-                QUnit.equal(document.querySelector("#test div p:nth-child(2)").innerHTML, "C");
+            function test(assert) {
+            	assert.equal(document.querySelector("#test div").children[0].innerHTML, "A");
+                assert.equal(document.querySelector("#test div").children[1].innerHTML, "C");
                 model.set("items", [1, 2]);
-                QUnit.equal(document.querySelector("#test div p:nth-child(1)").innerHTML, "A");
-                QUnit.equal(document.querySelector("#test div p:nth-child(2)").innerHTML, "B");
+                assert.equal(document.querySelector("#test div").children[0].innerHTML, "A");
+                assert.equal(document.querySelector("#test div").children[1].innerHTML, "B");
                 model.assocs.items.remove(model.assocs.items.collection.value().first());
-                QUnit.equal(document.querySelector("#test div p:nth-child(1)").innerHTML, "B");
+                assert.equal(document.querySelector("#test div").children[0].innerHTML, "B");
                 model.assocs.items.add(table2.findById(3).value());
-                QUnit.equal(document.querySelector("#test div p:nth-child(2)").innerHTML, "C");
+                assert.equal(document.querySelector("#test div").children[1].innerHTML, "C");
+                model.destroy();
             }
         </script>
 

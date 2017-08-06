@@ -2,7 +2,7 @@
     <head>
         
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
         <script src="../../dist/betajs-dynamics.js"></script>
@@ -41,9 +41,9 @@
 
             main.activate();
 
-            function test() {
-                QUnit.deepEqual(main.scope(">").get("inner"), {foo: "bar"});
-                QUnit.deepEqual(main.scope(">").get("inner2"), {foo: "bar", test: "test"});
+            function test(assert) {
+                assert.deepEqual(main.scope(">").get("inner"), {foo: "bar"});
+                assert.deepEqual(main.scope(">").get("inner2"), {foo: "bar", test: "test"});
             }
         </script>
 

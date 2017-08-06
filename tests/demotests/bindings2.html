@@ -2,7 +2,7 @@
 <head>
     
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
     <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script>
     <script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
     <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
@@ -18,7 +18,7 @@
 
 <script>
 
-    var root = $("#test");
+    var root = document.querySelector("#test");
 
 	BetaJS.Dynamics.Dynamic.extend(null, {
 		template: "<div></div>"
@@ -32,19 +32,19 @@
     });
     dyn.activate();
 
-    function test() {
+    function test(assert) {
     	var sub = dyn.scope(">").materialize();
-    	QUnit.equal(sub.length, 1);
+    	assert.equal(sub.length, 1);
     	sub = sub[0];
     	var prop = dyn.get("props").getByIndex(0);
-    	QUnit.equal(prop.get("foobar"), false);
-    	QUnit.equal(sub.get("param"), false);
+    	assert.equal(prop.get("foobar"), false);
+    	assert.equal(sub.get("param"), false);
 
     	sub.set("param", true);
-    	QUnit.equal(prop.get("foobar"), true);
+    	assert.equal(prop.get("foobar"), true);
     	
     	prop.set("foobar", false);
-    	QUnit.equal(sub.get("param"), false);
+    	assert.equal(sub.get("param"), false);
     }
 </script>
 

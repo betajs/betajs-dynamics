@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
@@ -12,13 +12,13 @@
 			</div>
 		</div>
 		<script>
-			var root = $("#test");
-			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
+			var root = document.querySelector("#test");
+			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root });
 		
 			dynamic.activate();
 			
-			function test() {
-				QUnit.equal(root.find("p").html().trim(), "{{inner}}");
+			function test(assert) {
+				assert.equal(root.querySelector("p").innerHTML.trim(), "{{inner}}");
 			}			
 		</script>
 	</body>

@@ -15,8 +15,7 @@
     "grunt-contrib-clean": "",
     "grunt-preprocess": "",
     "grunt-closure-tools": "",
-    "grunt-node-qunit": "",
-    "qunit": "",
+    "qunitjs": "",
     "grunt-contrib-connect": "",
     "grunt-jsdoc": "",
     "grunt-shell": "",
@@ -67,7 +66,7 @@
 		"Opera": "12 - Latest",
 		"Internet Explorer": "8 - Latest",
 		"Edge": "12 - Latest",
-      "Yandex": "Latest",
+        "Yandex": "Latest",
 		"iOS": "3.0 - Latest",
 		"Android": "2.2 - Latest"
     },

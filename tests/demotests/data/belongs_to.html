@@ -2,7 +2,7 @@
     <head>
         
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script>
         <script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../../node_modules/betajs-data/dist/betajs-data-noscoped.js"></script>
@@ -72,16 +72,16 @@
 
             main.activate();
 
-            function test() {
-            	QUnit.equal(document.querySelector("#test p").innerHTML, "B");
+            function test(assert) {
+            	assert.equal(document.querySelector("#test p").innerHTML, "B");
             	model.set("item", 1);
-                QUnit.equal(document.querySelector("#test p").innerHTML, "A");
+                assert.equal(document.querySelector("#test p").innerHTML, "A");
                 model.set("item", null);
-                QUnit.equal(document.querySelector("#test p").innerHTML, "");
+                assert.equal(document.querySelector("#test p").innerHTML, "");
                 model.assocs.item.set(table2.findById(3).value());
-                QUnit.equal(document.querySelector("#test p").innerHTML, "C");
+                assert.equal(document.querySelector("#test p").innerHTML, "C");
                 model.assocs.item.unset();
-                QUnit.equal(document.querySelector("#test p").innerHTML, "");
+                assert.equal(document.querySelector("#test p").innerHTML, "");
             }
         </script>
 

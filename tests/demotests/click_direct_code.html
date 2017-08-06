@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
@@ -17,26 +17,26 @@
       </div>
     </div>
 		<script>
-			var root = $("#test");
-			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root.get(0) });
+			var root = document.querySelector("#test");
+			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root });
 		
 			dynamic.set("test", false);
       		dynamic.set("outer", false);
 			dynamic.set("inner", false);
 			dynamic.activate();
 			
-			function test() {
-				QUnit.equal(dynamic.get("test"), false);
-				BetaJS.Browser.Dom.triggerDomEvent(root.find("button").get(0), "click");
-				QUnit.equal(dynamic.get("test"), true);
-				BetaJS.Browser.Dom.triggerDomEvent(root.find("button").get(0), "click");
-				QUnit.equal(dynamic.get("test"), false);
+			function test(assert) {
+				assert.equal(dynamic.get("test"), false);
+				BetaJS.Browser.Dom.triggerDomEvent(root.querySelector("button"), "click");
+				assert.equal(dynamic.get("test"), true);
+				BetaJS.Browser.Dom.triggerDomEvent(root.querySelector("button"), "click");
+				assert.equal(dynamic.get("test"), false);
 
-				QUnit.equal(dynamic.get("outer"), false);
-				QUnit.equal(dynamic.get("inner"), false);
-				BetaJS.Browser.Dom.triggerDomEvent(root.find("div#inner").get(0), "click");
-				QUnit.equal(dynamic.get("outer"), false, "outer should be false");
-				QUnit.equal(dynamic.get("inner"), true, "inner should be true");
+				assert.equal(dynamic.get("outer"), false);
+				assert.equal(dynamic.get("inner"), false);
+				BetaJS.Browser.Dom.triggerDomEvent(root.querySelector("div#inner"), "click");
+				assert.equal(dynamic.get("outer"), false, "outer should be false");
+				assert.equal(dynamic.get("inner"), true, "inner should be true");
 			}			
 		</script>
 	</body>

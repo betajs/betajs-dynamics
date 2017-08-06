@@ -14,7 +14,7 @@ The Javascript Controller:
 ```js
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $("some_element").html(),
+        element: document.querySelector("some_element").innerHTML,
         initial : {
             attrs : {
                 some_attribute : "This is some Text",

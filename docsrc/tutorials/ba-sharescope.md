@@ -6,7 +6,7 @@ The ba-sharescope Partial share the scope between the parent dynamic and the chi
 
 ```js
     var parent_dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $(".some_class"),
+        element: document.querySelector(".some_class"),
         initial:  {
             attrs : {
                 some_attribute : "This is from the Parent Dynamic",

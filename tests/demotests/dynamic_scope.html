@@ -2,7 +2,7 @@
 <head>
     
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
     <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
     <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
     <script src="../../dist/betajs-dynamics.js"></script>
@@ -67,21 +67,21 @@
         }
     }).register("ba-outer");
 
-    var root = $("#test");
+    var root = document.querySelector("#test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({element: root});
     dynamic.activate();
 
-    function test() {
+    function test(assert) {
         //Are the Dynamics working correctly?
-        QUnit.equal(root.find("#inner").html().trim(), inner);
-        QUnit.equal(root.find("#middle").html().trim(), middle);
-        QUnit.equal(root.find("#outer").html().trim(), outer);
+        assert.equal(root.querySelector("#inner").innerHTML.trim(), inner);
+        assert.equal(root.querySelector("#middle").innerHTML.trim(), middle);
+        assert.equal(root.querySelector("#outer").innerHTML.trim(), outer);
 
         //Is the Scoping working correctly?
-        QUnit.equal(root.find("#inner_scoped_text").html().trim(), outer);
-        QUnit.equal(root.find("#middle_scoped_text").html().trim(), outer);
-        QUnit.equal(root.find("#outer_scoped_text").html().trim(), middle);
+        assert.equal(root.querySelector("#inner_scoped_text").innerHTML.trim(), outer);
+        assert.equal(root.querySelector("#middle_scoped_text").innerHTML.trim(), outer);
+        assert.equal(root.querySelector("#outer_scoped_text").innerHTML.trim(), middle);
     }
 </script>
 

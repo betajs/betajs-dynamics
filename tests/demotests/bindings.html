@@ -2,7 +2,7 @@
 <head>
     
 
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
     <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script>
     <script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
     <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
@@ -48,11 +48,11 @@
 
 <script>
 
-    var root = $("#test");
+    var root = document.querySelector("#test");
 
     //Dynamics
     var showbinding = new BetaJS.Dynamics.Dynamic({
-        element: root.find("#binding"),
+        element: root.querySelector("#binding"),
         attrs: {
             value_true: true,
             value_false: false,
@@ -62,14 +62,14 @@
     });
     showbinding.activate();
 
-    function test() {
-        QUnit.equal(root.children().length, 2);
+    function test(assert) {
+        assert.equal(root.children.length, 2);
 
         //Binding
-        QUnit.equal($("#true").html().trim(), "true");
-        QUnit.equal($("#false").html().trim(), "false");
-        QUnit.equal($("#null").html().trim(), "");
-        QUnit.equal($("#undefined").html().trim(), "");
+        assert.equal(document.querySelector("#true").innerHTML.trim(), "true");
+        assert.equal(document.querySelector("#false").innerHTML.trim(), "false");
+        assert.equal(document.querySelector("#null").innerHTML.trim(), "");
+        assert.equal(document.querySelector("#undefined").innerHTML.trim(), "");
 
     }
 </script>

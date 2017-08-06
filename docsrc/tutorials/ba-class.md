@@ -16,7 +16,7 @@ The ba-class partial dynamically sets the css class of a given element based on 
 
 ```js
     some_dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $(".some_class"),
+        element: document.querySelector(".some_class"),
         attrs : {
             some_property : true
         }

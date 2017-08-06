@@ -24,7 +24,7 @@ Evaluates to
 
 ```js
     dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $(".some_class"),
+        element: document.querySelector(".some_class"),
         collections : {
             named_collection: [
                 {item_name : "Apple", item_index : "1"},
@@ -84,7 +84,7 @@ Evaluates to
 
 ```js
     dynamic = new BetaJS.Dynamics.Dynamic({
-        element: $(".some_class"),
+        element: document.querySelector(".some_class"),
         collections : {
             named_collection: [
                 {item_name : "Apple", item_index : "1"},

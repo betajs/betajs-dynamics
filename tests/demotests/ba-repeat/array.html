@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
 		<script src="../../dist/betajs-dynamics.js"></script>
@@ -15,7 +15,7 @@
 			</ul>
 		</div>
 		<script>
-			var root = $("#test");
+			var root = document.querySelector("#test");
 
 			var array = ["A", "B", "C"];
 			
@@ -23,7 +23,7 @@
 			var instanceMonitor = BetaJSDebug.Instances.monitorInstances(BetaJS.Class, BetaJSDebug.Instances.ancestryFilter(BetaJSDebug.Instances.regexFilter(instanceRegex)));
 			
 			var dynamic = new BetaJS.Dynamics.Dynamic({
-				element: root.get(0),
+				element: root,
 				attrs: {
 					array_items: array
 				}
@@ -32,21 +32,21 @@
 			dynamic.set("items", array);
 			dynamic.activate();
 			
-			function test() {
-				QUnit.equal(root.children().length, 2);
+			function test(assert) {
+				assert.equal(root.children.length, 2);
 
-				var elements = root.find("#set").find("li");
-				QUnit.equal(elements.length, array.length);
+				var elements = root.querySelectorAll("#set li");
+				assert.equal(elements.length, array.length);
 				for (var i = 0; i < elements.length; ++i)
-					QUnit.equal(elements.get(i).innerHTML, array[i]);
+					assert.equal(elements[i].innerHTML, array[i]);
 
-				var elements = root.find("#attrs").find("li");
-				QUnit.equal(elements.length, array.length);
+                var elements = root.querySelectorAll("#attrs li");
+				assert.equal(elements.length, array.length);
 				for (var i = 0; i < elements.length; ++i)
-					QUnit.equal(elements.get(i).innerHTML, array[i]);
+					assert.equal(elements[i].innerHTML, array[i]);
 				dynamic.destroy();
 				BetaJSDebug.Instances.unmonitorInstances(instanceMonitor);
-				QUnit.deepEqual(instanceMonitor.instances, {}, "Memory Leak");
+				assert.deepEqual(instanceMonitor.instances, {}, "Memory Leak");
 			}			
 		</script>
 	</body>

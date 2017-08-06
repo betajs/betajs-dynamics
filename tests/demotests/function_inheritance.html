@@ -2,7 +2,7 @@
     <head>
         
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
         <script src="../../dist/betajs-dynamics.js"></script>
@@ -46,13 +46,13 @@
             main.activate();
 
 
-            function test() {
-            	$("#test button").click();
-                QUnit.equal(main.get("clickB"), true);
-                QUnit.equal(main.get("clickA"), true);
+            function test(assert) {
+            	BetaJS.Browser.Dom.triggerDomEvent(document.querySelector("#test button"), "click");;
+                assert.equal(main.get("clickB"), true);
+                assert.equal(main.get("clickA"), true);
                 main.call("other");
-                QUnit.equal(main.get("otherB"), true);
-                QUnit.equal(main.get("otherA"), true);
+                assert.equal(main.get("otherB"), true);
+                assert.equal(main.get("otherA"), true);
             }
         </script>
 

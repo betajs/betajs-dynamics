@@ -9,10 +9,9 @@ If everything is set up correctly you should see "Hello World" if you load the h
 	<head lang="en">
 		<meta charset="UTF-8">
 		<title>Hello World</title>
-		<script src="vendors/jquery.min.js"></script>
-		<script src="vendors/beta.js"></script>
-		<script src="vendors/betajs-browser-noscoped.js"></script>
-		<script src="vendors/betajs-dynamics.js"></script>
+		<script src="beta.js"></script>
+		<script src="betajs-browser-noscoped.js"></script>
+		<script src="betajs-dynamics.js"></script>
 	</head>
 	<body>
 
@@ -21,7 +20,7 @@ If everything is set up correctly you should see "Hello World" if you load the h
 		<script>
 
 			var dynamic = new BetaJS.Dynamics.Dynamic({
-				element: $("#helloworld")
+				element: document.querySelector("#helloworld")
 			});
 
 			dynamic.set("replaced_value", "Hello World");
@@ -48,7 +47,7 @@ Inside {{}} ist an attribute property that we can control from other parts of th
 ```js
 
 	dynamic = new BetaJS.Dynamics.Dynamic({
-		element: $("#helloworld")
+		element: document.querySelector("#helloworld")
 	});
 
 ```

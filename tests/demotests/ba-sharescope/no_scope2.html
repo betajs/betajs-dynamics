@@ -1,6 +1,6 @@
 <html>
     <head>
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../../node_modules/betajs/dist/beta.js"></script>
         <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
         <script src="../../../dist/betajs-dynamics.js"></script>
@@ -10,14 +10,14 @@
         <div id="test">
             <div class="some_class">
                 <div class="parent1">{{some_attribute}}</div><div class="parent2">{{property.another_attribute}}</div>
-                <ba-child ba-noscope></ba-child>
-                <ba-child ba-sharescope="{{property}}"></ba-child>
+                <ba-child id="first" ba-noscope></ba-child>
+                <ba-child id="second" ba-sharescope="{{property}}"></ba-child>
             </div>
         </div>
 
         <script>
         
-        	var root = $("#test");
+        	var root = document.querySelector("#test");
 
             var parent_dynamic = new BetaJS.Dynamics.Dynamic({
                 element: document.querySelector(".some_class"),
@@ -38,13 +38,13 @@
             parent_dynamic.activate();
 
 
-            function test() {
-                QUnit.equal(root.find(".parent1").html(), "This is from the Parent Dynamic");
-                QUnit.equal(root.find(".parent2").html(), "Parent");
-                QUnit.equal(root.find("ba-child:eq(0) .child1").html(), "This is from the Parent Dynamic");
-                QUnit.equal(root.find("ba-child:eq(0) .child2").html(), "Child");
-                QUnit.equal(root.find("ba-child:eq(1) .child1").html(), "This is from the Child Dynamic");
-                QUnit.equal(root.find("ba-child:eq(1) .child2").html(), "Parent");
+            function test(assert) {
+                assert.equal(root.querySelector(".parent1").innerHTML, "This is from the Parent Dynamic");
+                assert.equal(root.querySelector(".parent2").innerHTML, "Parent");
+                assert.equal(root.querySelector("#first .child1").innerHTML, "This is from the Parent Dynamic");
+                assert.equal(root.querySelector("#first .child2").innerHTML, "Child");
+                assert.equal(root.querySelector("#second .child1").innerHTML, "This is from the Child Dynamic");
+                assert.equal(root.querySelector("#second .child2").innerHTML, "Parent");
             }
         </script>
 

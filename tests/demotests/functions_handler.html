@@ -2,7 +2,7 @@
     <head>
         
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
         <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
         <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
         <script src="../../dist/betajs-dynamics.js"></script>
@@ -64,13 +64,13 @@
             main.activate();
 
 
-            function test() {
-                $("#test #click1").click();
-                QUnit.equal(main.get("clicked"), true);
-                QUnit.equal(main.scope('>[tagname="outertest"]').get('outer_button_title'), $("#test #click1").prop('innerHTML'));
+            function test(assert) {
+                BetaJS.Browser.Dom.triggerDomEvent(document.querySelector("#test #click1"), "click");;
+                assert.equal(main.get("clicked"), true);
+                assert.equal(main.scope('>[tagname="outertest"]').get('outer_button_title'), document.querySelector("#test #click1").innerHTML);
 
-                $("#test #click2").click();
-                QUnit.equal(main.scope('>[tagname="outertest"]').get('outer_button_title'), $("#test #click2").prop('innerHTML'));
+                BetaJS.Browser.Dom.triggerDomEvent(document.querySelector("#test #click2"), "click");;
+                assert.equal(main.scope('>[tagname="outertest"]').get('outer_button_title'), document.querySelector("#test #click2").innerHTML);
             }
         </script>
 

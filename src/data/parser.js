@@ -53,9 +53,13 @@ Scoped.define("module:Parser", [
             var result = this.__cache[code];
             if (!result) {
                 var bidirectional = false;
+                var html = false;
                 var c = code;
                 if (c.charAt(0) == "=") {
                     bidirectional = true;
+                    c = c.substring(1);
+                } else if (c.charAt(0) == "-") {
+                    html = true;
                     c = c.substring(1);
                 }
                 var i = c.lastIndexOf("::");
@@ -66,6 +70,7 @@ Scoped.define("module:Parser", [
                 }
                 result = {
                     bidirectional: bidirectional,
+                    html: html,
                     args: args,
                     variable: bidirectional ? c : null,
                     /*jslint evil: true */

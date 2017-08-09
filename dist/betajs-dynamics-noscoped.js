@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.101 - 2017-08-04
+betajs-dynamics - v0.0.102 - 2017-08-09
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.101"
+    "version": "0.0.102"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -353,9 +353,13 @@ Scoped.define("module:Parser", [
             var result = this.__cache[code];
             if (!result) {
                 var bidirectional = false;
+                var html = false;
                 var c = code;
                 if (c.charAt(0) == "=") {
                     bidirectional = true;
+                    c = c.substring(1);
+                } else if (c.charAt(0) == "-") {
+                    html = true;
                     c = c.substring(1);
                 }
                 var i = c.lastIndexOf("::");
@@ -366,6 +370,7 @@ Scoped.define("module:Parser", [
                 }
                 result = {
                     bidirectional: bidirectional,
+                    html: html,
                     args: args,
                     variable: bidirectional ? c : null,
                     /*jslint evil: true */
@@ -1999,13 +2004,19 @@ Scoped.define("module:Handlers.Node", [
                 var value = this.__executeDyn(this._dyn);
                 if (force || value != this._dyn.value) {
                     this._dyn.value = value;
-                    var converted = Dom.entitiesToUnicode(value === null ? "" : value);
-                    if ("textContent" in this._element)
-                        this._element.textContent = converted;
-                    if ("innerText" in this._element)
-                        this._element.innerText = converted;
-                    if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9 && ("data" in this._element))
-                        this._element.data = converted;
+                    if (this._dyn.html) {
+                        var htmlElement = Dom.elementByTemplate(value);
+                        (this._htmlElement || this._element).replaceWith(htmlElement);
+                        this._htmlElement = htmlElement;
+                    } else {
+                        var converted = Dom.entitiesToUnicode(value === null ? "" : value);
+                        if ("textContent" in this._element)
+                            this._element.textContent = converted;
+                        if ("innerText" in this._element)
+                            this._element.innerText = converted;
+                        if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9 && ("data" in this._element))
+                            this._element.data = converted;
+                    }
                 }
             },
 

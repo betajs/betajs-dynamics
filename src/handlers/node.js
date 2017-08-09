@@ -225,13 +225,19 @@ Scoped.define("module:Handlers.Node", [
                 var value = this.__executeDyn(this._dyn);
                 if (force || value != this._dyn.value) {
                     this._dyn.value = value;
-                    var converted = Dom.entitiesToUnicode(value === null ? "" : value);
-                    if ("textContent" in this._element)
-                        this._element.textContent = converted;
-                    if ("innerText" in this._element)
-                        this._element.innerText = converted;
-                    if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9 && ("data" in this._element))
-                        this._element.data = converted;
+                    if (this._dyn.html) {
+                        var htmlElement = Dom.elementByTemplate(value);
+                        (this._htmlElement || this._element).replaceWith(htmlElement);
+                        this._htmlElement = htmlElement;
+                    } else {
+                        var converted = Dom.entitiesToUnicode(value === null ? "" : value);
+                        if ("textContent" in this._element)
+                            this._element.textContent = converted;
+                        if ("innerText" in this._element)
+                            this._element.innerText = converted;
+                        if (Info.isInternetExplorer() && Info.internetExplorerVersion() < 9 && ("data" in this._element))
+                            this._element.data = converted;
+                    }
                 }
             },
 

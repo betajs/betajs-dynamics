@@ -7,15 +7,19 @@
 </head>
 <body>
 
-	<div id="helloworld">{{replaced_value}}</div>
+	<div id="helloworld">
+        <p>{{replaced_value}}</p>
+        <p>{{- replaced_value}}</p>
+    </div>
 
 	<script>
 		dynamic = new BetaJS.Dynamics.Dynamic({
 			element : document.querySelector("#helloworld")
 		});
 
-		dynamic.set("replaced_value", "Hello World");
+		dynamic.set("replaced_value", "<b>Hello World</b>");
 		dynamic.activate();
+
 	</script>
 
 </body>

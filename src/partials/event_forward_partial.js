@@ -14,7 +14,14 @@ Scoped.define("module:Partials.EventForwardPartial", [
                 result = result.concat(this._value);
                 result = result.concat(args);
                 this._node._handler.trigger.apply(this._node._handler, result);
-            }, this);
+            }, this, {
+                off_on_destroyed: true
+            });
+        },
+
+        unbindTagHandler: function(handler) {
+            if (handler)
+                handler.off(null, null, this);
         }
 
     });

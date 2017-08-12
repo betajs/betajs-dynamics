@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.102 - 2017-08-09
+betajs-dynamics - v0.0.103 - 2017-08-11
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1007,7 +1007,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.102 - 2017-08-09
+betajs-dynamics - v0.0.103 - 2017-08-11
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1020,7 +1020,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.102"
+    "version": "0.0.103"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -3346,6 +3346,29 @@ Scoped.define("module:Partials.DataPartial", ["module:Handlers.Partial"], functi
 
     });
     Cls.register("ba-data");
+    return Cls;
+});
+Scoped.define("module:Partials.EventForwardPartial", [
+    "module:Handlers.Partial",
+    "base:Functions"
+], function(Partial, Functions, scoped) {
+    var Cls = Partial.extend({
+        scoped: scoped
+    }, {
+
+        bindTagHandler: function(handler) {
+            handler.on("all", function() {
+                var eventName = arguments[0];
+                var args = Functions.getArguments(arguments, 1);
+                result = [this._postfix ? this._postfix.trim() + "-" + eventName : eventName];
+                result = result.concat(this._value);
+                result = result.concat(args);
+                this._node._handler.trigger.apply(this._node._handler, result);
+            }, this);
+        }
+
+    });
+    Cls.register("ba-event-forward");
     return Cls;
 });
 Scoped.define("module:Partials.EventPartial", [

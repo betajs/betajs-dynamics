@@ -13,7 +13,6 @@ BetaJS.Browser.Dom.ready(function () {
 			var done = assert.async();
 			BetaJS.Browser.Loader.loadHtml(src, function (content) {
 				var parsed = BetaJS.Browser.Dom.elementsByTemplate(content);
-				var template = "";
 				var code = "";
 				parsed.forEach(function (elem) {
 					if (elem.id == "test")

@@ -20,7 +20,8 @@ Scoped.define("module:Handlers.HandlerMixin", [
         __handlerConstruct: function() {
             this.__activated = false;
             this._mesh_extend = {
-                string: Functions.as_method(this.string, this)
+                string: Functions.as_method(this.string, this),
+                stringUnicode: Functions.as_method(this.stringUnicode, this)
             };
         },
 
@@ -41,6 +42,14 @@ Scoped.define("module:Handlers.HandlerMixin", [
                 return this.cls.string(key);
             if (this.parent())
                 return this.parent().string(key);
+            return key;
+        },
+
+        stringUnicode: function(key) {
+            if (this.cls.stringUnicode)
+                return this.cls.stringUnicode(key);
+            if (this.parent())
+                return this.parent().stringUnicode(key);
             return key;
         },
 

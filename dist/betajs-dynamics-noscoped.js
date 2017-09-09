@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.105 - 2017-09-01
+betajs-dynamics - v0.0.106 - 2017-09-09
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.105"
+    "version": "0.0.106"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -1154,6 +1154,13 @@ Scoped.define("module:Dynamic", [
             return result;
         },
 
+        stringUnicode: function(key) {
+            var result = this.__stringTable.get(key, this.registeredName());
+            if (!result && this.parent.string)
+                result = this.parent.string(key);
+            return Dom.entitiesToUnicode(result);
+        },
+
         _extender: {
             types: function(base, overwrite) {
                 return Objs.extend(Objs.clone(base, 1), overwrite);
@@ -1429,7 +1436,8 @@ Scoped.define("module:Handlers.HandlerMixin", [
         __handlerConstruct: function() {
             this.__activated = false;
             this._mesh_extend = {
-                string: Functions.as_method(this.string, this)
+                string: Functions.as_method(this.string, this),
+                stringUnicode: Functions.as_method(this.stringUnicode, this)
             };
         },
 
@@ -1450,6 +1458,14 @@ Scoped.define("module:Handlers.HandlerMixin", [
                 return this.cls.string(key);
             if (this.parent())
                 return this.parent().string(key);
+            return key;
+        },
+
+        stringUnicode: function(key) {
+            if (this.cls.stringUnicode)
+                return this.cls.stringUnicode(key);
+            if (this.parent())
+                return this.parent().stringUnicode(key);
             return key;
         },
 

@@ -218,6 +218,13 @@ Scoped.define("module:Dynamic", [
             return result;
         },
 
+        stringUnicode: function(key) {
+            var result = this.__stringTable.get(key, this.registeredName());
+            if (!result && this.parent.string)
+                result = this.parent.string(key);
+            return Dom.entitiesToUnicode(result);
+        },
+
         _extender: {
             types: function(base, overwrite) {
                 return Objs.extend(Objs.clone(base, 1), overwrite);

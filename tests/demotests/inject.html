@@ -95,7 +95,8 @@
 					change_props : function (){
 						this.get("internal_property").set("v",internal_changed);
 						external_property.set("v",external_changed);
-						this.set("array_items",array_changed)
+						this.set("array_items",array_changed);
+						return 42;
 					}
 				}
 			});
@@ -139,7 +140,8 @@ outer.set("value", "Hello");
 				assert.equal(root.querySelector("#prop :first-child").innerHTML.trim(), external_initial);
 				assert.equal(root.querySelector("#arr :first-child").innerHTML.trim(), array_initial[0]);
 
-				outer.call("change_props");
+				var result = outer.call("change_props");
+				assert.equal(result, 42);
 				assert.equal(root.querySelector("#injected").innerHTML.trim(), outer.get("value"));
 				assert.equal(root.querySelector("#prop :first-child").innerHTML.trim(), external_changed);
 				assert.equal(root.querySelector("#arr :first-child").innerHTML.trim(), array_changed[0]);

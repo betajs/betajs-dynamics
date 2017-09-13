@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.106 - 2017-09-09
+betajs-dynamics - v0.0.106 - 2017-09-13
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1007,7 +1007,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.106 - 2017-09-09
+betajs-dynamics - v0.0.106 - 2017-09-13
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1968,15 +1968,16 @@ Scoped.define("module:Dynamic", [
     "base:Functions",
     "base:Promise",
     "base:Events.Events",
+    "base:Loggers.LoggableMixin",
     "module:Registries",
     "browser:Dom",
     "browser:Events",
     "base:Class"
-], function(Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Promise, Events, Registries, Dom, DomEvents, Class, scoped) {
+], function(Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Promise, Events, LoggableMixin, Registries, Dom, DomEvents, Class, scoped) {
     var Cls;
     Cls = Scope.extend({
         scoped: scoped
-    }, [HandlerMixin, function(inherited) {
+    }, [HandlerMixin, LoggableMixin, function(inherited) {
         return {
 
             supportsGc: true,

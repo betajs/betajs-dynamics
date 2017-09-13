@@ -24,15 +24,16 @@ Scoped.define("module:Dynamic", [
     "base:Functions",
     "base:Promise",
     "base:Events.Events",
+    "base:Loggers.LoggableMixin",
     "module:Registries",
     "browser:Dom",
     "browser:Events",
     "base:Class"
-], function(Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Promise, Events, Registries, Dom, DomEvents, Class, scoped) {
+], function(Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Promise, Events, LoggableMixin, Registries, Dom, DomEvents, Class, scoped) {
     var Cls;
     Cls = Scope.extend({
         scoped: scoped
-    }, [HandlerMixin, function(inherited) {
+    }, [HandlerMixin, LoggableMixin, function(inherited) {
         return {
 
             supportsGc: true,

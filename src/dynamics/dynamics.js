@@ -135,7 +135,7 @@ Scoped.define("module:Dynamic", [
                     this.free();
                 Objs.iter(this.__references, function(reference) {
                     var ref = this.get(reference);
-                    if (ref && Class.Class.is_class_instance(ref) && !ref.destroyed())
+                    if (ref && Class.is_class_instance(ref) && !ref.destroyed())
                         ref.decreaseRef(this);
                 }, this);
                 Objs.iter(this.__dispose, function(attr) {

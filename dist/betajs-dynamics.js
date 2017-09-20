@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.106 - 2017-09-13
+betajs-dynamics - v0.0.108 - 2017-09-19
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1007,7 +1007,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.106 - 2017-09-13
+betajs-dynamics - v0.0.108 - 2017-09-19
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1020,7 +1020,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.106"
+    "version": "0.0.108"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -2079,7 +2079,7 @@ Scoped.define("module:Dynamic", [
                     this.free();
                 Objs.iter(this.__references, function(reference) {
                     var ref = this.get(reference);
-                    if (ref && Class.Class.is_class_instance(ref) && !ref.destroyed())
+                    if (ref && Class.is_class_instance(ref) && !ref.destroyed())
                         ref.decreaseRef(this);
                 }, this);
                 Objs.iter(this.__dispose, function(attr) {
@@ -3855,7 +3855,7 @@ Scoped.define("module:Partials.RepeatPartial", [
                 this._iterateCollection(this.__addItem);
                 this._collection.on("add", this.__addItem, this);
                 this._collection.on("remove", function(item) {
-                    this.__removeItem(item, this._collection.bulk_operations > 0);
+                    this.__removeItem(item, this._collection.bulkOperationInProgress());
                 }, this);
                 this._collection.on("reindexed", function(item) {
                     if (this._collection.count() < 2)

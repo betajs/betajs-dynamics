@@ -126,7 +126,7 @@ Scoped.define("module:Partials.RepeatPartial", [
                 this._iterateCollection(this.__addItem);
                 this._collection.on("add", this.__addItem, this);
                 this._collection.on("remove", function(item) {
-                    this.__removeItem(item, this._collection.bulk_operations > 0);
+                    this.__removeItem(item, this._collection.bulkOperationInProgress());
                 }, this);
                 this._collection.on("reindexed", function(item) {
                     if (this._collection.count() < 2)

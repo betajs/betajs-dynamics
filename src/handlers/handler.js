@@ -202,6 +202,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
                     delete this.__activeElement.dynamicshandlerpromise;
                 } catch (e) {}
             }
+            this.trigger("dynamic-activated");
         },
 
         _afterActivate: function(activeElement) {}

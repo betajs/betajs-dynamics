@@ -1,0 +1,30 @@
+<html>
+    <head>
+
+        <script src="../../../node_modules/betajs/dist/beta.js"></script>
+        <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
+        <script src="../../../dist/betajs-dynamics.js"></script>
+    </head>
+    <body>
+
+        <div id="test">
+
+        </div>
+
+        <script>
+            var main = new BetaJS.Dynamics.Dynamic({
+                element: document.querySelector("#test")
+            });
+
+            function test(assert) {
+            	var activated = false;
+            	main.on("dynamic-activated", function () {
+            		activated = true;
+            	});
+	            main.activate();
+                assert.equal(activated, true);
+            }
+        </script>
+
+    </body>
+</html>

@@ -1,4 +1,7 @@
-Scoped.define("module:Partials.ClassPartial", ["module:Handlers.Partial"], function(Partial, scoped) {
+Scoped.define("module:Partials.ClassPartial", [
+    "module:Handlers.Partial",
+    "browser:Dom"
+], function(Partial, Dom, scoped) {
     /**
      * @name ba-class
      *
@@ -20,16 +23,14 @@ Scoped.define("module:Partials.ClassPartial", ["module:Handlers.Partial"], funct
 
         _apply: function(value) {
             for (var key in value) {
-                var className = this._node.element().className;
-                var hasClass = className.indexOf(key) >= 0;
+                var hasClass = Dom.elementHasClass(this._node.element(), key);
                 var newHasClass = !!value[key];
-                if (newHasClass !== hasClass) {
-                    if (newHasClass)
-                        className += " " + key;
-                    else
-                        className = className.replace(key, "").replace("  ", " ");
-                    this._node.element().className = className.trim();
-                }
+                if (newHasClass === hasClass)
+                    return;
+                if (newHasClass)
+                    Dom.elementAddClass(this._node.element(), key);
+                else
+                    Dom.elementRemoveClass(this._node.element(), key);
             }
         }
 

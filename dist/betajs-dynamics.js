@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.108 - 2017-09-19
+betajs-dynamics - v0.0.109 - 2017-10-21
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1007,7 +1007,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.108 - 2017-09-19
+betajs-dynamics - v0.0.109 - 2017-10-21
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1020,7 +1020,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.108"
+    "version": "0.0.109"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -2627,6 +2627,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
                     delete this.__activeElement.dynamicshandlerpromise;
                 } catch (e) {}
             }
+            this.trigger("dynamic-activated");
         },
 
         _afterActivate: function(activeElement) {}
@@ -3259,7 +3260,10 @@ Scoped.define("module:Partials.CachePartial", ["module:Handlers.Partial"], funct
     Cls.register("ba-cache");
     return Cls;
 });
-Scoped.define("module:Partials.ClassPartial", ["module:Handlers.Partial"], function(Partial, scoped) {
+Scoped.define("module:Partials.ClassPartial", [
+    "module:Handlers.Partial",
+    "browser:Dom"
+], function(Partial, Dom, scoped) {
     /**
      * @name ba-class
      *
@@ -3281,16 +3285,14 @@ Scoped.define("module:Partials.ClassPartial", ["module:Handlers.Partial"], funct
 
         _apply: function(value) {
             for (var key in value) {
-                var className = this._node.element().className;
-                var hasClass = className.indexOf(key) >= 0;
+                var hasClass = Dom.elementHasClass(this._node.element(), key);
                 var newHasClass = !!value[key];
-                if (newHasClass !== hasClass) {
-                    if (newHasClass)
-                        className += " " + key;
-                    else
-                        className = className.replace(key, "").replace("  ", " ");
-                    this._node.element().className = className.trim();
-                }
+                if (newHasClass === hasClass)
+                    return;
+                if (newHasClass)
+                    Dom.elementAddClass(this._node.element(), key);
+                else
+                    Dom.elementRemoveClass(this._node.element(), key);
             }
         }
 

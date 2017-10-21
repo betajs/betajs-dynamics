@@ -87,15 +87,15 @@
 				assert.equal(document.querySelector("#baifsimple #inner").innerHTML.trim(), showbinding.get("value"));
 				assert.equal(document.querySelector("#showbinding").style.display,"");
 				assert.equal(document.querySelector("#hidebinding").style.display,"none");
-				assert.equal(document.querySelector("#showbinding").className, "green");
-                assert.ok(!document.querySelector("#hidebinding").className);
+				assert.equal(document.querySelector("#showbinding").className.trim(), "green");
+                assert.ok(!document.querySelector("#hidebinding").className.trim());
 
 				//After change
 				showbinding.call("change_showbinding");
 				assert.equal(document.querySelector("#showbinding").style.display,"none");
 				assert.equal(document.querySelector("#hidebinding").style.display,"");
-                assert.ok(!document.querySelector("#showbinding").className);
-				assert.equal(document.querySelector("#hidebinding").className, "red");
+                assert.ok(!document.querySelector("#showbinding").className.trim());
+				assert.equal(document.querySelector("#hidebinding").className.trim(), "red");
 			}
 		</script>
 

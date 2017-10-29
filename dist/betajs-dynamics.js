@@ -1,10 +1,10 @@
 /*!
-betajs-dynamics - v0.0.109 - 2017-10-21
+betajs-dynamics - v0.0.109 - 2017-10-29
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
 /** @flow **//*!
-betajs-scoped - v0.0.16 - 2017-07-23
+betajs-scoped - v0.0.17 - 2017-10-22
 Copyright (c) Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -16,7 +16,7 @@ var Globals = (function () {
  * @module Globals
  * @access private
  */
-return { 
+return {
 		
 	/**
 	 * Returns the value of a global variable.
@@ -26,11 +26,11 @@ return {
 	 */
 	get : function(key/* : string */) {
 		if (typeof window !== "undefined")
-			return window[key];
+			return key ? window[key] : window;
 		if (typeof global !== "undefined")
-			return global[key];
+			return key ? global[key] : global;
 		if (typeof self !== "undefined")
-			return self[key];
+			return key ? self[key] : self;
 		return undefined;
 	},
 
@@ -64,6 +64,8 @@ return {
 	 * Globals.getPath("foo.bar")
 	 */
 	getPath: function (path/* : string */) {
+		if (!path)
+			return this.get();
 		var args = path.split(".");
 		if (args.length == 1)
 			return this.get(path);		
@@ -965,7 +967,7 @@ var Public = Helper.extend(rootScope, (function () {
 return {
 		
 	guid: "4b6878ee-cb6a-46b3-94ac-27d91f58d666",
-	version: '0.0.16',
+	version: '0.0.17',
 		
 	upgrade: Attach.upgrade,
 	attach: Attach.attach,
@@ -1007,7 +1009,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.109 - 2017-10-21
+betajs-dynamics - v0.0.109 - 2017-10-29
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1307,11 +1309,31 @@ Scoped.define("module:Data.Mesh", [
     }]);
 });
 Scoped.define("module:Parser", [
-    "base:Types", "base:Objs", "base:JavaScript"
+    "base:Types",
+    "base:Objs",
+    "base:JavaScript"
 ], function(Types, Objs, JavaScript) {
     return {
 
         __cache: {},
+
+        __functions: {},
+
+        secureMode: false,
+
+        compileFunction: function(code) {
+            if (!(code in this.__functions)) {
+                if (this.secureMode)
+                    throw ("Dynamics Secure Mode prevents creation of function code '" + code + "'.");
+                /*jslint evil: true */
+                this.__functions[code] = new Function("obj", "with (obj) { return " + code + "; }");
+            }
+            return this.__functions[code];
+        },
+
+        registerFunctions: function(codes) {
+            this.__functions = Objs.extend(this.__functions, codes);
+        },
 
         parseText: function(text) {
             if (!text)
@@ -1381,8 +1403,7 @@ Scoped.define("module:Parser", [
                     html: html,
                     args: args,
                     variable: bidirectional ? c : null,
-                    /*jslint evil: true */
-                    func: new Function("obj", "with (obj) { return " + c + "; }"),
+                    func: this.compileFunction(c),
                     dependencies: Object.keys(Objs.objectify(JavaScript.extractIdentifiers(c, true)))
                 };
                 this.__cache[code] = result;
@@ -1960,6 +1981,7 @@ Scoped.define("module:Exceptions.DynamicsCallException", [
 
 Scoped.define("module:Dynamic", [
     "module:Data.Scope",
+    "module:Parser",
     "module:Handlers.HandlerMixin",
     "module:Exceptions.DynamicsCallException",
     "base:Objs",
@@ -1973,7 +1995,7 @@ Scoped.define("module:Dynamic", [
     "browser:Dom",
     "browser:Events",
     "base:Class"
-], function(Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Promise, Events, LoggableMixin, Registries, Dom, DomEvents, Class, scoped) {
+], function(Scope, Parser, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Promise, Events, LoggableMixin, Registries, Dom, DomEvents, Class, scoped) {
     var Cls;
     Cls = Scope.extend({
         scoped: scoped
@@ -2134,6 +2156,11 @@ Scoped.define("module:Dynamic", [
             registry = registry || Registries.handler;
             this.__registeredName = key || this.registeredName();
             registry.register(this.__registeredName, this);
+            return this;
+        },
+
+        registerFunctions: function(code) {
+            Parser.registerFunctions(code);
             return this;
         },
 

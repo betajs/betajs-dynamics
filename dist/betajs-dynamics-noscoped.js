@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.109 - 2017-10-21
+betajs-dynamics - v0.0.109 - 2017-10-29
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -299,11 +299,31 @@ Scoped.define("module:Data.Mesh", [
     }]);
 });
 Scoped.define("module:Parser", [
-    "base:Types", "base:Objs", "base:JavaScript"
+    "base:Types",
+    "base:Objs",
+    "base:JavaScript"
 ], function(Types, Objs, JavaScript) {
     return {
 
         __cache: {},
+
+        __functions: {},
+
+        secureMode: false,
+
+        compileFunction: function(code) {
+            if (!(code in this.__functions)) {
+                if (this.secureMode)
+                    throw ("Dynamics Secure Mode prevents creation of function code '" + code + "'.");
+                /*jslint evil: true */
+                this.__functions[code] = new Function("obj", "with (obj) { return " + code + "; }");
+            }
+            return this.__functions[code];
+        },
+
+        registerFunctions: function(codes) {
+            this.__functions = Objs.extend(this.__functions, codes);
+        },
 
         parseText: function(text) {
             if (!text)
@@ -373,8 +393,7 @@ Scoped.define("module:Parser", [
                     html: html,
                     args: args,
                     variable: bidirectional ? c : null,
-                    /*jslint evil: true */
-                    func: new Function("obj", "with (obj) { return " + c + "; }"),
+                    func: this.compileFunction(c),
                     dependencies: Object.keys(Objs.objectify(JavaScript.extractIdentifiers(c, true)))
                 };
                 this.__cache[code] = result;
@@ -952,6 +971,7 @@ Scoped.define("module:Exceptions.DynamicsCallException", [
 
 Scoped.define("module:Dynamic", [
     "module:Data.Scope",
+    "module:Parser",
     "module:Handlers.HandlerMixin",
     "module:Exceptions.DynamicsCallException",
     "base:Objs",
@@ -965,7 +985,7 @@ Scoped.define("module:Dynamic", [
     "browser:Dom",
     "browser:Events",
     "base:Class"
-], function(Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Promise, Events, LoggableMixin, Registries, Dom, DomEvents, Class, scoped) {
+], function(Scope, Parser, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Promise, Events, LoggableMixin, Registries, Dom, DomEvents, Class, scoped) {
     var Cls;
     Cls = Scope.extend({
         scoped: scoped
@@ -1126,6 +1146,11 @@ Scoped.define("module:Dynamic", [
             registry = registry || Registries.handler;
             this.__registeredName = key || this.registeredName();
             registry.register(this.__registeredName, this);
+            return this;
+        },
+
+        registerFunctions: function(code) {
+            Parser.registerFunctions(code);
             return this;
         },
 

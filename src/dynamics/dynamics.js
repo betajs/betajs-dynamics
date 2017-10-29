@@ -16,6 +16,7 @@ Scoped.define("module:Exceptions.DynamicsCallException", [
 
 Scoped.define("module:Dynamic", [
     "module:Data.Scope",
+    "module:Parser",
     "module:Handlers.HandlerMixin",
     "module:Exceptions.DynamicsCallException",
     "base:Objs",
@@ -29,7 +30,7 @@ Scoped.define("module:Dynamic", [
     "browser:Dom",
     "browser:Events",
     "base:Class"
-], function(Scope, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Promise, Events, LoggableMixin, Registries, Dom, DomEvents, Class, scoped) {
+], function(Scope, Parser, HandlerMixin, DynamicsCallException, Objs, Strings, Types, Functions, Promise, Events, LoggableMixin, Registries, Dom, DomEvents, Class, scoped) {
     var Cls;
     Cls = Scope.extend({
         scoped: scoped
@@ -190,6 +191,11 @@ Scoped.define("module:Dynamic", [
             registry = registry || Registries.handler;
             this.__registeredName = key || this.registeredName();
             registry.register(this.__registeredName, this);
+            return this;
+        },
+
+        registerFunctions: function(code) {
+            Parser.registerFunctions(code);
             return this;
         },
 

@@ -1,9 +1,29 @@
 Scoped.define("module:Parser", [
-    "base:Types", "base:Objs", "base:JavaScript"
+    "base:Types",
+    "base:Objs",
+    "base:JavaScript"
 ], function(Types, Objs, JavaScript) {
     return {
 
         __cache: {},
+
+        __functions: {},
+
+        secureMode: false,
+
+        compileFunction: function(code) {
+            if (!(code in this.__functions)) {
+                if (this.secureMode)
+                    throw ("Dynamics Secure Mode prevents creation of function code '" + code + "'.");
+                /*jslint evil: true */
+                this.__functions[code] = new Function("obj", "with (obj) { return " + code + "; }");
+            }
+            return this.__functions[code];
+        },
+
+        registerFunctions: function(codes) {
+            this.__functions = Objs.extend(this.__functions, codes);
+        },
 
         parseText: function(text) {
             if (!text)
@@ -73,8 +93,7 @@ Scoped.define("module:Parser", [
                     html: html,
                     args: args,
                     variable: bidirectional ? c : null,
-                    /*jslint evil: true */
-                    func: new Function("obj", "with (obj) { return " + c + "; }"),
+                    func: this.compileFunction(c),
                     dependencies: Object.keys(Objs.objectify(JavaScript.extractIdentifiers(c, true)))
                 };
                 this.__cache[code] = result;

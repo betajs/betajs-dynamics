@@ -12,6 +12,7 @@ Scoped.define("module:Parser", [
         secureMode: false,
 
         compileFunction: function(code) {
+            code = code.trim();
             if (!(code in this.__functions)) {
                 if (this.secureMode)
                     throw ("Dynamics Secure Mode prevents creation of function code '" + code + "'.");

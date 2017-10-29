@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.109 - 2017-10-29
+betajs-dynamics - v0.0.110 - 2017-10-29
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1009,7 +1009,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.109 - 2017-10-29
+betajs-dynamics - v0.0.110 - 2017-10-29
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1022,7 +1022,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.109"
+    "version": "0.0.110"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -1322,6 +1322,7 @@ Scoped.define("module:Parser", [
         secureMode: false,
 
         compileFunction: function(code) {
+            code = code.trim();
             if (!(code in this.__functions)) {
                 if (this.secureMode)
                     throw ("Dynamics Secure Mode prevents creation of function code '" + code + "'.");

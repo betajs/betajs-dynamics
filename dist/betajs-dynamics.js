@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.110 - 2017-10-29
+betajs-dynamics - v0.0.111 - 2017-10-30
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1009,7 +1009,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.110 - 2017-10-29
+betajs-dynamics - v0.0.111 - 2017-10-30
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1022,7 +1022,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.110"
+    "version": "0.0.111"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -1376,7 +1376,7 @@ Scoped.define("module:Parser", [
                     });
                     return s;
                 },
-                dependencies: Object.keys(dependencies)
+                dependencies: Objs.keys(dependencies)
             };
         },
 
@@ -1405,7 +1405,7 @@ Scoped.define("module:Parser", [
                     args: args,
                     variable: bidirectional ? c : null,
                     func: this.compileFunction(c),
-                    dependencies: Object.keys(Objs.objectify(JavaScript.extractIdentifiers(c, true)))
+                    dependencies: Objs.keys(Objs.objectify(JavaScript.extractIdentifiers(c, true)))
                 };
                 this.__cache[code] = result;
             }

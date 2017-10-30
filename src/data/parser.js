@@ -66,7 +66,7 @@ Scoped.define("module:Parser", [
                     });
                     return s;
                 },
-                dependencies: Object.keys(dependencies)
+                dependencies: Objs.keys(dependencies)
             };
         },
 
@@ -95,7 +95,7 @@ Scoped.define("module:Parser", [
                     args: args,
                     variable: bidirectional ? c : null,
                     func: this.compileFunction(c),
-                    dependencies: Object.keys(Objs.objectify(JavaScript.extractIdentifiers(c, true)))
+                    dependencies: Objs.keys(Objs.objectify(JavaScript.extractIdentifiers(c, true)))
                 };
                 this.__cache[code] = result;
             }

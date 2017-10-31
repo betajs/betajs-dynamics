@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.111 - 2017-10-30
+betajs-dynamics - v0.0.112 - 2017-10-31
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1009,7 +1009,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.111 - 2017-10-30
+betajs-dynamics - v0.0.112 - 2017-10-31
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1022,7 +1022,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.111"
+    "version": "0.0.112"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -3316,7 +3316,7 @@ Scoped.define("module:Partials.ClassPartial", [
                 var hasClass = Dom.elementHasClass(this._node.element(), key);
                 var newHasClass = !!value[key];
                 if (newHasClass === hasClass)
-                    return;
+                    continue;
                 if (newHasClass)
                     Dom.elementAddClass(this._node.element(), key);
                 else

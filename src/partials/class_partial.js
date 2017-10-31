@@ -26,7 +26,7 @@ Scoped.define("module:Partials.ClassPartial", [
                 var hasClass = Dom.elementHasClass(this._node.element(), key);
                 var newHasClass = !!value[key];
                 if (newHasClass === hasClass)
-                    return;
+                    continue;
                 if (newHasClass)
                     Dom.elementAddClass(this._node.element(), key);
                 else

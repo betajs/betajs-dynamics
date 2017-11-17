@@ -83,13 +83,14 @@ Scoped.define("module:Handlers.Attr", [
                 this._element = element;
                 attribute = attribute || element.attributes[this._attrName];
                 this._attribute = attribute;
-                this.__updateAttr();
                 var splt = this._attrName.split(":");
+                this._partialCls = Registries.partial.get(splt[0]);
                 if (this._partial) {
                     this._partial.destroy();
                     this._partial = null;
                 }
-                if (Registries.partial.get(splt[0])) {
+                this.__updateAttr();
+                if (this._partialCls) {
                     this._partial = Registries.partial.create(splt[0], this._node, this._dyn ? this._dyn.args : {}, this._attrValue, splt[1]);
                     if (this._partial.cls.meta.value_hidden)
                         this._attribute.value = "";
@@ -118,7 +119,9 @@ Scoped.define("module:Handlers.Attr", [
             __updateAttr: function() {
                 if (!this._updatable)
                     return;
-                var value = this._dyn ? this._node.__executeDyn(this._dyn) : this._attrValue;
+                var value = this._attrValue;
+                if (this._dyn && (!this._partialCls || !this._partialCls.manualExecute))
+                    value = this._node.__executeDyn(this._dyn);
                 if ((value != this._attrValue || Types.is_array(value)) && !(!value && !this._attrValue)) {
                     var old = this._attrValue;
                     this._attrValue = value;

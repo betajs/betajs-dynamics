@@ -31,6 +31,10 @@ Scoped.define("module:Partials.ReturnPartial", [
             }
 
         };
+    }, {
+
+        manualExecute: true
+
     });
     Cls.register("ba-return");
     return Cls;

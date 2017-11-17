@@ -35,6 +35,10 @@ Scoped.define("module:Partials.OnPartial", [
             }
 
         };
+    }, {
+
+        manualExecute: true
+
     });
     Cls.register("ba-on");
     return Cls;

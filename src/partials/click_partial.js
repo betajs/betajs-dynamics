@@ -38,6 +38,10 @@ Scoped.define("module:Partials.ClickPartial", [
             }
 
         };
+    }, {
+
+        manualExecute: true
+
     });
     Cls.register("ba-click");
     return Cls;

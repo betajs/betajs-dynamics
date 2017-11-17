@@ -250,9 +250,10 @@ Scoped.define("module:Handlers.Partial", [
     "base:Class",
     "base:JavaScript",
     "base:Functions",
+    "base:Strings",
     "module:Parser",
     "module:Registries"
-], function(Class, JavaScript, Functions, Parser, Registries, scoped) {
+], function(Class, JavaScript, Functions, Strings, Parser, Registries, scoped) {
     return Class.extend({
         scoped: scoped
     }, function(inherited) {
@@ -303,15 +304,19 @@ Scoped.define("module:Handlers.Partial", [
             _apply: function(value, oldValue) {},
 
             _execute: function(code) {
-                var dyn = Parser.parseCode(code || this._value);
+                code = code || this._value;
+                var dyn = Parser.parseText(code) || Parser.parseCode(code);
                 this._node.__executeDyn(dyn);
             },
 
             _valueExecute: function(args) {
                 var value = this._value.trim();
-                if (JavaScript.isProperIdentifier(value)) {
+                var simplified = value;
+                if (Strings.starts_with(simplified, "{{") && Strings.ends_with(simplified, "}}"))
+                    simplified = Strings.strip_end(Strings.strip_start(simplified, "{{"), "}}");
+                if (JavaScript.isProperIdentifier(simplified)) {
                     args = Functions.getArguments(args);
-                    args.unshift(value);
+                    args.unshift(simplified);
                     this._node._handler.execute.apply(this._node._handler, args);
                 } else
                     this._execute(value);

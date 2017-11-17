@@ -1315,13 +1315,14 @@ Scoped.define("module:Handlers.Attr", [
                 this._element = element;
                 attribute = attribute || element.attributes[this._attrName];
                 this._attribute = attribute;
-                this.__updateAttr();
                 var splt = this._attrName.split(":");
+                this._partialCls = Registries.partial.get(splt[0]);
                 if (this._partial) {
                     this._partial.destroy();
                     this._partial = null;
                 }
-                if (Registries.partial.get(splt[0])) {
+                this.__updateAttr();
+                if (this._partialCls) {
                     this._partial = Registries.partial.create(splt[0], this._node, this._dyn ? this._dyn.args : {}, this._attrValue, splt[1]);
                     if (this._partial.cls.meta.value_hidden)
                         this._attribute.value = "";
@@ -1350,7 +1351,9 @@ Scoped.define("module:Handlers.Attr", [
             __updateAttr: function() {
                 if (!this._updatable)
                     return;
-                var value = this._dyn ? this._node.__executeDyn(this._dyn) : this._attrValue;
+                var value = this._attrValue;
+                if (this._dyn && (!this._partialCls || !this._partialCls.manualExecute))
+                    value = this._node.__executeDyn(this._dyn);
                 if ((value != this._attrValue || Types.is_array(value)) && !(!value && !this._attrValue)) {
                     var old = this._attrValue;
                     this._attrValue = value;
@@ -1693,9 +1696,10 @@ Scoped.define("module:Handlers.Partial", [
     "base:Class",
     "base:JavaScript",
     "base:Functions",
+    "base:Strings",
     "module:Parser",
     "module:Registries"
-], function(Class, JavaScript, Functions, Parser, Registries, scoped) {
+], function(Class, JavaScript, Functions, Strings, Parser, Registries, scoped) {
     return Class.extend({
         scoped: scoped
     }, function(inherited) {
@@ -1746,15 +1750,19 @@ Scoped.define("module:Handlers.Partial", [
             _apply: function(value, oldValue) {},
 
             _execute: function(code) {
-                var dyn = Parser.parseCode(code || this._value);
+                code = code || this._value;
+                var dyn = Parser.parseText(code) || Parser.parseCode(code);
                 this._node.__executeDyn(dyn);
             },
 
             _valueExecute: function(args) {
                 var value = this._value.trim();
-                if (JavaScript.isProperIdentifier(value)) {
+                var simplified = value;
+                if (Strings.starts_with(simplified, "{{") && Strings.ends_with(simplified, "}}"))
+                    simplified = Strings.strip_end(Strings.strip_start(simplified, "{{"), "}}");
+                if (JavaScript.isProperIdentifier(simplified)) {
                     args = Functions.getArguments(args);
-                    args.unshift(value);
+                    args.unshift(simplified);
                     this._node._handler.execute.apply(this._node._handler, args);
                 } else
                     this._execute(value);
@@ -2358,6 +2366,10 @@ Scoped.define("module:Partials.ClickPartial", [
             }
 
         };
+    }, {
+
+        manualExecute: true
+
     });
     Cls.register("ba-click");
     return Cls;
@@ -2428,6 +2440,10 @@ Scoped.define("module:Partials.EventPartial", [
             }, this);
         }
 
+    }, {
+
+        manualExecute: true
+
     });
     Cls.register("ba-event");
     return Cls;
@@ -2484,6 +2500,10 @@ Scoped.define("module:Partials.HotkeyPartial", [
             }
 
         };
+    }, {
+
+        manualExecute: true
+
     });
     Cls.register("ba-hotkey");
     return Cls;
@@ -2637,6 +2657,10 @@ Scoped.define("module:Partials.OnPartial", [
             }
 
         };
+    }, {
+
+        manualExecute: true
+
     });
     Cls.register("ba-on");
     return Cls;
@@ -3057,6 +3081,10 @@ Scoped.define("module:Partials.ReturnPartial", [
             }
 
         };
+    }, {
+
+        manualExecute: true
+
     });
     Cls.register("ba-return");
     return Cls;
@@ -3189,6 +3217,10 @@ Scoped.define("module:Partials.TapPartial", [
             }
 
         };
+    }, {
+
+        manualExecute: true
+
     });
     Cls.register("ba-tap");
     return Cls;

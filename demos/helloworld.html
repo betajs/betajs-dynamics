@@ -10,15 +10,19 @@
 	<div id="helloworld">
         <p>{{replaced_value}}</p>
         <p>{{- replaced_value}}</p>
-        <input ba-hotkey:shift+esc="esc()" />
+        <input ba-hotkey:shift+esc="shiftesc()"
+               ba-hotkey:alt+esc="{{altesc()}}" />
     </div>
 
 	<script>
 		dynamic = new BetaJS.Dynamics.Dynamic({
 			element : document.querySelector("#helloworld"),
             functions: {
-			    esc: function () {
+			    shiftesc: function () {
 			        alert("Shift+ESC");
+                },
+                altesc: function () {
+                    alert("Alt+ESC");
                 }
             }
 		});

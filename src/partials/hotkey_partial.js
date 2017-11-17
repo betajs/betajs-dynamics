@@ -19,6 +19,10 @@ Scoped.define("module:Partials.HotkeyPartial", [
             }
 
         };
+    }, {
+
+        manualExecute: true
+
     });
     Cls.register("ba-hotkey");
     return Cls;

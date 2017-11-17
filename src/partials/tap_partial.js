@@ -33,6 +33,10 @@ Scoped.define("module:Partials.TapPartial", [
             }
 
         };
+    }, {
+
+        manualExecute: true
+
     });
     Cls.register("ba-tap");
     return Cls;

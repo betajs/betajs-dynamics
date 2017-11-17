@@ -11,6 +11,10 @@ Scoped.define("module:Partials.EventPartial", [
             }, this);
         }
 
+    }, {
+
+        manualExecute: true
+
     });
     Cls.register("ba-event");
     return Cls;

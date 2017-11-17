@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.113 - 2017-11-17
+betajs-dynamics - v0.0.114 - 2017-11-17
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.113"
+    "version": "0.0.114"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');

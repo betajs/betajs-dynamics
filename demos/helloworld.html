@@ -10,11 +10,17 @@
 	<div id="helloworld">
         <p>{{replaced_value}}</p>
         <p>{{- replaced_value}}</p>
+        <input ba-hotkey:shift+esc="esc()" />
     </div>
 
 	<script>
 		dynamic = new BetaJS.Dynamics.Dynamic({
-			element : document.querySelector("#helloworld")
+			element : document.querySelector("#helloworld"),
+            functions: {
+			    esc: function () {
+			        alert("Shift+ESC");
+                }
+            }
 		});
 
 		dynamic.set("replaced_value", "<b>Hello World</b>");

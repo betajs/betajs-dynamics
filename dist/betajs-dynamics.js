@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.112 - 2017-10-31
+betajs-dynamics - v0.0.113 - 2017-11-17
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1009,7 +1009,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.112 - 2017-10-31
+betajs-dynamics - v0.0.113 - 2017-11-17
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1022,7 +1022,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.112"
+    "version": "0.0.113"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -3471,6 +3471,31 @@ Scoped.define("module:Partials.GcPartial", ["module:Handlers.Partial"], function
         };
     });
     Cls.register("ba-gc");
+    return Cls;
+});
+Scoped.define("module:Partials.HotkeyPartial", [
+    "module:Handlers.Partial",
+    "browser:Events",
+    "browser:Hotkeys"
+], function(Partial, Events, Hotkeys, scoped) {
+    var Cls = Partial.extend({
+        scoped: scoped
+    }, function(inherited) {
+        return {
+
+            constructor: function(node, args, value) {
+                inherited.constructor.apply(this, arguments);
+                var events = this.auto_destroy(new Events());
+                var hotkey = this._postfix;
+                events.on(this._node._element, "keydown", function(e) {
+                    if (Hotkeys.handleKeyEvent(hotkey, e))
+                        this._execute();
+                }, this);
+            }
+
+        };
+    });
+    Cls.register("ba-hotkey");
     return Cls;
 });
 Scoped.define("module:Partials.IfPartial", ["module:Partials.ShowPartial"], function(Partial, scoped) {

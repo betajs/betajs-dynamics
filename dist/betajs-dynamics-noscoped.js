@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.114 - 2017-11-17
+betajs-dynamics - v0.0.115 - 2017-11-18
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.114"
+    "version": "0.0.115"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.96');
@@ -2495,7 +2495,7 @@ Scoped.define("module:Partials.HotkeyPartial", [
                 var hotkey = this._postfix;
                 events.on(this._node._element, "keydown", function(e) {
                     if (Hotkeys.handleKeyEvent(hotkey, e))
-                        this._execute();
+                        this._valueExecute([e]);
                 }, this);
             }
 

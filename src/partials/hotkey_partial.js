@@ -14,7 +14,7 @@ Scoped.define("module:Partials.HotkeyPartial", [
                 var hotkey = this._postfix;
                 events.on(this._node._element, "keydown", function(e) {
                     if (Hotkeys.handleKeyEvent(hotkey, e))
-                        this._execute();
+                        this._valueExecute([e]);
                 }, this);
             }
 

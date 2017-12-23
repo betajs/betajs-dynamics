@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.115 - 2017-11-18
+betajs-dynamics - v0.0.116 - 2017-12-23
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,10 +12,10 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.115"
+    "version": "0.0.116"
 };
 });
-Scoped.assumeVersion('base:version', '~1.0.96');
+Scoped.assumeVersion('base:version', '~1.0.140');
 Scoped.assumeVersion('browser:version', '~1.0.61');
 Scoped.define("module:Data.Mesh", [
     "base:Class",
@@ -1252,31 +1252,31 @@ Scoped.define("module:Handlers.Attr", [
     "module:Parser",
     "base:Types",
     "base:Objs",
-    "base:Strings",
     "base:Async",
+    "base:Strings",
     "module:Registries",
     "browser:Dom",
     "browser:Events"
-], function(Class, TagHandlerException, Parser, Types, Objs, Strings, Async, Registries, Dom, Events, scoped) {
+], function(Class, TagHandlerException, Parser, Types, Objs, Async, Strings, Registries, Dom, Events, scoped) {
     var Cls;
     Cls = Class.extend({
         scoped: scoped
     }, function(inherited) {
         return {
 
-            constructor: function(node, attribute) {
+            constructor: function(node, attribute, dataNode) {
                 inherited.constructor.call(this);
+                this._dataNode = dataNode || node;
                 this._node = node;
                 this._tagHandler = null;
                 this._attrName = attribute.name;
                 this._isEvent = this._attrName.indexOf("on") === 0;
                 this._updatable = !this._isEvent;
-                this._attrOriginalValue = attribute.value;
                 this._attrValue = attribute.value;
                 this._dyn = Parser.parseText(this._attrValue);
                 if (this._dyn) {
                     var self = this;
-                    node.mesh().watch(this._dyn.dependencies, function() {
+                    this._dataNode.mesh().watch(this._dyn.dependencies, function() {
                         self.__updateAttr();
                     }, this);
                 }
@@ -1287,7 +1287,7 @@ Scoped.define("module:Handlers.Attr", [
                 if (this._partial)
                     this._partial.destroy();
                 if (this._dyn)
-                    this._node.mesh().unwatch(this._dyn.dependencies, this);
+                    this._dataNode.mesh().unwatch(this._dyn.dependencies, this);
                 inherited.destroy.call(this);
             },
 
@@ -1315,22 +1315,22 @@ Scoped.define("module:Handlers.Attr", [
                 this._element = element;
                 attribute = attribute || element.attributes[this._attrName];
                 this._attribute = attribute;
-                var splt = this._attrName.split(":");
-                this._partialCls = Registries.partial.get(splt[0]);
+                var splt = Strings.splitFirst(this._attrName, ":");
+                this._partialCls = Registries.partial.get(splt.head);
                 if (this._partial) {
                     this._partial.destroy();
                     this._partial = null;
                 }
                 this.__updateAttr();
                 if (this._partialCls) {
-                    this._partial = Registries.partial.create(splt[0], this._node, this._dyn ? this._dyn.args : {}, this._attrValue, splt[1]);
+                    this._partial = Registries.partial.create(splt.head, this._node, this._dyn ? this._dyn.args : {}, this._attrValue, splt.tail);
                     if (this._partial.cls.meta.value_hidden)
                         this._attribute.value = "";
                 }
                 if (this._dyn) {
                     if (this._dyn.bidirectional && this._attrName == "value") {
                         this._events().on(this._element, "change keyup keypress keydown blur focus update input", function() {
-                            this._node.mesh().write(this._dyn.variable, this.__inputVal(this._element));
+                            this._dataNode.mesh().write(this._dyn.variable, this.__inputVal(this._element));
                         }, this);
                     }
                     if (this._isEvent) {
@@ -1353,7 +1353,7 @@ Scoped.define("module:Handlers.Attr", [
                     return;
                 var value = this._attrValue;
                 if (this._dyn && (!this._partialCls || !this._partialCls.manualExecute))
-                    value = this._node.__executeDyn(this._dyn);
+                    value = this._dataNode.__executeDyn(this._dyn);
                 if ((value != this._attrValue || Types.is_array(value)) && !(!value && !this._attrValue)) {
                     var old = this._attrValue;
                     this._attrValue = value;
@@ -1382,28 +1382,30 @@ Scoped.define("module:Handlers.Attr", [
                     if (this._attrName === "value" && this._element.value !== value)
                         this.__inputVal(this._element, value);
                     if (this._tagHandler && this._dyn && !this._partial)
-                        this._tagHandler.properties().set(Strings.first_after(this._attrName, "-"), value);
+                        this._tagHandler.properties().set(Registries.prefixNormalize(this._attrName), value);
                 }
             },
 
             bindTagHandler: function(handler) {
-                this.unbindTagHandler();
+                this.unbindTagHandler(this._tagHandler);
                 this._tagHandler = handler;
-                if (!this._partial && Registries.prefixes[Strings.splitFirst(this._attrName, "-").head]) {
-                    var innerKey = Strings.first_after(this._attrName, "-");
-                    this._tagHandler.setArgumentAttr(innerKey, Class.is_pure_json(this._attrValue) ? Objs.clone(this._attrValue, 1) : this._attrValue);
-                    if (this._dyn && this._dyn.bidirectional) {
-                        if (Class.is_pure_json(this._attrValue)) {
-                            this._tagHandler.properties().bind(innerKey, this._node._handler.properties(), {
-                                deep: true,
-                                left: true,
-                                right: true,
-                                secondKey: this._dyn.variable
-                            });
-                        } else {
-                            this._tagHandler.properties().on("change:" + innerKey, function(value) {
-                                this._node.mesh().write(this._dyn.variable, value);
-                            }, this);
+                if (!this._partial) {
+                    var innerKey = Registries.prefixNormalize(this._attrName);
+                    if (innerKey) {
+                        this._tagHandler.setArgumentAttr(innerKey, Class.is_pure_json(this._attrValue) ? Objs.clone(this._attrValue, 1) : this._attrValue);
+                        if (this._dyn && this._dyn.bidirectional) {
+                            if (Class.is_pure_json(this._attrValue)) {
+                                this._tagHandler.properties().bind(innerKey, this._node._handler.properties(), {
+                                    deep: true,
+                                    left: true,
+                                    right: true,
+                                    secondKey: this._dyn.variable
+                                });
+                            } else {
+                                this._tagHandler.properties().on("change:" + innerKey, function(value) {
+                                    this._dataNode.mesh().write(this._dyn.variable, value);
+                                }, this);
+                            }
                         }
                     }
                 } else if (this._partial) {
@@ -1464,6 +1466,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
         },
 
         __handlerConstruct: function() {
+            this._inheritableAttributes = {};
             this.__activated = false;
             this._mesh_extend = {
                 string: Functions.as_method(this.string, this),
@@ -1651,7 +1654,31 @@ Scoped.define("module:Handlers.HandlerMixin", [
             this.trigger("dynamic-activated");
         },
 
-        _afterActivate: function(activeElement) {}
+        _afterActivate: function(activeElement) {},
+
+        registerInheritableAttribute: function(tagName, attrKey, attrValue, node) {
+            tagName = Registries.prefixNormalize(tagName, true);
+            this._inheritableAttributes[tagName] = this._inheritableAttributes[tagName] || {};
+            this._inheritableAttributes[tagName][attrKey] = {
+                value: attrValue,
+                name: attrKey,
+                node: node
+            };
+        },
+
+        unregisterInheritableAttribute: function(tagName, attrKey) {
+            tagName = Registries.prefixNormalize(tagName, true);
+            if (this._inheritableAttributes[tagName]) {
+                delete this._inheritableAttributes[tagName][attrKey];
+                if (Types.is_empty(this._inheritableAttributes[tagName]))
+                    delete this._inheritableAttributes[tagName];
+            }
+        },
+
+        getInheritableAttributes: function(tagName) {
+            tagName = Registries.prefixNormalize(tagName, true);
+            return Objs.values(this._inheritableAttributes[tagName]);
+        }
 
     };
 });
@@ -1916,6 +1943,7 @@ Scoped.define("module:Handlers.Node", [
 
             _registerAttr: function(attribute) {
                 if (attribute.name in this._attrs)
+                    // Is this ever being called? The method doesn't exist!?
                     this._attrs[attribute.name].updateAttribute(attribute);
                 else
                     this._attrs[attribute.name] = new Attr(this, attribute);
@@ -1965,6 +1993,10 @@ Scoped.define("module:Handlers.Node", [
                     else
                         this._tagHandler.weakDestroy();
                     this._tagHandler = null;
+                    Objs.iter(this._handler.getInheritableAttributes(this.__tagValue()), function(attr) {
+                        this._attrs[attr.name].weakDestroy();
+                        delete this._attrs[attr.name];
+                    }, this);
                 }
             },
 
@@ -1997,6 +2029,9 @@ Scoped.define("module:Handlers.Node", [
                     cacheable: false,
                     tagName: tagv
                 };
+                Objs.iter(this._handler.getInheritableAttributes(this.__tagValue()), function(attr) {
+                    this._attrs[attr.name] = new Attr(attr.node, attr);
+                }, this);
                 Objs.iter(this._attrs, function(attr) {
                     attr.prepareTagHandler(createArguments);
                 }, this);
@@ -2117,14 +2152,20 @@ Scoped.define("module:Handlers.Node", [
 Scoped.define("module:Registries", [
     "base:Classes.ClassRegistry",
     "base:Exceptions.AsyncExceptionThrower",
-    "browser:Dom"
-], function(ClassRegistry, AsyncExceptionThrower, Dom) {
+    "browser:Dom",
+    "base:Strings"
+], function(ClassRegistry, AsyncExceptionThrower, Dom, Strings) {
     return {
 
         handler: new ClassRegistry({}, true),
         partial: new ClassRegistry({}, true),
         prefixes: {
             "ba": true
+        },
+
+        prefixNormalize: function(s, returnOriginal) {
+            var splt = Strings.splitFirst(s || "", "-");
+            return this.prefixes[splt.head] ? splt.tail : s;
         },
 
         templates: {
@@ -2395,6 +2436,33 @@ Scoped.define("module:Partials.DataPartial", ["module:Handlers.Partial"], functi
 
     });
     Cls.register("ba-data");
+    return Cls;
+});
+Scoped.define("module:Partials.DeeperPartial", ["module:Handlers.Partial"], function(Partial, scoped) {
+    var Cls = Partial.extend({
+        scoped: scoped
+    }, function(inherited) {
+        return {
+
+            bindTagHandler: function(handler) {
+                var splt = this._postfix.split(":");
+                handler.registerInheritableAttribute(splt[0], splt[1], this._value, this._node);
+            },
+
+            unbindTagHandler: function(handler) {
+                if (!handler)
+                    return;
+                var splt = this._postfix.split(":");
+                handler.unregisterInheritableAttribute(splt[0], splt[1]);
+            }
+
+        };
+    }, {
+
+        manualExecute: true
+
+    });
+    Cls.register("ba-deeper");
     return Cls;
 });
 Scoped.define("module:Partials.EventForwardPartial", [

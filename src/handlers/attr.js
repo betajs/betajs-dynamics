@@ -20,31 +20,31 @@ Scoped.define("module:Handlers.Attr", [
     "module:Parser",
     "base:Types",
     "base:Objs",
-    "base:Strings",
     "base:Async",
+    "base:Strings",
     "module:Registries",
     "browser:Dom",
     "browser:Events"
-], function(Class, TagHandlerException, Parser, Types, Objs, Strings, Async, Registries, Dom, Events, scoped) {
+], function(Class, TagHandlerException, Parser, Types, Objs, Async, Strings, Registries, Dom, Events, scoped) {
     var Cls;
     Cls = Class.extend({
         scoped: scoped
     }, function(inherited) {
         return {
 
-            constructor: function(node, attribute) {
+            constructor: function(node, attribute, dataNode) {
                 inherited.constructor.call(this);
+                this._dataNode = dataNode || node;
                 this._node = node;
                 this._tagHandler = null;
                 this._attrName = attribute.name;
                 this._isEvent = this._attrName.indexOf("on") === 0;
                 this._updatable = !this._isEvent;
-                this._attrOriginalValue = attribute.value;
                 this._attrValue = attribute.value;
                 this._dyn = Parser.parseText(this._attrValue);
                 if (this._dyn) {
                     var self = this;
-                    node.mesh().watch(this._dyn.dependencies, function() {
+                    this._dataNode.mesh().watch(this._dyn.dependencies, function() {
                         self.__updateAttr();
                     }, this);
                 }
@@ -55,7 +55,7 @@ Scoped.define("module:Handlers.Attr", [
                 if (this._partial)
                     this._partial.destroy();
                 if (this._dyn)
-                    this._node.mesh().unwatch(this._dyn.dependencies, this);
+                    this._dataNode.mesh().unwatch(this._dyn.dependencies, this);
                 inherited.destroy.call(this);
             },
 
@@ -83,22 +83,22 @@ Scoped.define("module:Handlers.Attr", [
                 this._element = element;
                 attribute = attribute || element.attributes[this._attrName];
                 this._attribute = attribute;
-                var splt = this._attrName.split(":");
-                this._partialCls = Registries.partial.get(splt[0]);
+                var splt = Strings.splitFirst(this._attrName, ":");
+                this._partialCls = Registries.partial.get(splt.head);
                 if (this._partial) {
                     this._partial.destroy();
                     this._partial = null;
                 }
                 this.__updateAttr();
                 if (this._partialCls) {
-                    this._partial = Registries.partial.create(splt[0], this._node, this._dyn ? this._dyn.args : {}, this._attrValue, splt[1]);
+                    this._partial = Registries.partial.create(splt.head, this._node, this._dyn ? this._dyn.args : {}, this._attrValue, splt.tail);
                     if (this._partial.cls.meta.value_hidden)
                         this._attribute.value = "";
                 }
                 if (this._dyn) {
                     if (this._dyn.bidirectional && this._attrName == "value") {
                         this._events().on(this._element, "change keyup keypress keydown blur focus update input", function() {
-                            this._node.mesh().write(this._dyn.variable, this.__inputVal(this._element));
+                            this._dataNode.mesh().write(this._dyn.variable, this.__inputVal(this._element));
                         }, this);
                     }
                     if (this._isEvent) {
@@ -121,7 +121,7 @@ Scoped.define("module:Handlers.Attr", [
                     return;
                 var value = this._attrValue;
                 if (this._dyn && (!this._partialCls || !this._partialCls.manualExecute))
-                    value = this._node.__executeDyn(this._dyn);
+                    value = this._dataNode.__executeDyn(this._dyn);
                 if ((value != this._attrValue || Types.is_array(value)) && !(!value && !this._attrValue)) {
                     var old = this._attrValue;
                     this._attrValue = value;
@@ -150,28 +150,30 @@ Scoped.define("module:Handlers.Attr", [
                     if (this._attrName === "value" && this._element.value !== value)
                         this.__inputVal(this._element, value);
                     if (this._tagHandler && this._dyn && !this._partial)
-                        this._tagHandler.properties().set(Strings.first_after(this._attrName, "-"), value);
+                        this._tagHandler.properties().set(Registries.prefixNormalize(this._attrName), value);
                 }
             },
 
             bindTagHandler: function(handler) {
-                this.unbindTagHandler();
+                this.unbindTagHandler(this._tagHandler);
                 this._tagHandler = handler;
-                if (!this._partial && Registries.prefixes[Strings.splitFirst(this._attrName, "-").head]) {
-                    var innerKey = Strings.first_after(this._attrName, "-");
-                    this._tagHandler.setArgumentAttr(innerKey, Class.is_pure_json(this._attrValue) ? Objs.clone(this._attrValue, 1) : this._attrValue);
-                    if (this._dyn && this._dyn.bidirectional) {
-                        if (Class.is_pure_json(this._attrValue)) {
-                            this._tagHandler.properties().bind(innerKey, this._node._handler.properties(), {
-                                deep: true,
-                                left: true,
-                                right: true,
-                                secondKey: this._dyn.variable
-                            });
-                        } else {
-                            this._tagHandler.properties().on("change:" + innerKey, function(value) {
-                                this._node.mesh().write(this._dyn.variable, value);
-                            }, this);
+                if (!this._partial) {
+                    var innerKey = Registries.prefixNormalize(this._attrName);
+                    if (innerKey) {
+                        this._tagHandler.setArgumentAttr(innerKey, Class.is_pure_json(this._attrValue) ? Objs.clone(this._attrValue, 1) : this._attrValue);
+                        if (this._dyn && this._dyn.bidirectional) {
+                            if (Class.is_pure_json(this._attrValue)) {
+                                this._tagHandler.properties().bind(innerKey, this._node._handler.properties(), {
+                                    deep: true,
+                                    left: true,
+                                    right: true,
+                                    secondKey: this._dyn.variable
+                                });
+                            } else {
+                                this._tagHandler.properties().on("change:" + innerKey, function(value) {
+                                    this._dataNode.mesh().write(this._dyn.variable, value);
+                                }, this);
+                            }
                         }
                     }
                 } else if (this._partial) {

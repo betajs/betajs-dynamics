@@ -85,6 +85,7 @@ Scoped.define("module:Handlers.Node", [
 
             _registerAttr: function(attribute) {
                 if (attribute.name in this._attrs)
+                    // Is this ever being called? The method doesn't exist!?
                     this._attrs[attribute.name].updateAttribute(attribute);
                 else
                     this._attrs[attribute.name] = new Attr(this, attribute);
@@ -134,6 +135,10 @@ Scoped.define("module:Handlers.Node", [
                     else
                         this._tagHandler.weakDestroy();
                     this._tagHandler = null;
+                    Objs.iter(this._handler.getInheritableAttributes(this.__tagValue()), function(attr) {
+                        this._attrs[attr.name].weakDestroy();
+                        delete this._attrs[attr.name];
+                    }, this);
                 }
             },
 
@@ -166,6 +171,9 @@ Scoped.define("module:Handlers.Node", [
                     cacheable: false,
                     tagName: tagv
                 };
+                Objs.iter(this._handler.getInheritableAttributes(this.__tagValue()), function(attr) {
+                    this._attrs[attr.name] = new Attr(attr.node, attr);
+                }, this);
                 Objs.iter(this._attrs, function(attr) {
                     attr.prepareTagHandler(createArguments);
                 }, this);

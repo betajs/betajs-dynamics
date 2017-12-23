@@ -1,0 +1,44 @@
+<html>
+<head>
+    <script src="../../node_modules/betajs-scoped/dist/scoped.js"></script>
+	<script src="../../node_modules/betajs/dist/beta-noscoped.js"></script>
+    <script src="../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
+    <script src="../../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+
+<div id="test">
+	<div>IE</div>
+	<ba-outertest ba-deeper:innertest:foo="{{arg}}">
+	</ba-outertest>
+	<div>IE</div>
+</div>
+
+<script>
+	BetaJS.Dynamics.Dynamic.extend(null, {
+		template : '<ba-innertest></ba-innertest>',
+		attrs: {
+		    arg: "garbage"
+		}
+	}).register("ba-outertest");
+    BetaJS.Dynamics.Dynamic.extend(null, {
+        template : '<p>{{foo}}</p>'
+    }).register("ba-innertest");
+
+    var root = document.querySelector("#test");
+
+    var dynamic = new BetaJS.Dynamics.Dynamic({
+        element: root,
+        attrs: {
+            arg: "baz"
+        }
+    });
+    dynamic.activate();
+
+    function test(assert) {
+    	assert.equal(root.querySelector("#test p").innerHTML.trim(), "barbaz");
+    }
+</script>
+
+</body>
+</html>

@@ -18,6 +18,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
         },
 
         __handlerConstruct: function() {
+            this._inheritableAttributes = {};
             this.__activated = false;
             this._mesh_extend = {
                 string: Functions.as_method(this.string, this),
@@ -205,7 +206,31 @@ Scoped.define("module:Handlers.HandlerMixin", [
             this.trigger("dynamic-activated");
         },
 
-        _afterActivate: function(activeElement) {}
+        _afterActivate: function(activeElement) {},
+
+        registerInheritableAttribute: function(tagName, attrKey, attrValue, node) {
+            tagName = Registries.prefixNormalize(tagName, true);
+            this._inheritableAttributes[tagName] = this._inheritableAttributes[tagName] || {};
+            this._inheritableAttributes[tagName][attrKey] = {
+                value: attrValue,
+                name: attrKey,
+                node: node
+            };
+        },
+
+        unregisterInheritableAttribute: function(tagName, attrKey) {
+            tagName = Registries.prefixNormalize(tagName, true);
+            if (this._inheritableAttributes[tagName]) {
+                delete this._inheritableAttributes[tagName][attrKey];
+                if (Types.is_empty(this._inheritableAttributes[tagName]))
+                    delete this._inheritableAttributes[tagName];
+            }
+        },
+
+        getInheritableAttributes: function(tagName) {
+            tagName = Registries.prefixNormalize(tagName, true);
+            return Objs.values(this._inheritableAttributes[tagName]);
+        }
 
     };
 });

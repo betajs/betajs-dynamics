@@ -1,14 +1,20 @@
 Scoped.define("module:Registries", [
     "base:Classes.ClassRegistry",
     "base:Exceptions.AsyncExceptionThrower",
-    "browser:Dom"
-], function(ClassRegistry, AsyncExceptionThrower, Dom) {
+    "browser:Dom",
+    "base:Strings"
+], function(ClassRegistry, AsyncExceptionThrower, Dom, Strings) {
     return {
 
         handler: new ClassRegistry({}, true),
         partial: new ClassRegistry({}, true),
         prefixes: {
             "ba": true
+        },
+
+        prefixNormalize: function(s, returnOriginal) {
+            var splt = Strings.splitFirst(s || "", "-");
+            return this.prefixes[splt.head] ? splt.tail : s;
         },
 
         templates: {

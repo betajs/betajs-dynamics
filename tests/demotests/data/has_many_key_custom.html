@@ -1,0 +1,89 @@
+<html>
+    <head>
+        
+
+
+        <script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script>
+        <script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
+        <script src="../../../node_modules/betajs-data/dist/betajs-data-noscoped.js"></script>
+        <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
+        <script src="../../../dist/betajs-dynamics.js"></script>
+    </head>
+    <body>
+
+        <div id="test">
+            <div ba-repeat="{{item :: model.assocs.items.customCollection({foo: true})}}">
+                <p>{{item.value}}</p>
+            </div>
+        </div>
+
+        <script>
+            var Model2 = BetaJS.Data.Modelling.Model.extend("Model2", {}, {
+                _initializeScheme: function () {
+                    var scheme = this._inherited(Model2, "_initializeScheme");
+                    scheme.value = {
+                        type: "string"
+                    };
+                    scheme.foreign = {
+                        type: "id"
+                    };
+                    return scheme;
+                }
+            });
+            var store2 = new BetaJS.Data.Stores.MemoryStore();
+            store2.insert_all([{
+                id: 1,
+                value: "A",
+                foreign: 11,
+                foo: true
+            }, {
+                id: 2,
+                value: "B",
+                foreign: 12,
+                foo: false
+            }, {
+                id: 3,
+                value: "C",
+                foreign: 11,
+                foo: false
+            }]);
+            var table2 = new BetaJS.Data.Modelling.Table(store2, Model2, {});
+            var Model1 = BetaJS.Data.Modelling.Model.extend("Model1", {
+                _initializeAssociations: function () {
+                    var assocs = this._inherited(Model1, "_initializeAssociations");
+                    assocs.items = new BetaJS.Data.Modelling.Associations.HasManyKeyAssociation(
+                        this,
+                        table2,
+                        "foreign", {
+                            collectionOptions: {
+                                auto: true,
+                                active: true
+                            }
+                        }
+                    );
+                    return assocs;
+                }
+            });
+            var store1 = new BetaJS.Data.Stores.MemoryStore();
+            var table1 = new BetaJS.Data.Modelling.Table(store1, Model1, {});
+            var model = table1.newModel({
+                id: 11
+            });
+            model.save();
+
+            var main = new BetaJS.Dynamics.Dynamic({
+                element: document.querySelector("#test"),
+                attrs: {
+                    model: model
+                }
+            });
+
+            main.activate();
+
+            function test(assert) {
+            	assert.equal(document.querySelector("#test div").children.length, 1);
+            }
+        </script>
+
+    </body>
+</html>

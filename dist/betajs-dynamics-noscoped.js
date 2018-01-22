@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.116 - 2017-12-23
+betajs-dynamics - v0.0.117 - 2018-01-22
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.116"
+    "version": "0.0.117"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.140');
@@ -2478,7 +2478,8 @@ Scoped.define("module:Partials.EventForwardPartial", [
                 var eventName = arguments[0];
                 var args = Functions.getArguments(arguments, 1);
                 result = [this._postfix ? this._postfix.trim() + "-" + eventName : eventName];
-                result = result.concat(this._value);
+                if (this._value)
+                    result = result.concat(this._value);
                 result = result.concat(args);
                 this._node._handler.trigger.apply(this._node._handler, result);
             }, this, {

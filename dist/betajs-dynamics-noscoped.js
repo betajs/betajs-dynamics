@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.117 - 2018-01-22
+betajs-dynamics - v0.0.118 - 2018-02-05
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,22 +12,22 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.117"
+    "version": "0.0.118"
 };
 });
-Scoped.assumeVersion('base:version', '~1.0.140');
+Scoped.assumeVersion('base:version', '~1.0.146');
 Scoped.assumeVersion('browser:version', '~1.0.61');
 Scoped.define("module:Data.Mesh", [
     "base:Class",
     "base:Events.EventsMixin",
-    "base:Properties.Properties",
+    "base:Properties.ObservableMixin",
     "base:Objs",
     "base:Types",
     "base:Strings",
     "base:Ids",
     "base:Functions",
     "base:Classes.SharedObjectFactory"
-], function(Class, EventsMixin, Properties, Objs, Types, Strings, Ids, Functions, SharedObjectFactory, scoped) {
+], function(Class, EventsMixin, ObservableMixin, Objs, Types, Strings, Ids, Functions, SharedObjectFactory, scoped) {
     return Class.extend({
         scoped: scoped
     }, [EventsMixin, function(inherited) {
@@ -126,7 +126,7 @@ Scoped.define("module:Data.Mesh", [
                 if (n === null) {
                     var defScope = this.__defaults.watch || this.__environment[0];
                     n = this._navigate(defScope, watcher.expression);
-                    if (!n.properties && Properties.is_instance_of(defScope))
+                    if (!n.properties && ObservableMixin.__observable_guid === defScope.__observable_guid)
                         n.properties = defScope;
                     if (!n.properties)
                         n = null;
@@ -216,8 +216,8 @@ Scoped.define("module:Data.Mesh", [
                     current = current.acquire(this);
                     this.__acquiredProperties[current.cid()] = current;
                 }
-                if (Properties.is_instance_of(current) && !current.destroyed()) {
-                    if (current.has(splt.head))
+                if (ObservableMixin.__observable_guid === current.__observable_guid && !current.destroyed()) {
+                    if (current.hasKey(splt.head))
                         return this._sub_navigate(current, splt.head, splt.tail, current, current.get(splt.head));
                     else if (splt.head in current)
                         return this._sub_navigate(properties, hd, splt.tail, current, current[splt.head]);

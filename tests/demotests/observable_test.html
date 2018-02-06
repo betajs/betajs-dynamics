@@ -9,34 +9,25 @@
 
 <div id="test">
 	<div>IE</div>
-	<ba-outertest ba-deeper:innertest:foo="{{arg}}">
-	</ba-outertest>
+	<p>{{coll.observable_count}}</p>
 	<div>IE</div>
 </div>
 
 <script>
-	BetaJS.Dynamics.Dynamic.extend(null, {
-		template : '<ba-innertest></ba-innertest>',
-		attrs: {
-		    arg: "garbage"
-		}
-	}).register("ba-outertest");
-    BetaJS.Dynamics.Dynamic.extend(null, {
-        template : '<p>{{foo}}</p>'
-    }).register("ba-innertest");
-
     var root = document.querySelector("#test");
 
     var dynamic = new BetaJS.Dynamics.Dynamic({
         element: root,
-        attrs: {
-            arg: "baz"
-        }
+		collections: ["coll"]
     });
     dynamic.activate();
 
     function test(assert) {
-    	assert.equal(root.querySelector("#test p").innerHTML.trim(), "baz");
+    	assert.equal(root.querySelector("#test p").innerHTML.trim(), "0");
+    	dynamic.get("coll").add({});
+        assert.equal(root.querySelector("#test p").innerHTML.trim(), "1");
+        dynamic.get("coll").remove(dynamic.get("coll").first());
+        assert.equal(root.querySelector("#test p").innerHTML.trim(), "0");
     }
 </script>
 

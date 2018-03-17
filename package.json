@@ -53,7 +53,8 @@
         "url": "git://github.com/betajs/betajs-dynamics.git"
     },
     "scripts": {
-        "test": "grunt check-node"
+        "test": "grunt check-node",
+        "relink": "npm link betajs && npm link betajs-compile && npm link betajs-scoped && npm link betajs-shims && npm link betajs-data && npm link betajs-browser && npm link betajs-debug"
     },
     "meta": {
         "blog": "http://blog.betajs.com",

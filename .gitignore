@@ -13,3 +13,4 @@ BrowserStackLocal
 /docs
 jsdoc.conf.json
 *.log
+package-lock.json

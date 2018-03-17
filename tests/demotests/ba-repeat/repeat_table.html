@@ -1,12 +1,12 @@
 <html>
 <head>
-    
 
 
-    <script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script>
-    <script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
-    <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
-    <script src="../../../dist/betajs-dynamics.js"></script>
+
+	<script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script>
+	<script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
+	<script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
+	<script src="../../../dist/betajs-dynamics.js"></script>
 </head>
 <body>
 
@@ -26,47 +26,51 @@
 </div>
 
 <script>
-    var root = document.querySelector("#test");
+	var root = document.querySelector("#test");
 
-    var dynamic = new BetaJS.Dynamics.Dynamic({
-        element: root,
-       	attrs: {
-       		table_headers: ["Header 1", "Header 2", "Header 3"],
-       		table_data: [
-		        ["Elem 1.1", "Elem 1.2", "Elem 1.3"],
-		        ["Elem 2.1", "Elem 2.2", "Elem 2.3"],
-		        ["Elem 3.1", "Elem 3.2", "Elem 3.3"]
-	        ]
-       	}
-    });
-    dynamic.activate();
+	var dynamic = new BetaJS.Dynamics.Dynamic({
+		element: root,
+		attrs: {
+			table_headers: ["Header 1", "Header 2", "Header 3"],
+			table_data: [
+				["Elem 1.1", "Elem 1.2", "Elem 1.3"],
+				["Elem 2.1", "Elem 2.2", "Elem 2.3"],
+				["Elem 3.1", "Elem 3.2", "Elem 3.3"]
+			]
+		}
+	});
+	dynamic.activate();
 
-    function test(assert) {
-    	var table_header = root.querySelector("thead");
-    	var headers = dynamic.get("table_headers");
-	    var children_header = table_header.querySelectorAll("th");
-    	var data = dynamic.get("table_data");
-	    var table_body = root.querySelector("tbody");
+	function test(assert) {
+		var table_header = root.querySelector("thead");
+		var headers = dynamic.get("table_headers");
+		var children_header = table_header.querySelectorAll("th");
+		var data = dynamic.get("table_data");
+		var table_body = root.querySelector("tbody");
 
-        assert.equal(children_header.length, headers.length);
-        for (var i = 0; i < headers.length; ++i) {
+		assert.equal(children_header.length, headers.length);
+		for (var i = 0; i < headers.length; ++i) {
 			if (children_header[i]) {
 				assert.equal(headers[i], children_header[i].innerHTML.trim());
 			} else {
 				assert.ok(false);
 			}
-        }
-	    var children_body = table_body.querySelectorAll("tr");
-	    assert.equal(children_body.length, data.length);
-	    for (i = 0; i < data.length; ++i) {
-	    	var row_children = children_body[i].querySelectorAll("td");
-		    assert.equal(row_children.length, data[i].length);
-		    for (var j = 0; j < row_children.length; ++j) {
-		        assert.equal(data[i][j], row_children[j].innerHTML.trim());
-	        }
-	    }
+		}
+		var children_body = table_body.querySelectorAll("tr");
+		assert.equal(children_body.length, data.length);
+		for (i = 0; i < data.length; ++i) {
+			var row_children = children_body[i].querySelectorAll("td");
+			assert.equal(row_children.length, data[i].length);
+			for (var j = 0; j < data[i].length; ++j) {
+				if (row_children[j]) {
+					assert.equal(data[i][j], row_children[j].innerHTML.trim());
+				} else {
+					assert.ok(false);
+				}
+			}
+		}
 
-    }
+	}
 </script>
 
 </body>

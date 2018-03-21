@@ -1,0 +1,41 @@
+<html>
+	<head>
+
+        <script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
+        <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
+		<script src="../../../dist/betajs-dynamics.js"></script>
+	</head>
+	<body>
+		<div id="test">
+			<ba-inner
+					ba-nulltest="{{nulltest}}"
+					ba-undefinedtest="{{undefinedtest}}"
+			></ba-inner>
+		</div>
+		<script>
+			var root = document.querySelector("#test");
+
+            BetaJS.Dynamics.Dynamic.extend(null, {
+                template : '<div></div>',
+				attrs: {
+                    nulltest: null,
+					undefinedtest: undefined
+				}
+            }).register("ba-inner");
+
+			var dynamic = new BetaJS.Dynamics.Dynamic({ element: root });
+		
+			dynamic.activate();
+			
+			
+			function test(assert) {
+			    var inner = dynamic.scope(">").materialize(true);
+			    assert.equal(dynamic.get("nulltest"), undefined);
+                assert.equal(inner.get("nulltest"), null);
+                dynamic.set("nulltest", null);
+                assert.equal(dynamic.get("nulltest"), null);
+                assert.equal(inner.get("nulltest"), null);
+			}
+		</script>
+	</body>
+</html>

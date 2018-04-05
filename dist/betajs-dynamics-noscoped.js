@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.118 - 2018-02-05
+betajs-dynamics - v0.0.119 - 2018-04-05
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.118"
+    "version": "0.0.119"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -884,21 +884,19 @@ Scoped.define("module:DomObserver", [
                 this.__persistent_dynamics = !!options.persistent_dynamics;
                 this.__allowed_dynamics = options.allowed_dynamics ? Objs.objectify(options.allowed_dynamics) : null;
                 this.__forbidden_dynamics = options.forbidden_dynamics ? Objs.objectify(options.forbidden_dynamics) : null;
+                this.__ignore_existing = options.ignore_existing;
                 this.__dynamics = {};
-                if (!options.ignore_existing) {
-                    Objs.iter(Registries.handler.classes(), function(cls, key) {
-                        if (this.__forbidden_dynamics && this.__forbidden_dynamics[key])
-                            return;
-                        if (this.__allowed_dynamics && !this.__allowed_dynamics[key])
-                            return;
-                        var tags = this.__root.getElementsByTagName(key.toUpperCase());
-                        for (var i = 0; i < tags.length; ++i) {
-                            var elem = tags[i];
-                            if (!elem.dynamicshandler)
-                                this.__nodeInserted(elem);
-                        }
-                    }, this);
-                }
+                this.__enabled = false;
+                if (!("enabled" in options) || options.enabled)
+                    this.enable();
+            },
+
+            enable: function() {
+                if (this.__enabled)
+                    return;
+                this.__enabled = true;
+                if (!this.__ignore_existing)
+                    Objs.iter(Registries.handler.classes(), this.__registerExisting, this);
                 this.__observer = NodeInsertObserver.create({
                     root: this.__root,
                     filter: this.__observerFilter,
@@ -907,8 +905,36 @@ Scoped.define("module:DomObserver", [
                 this.__observer.on("node-inserted", this.__nodeInserted, this);
             },
 
+            disable: function() {
+                if (!this.__enabled)
+                    return;
+                this.__enabled = false;
+                this.__observer.weakDestroy();
+            },
+
+            __registerExisting: function(cls, key) {
+                if (this.__forbidden_dynamics && this.__forbidden_dynamics[key])
+                    return;
+                if (this.__allowed_dynamics && !this.__allowed_dynamics[key])
+                    return;
+                var tags = this.__root.getElementsByTagName(key.toUpperCase());
+                for (var i = 0; i < tags.length; ++i) {
+                    var elem = tags[i];
+                    if (!elem.dynamicshandler)
+                        this.__nodeInserted(elem);
+                }
+            },
+
+            addAllowedDynamic: function(key) {
+                this.__allowed_dynamics = this.__allowed_dynamics || {};
+                this.__allowed_dynamics[key] = true;
+                var cls = (Registries.handler.classes())[key];
+                if (this.__enabled && !this.__ignore_existing && cls)
+                    this.__registerExisting(cls, key);
+            },
+
             destroy: function() {
-                this.__observer.destroy();
+                this.disable();
                 Objs.iter(this.__dynamics, function(dynamic) {
                     dynamic.off(null, null, this);
                     if (!this.__persistent_dynamics)
@@ -2477,7 +2503,19 @@ Scoped.define("module:Partials.EventForwardPartial", [
             handler.on("all", function() {
                 var eventName = arguments[0];
                 var args = Functions.getArguments(arguments, 1);
-                result = [this._postfix ? this._postfix.trim() + "-" + eventName : eventName];
+                var result = [eventName];
+                var pf = this._postfix.trim();
+                if (pf.indexOf("~") === 0) {
+                    console.log(pf, arguments);
+                }
+                if (pf) {
+                    if (pf.indexOf("~") === 0) {
+                        pf = pf.substring(1);
+                        if (eventName.indexOf(pf) === 0)
+                            result = [eventName.substring(pf.length + 1)];
+                    } else
+                        result = [pf + "-" + eventName];
+                }
                 if (this._value)
                     result = result.concat(this._value);
                 result = result.concat(args);
@@ -2497,15 +2535,25 @@ Scoped.define("module:Partials.EventForwardPartial", [
     return Cls;
 });
 Scoped.define("module:Partials.EventPartial", [
-    "module:Handlers.Partial"
-], function(Partial, scoped) {
+    "module:Handlers.Partial",
+    "base:Functions"
+], function(Partial, Functions, scoped) {
     var Cls = Partial.extend({
         scoped: scoped
     }, {
 
         bindTagHandler: function(handler) {
-            handler.on(this._postfix, function() {
-                this._valueExecute(arguments);
+            var pf = this._postfix.trim();
+            var fwd = pf.indexOf("~") === 0;
+            if (fwd)
+                pf = pf.substring(1);
+            handler.on(pf, function() {
+                if (fwd) {
+                    var args = Functions.getArguments(arguments);
+                    args.unshift(this._value || pf);
+                    this._node._handler.trigger.apply(this._node._handler, args);
+                } else
+                    this._valueExecute(arguments);
             }, this);
         }
 

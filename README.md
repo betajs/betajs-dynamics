@@ -1,4 +1,4 @@
-# betajs-dynamics 0.0.118
+# betajs-dynamics 0.0.119
 [![Build Status](https://api.travis-ci.org/betajs/betajs-dynamics.svg?branch=master)](https://travis-ci.org/betajs/betajs-dynamics)
 [![Code Climate](https://codeclimate.com/github/betajs/betajs-dynamics/badges/gpa.svg)](https://codeclimate.com/github/betajs/betajs-dynamics)
 [![NPM](https://img.shields.io/npm/v/betajs-dynamics.svg?style=flat)](https://www.npmjs.com/package/betajs-dynamics)
@@ -72,11 +72,11 @@ Will evaluate to
 ## Links
 | Resource   | URL |
 | :--------- | --: |
-| Homepage   | [http://betajs.com](http://betajs.com) |
+| Homepage   | [https://betajs.com](https://betajs.com) |
 | Git        | [git://github.com/betajs/betajs-dynamics.git](git://github.com/betajs/betajs-dynamics.git) |
 | Repository | [https://github.com/betajs/betajs-dynamics](https://github.com/betajs/betajs-dynamics) |
-| Blog       | [http://blog.betajs.com](http://blog.betajs.com) | 
-| Twitter    | [http://twitter.com/thebetajs](http://twitter.com/thebetajs) | 
+| Blog       | [https://blog.betajs.com](https://blog.betajs.com) | 
+| Twitter    | [https://twitter.com/thebetajs](https://twitter.com/thebetajs) | 
 | Gitter     | [https://gitter.im/betajs/betajs-dynamics](https://gitter.im/betajs/betajs-dynamics) | 
 
 

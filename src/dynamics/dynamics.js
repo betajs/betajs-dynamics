@@ -219,14 +219,18 @@ Scoped.define("module:Dynamic", [
         },
 
         string: function(key) {
-            var result = this.__stringTable.get(key, this.registeredName());
+            var result = null;
+            if (this.__stringTable)
+                result = this.__stringTable.get(key, this.registeredName());
             if (!result && this.parent.string)
                 result = this.parent.string(key);
             return result;
         },
 
         stringUnicode: function(key) {
-            var result = this.__stringTable.get(key, this.registeredName());
+            var result = null;
+            if (this.__stringTable)
+                result = this.__stringTable.get(key, this.registeredName());
             if (!result && this.parent.string)
                 result = this.parent.string(key);
             return Dom.entitiesToUnicode(result);

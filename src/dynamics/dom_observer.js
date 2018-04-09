@@ -14,7 +14,7 @@ Scoped.define("module:DomObserver", [
             constructor: function(options) {
                 inherited.constructor.call(this);
                 options = options || {};
-                this.__root = Dom.unbox(options.root || document.body);
+                this.__initialRoot = options.root;
                 this.__persistent_dynamics = !!options.persistent_dynamics;
                 this.__allowed_dynamics = options.allowed_dynamics ? Objs.objectify(options.allowed_dynamics) : null;
                 this.__forbidden_dynamics = options.forbidden_dynamics ? Objs.objectify(options.forbidden_dynamics) : null;
@@ -29,6 +29,7 @@ Scoped.define("module:DomObserver", [
                 if (this.__enabled)
                     return;
                 this.__enabled = true;
+                this.__root = Dom.unbox(this.__initialRoot || document.body);
                 if (!this.__ignore_existing)
                     Objs.iter(Registries.handler.classes(), this.__registerExisting, this);
                 this.__observer = NodeInsertObserver.create({

@@ -1,10 +1,10 @@
 /*!
-betajs-dynamics - v0.0.119 - 2018-04-05
+betajs-dynamics - v0.0.120 - 2018-04-08
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
 /** @flow **//*!
-betajs-scoped - v0.0.17 - 2018-02-17
+betajs-scoped - v0.0.19 - 2018-04-07
 Copyright (c) Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -759,10 +759,7 @@ function newScope (parent, parentNS, rootNS, globalNS) {
 		resolve: function (namespaceLocator) {
 			var parts = namespaceLocator.split(":");
 			if (parts.length == 1) {
-				return {
-					namespace: privateNamespace,
-					path: parts[0]
-				};
+                throw ("The locator '" + parts[0] + "' requires a namespace.");
 			} else {
 				var binding = bindings[parts[0]];
 				if (!binding)
@@ -967,7 +964,7 @@ var Public = Helper.extend(rootScope, (function () {
 return {
 		
 	guid: "4b6878ee-cb6a-46b3-94ac-27d91f58d666",
-	version: '0.0.17',
+	version: '0.0.19',
 		
 	upgrade: Attach.upgrade,
 	attach: Attach.attach,
@@ -1009,7 +1006,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.119 - 2018-04-05
+betajs-dynamics - v0.0.120 - 2018-04-08
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1022,7 +1019,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.119"
+    "version": "0.0.120"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -1890,7 +1887,7 @@ Scoped.define("module:DomObserver", [
             constructor: function(options) {
                 inherited.constructor.call(this);
                 options = options || {};
-                this.__root = Dom.unbox(options.root || document.body);
+                this.__initialRoot = options.root;
                 this.__persistent_dynamics = !!options.persistent_dynamics;
                 this.__allowed_dynamics = options.allowed_dynamics ? Objs.objectify(options.allowed_dynamics) : null;
                 this.__forbidden_dynamics = options.forbidden_dynamics ? Objs.objectify(options.forbidden_dynamics) : null;
@@ -1905,6 +1902,7 @@ Scoped.define("module:DomObserver", [
                 if (this.__enabled)
                     return;
                 this.__enabled = true;
+                this.__root = Dom.unbox(this.__initialRoot || document.body);
                 if (!this.__ignore_existing)
                     Objs.iter(Registries.handler.classes(), this.__registerExisting, this);
                 this.__observer = NodeInsertObserver.create({
@@ -2211,14 +2209,18 @@ Scoped.define("module:Dynamic", [
         },
 
         string: function(key) {
-            var result = this.__stringTable.get(key, this.registeredName());
+            var result = null;
+            if (this.__stringTable)
+                result = this.__stringTable.get(key, this.registeredName());
             if (!result && this.parent.string)
                 result = this.parent.string(key);
             return result;
         },
 
         stringUnicode: function(key) {
-            var result = this.__stringTable.get(key, this.registeredName());
+            var result = null;
+            if (this.__stringTable)
+                result = this.__stringTable.get(key, this.registeredName());
             if (!result && this.parent.string)
                 result = this.parent.string(key);
             return Dom.entitiesToUnicode(result);

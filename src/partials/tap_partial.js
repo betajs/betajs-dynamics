@@ -1,8 +1,10 @@
 Scoped.define("module:Partials.TapPartial", [
     "module:Handlers.Partial",
     "browser:Info",
-    "browser:Events"
-], function(Partial, Info, Events, scoped) {
+    "browser:Events",
+    "base:Time",
+    "base:Async"
+], function(Partial, Info, Events, Time, Async, scoped) {
     /**
      * @name ba-tap
      *
@@ -24,11 +26,32 @@ Scoped.define("module:Partials.TapPartial", [
             constructor: function(node, args, value, postfix) {
                 inherited.constructor.apply(this, arguments);
                 var events = this.auto_destroy(new Events());
-                postfix = postfix ? postfix.trim() : "";
-                var event = Info.isMobile() ? (postfix ? "touch" + postfix : "touchstart") : "click";
-                events.on(this._node._element, event, function(e) {
+                if (!Info.isMobile()) {
+                    events.on(this._node._element, "click", function(e) {
+                        e.stopPropagation();
+                        this._execute();
+                    }, this);
+                    return;
+                }
+                /*
+                    This code prevents two issues with tapping on mobile devices
+                        - after touchstart, click is being fired and might execute subsequent things
+                            workaround: if delta between last tap and click is too small, discard
+                        - sometimes click is fired but not touchstart
+                            workaround: if delta between last tap and click is sufficiently large, execute
+                 */
+                var touch = postfix ? "touch" + postfix.trim() : "touchstart";
+                var lastTap = 0;
+                events.on(this._node._element, "click " + touch, function(e) {
                     e.stopPropagation();
-                    this._execute();
+                    e.preventDefault();
+                    var delta = Time.now() - lastTap;
+                    if (delta < 100)
+                        return;
+                    Async.eventually(function() {
+                        this._execute();
+                    }, this);
+                    lastTap = Time.now();
                 }, this);
             }
 

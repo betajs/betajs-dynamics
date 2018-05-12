@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.120 - 2018-04-08
+betajs-dynamics - v0.0.121 - 2018-05-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1006,7 +1006,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.120 - 2018-04-08
+betajs-dynamics - v0.0.121 - 2018-05-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1019,7 +1019,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.120"
+    "version": "0.0.121"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -3517,9 +3517,6 @@ Scoped.define("module:Partials.EventForwardPartial", [
                 var args = Functions.getArguments(arguments, 1);
                 var result = [eventName];
                 var pf = this._postfix.trim();
-                if (pf.indexOf("~") === 0) {
-                    console.log(pf, arguments);
-                }
                 if (pf) {
                     if (pf.indexOf("~") === 0) {
                         pf = pf.substring(1);
@@ -4314,8 +4311,10 @@ Scoped.define("module:Partials.StylesPartial", ["module:Handlers.Partial"], func
 Scoped.define("module:Partials.TapPartial", [
     "module:Handlers.Partial",
     "browser:Info",
-    "browser:Events"
-], function(Partial, Info, Events, scoped) {
+    "browser:Events",
+    "base:Time",
+    "base:Async"
+], function(Partial, Info, Events, Time, Async, scoped) {
     /**
      * @name ba-tap
      *
@@ -4337,11 +4336,32 @@ Scoped.define("module:Partials.TapPartial", [
             constructor: function(node, args, value, postfix) {
                 inherited.constructor.apply(this, arguments);
                 var events = this.auto_destroy(new Events());
-                postfix = postfix ? postfix.trim() : "";
-                var event = Info.isMobile() ? (postfix ? "touch" + postfix : "touchstart") : "click";
-                events.on(this._node._element, event, function(e) {
+                if (!Info.isMobile()) {
+                    events.on(this._node._element, "click", function(e) {
+                        e.stopPropagation();
+                        this._execute();
+                    }, this);
+                    return;
+                }
+                /*
+                    This code prevents two issues with tapping on mobile devices
+                        - after touchstart, click is being fired and might execute subsequent things
+                            workaround: if delta between last tap and click is too small, discard
+                        - sometimes click is fired but not touchstart
+                            workaround: if delta between last tap and click is sufficiently large, execute
+                 */
+                var touch = postfix ? "touch" + postfix.trim() : "touchstart";
+                var lastTap = 0;
+                events.on(this._node._element, "click " + touch, function(e) {
                     e.stopPropagation();
-                    this._execute();
+                    e.preventDefault();
+                    var delta = Time.now() - lastTap;
+                    if (delta < 100)
+                        return;
+                    Async.eventually(function() {
+                        this._execute();
+                    }, this);
+                    lastTap = Time.now();
                 }, this);
             }
 

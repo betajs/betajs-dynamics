@@ -12,9 +12,6 @@ Scoped.define("module:Partials.EventForwardPartial", [
                 var args = Functions.getArguments(arguments, 1);
                 var result = [eventName];
                 var pf = this._postfix.trim();
-                if (pf.indexOf("~") === 0) {
-                    console.log(pf, arguments);
-                }
                 if (pf) {
                     if (pf.indexOf("~") === 0) {
                         pf = pf.substring(1);

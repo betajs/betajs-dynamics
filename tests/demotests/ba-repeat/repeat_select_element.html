@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script>
+	<script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
+	<script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
+	<script src="../../../dist/betajs-dynamics.js"></script>
+    <!--<script src="../../../node_modules/qunitjs/qunit/qunit.js"></script>-->
+</head>
+<body>
+
+<div id="test">
+    <select id="select-test">
+        <option ba-repeat-element="{{option :: options}}"
+                value="{{option.value}}"
+        >{{option.label}}</option>
+    </select>
+</div>
+
+<script>
+	var root = document.querySelector("#test");
+	var Objs = BetaJS.Objs;
+	var Async = BetaJS.Async;
+
+	var dynamic = new BetaJS.Dynamics.Dynamic({
+		element: root,
+		attrs: {
+			options: [
+			    {
+                    'value': '1',
+                	'label': 'Option 1'
+				},
+                {
+                    'value': '2',
+                    'label': 'Option 2'
+                },
+                {
+                    'value': '3',
+                    'label': 'Option 3'
+                }
+			]
+		}
+	});
+	dynamic.activate();
+    var options = dynamic.get("options");
+    var selectElement = document.getElementById("select-test");
+    var counter = 0;
+
+    // to test with `node-qunit-phantomjs` for single file
+    // also uncomment above qunit inclusion
+    // QUnit.test("Ba-repeat-element select element test", function(assert) {
+    //     var done = assert.async();
+    //     for (var i = 0; i <= options.length; i++) {
+    //         if (typeof options[i] !== 'undefined') {
+    //             assert.equal(selectElement.options[i + 1].value, options[i].value);
+    //             assert.equal(selectElement.options[i + 1].text, options[i].label);
+    //             counter++;
+    //         }
+    //     }
+    //     Async.eventually(function () {
+    //         if (counter > 0) {
+    //             assert.ok(true, "we've passed at least one pair test");
+    //         }
+    //         done();
+    //     }, document, 100);
+    // });
+
+    function test(assert) {
+        var done = assert.async();
+        for (var i = 0; i <= options.length; i++) {
+            if (typeof options[i] !== 'undefined') {
+                assert.equal(selectElement.options[i + 1].value, options[i].value);
+                assert.equal(selectElement.options[i + 1].text, options[i].label);
+                counter++;
+            }
+        }
+        Async.eventually(function () {
+            if (counter > 0)
+                assert.ok(true, "we've passed at least one pair test");
+            else
+                assert.ok(false, "no tests passed");
+            done();
+        }, document, 100);
+    }
+</script>
+
+</body>
+</html>

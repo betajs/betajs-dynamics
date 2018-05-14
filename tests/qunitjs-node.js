@@ -24,6 +24,7 @@ QUnit.test("jsdom", function (assert) {
             "demotests/ba-repeat/element_handler.html",
             "demotests/ba-repeat/updates.html",
             "demotests/ba-repeat/sort.html",
+            "demotests/ba-repeat/repeat_select_element.html",
             "demotests/ba-sharescope/share_scope.html",
             "demotests/ba-sharescope/share_scope2.html",
             "demotests/events/event_chain.html",

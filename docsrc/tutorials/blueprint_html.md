@@ -31,8 +31,8 @@
     <-- Classes -->
     <div ba-class='{{{
         'always' : true,
-        'sometimes' : {{attribute}},
-        'othertimes' : {{attribute.get('property') == 'other'}},
+        'sometimes' : attribute,
+        'othertimes' : attribute.get('property') == 'other',
         'never' : false
     }}}'>Some random text</div>
 

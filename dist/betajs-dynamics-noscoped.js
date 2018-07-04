@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.121 - 2018-05-12
+betajs-dynamics - v0.0.122 - 2018-07-03
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,11 +12,76 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.121"
+    "version": "0.0.122"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
 Scoped.assumeVersion('browser:version', '~1.0.61');
+Scoped.define("module:Data.Friendgroup", [
+    "base:Class",
+    "base:Types",
+    "base:Objs",
+    "base:Iterators.ObjectValuesIterator",
+    "module:Data.ManualMultiScope"
+], function(Class, Types, Objs, ObjectValuesIterator, ManualMultiScope, scoped) {
+    return Class.extend({
+        scoped: scoped
+    }, function(inherited) {
+        return {
+
+            constructor: function(parent) {
+                inherited.constructor.call(this);
+                this.parent = parent;
+                this._registeredScopes = {};
+                this._watchScopes = {};
+            },
+
+            destroy: function() {
+                Objs.iter(this._watchScopes, function(m) {
+                    m.weakDestroy();
+                });
+                inherited.destroy.call(this);
+            },
+
+            registerScope: function(scope, identifier) {
+                this._registeredScopes[identifier] = this._registeredScopes[identifier] || {};
+                this._registeredScopes[identifier][scope.cid()] = scope;
+            },
+
+            unregisterScope: function(scope, identifier) {
+                delete this._registeredScopes[identifier][scope.cid()];
+                if (Types.is_empty(this._registeredScopes[identifier]))
+                    delete this._registeredScopes[identifier];
+            },
+
+            watchScope: function(reference, identifier) {
+                if (!this._watchScopes[identifier]) {
+                    this._watchScopes[identifier] = new ManualMultiScope(function() {
+                        return this.iterateScopes(identifier);
+                    }, this);
+                }
+                this._watchScopes[identifier].increaseRef(reference);
+                return this._watchScopes[identifier];
+            },
+
+            unwatchScope: function(reference, identifier) {
+                if (this._watchScopes[identifier]) {
+                    this._watchScopes[identifier].decreaseRef(reference);
+                    if (this._watchScopes[identifier].destroyed())
+                        delete this._watchScopes[identifier];
+                }
+                return this;
+            },
+
+            iterateScopes: function(identifier) {
+                return this._registeredScopes[identifier] || !this.parent ?
+                    new ObjectValuesIterator(this._registeredScopes[identifier] || {}) :
+                    this.parent.iterateScopes(identifier);
+            }
+
+        };
+    });
+});
 Scoped.define("module:Data.Mesh", [
     "base:Class",
     "base:Events.EventsMixin",
@@ -298,6 +363,184 @@ Scoped.define("module:Data.Mesh", [
         };
     }]);
 });
+Scoped.define("module:Data.AbstractMultiScope", [
+    "base:Class",
+    "base:Events.EventsMixin",
+    "base:Events.ListenMixin"
+], function(Class, EventsMixin, ListenMixin, scoped) {
+    return Class.extend({
+        scoped: scoped
+    }, [EventsMixin, ListenMixin, function(inherited) {
+        return {
+
+            constructor: function() {
+                inherited.constructor.call(this);
+                var iter = this.iterator();
+                while (iter.hasNext())
+                    this.delegateEvents(null, iter.next());
+            },
+
+            destroy: function() {
+                var iter = this.iterator();
+                while (iter.hasNext())
+                    iter.next().off(null, null, this);
+                inherited.destroy.call(this);
+            },
+
+            set: function(key, value) {
+                var iter = this.iterator();
+                while (iter.hasNext())
+                    iter.next().set(key, value);
+                return this;
+            },
+
+            get: function(key) {
+                var iter = this.iterator();
+                return iter.hasNext() ? iter.next().get(key) : null;
+            },
+
+            setProp: function(key, value) {
+                var iter = this.iterator();
+                while (iter.hasNext())
+                    iter.next().setProp(key, value);
+                return this;
+            },
+
+            getProp: function(key) {
+                var iter = this.iterator();
+                return iter.hasNext() ? iter.next().getProp(key) : null;
+            },
+
+            define: function(name, func) {
+                var iter = this.iterator();
+                while (iter.hasNext())
+                    iter.next().define(name, func);
+                return this;
+            },
+
+            /* Deprecated */
+            call: function(name) {
+                return this.execute.apply(this, arguments);
+            },
+
+            execute: function(name) {
+                var iter = this.iterator();
+                var result = null;
+                while (iter.hasNext()) {
+                    var obj = iter.next();
+                    var local = obj.execute.apply(obj, arguments);
+                    result = result || local;
+                }
+                return result;
+            },
+
+            materialize: function(returnFirst) {
+                return returnFirst ? this.iterator().next() : this.iterator().asArray();
+            },
+
+            iterator: function() {
+                throw "Abstract";
+            },
+
+            _addScope: function(scope) {
+                this.delegateEvents(null, scope);
+                this.trigger("addscope", scope);
+                return this;
+            },
+
+            _removeScope: function(scope) {
+                scope.off(null, null, this);
+                this.trigger("removescope", scope);
+                return this;
+            }
+
+        };
+    }]);
+});
+
+
+
+Scoped.define("module:Data.ManualMultiScope", [
+    "module:Data.AbstractMultiScope"
+], function(Class, scoped) {
+    return Class.extend({
+        scoped: scoped
+    }, function(inherited) {
+        return {
+
+            constructor: function(iteratorCallback, iteratorContext) {
+                this.__iteratorCallback = iteratorCallback;
+                this.__iteratorContext = iteratorContext;
+                inherited.constructor.call(this);
+            },
+
+            iterator: function() {
+                return this.__iteratorCallback.call(this.__iteratorContext);
+            },
+
+            addScope: function(scope) {
+                return this._addScope(scope);
+            },
+
+            removeScope: function(scope) {
+                return this._removeScope(scope);
+            }
+
+        };
+    });
+});
+
+
+Scoped.define("module:Data.MultiScope", [
+    "module:Data.AbstractMultiScope",
+    "base:Iterators.ArrayIterator"
+], function(Class, ArrayIterator, scoped) {
+    return Class.extend({
+        scoped: scoped
+    }, function(inherited) {
+        return {
+
+            constructor: function(owner, base, query) {
+                this.__owner = owner;
+                this.__base = base;
+                this.__queryStr = query;
+                this.__query = this.auto_destroy(this.__owner.__manager.query(this.__owner, query));
+                inherited.constructor.call(this);
+                this.__query.on("add", this._addScope, this);
+                this.__query.on("remove", this._removeScope, this);
+            },
+
+            iterator: function() {
+                return new ArrayIterator(this.__query.result());
+            },
+
+            parent: function() {
+                return this.__owner.scope(this.__base, this.__queryStr + "<");
+            },
+
+            root: function() {
+                return this.__owner.root();
+            },
+
+            children: function() {
+                return this.__owner.scope(this.__base, this.__queryStr + ">");
+            },
+
+            scope: function(base, query) {
+                if (arguments.length < 2) {
+                    query = this.__queryStr + base;
+                    base = this.__base;
+                }
+                return this.__owner.scope(base, query);
+            },
+
+            freeze: function() {
+                this.__query.off("add", null, this);
+            }
+
+        };
+    });
+});
 Scoped.define("module:Parser", [
     "base:Types",
     "base:Objs",
@@ -480,8 +723,9 @@ Scoped.define("module:Data.Scope", [
     "base:Collections.Collection",
     "base:Events.Events",
     "module:Data.ScopeManager",
-    "module:Data.MultiScope"
-], function(Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, Events, ScopeManager, MultiScope, scoped) {
+    "module:Data.MultiScope",
+    "module:Data.Friendgroup"
+], function(Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, Events, ScopeManager, MultiScope, Friendgroup, scoped) {
     return Class.extend({
         scoped: scoped
     }, [EventsMixin, ListenMixin, ObjectIdMixin, function(inherited) {
@@ -500,7 +744,8 @@ Scoped.define("module:Data.Scope", [
                     computed: {},
                     events: {},
                     channels: {},
-                    registerchannels: []
+                    registerchannels: [],
+                    friends: {}
                 }, options);
                 if (options.bindings)
                     options.bind = Objs.extend(options.bind, options.bindings);
@@ -565,10 +810,24 @@ Scoped.define("module:Data.Scope", [
                     if (channel)
                         this.listenOn(this.channel(splt.head), splt.tail, value, this);
                 }, this);
+                if (this.friendgroup || !parent)
+                    this.friendgroup = this.auto_destroy(new Friendgroup(parent ? parent.friendgroup : null));
+                else
+                    this.friendgroup = parent.friendgroup;
+                this.friends = {};
+                this.__friends = options.friends;
+                Objs.iter(this.__friends, function(value, key) {
+                    this.friends[key] = this.friendgroup.watchScope(this, value);
+                }, this);
             },
+
+            friendgroup: false,
 
             destroy: function() {
                 this.trigger("destroy");
+                Objs.iter(this.__friends, function(value) {
+                    this.friendgroup.unwatchScope(this, value);
+                }, this);
                 Objs.iter(this.__scopes, function(scope) {
                     scope.destroy();
                 });
@@ -734,135 +993,14 @@ Scoped.define("module:Data.Scope", [
         _extender: {
             functions: function(base, overwrite) {
                 return Objs.extend(Objs.clone(base, 1), overwrite);
+            },
+            friends: function(base, overwrite) {
+                return Objs.extend(Objs.clone(base, 1), overwrite);
             }
+
         }
 
     });
-});
-
-
-Scoped.define("module:Data.MultiScope", [
-    "base:Class",
-    "base:Events.EventsMixin",
-    "base:Events.ListenMixin",
-    "base:Objs",
-    "base:Iterators.ArrayIterator"
-], function(Class, EventsMixin, ListenMixin, Objs, ArrayIterator, scoped) {
-    return Class.extend({
-        scoped: scoped
-    }, [EventsMixin, ListenMixin, function(inherited) {
-        return {
-
-            constructor: function(owner, base, query) {
-                inherited.constructor.call(this);
-                this.__owner = owner;
-                this.__base = base;
-                this.__queryStr = query;
-                this.__query = this.__owner.__manager.query(this.__owner, query);
-                this.__query.on("add", function(scope) {
-                    this.delegateEvents(null, scope);
-                    this.trigger("addscope", scope);
-                }, this);
-                this.__query.on("remove", function(scope) {
-                    scope.off(null, null, this);
-                    this.trigger("removescope", scope);
-                }, this);
-                Objs.iter(this.__query.result(), function(scope) {
-                    this.delegateEvents(null, scope);
-                }, this);
-                this.__freeze = false;
-            },
-
-            destroy: function() {
-                Objs.iter(this.__query.result(), function(scope) {
-                    scope.off(null, null, this);
-                }, this);
-                this.__query.destroy();
-                inherited.destroy.call(this);
-            },
-
-            iterator: function() {
-                return new ArrayIterator(this.__query.result());
-            },
-
-            set: function(key, value) {
-                var iter = this.iterator();
-                while (iter.hasNext())
-                    iter.next().set(key, value);
-                return this;
-            },
-
-            get: function(key) {
-                var iter = this.iterator();
-                return iter.hasNext() ? iter.next().get(key) : null;
-            },
-
-            setProp: function(key, value) {
-                var iter = this.iterator();
-                while (iter.hasNext())
-                    iter.next().setProp(key, value);
-                return this;
-            },
-
-            getProp: function(key) {
-                var iter = this.iterator();
-                return iter.hasNext() ? iter.next().getProp(key) : null;
-            },
-
-            define: function(name, func) {
-                var iter = this.iterator();
-                while (iter.hasNext())
-                    iter.next().define(name, func);
-                return this;
-            },
-
-            /* Deprecated */
-            call: function(name) {
-                return this.execute.apply(this, arguments);
-            },
-
-            execute: function(name) {
-                var iter = this.iterator();
-                var result = null;
-                while (iter.hasNext()) {
-                    var obj = iter.next();
-                    var local = obj.execute.apply(obj, arguments);
-                    result = result || local;
-                }
-                return result;
-            },
-
-            parent: function() {
-                return this.__owner.scope(this.__base, this.__queryStr + "<");
-            },
-
-            root: function() {
-                return this.__owner.root();
-            },
-
-            children: function() {
-                return this.__owner.scope(this.__base, this.__queryStr + ">");
-            },
-
-            scope: function(base, query) {
-                if (arguments.length < 2) {
-                    query = this.__queryStr + base;
-                    base = this.__base;
-                }
-                return this.__owner.scope(base, query);
-            },
-
-            materialize: function(returnFirst) {
-                return returnFirst ? this.iterator().next() : this.iterator().asArray();
-            },
-
-            freeze: function() {
-                this.__freeze = true;
-                this.__query.off("add", null, this);
-            }
-
-        };
-    }]);
 });
 Scoped.define("module:DomObserver", [
     "base:Class",
@@ -1085,6 +1223,7 @@ Scoped.define("module:Dynamic", [
                 this.window_events = {};
                 this.__domEvents = new DomEvents();
                 this.inheritables = (this.parent() ? this.parent().inheritables : []).concat(this.inheritables || []);
+                this.friendgroup.registerScope(this, this.cls.registeredName());
             },
 
             handle_call_exception: function(name, args, e) {
@@ -1115,6 +1254,7 @@ Scoped.define("module:Dynamic", [
             },
 
             destroy: function() {
+                this.friendgroup.unregisterScope(this, this.cls.registeredName());
                 if (this.free)
                     this.free();
                 Objs.iter(this.__references, function(reference) {
@@ -1136,13 +1276,13 @@ Scoped.define("module:Dynamic", [
     }], {
 
         __initialForward: [
-            "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose", "channels", "registerchannels", "references"
+            "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose", "channels", "registerchannels", "references", "friends"
         ],
 
         __globalEvents: new Events(),
 
         canonicName: function() {
-            return Strings.last_after(this.classname, ".").toLowerCase();
+            return this.classname ? Strings.last_after(this.classname, ".").toLowerCase() : "";
         },
 
         registeredName: function() {
@@ -1220,6 +1360,9 @@ Scoped.define("module:Dynamic", [
         },
 
         _extender: {
+            events: function(base, overwrite) {
+                return Objs.extend(Objs.clone(base, 1), overwrite);
+            },
             types: function(base, overwrite) {
                 return Objs.extend(Objs.clone(base, 1), overwrite);
             },
@@ -1931,7 +2074,7 @@ Scoped.define("module:Handlers.Node", [
                 this._expandChildren = true;
                 this._touchedInner = false;
 
-                this._mesh = new Mesh([window, this.properties(), this._locals, this._handler.functions, this._handler._mesh_extend], this._handler, {
+                this._mesh = new Mesh([window, this.properties(), this._locals, this._handler.functions, this._handler.friends || {}, this._handler._mesh_extend], this._handler, {
                     read: this.properties(),
                     write: this.properties(),
                     watch: this.properties()

@@ -74,8 +74,9 @@ Scoped.define("module:Data.Scope", [
     "base:Collections.Collection",
     "base:Events.Events",
     "module:Data.ScopeManager",
-    "module:Data.MultiScope"
-], function(Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, Events, ScopeManager, MultiScope, scoped) {
+    "module:Data.MultiScope",
+    "module:Data.Friendgroup"
+], function(Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, Events, ScopeManager, MultiScope, Friendgroup, scoped) {
     return Class.extend({
         scoped: scoped
     }, [EventsMixin, ListenMixin, ObjectIdMixin, function(inherited) {
@@ -94,7 +95,8 @@ Scoped.define("module:Data.Scope", [
                     computed: {},
                     events: {},
                     channels: {},
-                    registerchannels: []
+                    registerchannels: [],
+                    friends: {}
                 }, options);
                 if (options.bindings)
                     options.bind = Objs.extend(options.bind, options.bindings);
@@ -159,10 +161,24 @@ Scoped.define("module:Data.Scope", [
                     if (channel)
                         this.listenOn(this.channel(splt.head), splt.tail, value, this);
                 }, this);
+                if (this.friendgroup || !parent)
+                    this.friendgroup = this.auto_destroy(new Friendgroup(parent ? parent.friendgroup : null));
+                else
+                    this.friendgroup = parent.friendgroup;
+                this.friends = {};
+                this.__friends = options.friends;
+                Objs.iter(this.__friends, function(value, key) {
+                    this.friends[key] = this.friendgroup.watchScope(this, value);
+                }, this);
             },
+
+            friendgroup: false,
 
             destroy: function() {
                 this.trigger("destroy");
+                Objs.iter(this.__friends, function(value) {
+                    this.friendgroup.unwatchScope(this, value);
+                }, this);
                 Objs.iter(this.__scopes, function(scope) {
                     scope.destroy();
                 });
@@ -328,133 +344,12 @@ Scoped.define("module:Data.Scope", [
         _extender: {
             functions: function(base, overwrite) {
                 return Objs.extend(Objs.clone(base, 1), overwrite);
+            },
+            friends: function(base, overwrite) {
+                return Objs.extend(Objs.clone(base, 1), overwrite);
             }
+
         }
 
     });
-});
-
-
-Scoped.define("module:Data.MultiScope", [
-    "base:Class",
-    "base:Events.EventsMixin",
-    "base:Events.ListenMixin",
-    "base:Objs",
-    "base:Iterators.ArrayIterator"
-], function(Class, EventsMixin, ListenMixin, Objs, ArrayIterator, scoped) {
-    return Class.extend({
-        scoped: scoped
-    }, [EventsMixin, ListenMixin, function(inherited) {
-        return {
-
-            constructor: function(owner, base, query) {
-                inherited.constructor.call(this);
-                this.__owner = owner;
-                this.__base = base;
-                this.__queryStr = query;
-                this.__query = this.__owner.__manager.query(this.__owner, query);
-                this.__query.on("add", function(scope) {
-                    this.delegateEvents(null, scope);
-                    this.trigger("addscope", scope);
-                }, this);
-                this.__query.on("remove", function(scope) {
-                    scope.off(null, null, this);
-                    this.trigger("removescope", scope);
-                }, this);
-                Objs.iter(this.__query.result(), function(scope) {
-                    this.delegateEvents(null, scope);
-                }, this);
-                this.__freeze = false;
-            },
-
-            destroy: function() {
-                Objs.iter(this.__query.result(), function(scope) {
-                    scope.off(null, null, this);
-                }, this);
-                this.__query.destroy();
-                inherited.destroy.call(this);
-            },
-
-            iterator: function() {
-                return new ArrayIterator(this.__query.result());
-            },
-
-            set: function(key, value) {
-                var iter = this.iterator();
-                while (iter.hasNext())
-                    iter.next().set(key, value);
-                return this;
-            },
-
-            get: function(key) {
-                var iter = this.iterator();
-                return iter.hasNext() ? iter.next().get(key) : null;
-            },
-
-            setProp: function(key, value) {
-                var iter = this.iterator();
-                while (iter.hasNext())
-                    iter.next().setProp(key, value);
-                return this;
-            },
-
-            getProp: function(key) {
-                var iter = this.iterator();
-                return iter.hasNext() ? iter.next().getProp(key) : null;
-            },
-
-            define: function(name, func) {
-                var iter = this.iterator();
-                while (iter.hasNext())
-                    iter.next().define(name, func);
-                return this;
-            },
-
-            /* Deprecated */
-            call: function(name) {
-                return this.execute.apply(this, arguments);
-            },
-
-            execute: function(name) {
-                var iter = this.iterator();
-                var result = null;
-                while (iter.hasNext()) {
-                    var obj = iter.next();
-                    var local = obj.execute.apply(obj, arguments);
-                    result = result || local;
-                }
-                return result;
-            },
-
-            parent: function() {
-                return this.__owner.scope(this.__base, this.__queryStr + "<");
-            },
-
-            root: function() {
-                return this.__owner.root();
-            },
-
-            children: function() {
-                return this.__owner.scope(this.__base, this.__queryStr + ">");
-            },
-
-            scope: function(base, query) {
-                if (arguments.length < 2) {
-                    query = this.__queryStr + base;
-                    base = this.__base;
-                }
-                return this.__owner.scope(base, query);
-            },
-
-            materialize: function(returnFirst) {
-                return returnFirst ? this.iterator().next() : this.iterator().asArray();
-            },
-
-            freeze: function() {
-                this.__freeze = true;
-                this.__query.off("add", null, this);
-            }
-
-        };
-    }]);
 });

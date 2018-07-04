@@ -102,6 +102,7 @@ Scoped.define("module:Dynamic", [
                 this.window_events = {};
                 this.__domEvents = new DomEvents();
                 this.inheritables = (this.parent() ? this.parent().inheritables : []).concat(this.inheritables || []);
+                this.friendgroup.registerScope(this, this.cls.registeredName());
             },
 
             handle_call_exception: function(name, args, e) {
@@ -132,6 +133,7 @@ Scoped.define("module:Dynamic", [
             },
 
             destroy: function() {
+                this.friendgroup.unregisterScope(this, this.cls.registeredName());
                 if (this.free)
                     this.free();
                 Objs.iter(this.__references, function(reference) {
@@ -153,13 +155,13 @@ Scoped.define("module:Dynamic", [
     }], {
 
         __initialForward: [
-            "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose", "channels", "registerchannels", "references"
+            "functions", "attrs", "extendables", "collections", "template", "create", "scopes", "bindings", "computed", "types", "events", "dispose", "channels", "registerchannels", "references", "friends"
         ],
 
         __globalEvents: new Events(),
 
         canonicName: function() {
-            return Strings.last_after(this.classname, ".").toLowerCase();
+            return this.classname ? Strings.last_after(this.classname, ".").toLowerCase() : "";
         },
 
         registeredName: function() {
@@ -237,6 +239,9 @@ Scoped.define("module:Dynamic", [
         },
 
         _extender: {
+            events: function(base, overwrite) {
+                return Objs.extend(Objs.clone(base, 1), overwrite);
+            },
             types: function(base, overwrite) {
                 return Objs.extend(Objs.clone(base, 1), overwrite);
             },

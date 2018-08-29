@@ -37,6 +37,7 @@ Scoped.define("module:Partials.RepeatElementPartial", [
                 var temp = Dom.elementByTemplate(node._template);
                 temp.removeAttribute("ba-repeat-element");
                 this.__filteredTemplate = temp.outerHTML.trim();
+                this.__alwaysReindexNewItems = true;
             },
 
             _activate: function() {

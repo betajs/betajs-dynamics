@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.122 - 2018-07-03
+betajs-dynamics - v0.0.123 - 2018-08-29
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.122"
+    "version": "0.0.123"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -3029,6 +3029,7 @@ Scoped.define("module:Partials.RepeatElementPartial", [
                 var temp = Dom.elementByTemplate(node._template);
                 temp.removeAttribute("ba-repeat-element");
                 this.__filteredTemplate = temp.outerHTML.trim();
+                this.__alwaysReindexNewItems = true;
             },
 
             _activate: function() {
@@ -3093,6 +3094,7 @@ Scoped.define("module:Partials.RepeatPartial", [
 
             constructor: function(node, args, value) {
                 inherited.constructor.apply(this, arguments);
+                this.__alwaysReindexNewItems = false;
                 this.__registered = false;
                 args = args.split("::");
                 if (args.length > 1)
@@ -3238,6 +3240,8 @@ Scoped.define("module:Partials.RepeatPartial", [
                 var idx = this._collection.getIndex(item);
                 if (idx < this._collection.count() - 1)
                     this._prependItem(this._collection.getByIndex(idx + 1), item);
+                else if (this.__alwaysReindexNewItems && this._collection.count() > 1)
+                    this._appendItem(this._collection.getByIndex(idx - 1), item);
             },
 
             __removeItem: function(item, instant) {

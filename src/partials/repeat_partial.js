@@ -33,6 +33,7 @@ Scoped.define("module:Partials.RepeatPartial", [
 
             constructor: function(node, args, value) {
                 inherited.constructor.apply(this, arguments);
+                this.__alwaysReindexNewItems = false;
                 this.__registered = false;
                 args = args.split("::");
                 if (args.length > 1)
@@ -178,6 +179,8 @@ Scoped.define("module:Partials.RepeatPartial", [
                 var idx = this._collection.getIndex(item);
                 if (idx < this._collection.count() - 1)
                     this._prependItem(this._collection.getByIndex(idx + 1), item);
+                else if (this.__alwaysReindexNewItems && this._collection.count() > 1)
+                    this._appendItem(this._collection.getByIndex(idx - 1), item);
             },
 
             __removeItem: function(item, instant) {

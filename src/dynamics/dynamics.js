@@ -110,6 +110,10 @@ Scoped.define("module:Dynamic", [
                 return null;
             },
 
+            hierarchyName: function() {
+                return (this.parent() ? this.parent().hierarchyName() + " > " : "") + this.cls.registeredName();
+            },
+
             _preAfterActivate: function(activeElement) {
                 this.__domEvents.clear();
                 var self = this;

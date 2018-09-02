@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.123 - 2018-08-29
+betajs-dynamics - v0.0.124 - 2018-09-02
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1006,7 +1006,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.123 - 2018-08-29
+betajs-dynamics - v0.0.124 - 2018-09-02
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1019,7 +1019,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.123"
+    "version": "0.0.124"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -2238,6 +2238,10 @@ Scoped.define("module:Dynamic", [
                 return null;
             },
 
+            hierarchyName: function() {
+                return (this.parent() ? this.parent().hierarchyName() + " > " : "") + this.cls.registeredName();
+            },
+
             _preAfterActivate: function(activeElement) {
                 this.__domEvents.clear();
                 var self = this;
@@ -2900,99 +2904,6 @@ Scoped.define("module:Handlers.Handler", [
 });
 
 
-Scoped.define("module:Handlers.Partial", [
-    "base:Class",
-    "base:JavaScript",
-    "base:Functions",
-    "base:Strings",
-    "module:Parser",
-    "module:Registries"
-], function(Class, JavaScript, Functions, Strings, Parser, Registries, scoped) {
-    return Class.extend({
-        scoped: scoped
-    }, function(inherited) {
-        return {
-
-            constructor: function(node, args, value, postfix) {
-                inherited.constructor.call(this);
-                this._node = node;
-                this._args = args;
-                this._value = value;
-                this._active = false;
-                this._postfix = postfix;
-            },
-
-            change: function(value, oldValue) {
-                this._value = value;
-                this._change(value, oldValue);
-                this._apply(value, oldValue);
-            },
-
-            activate: function() {
-                if (this._active)
-                    return;
-                this._active = true;
-                this._activate();
-                this._apply(this._value, null);
-            },
-
-            deactivate: function() {
-                if (!this._active)
-                    return;
-                this._active = false;
-                this._deactivate();
-            },
-
-            bindTagHandler: function(handler) {},
-
-            unbindTagHandler: function(handler) {},
-
-            prepareTagHandler: function(createArguments) {},
-
-            _change: function(value, oldValue) {},
-
-            _activate: function() {},
-
-            _deactivate: function() {},
-
-            _apply: function(value, oldValue) {},
-
-            _execute: function(code) {
-                code = code || this._value;
-                var dyn = Parser.parseText(code) || Parser.parseCode(code);
-                this._node.__executeDyn(dyn);
-            },
-
-            _valueExecute: function(args) {
-                var value = this._value.trim();
-                var simplified = value;
-                if (Strings.starts_with(simplified, "{{") && Strings.ends_with(simplified, "}}"))
-                    simplified = Strings.strip_end(Strings.strip_start(simplified, "{{"), "}}");
-                if (JavaScript.isProperIdentifier(simplified)) {
-                    args = Functions.getArguments(args);
-                    args.unshift(simplified);
-                    this._node._handler.execute.apply(this._node._handler, args);
-                } else
-                    this._execute(value);
-            }
-
-
-        };
-    }, {
-
-        meta: {
-            // value_hidden: false
-            // requires_tag_handler: false
-        },
-
-        register: function(key, registry) {
-            registry = registry || Registries.partial;
-            registry.register(key, this);
-        }
-
-    });
-});
-
 
 
 Scoped.define("module:Handlers.HandlerNameRegistry", [
@@ -3330,6 +3241,107 @@ Scoped.define("module:Handlers.Node", [
     }]);
     return Cls;
 });
+Scoped.define("module:Handlers.Partial", [
+    "base:Class",
+    "base:JavaScript",
+    "base:Functions",
+    "base:Strings",
+    "module:Parser",
+    "module:Registries"
+], function(Class, JavaScript, Functions, Strings, Parser, Registries, scoped) {
+    return Class.extend({
+        scoped: scoped
+    }, function(inherited) {
+        return {
+
+            constructor: function(node, args, value, postfix) {
+                inherited.constructor.call(this);
+                this._node = node;
+                this._args = args;
+                this._value = value;
+                this._active = false;
+                this._postfix = postfix;
+            },
+
+            change: function(value, oldValue) {
+                this._value = value;
+                this._change(value, oldValue);
+                this._apply(value, oldValue);
+            },
+
+            activate: function() {
+                if (this._active)
+                    return;
+                this._active = true;
+                this._activate();
+                this._apply(this._value, null);
+            },
+
+            deactivate: function() {
+                if (!this._active)
+                    return;
+                this._active = false;
+                this._deactivate();
+            },
+
+            bindTagHandler: function(handler) {},
+
+            unbindTagHandler: function(handler) {},
+
+            prepareTagHandler: function(createArguments) {},
+
+            _change: function(value, oldValue) {},
+
+            _activate: function() {},
+
+            _deactivate: function() {},
+
+            _apply: function(value, oldValue) {},
+
+            _execute: function(code) {
+                code = code || this._value;
+                var dyn = Parser.parseText(code) || Parser.parseCode(code);
+                this._node.__executeDyn(dyn);
+            },
+
+            _valueExecute: function(args) {
+                var value = this._value.trim();
+                var simplified = value;
+                if (Strings.starts_with(simplified, "{{") && Strings.ends_with(simplified, "}}"))
+                    simplified = Strings.strip_end(Strings.strip_start(simplified, "{{"), "}}");
+                if (JavaScript.isProperIdentifier(simplified)) {
+                    args = Functions.getArguments(args);
+                    args.unshift(simplified);
+                    this._node._handler.execute.apply(this._node._handler, args);
+                } else
+                    this._execute(value);
+            }
+
+
+        };
+    }, {
+
+        meta: {
+            // value_hidden: false
+            // requires_tag_handler: false
+        },
+
+        canonicName: function() {
+            return this.classname ? Strings.last_after(this.classname, ".").toLowerCase() : "";
+        },
+
+        registeredName: function() {
+            return this.__registeredName || ("ba-" + this.canonicName());
+        },
+
+        register: function(key, registry) {
+            registry = registry || Registries.partial;
+            this.__registeredName = key || this.registeredName();
+            registry.register(this.__registeredName, this);
+        }
+
+    });
+});
 Scoped.define("module:Registries", [
     "base:Classes.ClassRegistry",
     "base:Exceptions.AsyncExceptionThrower",
@@ -3583,8 +3595,12 @@ Scoped.define("module:Partials.ClickPartial", [
                 var events = this.auto_destroy(new Events());
                 events.on(this._node.element(), "click", function(e) {
                     e.stopPropagation();
-                    this._execute();
+                    this.executeAction();
                 }, this);
+            },
+
+            executeAction: function() {
+                this._execute();
             }
 
         };
@@ -4486,7 +4502,7 @@ Scoped.define("module:Partials.TapPartial", [
                 if (!Info.isMobile()) {
                     events.on(this._node._element, "click", function(e) {
                         e.stopPropagation();
-                        this._execute();
+                        this.executeAction();
                     }, this);
                     return;
                 }
@@ -4506,10 +4522,14 @@ Scoped.define("module:Partials.TapPartial", [
                     if (delta < 100)
                         return;
                     Async.eventually(function() {
-                        this._execute();
+                        this.executeAction();
                     }, this);
                     lastTap = Time.now();
                 }, this);
+            },
+
+            executeAction: function() {
+                this._execute();
             }
 
         };

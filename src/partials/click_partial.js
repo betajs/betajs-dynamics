@@ -33,8 +33,12 @@ Scoped.define("module:Partials.ClickPartial", [
                 var events = this.auto_destroy(new Events());
                 events.on(this._node.element(), "click", function(e) {
                     e.stopPropagation();
-                    this._execute();
+                    this.executeAction();
                 }, this);
+            },
+
+            executeAction: function() {
+                this._execute();
             }
 
         };

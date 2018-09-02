@@ -29,7 +29,7 @@ Scoped.define("module:Partials.TapPartial", [
                 if (!Info.isMobile()) {
                     events.on(this._node._element, "click", function(e) {
                         e.stopPropagation();
-                        this._execute();
+                        this.executeAction();
                     }, this);
                     return;
                 }
@@ -49,10 +49,14 @@ Scoped.define("module:Partials.TapPartial", [
                     if (delta < 100)
                         return;
                     Async.eventually(function() {
-                        this._execute();
+                        this.executeAction();
                     }, this);
                     lastTap = Time.now();
                 }, this);
+            },
+
+            executeAction: function() {
+                this._execute();
             }
 
         };

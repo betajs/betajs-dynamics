@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.124 - 2018-09-02
+betajs-dynamics - v0.0.124 - 2018-09-03
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1967,6 +1967,7 @@ Scoped.define("module:Handlers.Node", [
                 if (parent)
                     parent._children[Ids.objectId(this)] = this;
                 this._element = element;
+                this._element.dynnodehandler = this;
 
                 this._tag = element.tagName ? element.tagName.toLowerCase() : "";
                 if (this._tag.indexOf(":") >= 0)

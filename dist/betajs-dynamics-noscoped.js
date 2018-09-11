@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.124 - 2018-09-03
+betajs-dynamics - v0.0.126 - 2018-09-11
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,7 +12,7 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.124"
+    "version": "0.0.126"
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -2177,11 +2177,15 @@ Scoped.define("module:Handlers.Node", [
                 var value = this.__executeDyn(this._dyn);
                 if (force || value != this._dyn.value) {
                     this._dyn.value = value;
+                    var htmlElement = null;
                     if (this._dyn.html) {
-                        var htmlElement = Dom.elementByTemplate(value);
-                        (this._htmlElement || this._element).replaceWith(htmlElement);
-                        this._htmlElement = htmlElement;
-                    } else {
+                        htmlElement = Dom.elementByTemplate(value);
+                        if (htmlElement) {
+                            (this._htmlElement || this._element).replaceWith(htmlElement);
+                            this._htmlElement = htmlElement;
+                        }
+                    }
+                    if (!htmlElement) {
                         var converted = Dom.entitiesToUnicode(value === null ? "" : value);
                         if ("textContent" in this._element)
                             this._element.textContent = converted;

@@ -234,11 +234,15 @@ Scoped.define("module:Handlers.Node", [
                 var value = this.__executeDyn(this._dyn);
                 if (force || value != this._dyn.value) {
                     this._dyn.value = value;
+                    var htmlElement = null;
                     if (this._dyn.html) {
-                        var htmlElement = Dom.elementByTemplate(value);
-                        (this._htmlElement || this._element).replaceWith(htmlElement);
-                        this._htmlElement = htmlElement;
-                    } else {
+                        htmlElement = Dom.elementByTemplate(value);
+                        if (htmlElement) {
+                            (this._htmlElement || this._element).replaceWith(htmlElement);
+                            this._htmlElement = htmlElement;
+                        }
+                    }
+                    if (!htmlElement) {
                         var converted = Dom.entitiesToUnicode(value === null ? "" : value);
                         if ("textContent" in this._element)
                             this._element.textContent = converted;

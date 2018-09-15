@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.126 - 2018-09-11
+betajs-dynamics - v0.0.126 - 2018-09-15
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1006,7 +1006,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.126 - 2018-09-11
+betajs-dynamics - v0.0.126 - 2018-09-15
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -2974,7 +2974,10 @@ Scoped.define("module:Handlers.Node", [
                 if (parent)
                     parent._children[Ids.objectId(this)] = this;
                 this._element = element;
-                this._element.dynnodehandler = this;
+                try {
+                    if (element)
+                        element.dynnodehandler = this;
+                } catch (e) {}
 
                 this._tag = element.tagName ? element.tagName.toLowerCase() : "";
                 if (this._tag.indexOf(":") >= 0)

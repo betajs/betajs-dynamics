@@ -24,7 +24,10 @@ Scoped.define("module:Handlers.Node", [
                 if (parent)
                     parent._children[Ids.objectId(this)] = this;
                 this._element = element;
-                this._element.dynnodehandler = this;
+                try {
+                    if (element)
+                        element.dynnodehandler = this;
+                } catch (e) {}
 
                 this._tag = element.tagName ? element.tagName.toLowerCase() : "";
                 if (this._tag.indexOf(":") >= 0)

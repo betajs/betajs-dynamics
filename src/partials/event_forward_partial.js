@@ -9,6 +9,8 @@ Scoped.define("module:Partials.EventForwardPartial", [
         bindTagHandler: function(handler) {
             handler.on("all", function() {
                 var eventName = arguments[0];
+                if (eventName.indexOf("change:") === 0)
+                    return;
                 var args = Functions.getArguments(arguments, 1);
                 var result = [eventName];
                 var pf = this._postfix.trim();

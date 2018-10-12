@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.126 - 2018-09-15
+betajs-dynamics - v0.0.128 - 2018-10-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1006,7 +1006,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.126 - 2018-09-15
+betajs-dynamics - v0.0.128 - 2018-10-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1019,7 +1019,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.126"
+    "version": "0.0.128",
+    "datetime": 1539347711924
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -1872,6 +1873,8 @@ Scoped.define("module:Data.Scope", [
             },
 
             set: function(key, value, force) {
+                if (this.destroyed())
+                    return this;
                 if (key in this.__extendables)
                     value = Objs.tree_extend(this.__properties.get(key) || {}, value);
                 this.__properties.set(key, value, force);
@@ -3681,6 +3684,8 @@ Scoped.define("module:Partials.EventForwardPartial", [
         bindTagHandler: function(handler) {
             handler.on("all", function() {
                 var eventName = arguments[0];
+                if (eventName.indexOf("change:") === 0)
+                    return;
                 var args = Functions.getArguments(arguments, 1);
                 var result = [eventName];
                 var pf = this._postfix.trim();

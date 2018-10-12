@@ -216,6 +216,8 @@ Scoped.define("module:Data.Scope", [
             },
 
             set: function(key, value, force) {
+                if (this.destroyed())
+                    return this;
                 if (key in this.__extendables)
                     value = Objs.tree_extend(this.__properties.get(key) || {}, value);
                 this.__properties.set(key, value, force);

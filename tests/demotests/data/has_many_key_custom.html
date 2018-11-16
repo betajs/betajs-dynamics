@@ -65,7 +65,9 @@
                 }
             });
             var store1 = new BetaJS.Data.Stores.MemoryStore();
-            var table1 = new BetaJS.Data.Modelling.Table(store1, Model1, {});
+            var table1 = new BetaJS.Data.Modelling.Table(store1, Model1, {
+                keep_primary_keys: true
+            });
             var model = table1.newModel({
                 id: 11
             });

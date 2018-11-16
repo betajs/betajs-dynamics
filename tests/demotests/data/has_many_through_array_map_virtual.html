@@ -33,10 +33,10 @@
                 value: "a@a.a"
             }, {
                 id: 2,
-                value: "b@B.b"
+                value: "b@b.b"
             }, {
                 id: 3,
-                value: "c@C.c"
+                value: "c@c.c"
             }]);
             var table2 = new BetaJS.Data.Modelling.Table(store2, Model2, {});
             var Model1 = BetaJS.Data.Modelling.Model.extend("Model1", {
@@ -49,7 +49,6 @@
                             collectionOptions: {
                                 auto: true
                             },
-                            ignore_case: true,
                             foreign_attr: "value",
                             create_virtual: function (key) {
                                 return table2.newModel({
@@ -90,7 +89,7 @@
 
             function test(assert) {
             	assert.equal(document.querySelector("#test div").children[0].innerHTML, "a@a.a");
-                assert.equal(document.querySelector("#test div").children[1].innerHTML, "c@C.c");
+                assert.equal(document.querySelector("#test div").children[1].innerHTML, "c@c.c");
                 assert.equal(document.querySelector("#test div").children[2].innerText, "D <d@d.d>");
                 model.destroy();
             }

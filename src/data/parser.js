@@ -75,12 +75,16 @@ Scoped.define("module:Parser", [
             if (!result) {
                 var bidirectional = false;
                 var html = false;
+                var noentities = false;
                 var c = code;
                 if (c.charAt(0) == "=") {
                     bidirectional = true;
                     c = c.substring(1);
                 } else if (c.charAt(0) == "-") {
                     html = true;
+                    c = c.substring(1);
+                } else if (c.charAt(0) == "*") {
+                    noentities = true;
                     c = c.substring(1);
                 }
                 var i = c.lastIndexOf("::");
@@ -92,6 +96,7 @@ Scoped.define("module:Parser", [
                 result = {
                     bidirectional: bidirectional,
                     html: html,
+                    noentities: noentities,
                     args: args,
                     variable: bidirectional ? c : null,
                     func: this.compileFunction(c),

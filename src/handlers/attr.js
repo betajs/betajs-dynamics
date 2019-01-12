@@ -127,7 +127,7 @@ Scoped.define("module:Handlers.Attr", [
                     this._attrValue = value;
 
                     if (!this._partial || !this._partial.cls.meta.value_hidden) {
-                        var result = Dom.entitiesToUnicode(value);
+                        var result = this._dyn.noentities ? value : Dom.entitiesToUnicode(value);
 
 
                         /*

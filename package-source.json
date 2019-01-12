@@ -1,6 +1,6 @@
 {
     "name": "betajs-dynamics",
-    "version": "0.0.128",
+    "version": "0.0.129",
     "description": "BetaJS-Dynamics is a dynamic DOM templating engine.",
     "contributors": [
         "Victor Lingenthal",
@@ -11,7 +11,7 @@
         "grunt": "",
         "grunt-contrib-jshint": "",
         "grunt-contrib-concat": "",
-        "grunt-contrib-uglify": "~2.3.0",
+        "grunt-contrib-uglify": "^4.0.0",
         "grunt-contrib-clean": "",
         "grunt-preprocess": "",
         "grunt-closure-tools": "",
@@ -39,7 +39,8 @@
     },
     "scripts": {
         "test": "grunt check-node",
-        "relink": "npm link betajs && npm link betajs-compile && npm link betajs-scoped && npm link betajs-shims && npm link betajs-data && npm link betajs-browser && npm link betajs-debug"
+        "relink": "npm link betajs && npm link betajs-compile && npm link betajs-scoped && npm link betajs-shims && npm link betajs-data && npm link betajs-browser && npm link betajs-debug",
+        "reinstall": "rm -f package-lock.json && rm -rf node_modules && npm i && npm run relink"
     },
     "meta": {
         "sponsors": [
@@ -72,7 +73,7 @@
             "Edge": "12 - Latest",
             "Yandex": "Latest",
             "iOS": "3.0 - Latest",
-            "Android": "2.2 - Latest"
+            "Android": "4.4 - Latest"
         },
         "tests": {
             "Test Suite": "http://rawgit.com/betajs/betajs-dynamics/master/tests/tests.html"

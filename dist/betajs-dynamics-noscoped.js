@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.128 - 2018-10-12
+betajs-dynamics - v0.0.129 - 2019-01-11
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,8 +12,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.128",
-    "datetime": 1539347711924
+    "version": "0.0.129",
+    "datetime": 1547263545534
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -619,12 +619,16 @@ Scoped.define("module:Parser", [
             if (!result) {
                 var bidirectional = false;
                 var html = false;
+                var noentities = false;
                 var c = code;
                 if (c.charAt(0) == "=") {
                     bidirectional = true;
                     c = c.substring(1);
                 } else if (c.charAt(0) == "-") {
                     html = true;
+                    c = c.substring(1);
+                } else if (c.charAt(0) == "*") {
+                    noentities = true;
                     c = c.substring(1);
                 }
                 var i = c.lastIndexOf("::");
@@ -636,6 +640,7 @@ Scoped.define("module:Parser", [
                 result = {
                     bidirectional: bidirectional,
                     html: html,
+                    noentities: noentities,
                     args: args,
                     variable: bidirectional ? c : null,
                     func: this.compileFunction(c),
@@ -1540,7 +1545,7 @@ Scoped.define("module:Handlers.Attr", [
                     this._attrValue = value;
 
                     if (!this._partial || !this._partial.cls.meta.value_hidden) {
-                        var result = Dom.entitiesToUnicode(value);
+                        var result = this._dyn.noentities ? value : Dom.entitiesToUnicode(value);
 
 
                         /*
@@ -2192,7 +2197,8 @@ Scoped.define("module:Handlers.Node", [
                         }
                     }
                     if (!htmlElement) {
-                        var converted = Dom.entitiesToUnicode(value === null ? "" : value);
+                        value = value === null ? "" : value;
+                        var converted = this._dyn.noentities ? value : Dom.entitiesToUnicode(value);
                         if ("textContent" in this._element)
                             this._element.textContent = converted;
                         if ("innerText" in this._element)

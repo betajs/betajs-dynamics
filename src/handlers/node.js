@@ -246,7 +246,8 @@ Scoped.define("module:Handlers.Node", [
                         }
                     }
                     if (!htmlElement) {
-                        var converted = Dom.entitiesToUnicode(value === null ? "" : value);
+                        value = value === null ? "" : value;
+                        var converted = this._dyn.noentities ? value : Dom.entitiesToUnicode(value);
                         if ("textContent" in this._element)
                             this._element.textContent = converted;
                         if ("innerText" in this._element)

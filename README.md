@@ -1,4 +1,4 @@
-# betajs-dynamics 0.0.128
+# betajs-dynamics 0.0.129
 [![Build Status](https://api.travis-ci.org/betajs/betajs-dynamics.svg?branch=master)](https://travis-ci.org/betajs/betajs-dynamics)
 [![Code Climate](https://codeclimate.com/github/betajs/betajs-dynamics/badges/gpa.svg)](https://codeclimate.com/github/betajs/betajs-dynamics)
 [![NPM](https://img.shields.io/npm/v/betajs-dynamics.svg?style=flat)](https://www.npmjs.com/package/betajs-dynamics)
@@ -92,7 +92,7 @@ Will evaluate to
 | Edge | 12 - Latest |
 | Yandex | Latest |
 | iOS | 3.0 - Latest |
-| Android | 2.2 - Latest |
+| Android | 4.4 - Latest |
 
 
 ## CDN

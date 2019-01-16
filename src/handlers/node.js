@@ -239,7 +239,7 @@ Scoped.define("module:Handlers.Node", [
                     this._dyn.value = value;
                     var htmlElement = null;
                     if (this._dyn.html) {
-                        htmlElement = Dom.elementByTemplate(value);
+                        htmlElement = Dom.elementByTemplate(value, true);
                         if (htmlElement) {
                             (this._htmlElement || this._element).replaceWith(htmlElement);
                             this._htmlElement = htmlElement;

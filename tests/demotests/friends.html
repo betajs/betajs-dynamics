@@ -16,7 +16,10 @@
 
 <script>
     BetaJS.Dynamics.Dynamic.extend(null, {
-        template : '<p>{{foodata}}</p>',
+        template : '<p>{{foodata}}</p><span>{{bar.bardata}}</span>',
+		attrs: {
+        	foodata: "placeholder"
+		},
 		friends: {
             "bar": "ba-friendbar"
 		},
@@ -27,7 +30,10 @@
 		}
     }).register("ba-friendfoo");
     BetaJS.Dynamics.Dynamic.extend(null, {
-        template : '<p>{{bardata}}</p>',
+        template : '<p>{{bardata}}</p><span>{{foo.foodata}}</span>',
+		attrs: {
+			foodata: "placeholder"
+		},
         friends: {
             "foo": "ba-friendfoo"
         },
@@ -52,6 +58,10 @@
         assert.equal(bar.get("bardata"), "foohere");
         bar.execute("setFooData", "barhere");
         assert.equal(foo.get("foodata"), "barhere");
+        assert.equal(root.querySelector("ba-friendfoo p").innerText.trim(), "barhere");
+		assert.equal(root.querySelector("ba-friendbar p").innerText.trim(), "foohere");
+		assert.equal(root.querySelector("ba-friendfoo span").innerText.trim(), "foohere");
+		assert.equal(root.querySelector("ba-friendbar span").innerText.trim(), "barhere");
     }
 </script>
 

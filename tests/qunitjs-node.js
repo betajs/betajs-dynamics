@@ -14,7 +14,7 @@ QUnit.test("jsdom", function (assert) {
         assert.ok(true);
         done();
         var democases = [
-            "demotests/betajs/set&get.html",
+            "demotests/setget.html",
             "demotests/dynamic_scope.html",
             "demotests/ba-class/change.html",
             "demotests/ba-class/if.html",

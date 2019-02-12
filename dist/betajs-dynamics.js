@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.129 - 2019-01-16
+betajs-dynamics - v0.0.131 - 2019-02-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1006,7 +1006,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.129 - 2019-01-16
+betajs-dynamics - v0.0.131 - 2019-02-12
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1019,8 +1019,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.129",
-    "datetime": 1547654604858
+    "version": "0.0.131",
+    "datetime": 1550007760282
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -1054,12 +1054,16 @@ Scoped.define("module:Data.Friendgroup", [
             registerScope: function(scope, identifier) {
                 this._registeredScopes[identifier] = this._registeredScopes[identifier] || {};
                 this._registeredScopes[identifier][scope.cid()] = scope;
+                if (this._watchScopes[identifier])
+                    this._watchScopes[identifier].addScope(scope);
             },
 
             unregisterScope: function(scope, identifier) {
                 delete this._registeredScopes[identifier][scope.cid()];
                 if (Types.is_empty(this._registeredScopes[identifier]))
                     delete this._registeredScopes[identifier];
+                if (this._watchScopes[identifier])
+                    this._watchScopes[identifier].removeScope(scope);
             },
 
             watchScope: function(reference, identifier) {
@@ -1374,11 +1378,12 @@ Scoped.define("module:Data.Mesh", [
 Scoped.define("module:Data.AbstractMultiScope", [
     "base:Class",
     "base:Events.EventsMixin",
-    "base:Events.ListenMixin"
-], function(Class, EventsMixin, ListenMixin, scoped) {
+    "base:Events.ListenMixin",
+    "base:Properties.ObservableMixin"
+], function(Class, EventsMixin, ListenMixin, ObservableMixin, scoped) {
     return Class.extend({
         scoped: scoped
-    }, [EventsMixin, ListenMixin, function(inherited) {
+    }, [EventsMixin, ListenMixin, ObservableMixin, function(inherited) {
         return {
 
             constructor: function() {
@@ -1405,6 +1410,14 @@ Scoped.define("module:Data.AbstractMultiScope", [
             get: function(key) {
                 var iter = this.iterator();
                 return iter.hasNext() ? iter.next().get(key) : null;
+            },
+
+            hasKey: function(key) {
+                var iter = this.iterator();
+                while (iter.hasNext())
+                    if (iter.next().hasKey(key))
+                        return true;
+                return false;
             },
 
             setProp: function(key, value) {
@@ -1735,13 +1748,15 @@ Scoped.define("module:Data.Scope", [
     "base:Properties.Properties",
     "base:Collections.Collection",
     "base:Events.Events",
+    "base:Properties.ObservableMixin",
     "module:Data.ScopeManager",
     "module:Data.MultiScope",
+    "module:Data.AbstractMultiScope",
     "module:Data.Friendgroup"
-], function(Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, Events, ScopeManager, MultiScope, Friendgroup, scoped) {
+], function(Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, Events, ObservableMixin, ScopeManager, MultiScope, AbstractMultiScope, Friendgroup, scoped) {
     return Class.extend({
         scoped: scoped
-    }, [EventsMixin, ListenMixin, ObjectIdMixin, function(inherited) {
+    }, [EventsMixin, ListenMixin, ObjectIdMixin, ObservableMixin, function(inherited) {
         return {
 
             constructor: function(options) {
@@ -1891,6 +1906,10 @@ Scoped.define("module:Data.Scope", [
                 return this;
             },
 
+            hasKey: function(key) {
+                return this.__properties.hasKey(key);
+            },
+
             get: function(key) {
                 return this.__properties.get(key);
             },
@@ -1988,7 +2007,7 @@ Scoped.define("module:Data.Scope", [
             },
 
             bind: function(scope, key, options) {
-                if (scope.instance_of(MultiScope)) {
+                if (scope.instance_of(AbstractMultiScope)) {
                     var iter = scope.iterator();
                     while (iter.hasNext())
                         this.properties().bind(key, iter.next().properties(), options);

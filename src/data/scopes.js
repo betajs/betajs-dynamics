@@ -73,13 +73,15 @@ Scoped.define("module:Data.Scope", [
     "base:Properties.Properties",
     "base:Collections.Collection",
     "base:Events.Events",
+    "base:Properties.ObservableMixin",
     "module:Data.ScopeManager",
     "module:Data.MultiScope",
+    "module:Data.AbstractMultiScope",
     "module:Data.Friendgroup"
-], function(Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, Events, ScopeManager, MultiScope, Friendgroup, scoped) {
+], function(Class, EventsMixin, ListenMixin, ObjectIdMixin, Functions, Types, Strings, Objs, Ids, Properties, Collection, Events, ObservableMixin, ScopeManager, MultiScope, AbstractMultiScope, Friendgroup, scoped) {
     return Class.extend({
         scoped: scoped
-    }, [EventsMixin, ListenMixin, ObjectIdMixin, function(inherited) {
+    }, [EventsMixin, ListenMixin, ObjectIdMixin, ObservableMixin, function(inherited) {
         return {
 
             constructor: function(options) {
@@ -229,6 +231,10 @@ Scoped.define("module:Data.Scope", [
                 return this;
             },
 
+            hasKey: function(key) {
+                return this.__properties.hasKey(key);
+            },
+
             get: function(key) {
                 return this.__properties.get(key);
             },
@@ -326,7 +332,7 @@ Scoped.define("module:Data.Scope", [
             },
 
             bind: function(scope, key, options) {
-                if (scope.instance_of(MultiScope)) {
+                if (scope.instance_of(AbstractMultiScope)) {
                     var iter = scope.iterator();
                     while (iter.hasNext())
                         this.properties().bind(key, iter.next().properties(), options);

@@ -1,0 +1,40 @@
+<html>
+<head>
+    
+
+
+    <script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script>
+    <script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
+    <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
+    <script src="../../../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+
+<div id="test">
+	<br>
+    <button ba-click="{{model.value = !model.value}}">Click</button>
+	<br>
+</div>
+
+<script>
+
+    var root = document.querySelector("#test");
+
+	var dyn = new BetaJS.Dynamics.Dynamic({
+        element: root,
+        attrs: {
+            model: {
+                value: true
+            }
+        }
+    });
+    dyn.activate();
+
+    function test(assert) {
+        root.querySelector("button").click();
+    	assert.equal(dyn.getProp("model.value"), false);
+    }
+</script>
+
+</body>
+</html>

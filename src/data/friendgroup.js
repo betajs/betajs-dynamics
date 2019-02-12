@@ -27,12 +27,16 @@ Scoped.define("module:Data.Friendgroup", [
             registerScope: function(scope, identifier) {
                 this._registeredScopes[identifier] = this._registeredScopes[identifier] || {};
                 this._registeredScopes[identifier][scope.cid()] = scope;
+                if (this._watchScopes[identifier])
+                    this._watchScopes[identifier].addScope(scope);
             },
 
             unregisterScope: function(scope, identifier) {
                 delete this._registeredScopes[identifier][scope.cid()];
                 if (Types.is_empty(this._registeredScopes[identifier]))
                     delete this._registeredScopes[identifier];
+                if (this._watchScopes[identifier])
+                    this._watchScopes[identifier].removeScope(scope);
             },
 
             watchScope: function(reference, identifier) {

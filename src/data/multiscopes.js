@@ -1,11 +1,12 @@
 Scoped.define("module:Data.AbstractMultiScope", [
     "base:Class",
     "base:Events.EventsMixin",
-    "base:Events.ListenMixin"
-], function(Class, EventsMixin, ListenMixin, scoped) {
+    "base:Events.ListenMixin",
+    "base:Properties.ObservableMixin"
+], function(Class, EventsMixin, ListenMixin, ObservableMixin, scoped) {
     return Class.extend({
         scoped: scoped
-    }, [EventsMixin, ListenMixin, function(inherited) {
+    }, [EventsMixin, ListenMixin, ObservableMixin, function(inherited) {
         return {
 
             constructor: function() {
@@ -32,6 +33,14 @@ Scoped.define("module:Data.AbstractMultiScope", [
             get: function(key) {
                 var iter = this.iterator();
                 return iter.hasNext() ? iter.next().get(key) : null;
+            },
+
+            hasKey: function(key) {
+                var iter = this.iterator();
+                while (iter.hasNext())
+                    if (iter.next().hasKey(key))
+                        return true;
+                return false;
             },
 
             setProp: function(key, value) {

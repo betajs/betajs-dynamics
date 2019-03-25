@@ -126,7 +126,7 @@ Scoped.define("module:Data.Scope", [
                         this.set(key, value);
                 }, this);
                 this.setAll();
-                Objs.iter(options.collections, function(value, key) {
+                Objs.iter(Types.is_function(options.collections) ? options.collections.call(this) : options.collections, function(value, key) {
                     if (Types.is_array(options.collections)) {
                         key = value;
                         value = [];

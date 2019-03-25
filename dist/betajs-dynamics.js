@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.131 - 2019-02-12
+betajs-dynamics - v0.0.132 - 2019-03-24
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1006,7 +1006,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.131 - 2019-02-12
+betajs-dynamics - v0.0.132 - 2019-03-24
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1019,8 +1019,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.131",
-    "datetime": 1550007760282
+    "version": "0.0.132",
+    "datetime": 1553484878414
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -1641,13 +1641,13 @@ Scoped.define("module:Parser", [
                 var html = false;
                 var noentities = false;
                 var c = code;
-                if (c.charAt(0) == "=") {
+                if (c.charAt(0) === "=") {
                     bidirectional = true;
                     c = c.substring(1);
-                } else if (c.charAt(0) == "-") {
+                } else if (c.charAt(0) === "-") {
                     html = true;
                     c = c.substring(1);
-                } else if (c.charAt(0) == "*") {
+                } else if (c.charAt(0) === "*") {
                     noentities = true;
                     c = c.substring(1);
                 }
@@ -1801,7 +1801,7 @@ Scoped.define("module:Data.Scope", [
                         this.set(key, value);
                 }, this);
                 this.setAll();
-                Objs.iter(options.collections, function(value, key) {
+                Objs.iter(Types.is_function(options.collections) ? options.collections.call(this) : options.collections, function(value, key) {
                     if (Types.is_array(options.collections)) {
                         key = value;
                         value = [];

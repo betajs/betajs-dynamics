@@ -77,13 +77,13 @@ Scoped.define("module:Parser", [
                 var html = false;
                 var noentities = false;
                 var c = code;
-                if (c.charAt(0) == "=") {
+                if (c.charAt(0) === "=") {
                     bidirectional = true;
                     c = c.substring(1);
-                } else if (c.charAt(0) == "-") {
+                } else if (c.charAt(0) === "-") {
                     html = true;
                     c = c.substring(1);
-                } else if (c.charAt(0) == "*") {
+                } else if (c.charAt(0) === "*") {
                     noentities = true;
                     c = c.substring(1);
                 }

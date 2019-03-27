@@ -248,6 +248,10 @@ Scoped.define("module:Data.Scope", [
                 return this.__properties.getProp(key);
             },
 
+            flipProp: function(key) {
+                return this.setProp(key, !this.getProp(key));
+            },
+
             define: function(name, func, ctx) {
                 this.__functions[name] = Functions.as_method(func, ctx || this);
                 return this;

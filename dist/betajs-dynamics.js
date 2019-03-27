@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.132 - 2019-03-24
+betajs-dynamics - v0.0.132 - 2019-03-26
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1006,7 +1006,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.132 - 2019-03-24
+betajs-dynamics - v0.0.132 - 2019-03-26
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1020,7 +1020,7 @@ Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
     "version": "0.0.132",
-    "datetime": 1553484878414
+    "datetime": 1553647725220
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -1921,6 +1921,10 @@ Scoped.define("module:Data.Scope", [
 
             getProp: function(key) {
                 return this.__properties.getProp(key);
+            },
+
+            flipProp: function(key) {
+                return this.setProp(key, !this.getProp(key));
             },
 
             define: function(name, func, ctx) {

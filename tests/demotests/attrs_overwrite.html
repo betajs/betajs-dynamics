@@ -1,0 +1,45 @@
+<html>
+<head>
+    
+
+
+    <script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script><script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
+    <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
+    <script src="../../../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+
+<div id="test">
+<br/>
+<ba-innertest>
+</ba-innertest>
+<br/>
+</div>
+
+<script>
+    var C = BetaJS.Dynamics.Dynamic.extend(null, {
+		template : '<div></div>',
+        attrs: {
+		    foo: "bar",
+            single: "ton"
+        }
+	});
+
+    var dynamic = new C({
+        element: document.getElementById("test"),
+        attrs: {
+            foo: "baz",
+            after: "wards"
+        }
+    });
+    dynamic.activate();
+
+    function test(assert) {
+    	assert.equal(dynamic.get("foo"), "baz");
+        assert.equal(dynamic.get("single"), "ton");
+        assert.equal(dynamic.get("after"), "wards");
+    }
+</script>
+
+</body>
+</html>

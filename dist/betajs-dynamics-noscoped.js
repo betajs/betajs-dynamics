@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.132 - 2019-03-26
+betajs-dynamics - v0.0.133 - 2019-06-25
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,8 +12,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.132",
-    "datetime": 1553647725220
+    "version": "0.0.133",
+    "datetime": 1561491725649
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -1230,6 +1230,13 @@ Scoped.define("module:Dynamic", [
                     }
                 }
                 inherited.constructor.call(this, options);
+                if (options.bindAttrs) {
+                    Objs.iter(options.bindAttrs, function(value, key) {
+                        this.properties().bind(key, value, {
+                            secondKey: key
+                        });
+                    }, this);
+                }
                 this.__references = options.references;
                 Objs.iter(this.__references, function(reference) {
                     this.on("change:" + reference, function(newReference, oldReference) {

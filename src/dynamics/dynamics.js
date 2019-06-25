@@ -78,6 +78,13 @@ Scoped.define("module:Dynamic", [
                     }
                 }
                 inherited.constructor.call(this, options);
+                if (options.bindAttrs) {
+                    Objs.iter(options.bindAttrs, function(value, key) {
+                        this.properties().bind(key, value, {
+                            secondKey: key
+                        });
+                    }, this);
+                }
                 this.__references = options.references;
                 Objs.iter(this.__references, function(reference) {
                     this.on("change:" + reference, function(newReference, oldReference) {

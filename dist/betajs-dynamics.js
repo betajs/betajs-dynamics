@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.133 - 2019-06-25
+betajs-dynamics - v0.0.135 - 2019-07-07
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1006,7 +1006,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.133 - 2019-06-25
+betajs-dynamics - v0.0.135 - 2019-07-07
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1019,8 +1019,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.133",
-    "datetime": 1561491725649
+    "version": "0.0.135",
+    "datetime": 1562537066650
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -1273,6 +1273,10 @@ Scoped.define("module:Data.Mesh", [
                         if (!(expression in data) || data[expression] != collapsed[expression])
                             this.write(expression, collapsed[expression]);
                     }
+                }
+                if (SharedObjectFactory.is_instance_of(result) && !result.destroyed()) {
+                    result = result.acquire(this);
+                    this.__acquiredProperties[result.cid()] = result;
                 }
                 return result;
             },
@@ -4138,10 +4142,9 @@ Scoped.define("module:Partials.RepeatPartial", [
     "base:Collections.Collection",
     "base:Collections.FilteredCollection",
     "base:Objs",
-    "base:Classes.SharedObjectFactory",
     "module:Parser",
     "module:Registries"
-], function(Partial, Promise, Properties, Collection, FilteredCollection, Objs, SharedObjectFactory, Parser, Registries, scoped) {
+], function(Partial, Promise, Properties, Collection, FilteredCollection, Objs, Parser, Registries, scoped) {
     /**
      * @name ba-repeat
      *
@@ -4235,22 +4238,16 @@ Scoped.define("module:Partials.RepeatPartial", [
                 this.__unregister();
                 if (Collection.is_instance_of(this._value) && this._value.destroyed())
                     return;
-                if (SharedObjectFactory.is_instance_of(this._value)) {
-                    this._isArray = false;
-                    this._releaseValueCollection = true;
-                    this._valueCollection = this._value.acquire();
-                } else {
-                    this._isArray = !Collection.is_instance_of(this._value);
-                    this._releaseValueCollection = !Collection.is_instance_of(this._value);
-                    this._valueCollection = this._releaseValueCollection ? new Collection({
-                        objects: Objs.map(this._value, function(val) {
-                            return new Properties({
-                                value: val
-                            });
-                        }),
-                        release_references: true
-                    }) : this._value;
-                }
+                this._isArray = !Collection.is_instance_of(this._value);
+                this._releaseValueCollection = !Collection.is_instance_of(this._value);
+                this._valueCollection = this._releaseValueCollection ? new Collection({
+                    objects: Objs.map(this._value, function(val) {
+                        return new Properties({
+                            value: val
+                        });
+                    }),
+                    release_references: true
+                }) : this._value;
                 this._destroyCollection = !!this.__repeatFilter;
                 this._collection = this._destroyCollection ? new FilteredCollection(this._valueCollection, {
                     filter: this.__filterFunc,

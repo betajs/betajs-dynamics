@@ -178,6 +178,10 @@ Scoped.define("module:Data.Mesh", [
                             this.write(expression, collapsed[expression]);
                     }
                 }
+                if (SharedObjectFactory.is_instance_of(result) && !result.destroyed()) {
+                    result = result.acquire(this);
+                    this.__acquiredProperties[result.cid()] = result;
+                }
                 return result;
             },
 

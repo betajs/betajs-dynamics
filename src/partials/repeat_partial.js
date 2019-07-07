@@ -5,10 +5,9 @@ Scoped.define("module:Partials.RepeatPartial", [
     "base:Collections.Collection",
     "base:Collections.FilteredCollection",
     "base:Objs",
-    "base:Classes.SharedObjectFactory",
     "module:Parser",
     "module:Registries"
-], function(Partial, Promise, Properties, Collection, FilteredCollection, Objs, SharedObjectFactory, Parser, Registries, scoped) {
+], function(Partial, Promise, Properties, Collection, FilteredCollection, Objs, Parser, Registries, scoped) {
     /**
      * @name ba-repeat
      *
@@ -102,22 +101,16 @@ Scoped.define("module:Partials.RepeatPartial", [
                 this.__unregister();
                 if (Collection.is_instance_of(this._value) && this._value.destroyed())
                     return;
-                if (SharedObjectFactory.is_instance_of(this._value)) {
-                    this._isArray = false;
-                    this._releaseValueCollection = true;
-                    this._valueCollection = this._value.acquire();
-                } else {
-                    this._isArray = !Collection.is_instance_of(this._value);
-                    this._releaseValueCollection = !Collection.is_instance_of(this._value);
-                    this._valueCollection = this._releaseValueCollection ? new Collection({
-                        objects: Objs.map(this._value, function(val) {
-                            return new Properties({
-                                value: val
-                            });
-                        }),
-                        release_references: true
-                    }) : this._value;
-                }
+                this._isArray = !Collection.is_instance_of(this._value);
+                this._releaseValueCollection = !Collection.is_instance_of(this._value);
+                this._valueCollection = this._releaseValueCollection ? new Collection({
+                    objects: Objs.map(this._value, function(val) {
+                        return new Properties({
+                            value: val
+                        });
+                    }),
+                    release_references: true
+                }) : this._value;
                 this._destroyCollection = !!this.__repeatFilter;
                 this._collection = this._destroyCollection ? new FilteredCollection(this._valueCollection, {
                     filter: this.__filterFunc,

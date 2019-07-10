@@ -118,8 +118,8 @@ Scoped.define("module:Handlers.Node", [
                 return this._mesh;
             },
 
-            __executeDyn: function(dyn, readonly) {
-                return Types.is_object(dyn) ? this._mesh.execute(dyn.dependencies, dyn.func, readonly) : dyn;
+            __executeDyn: function(dyn, readonly, factoryPassthrough) {
+                return Types.is_object(dyn) ? this._mesh.execute(dyn.dependencies, dyn.func, readonly, factoryPassthrough) : dyn;
             },
 
             __tagValue: function() {

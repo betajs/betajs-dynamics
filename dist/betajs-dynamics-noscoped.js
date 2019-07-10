@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.135 - 2019-07-07
+betajs-dynamics - v0.0.136 - 2019-07-10
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,8 +12,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.135",
-    "datetime": 1562537066650
+    "version": "0.0.136",
+    "datetime": 1562798002138
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -246,7 +246,7 @@ Scoped.define("module:Data.Mesh", [
                 this._write(this.__defaults.write || this.__environment[0], expression, value, true);
             },
 
-            execute: function(expressions, callback, readonly) {
+            execute: function(expressions, callback, readonly, factoryPassthrough) {
                 var data = {};
                 var exprs = [];
                 Objs.iter(expressions, function(expression) {
@@ -267,7 +267,7 @@ Scoped.define("module:Data.Mesh", [
                             this.write(expression, collapsed[expression]);
                     }
                 }
-                if (SharedObjectFactory.is_instance_of(result) && !result.destroyed()) {
+                if (!factoryPassthrough && SharedObjectFactory.is_instance_of(result) && !result.destroyed()) {
                     result = result.acquire(this);
                     this.__acquiredProperties[result.cid()] = result;
                 }
@@ -1573,7 +1573,7 @@ Scoped.define("module:Handlers.Attr", [
                     return;
                 var value = this._attrValue;
                 if (this._dyn && (!this._partialCls || !this._partialCls.manualExecute))
-                    value = this._dataNode.__executeDyn(this._dyn);
+                    value = this._dataNode.__executeDyn(this._dyn, false, !this._partialCls);
                 if ((value != this._attrValue || Types.is_array(value)) && !(!value && !this._attrValue)) {
                     var old = this._attrValue;
                     this._attrValue = value;
@@ -2103,8 +2103,8 @@ Scoped.define("module:Handlers.Node", [
                 return this._mesh;
             },
 
-            __executeDyn: function(dyn, readonly) {
-                return Types.is_object(dyn) ? this._mesh.execute(dyn.dependencies, dyn.func, readonly) : dyn;
+            __executeDyn: function(dyn, readonly, factoryPassthrough) {
+                return Types.is_object(dyn) ? this._mesh.execute(dyn.dependencies, dyn.func, readonly, factoryPassthrough) : dyn;
             },
 
             __tagValue: function() {

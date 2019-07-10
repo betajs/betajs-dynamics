@@ -157,7 +157,7 @@ Scoped.define("module:Data.Mesh", [
                 this._write(this.__defaults.write || this.__environment[0], expression, value, true);
             },
 
-            execute: function(expressions, callback, readonly) {
+            execute: function(expressions, callback, readonly, factoryPassthrough) {
                 var data = {};
                 var exprs = [];
                 Objs.iter(expressions, function(expression) {
@@ -178,7 +178,7 @@ Scoped.define("module:Data.Mesh", [
                             this.write(expression, collapsed[expression]);
                     }
                 }
-                if (SharedObjectFactory.is_instance_of(result) && !result.destroyed()) {
+                if (!factoryPassthrough && SharedObjectFactory.is_instance_of(result) && !result.destroyed()) {
                     result = result.acquire(this);
                     this.__acquiredProperties[result.cid()] = result;
                 }

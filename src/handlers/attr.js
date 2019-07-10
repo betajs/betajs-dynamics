@@ -121,7 +121,7 @@ Scoped.define("module:Handlers.Attr", [
                     return;
                 var value = this._attrValue;
                 if (this._dyn && (!this._partialCls || !this._partialCls.manualExecute))
-                    value = this._dataNode.__executeDyn(this._dyn);
+                    value = this._dataNode.__executeDyn(this._dyn, false, !this._partialCls);
                 if ((value != this._attrValue || Types.is_array(value)) && !(!value && !this._attrValue)) {
                     var old = this._attrValue;
                     this._attrValue = value;

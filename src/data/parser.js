@@ -17,7 +17,14 @@ Scoped.define("module:Parser", [
                 if (this.secureMode)
                     throw ("Dynamics Secure Mode prevents creation of function code '" + code + "'.");
                 /*jslint evil: true */
-                this.__functions[code] = new Function("obj", "with (obj) { return " + code + "; }");
+                try {
+                    this.__functions[code] = new Function("obj", "with (obj) { return " + code + "; }");
+                } catch (e) {
+                    console.warn("Cannot compile `" + code + "` : " + e);
+                    this.__functions[code] = function() {
+                        return {};
+                    };
+                }
             }
             return this.__functions[code];
         },

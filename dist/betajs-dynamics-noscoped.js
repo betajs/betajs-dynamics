@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.137 - 2019-07-22
+betajs-dynamics - v0.0.138 - 2020-01-24
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,8 +12,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.137",
-    "datetime": 1563839679479
+    "version": "0.0.138",
+    "datetime": 1579883856986
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -1273,6 +1273,8 @@ Scoped.define("module:Dynamic", [
                 this.__domEvents = new DomEvents();
                 this.inheritables = (this.parent() ? this.parent().inheritables : []).concat(this.inheritables || []);
                 this.friendgroup.registerScope(this, this.cls.registeredName());
+                if (this.friendgroup && this.parent() && this.parent().friendgroup !== this.friendgroup)
+                    this.parent().friendgroup.registerScope(this, this.cls.registeredName());
             },
 
             handle_call_exception: function(name, args, e) {
@@ -1307,6 +1309,8 @@ Scoped.define("module:Dynamic", [
             },
 
             destroy: function() {
+                if (this.friendgroup && this.parent() && this.parent().friendgroup !== this.friendgroup)
+                    this.parent().friendgroup.unregisterScope(this, this.cls.registeredName());
                 this.friendgroup.unregisterScope(this, this.cls.registeredName());
                 if (this.free)
                     this.free();

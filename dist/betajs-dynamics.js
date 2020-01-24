@@ -1,10 +1,10 @@
 /*!
-betajs-dynamics - v0.0.137 - 2019-07-22
+betajs-dynamics - v0.0.138 - 2020-01-24
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
 /** @flow **//*!
-betajs-scoped - v0.0.19 - 2018-04-07
+betajs-scoped - v0.0.22 - 2019-10-23
 Copyright (c) Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -242,13 +242,15 @@ return {
 	 */
 	upgrade: function (namespace/* : ?string */) {
 		var current = Globals.get(namespace || Attach.__namespace);
-		if (current && Helper.typeOf(current) == "object" && current.guid == this.guid && Helper.typeOf(current.version) == "string") {
+		if (current && Helper.typeOf(current) === "object" && current.guid === this.guid && Helper.typeOf(current.version) === "string") {
+			if (this.upgradable === false || current.upgradable === false)
+				return current;
 			var my_version = this.version.split(".");
 			var current_version = current.version.split(".");
 			var newer = false;
 			for (var i = 0; i < Math.min(my_version.length, current_version.length); ++i) {
 				newer = parseInt(my_version[i], 10) > parseInt(current_version[i], 10);
-				if (my_version[i] != current_version[i]) 
+				if (my_version[i] !== current_version[i])
 					break;
 			}
 			return newer ? this.attach(namespace) : current;				
@@ -267,7 +269,7 @@ return {
 		if (namespace)
 			Attach.__namespace = namespace;
 		var current = Globals.get(Attach.__namespace);
-		if (current == this)
+		if (current === this)
 			return this;
 		Attach.__revert = current;
 		if (current) {
@@ -312,7 +314,7 @@ return {
 	 */
 	exports: function (mod, object, forceExport) {
 		mod = mod || (typeof module != "undefined" ? module : null);
-		if (typeof mod == "object" && mod && "exports" in mod && (forceExport || mod.exports == this || !mod.exports || Helper.isEmpty(mod.exports)))
+		if (typeof mod == "object" && mod && "exports" in mod && (forceExport || mod.exports === this || !mod.exports || Helper.isEmpty(mod.exports)))
 			mod.exports = object || this;
 		return this;
 	}	
@@ -828,7 +830,7 @@ function newScope (parent, parentNS, rootNS, globalNS) {
 		
 		
 		/**
-		 * Extends a potentiall existing name space once a list of name space locators is available.
+		 * Extends a potentially existing name space once a list of name space locators is available.
 		 * 
 		 * @param {string} namespaceLocator the name space that is to be defined
 		 * @param {array} dependencies a list of name space locator dependencies (optional)
@@ -964,7 +966,9 @@ var Public = Helper.extend(rootScope, (function () {
 return {
 		
 	guid: "4b6878ee-cb6a-46b3-94ac-27d91f58d666",
-	version: '0.0.19',
+	version: '0.0.22',
+
+	upgradable: true,
 		
 	upgrade: Attach.upgrade,
 	attach: Attach.attach,
@@ -1006,7 +1010,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.137 - 2019-07-22
+betajs-dynamics - v0.0.138 - 2020-01-24
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1019,8 +1023,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.137",
-    "datetime": 1563839679479
+    "version": "0.0.138",
+    "datetime": 1579883856986
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -2280,6 +2284,8 @@ Scoped.define("module:Dynamic", [
                 this.__domEvents = new DomEvents();
                 this.inheritables = (this.parent() ? this.parent().inheritables : []).concat(this.inheritables || []);
                 this.friendgroup.registerScope(this, this.cls.registeredName());
+                if (this.friendgroup && this.parent() && this.parent().friendgroup !== this.friendgroup)
+                    this.parent().friendgroup.registerScope(this, this.cls.registeredName());
             },
 
             handle_call_exception: function(name, args, e) {
@@ -2314,6 +2320,8 @@ Scoped.define("module:Dynamic", [
             },
 
             destroy: function() {
+                if (this.friendgroup && this.parent() && this.parent().friendgroup !== this.friendgroup)
+                    this.parent().friendgroup.unregisterScope(this, this.cls.registeredName());
                 this.friendgroup.unregisterScope(this, this.cls.registeredName());
                 if (this.free)
                     this.free();

@@ -110,6 +110,8 @@ Scoped.define("module:Dynamic", [
                 this.__domEvents = new DomEvents();
                 this.inheritables = (this.parent() ? this.parent().inheritables : []).concat(this.inheritables || []);
                 this.friendgroup.registerScope(this, this.cls.registeredName());
+                if (this.friendgroup && this.parent() && this.parent().friendgroup !== this.friendgroup)
+                    this.parent().friendgroup.registerScope(this, this.cls.registeredName());
             },
 
             handle_call_exception: function(name, args, e) {
@@ -144,6 +146,8 @@ Scoped.define("module:Dynamic", [
             },
 
             destroy: function() {
+                if (this.friendgroup && this.parent() && this.parent().friendgroup !== this.friendgroup)
+                    this.parent().friendgroup.unregisterScope(this, this.cls.registeredName());
                 this.friendgroup.unregisterScope(this, this.cls.registeredName());
                 if (this.free)
                     this.free();

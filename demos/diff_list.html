@@ -1,0 +1,44 @@
+<html>
+<head>
+    <script src="../node_modules/betajs-scoped/dist/scoped.js"></script>
+    <script src="../node_modules/betajs/dist/beta-noscoped.js"></script>
+    <script src="../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
+    <script src="../dist/betajs-dynamics-noscoped.js"></script>
+</head>
+<body>
+
+<textarea value="{{=primary}}" cols="40" rows="20"></textarea>
+<textarea value="{{=secondary}}" cols="40" rows="20"></textarea>
+<textarea value="{{output}}"  cols="40" rows="20" readonly></textarea>
+
+<script>
+    BetaJS.Dynamics.Dynamic.activate({
+        element: document.body,
+        attrs: {
+            primary: "",
+            secondary: "",
+            output: ""
+        },
+        computed: {
+            "output:primary,secondary": function () {
+                var p = this.get("primary").split("\n").sort();
+                var s = this.get("secondary").split("\n").sort();
+                var r = [];
+                while (p.length > 0) {
+                    var fst = p.shift();
+                    while (s.length > 0 && s[0] < fst)
+                        s.shift();
+                    if (s.length > 0 && s[0] === fst) {
+                        s.shift();
+                        continue;
+                    }
+                    r.push(fst);
+                }
+                return r.join("\n");
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

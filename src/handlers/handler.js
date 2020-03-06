@@ -135,7 +135,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
                 value = Objs.tree_extend(this.properties().get(key) || {}, value);
             if (this.__types[key])
                 value = Types.parseType(value, this.__types[key]);
-            this.properties().set(key, value);
+            this.properties().setProp(key, value);
             this._argumentAttrs[key] = true;
         },
 
@@ -207,6 +207,10 @@ Scoped.define("module:Handlers.HandlerMixin", [
         },
 
         _afterActivate: function(activeElement) {},
+
+        defaultMesh: function() {
+            return this.__rootNodes[0].mesh();
+        },
 
         registerInheritableAttribute: function(tagName, attrKey, attrValue, node) {
             tagName = Registries.prefixNormalize(tagName, true);

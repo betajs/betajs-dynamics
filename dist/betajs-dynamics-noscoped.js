@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.138 - 2020-01-24
+betajs-dynamics - v0.0.139 - 2020-03-05
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,8 +12,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.138",
-    "datetime": 1579883856986
+    "version": "0.0.139",
+    "datetime": 1583456400541
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -133,13 +133,20 @@ Scoped.define("module:Data.Mesh", [
             },
 
             unwatch: function(expressions, context) {
-                Objs.iter(expressions, function(expression) {
-                    var watcher = this.__createWatcher(expression, true);
-                    if (watcher) {
+                if (expressions) {
+                    Objs.iter(expressions, function(expression) {
+                        var watcher = this.__createWatcher(expression, true);
+                        if (watcher) {
+                            delete watcher.cbs[Ids.objectId(context)];
+                            this.__destroyWatcher(watcher, true);
+                        }
+                    }, this);
+                } else if (context) {
+                    Objs.iter(this.__watchers, function(watcher) {
                         delete watcher.cbs[Ids.objectId(context)];
                         this.__destroyWatcher(watcher, true);
-                    }
-                }, this);
+                    }, this);
+                }
             },
 
             __destroyWatcher: function(watcher, weak) {
@@ -1613,7 +1620,7 @@ Scoped.define("module:Handlers.Attr", [
                     if (this._attrName === "value" && this._element.value !== value)
                         this.__inputVal(this._element, value);
                     if (this._tagHandler && this._dyn && !this._partial)
-                        this._tagHandler.properties().set(Registries.prefixNormalize(this._attrName), value);
+                        this._tagHandler.properties().setProp(Registries.prefixNormalize(this._attrName), value);
                 }
             },
 
@@ -1633,9 +1640,17 @@ Scoped.define("module:Handlers.Attr", [
                                     secondKey: this._dyn.variable
                                 });
                             } else {
-                                this._tagHandler.properties().on("change:" + innerKey, function(value) {
-                                    this._dataNode.mesh().write(this._dyn.variable, value);
-                                }, this);
+                                if (innerKey.indexOf(".") >= 0) {
+                                    this._tagHandler.on("dynamic-activated", function() {
+                                        this._tagHandler.defaultMesh().watch([innerKey], function() {
+                                            this._dataNode.mesh().write(this._dyn.variable, this._tagHandler.defaultMesh().read(innerKey));
+                                        }, this);
+                                    }, this);
+                                } else {
+                                    this._tagHandler.properties().on("change:" + innerKey, function(value) {
+                                        this._dataNode.mesh().write(this._dyn.variable, value);
+                                    }, this);
+                                }
                             }
                         }
                     }
@@ -1653,8 +1668,11 @@ Scoped.define("module:Handlers.Attr", [
                 if (this._partial) {
                     this._partial.unbindTagHandler(handler);
                 }
-                if (this._tagHandler)
+                if (this._tagHandler) {
                     this._tagHandler.properties().off(null, null, this);
+                    this._tagHandler.off("dynamic-activated", null, this);
+                    this._tagHandler.defaultMesh().unwatch(undefined, this);
+                }
                 this._tagHandler = null;
             },
 
@@ -1814,7 +1832,7 @@ Scoped.define("module:Handlers.HandlerMixin", [
                 value = Objs.tree_extend(this.properties().get(key) || {}, value);
             if (this.__types[key])
                 value = Types.parseType(value, this.__types[key]);
-            this.properties().set(key, value);
+            this.properties().setProp(key, value);
             this._argumentAttrs[key] = true;
         },
 
@@ -1886,6 +1904,10 @@ Scoped.define("module:Handlers.HandlerMixin", [
         },
 
         _afterActivate: function(activeElement) {},
+
+        defaultMesh: function() {
+            return this.__rootNodes[0].mesh();
+        },
 
         registerInheritableAttribute: function(tagName, attrKey, attrValue, node) {
             tagName = Registries.prefixNormalize(tagName, true);

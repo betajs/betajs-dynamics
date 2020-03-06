@@ -44,13 +44,20 @@ Scoped.define("module:Data.Mesh", [
             },
 
             unwatch: function(expressions, context) {
-                Objs.iter(expressions, function(expression) {
-                    var watcher = this.__createWatcher(expression, true);
-                    if (watcher) {
+                if (expressions) {
+                    Objs.iter(expressions, function(expression) {
+                        var watcher = this.__createWatcher(expression, true);
+                        if (watcher) {
+                            delete watcher.cbs[Ids.objectId(context)];
+                            this.__destroyWatcher(watcher, true);
+                        }
+                    }, this);
+                } else if (context) {
+                    Objs.iter(this.__watchers, function(watcher) {
                         delete watcher.cbs[Ids.objectId(context)];
                         this.__destroyWatcher(watcher, true);
-                    }
-                }, this);
+                    }, this);
+                }
             },
 
             __destroyWatcher: function(watcher, weak) {

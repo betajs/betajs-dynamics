@@ -1,0 +1,62 @@
+<html>
+<head>
+    
+
+
+    <script src="../../../node_modules/betajs-scoped/dist/scoped.js"></script>
+    <script src="../../../node_modules/betajs/dist/beta-noscoped.js"></script>
+    <script src="../../../node_modules/betajs-browser/dist/betajs-browser-noscoped.js"></script>
+    <script src="../../../dist/betajs-dynamics.js"></script>
+</head>
+<body>
+
+<div id="test">
+	<br>
+	<ba-subdyn ba-model.value="{{=model.value}}"></ba-subdyn>
+	<br>
+</div>
+
+<script>
+
+    var root = document.querySelector("#test");
+
+	BetaJS.Dynamics.Dynamic.extend(null, {
+		template: "<div></div>",
+		attrs: function () {
+		    return {
+                model: new BetaJS.Properties.Properties({
+                    value: "test"
+                })
+            };
+		}
+	}).register("ba-subdyn");
+
+	var dyn = new BetaJS.Dynamics.Dynamic({
+        element: root,
+        attrs: function () {
+            return {
+                model: new BetaJS.Properties.Properties({
+                    value: "foobar"
+                })
+            };
+        }
+    });
+    dyn.activate();
+
+    function test(assert) {
+    	var sub = dyn.scope(">").materialize();
+    	assert.equal(sub.length, 1);
+    	sub = sub[0];
+    	assert.equal(dyn.getProp("model.value"), "foobar");
+    	assert.equal(sub.getProp("model.value"), "foobar");
+    	sub.setProp("model.value", "xyz");
+    	assert.equal(dyn.getProp("model.value"), "xyz");
+    	assert.equal(sub.getProp("model.value"), "xyz");
+    	dyn.setProp("model.value", "baz");
+        assert.equal(dyn.getProp("model.value"), "baz");
+        assert.equal(sub.getProp("model.value"), "baz");
+    }
+</script>
+
+</body>
+</html>

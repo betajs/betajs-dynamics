@@ -150,7 +150,7 @@ Scoped.define("module:Handlers.Attr", [
                     if (this._attrName === "value" && this._element.value !== value)
                         this.__inputVal(this._element, value);
                     if (this._tagHandler && this._dyn && !this._partial)
-                        this._tagHandler.properties().set(Registries.prefixNormalize(this._attrName), value);
+                        this._tagHandler.properties().setProp(Registries.prefixNormalize(this._attrName), value);
                 }
             },
 
@@ -170,9 +170,17 @@ Scoped.define("module:Handlers.Attr", [
                                     secondKey: this._dyn.variable
                                 });
                             } else {
-                                this._tagHandler.properties().on("change:" + innerKey, function(value) {
-                                    this._dataNode.mesh().write(this._dyn.variable, value);
-                                }, this);
+                                if (innerKey.indexOf(".") >= 0) {
+                                    this._tagHandler.on("dynamic-activated", function() {
+                                        this._tagHandler.defaultMesh().watch([innerKey], function() {
+                                            this._dataNode.mesh().write(this._dyn.variable, this._tagHandler.defaultMesh().read(innerKey));
+                                        }, this);
+                                    }, this);
+                                } else {
+                                    this._tagHandler.properties().on("change:" + innerKey, function(value) {
+                                        this._dataNode.mesh().write(this._dyn.variable, value);
+                                    }, this);
+                                }
                             }
                         }
                     }
@@ -190,8 +198,11 @@ Scoped.define("module:Handlers.Attr", [
                 if (this._partial) {
                     this._partial.unbindTagHandler(handler);
                 }
-                if (this._tagHandler)
+                if (this._tagHandler) {
                     this._tagHandler.properties().off(null, null, this);
+                    this._tagHandler.off("dynamic-activated", null, this);
+                    this._tagHandler.defaultMesh().unwatch(undefined, this);
+                }
                 this._tagHandler = null;
             },
 

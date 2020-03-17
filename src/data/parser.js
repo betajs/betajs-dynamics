@@ -83,7 +83,12 @@ Scoped.define("module:Parser", [
                 var bidirectional = false;
                 var html = false;
                 var noentities = false;
+                var hidden = false;
                 var c = code;
+                if (c.charAt(0) === "?") {
+                    hidden = true;
+                    c = c.substring(1);
+                }
                 if (c.charAt(0) === "=") {
                     bidirectional = true;
                     c = c.substring(1);
@@ -102,6 +107,7 @@ Scoped.define("module:Parser", [
                 }
                 result = {
                     bidirectional: bidirectional,
+                    hidden: hidden,
                     html: html,
                     noentities: noentities,
                     args: args,

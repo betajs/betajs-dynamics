@@ -141,8 +141,8 @@ Scoped.define("module:Handlers.Attr", [
                         if (result === null && this._attrName === "class")
                             result = "";
 
-
-                        this._attribute.value = result;
+                        if (!this._dyn.hidden)
+                            this._attribute.value = result;
                     }
 
                     if (this._partial)

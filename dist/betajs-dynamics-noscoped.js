@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.139 - 2020-03-05
+betajs-dynamics - v0.0.140 - 2020-03-16
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,8 +12,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.139",
-    "datetime": 1583456400541
+    "version": "0.0.140",
+    "datetime": 1584408992620
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -651,7 +651,12 @@ Scoped.define("module:Parser", [
                 var bidirectional = false;
                 var html = false;
                 var noentities = false;
+                var hidden = false;
                 var c = code;
+                if (c.charAt(0) === "?") {
+                    hidden = true;
+                    c = c.substring(1);
+                }
                 if (c.charAt(0) === "=") {
                     bidirectional = true;
                     c = c.substring(1);
@@ -670,6 +675,7 @@ Scoped.define("module:Parser", [
                 }
                 result = {
                     bidirectional: bidirectional,
+                    hidden: hidden,
                     html: html,
                     noentities: noentities,
                     args: args,
@@ -1611,8 +1617,8 @@ Scoped.define("module:Handlers.Attr", [
                         if (result === null && this._attrName === "class")
                             result = "";
 
-
-                        this._attribute.value = result;
+                        if (!this._dyn.hidden)
+                            this._attribute.value = result;
                     }
 
                     if (this._partial)

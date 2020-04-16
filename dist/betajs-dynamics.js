@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.140 - 2020-03-16
+betajs-dynamics - v0.0.140 - 2020-04-15
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1010,7 +1010,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.140 - 2020-03-16
+betajs-dynamics - v0.0.140 - 2020-04-15
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1024,7 +1024,7 @@ Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
     "version": "0.0.140",
-    "datetime": 1584408992620
+    "datetime": 1587005532514
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -4219,7 +4219,9 @@ Scoped.define("module:Partials.RepeatPartial", [
                     this.__dynOpts = Parser.parseCode(args[0].trim());
                 args = args[args.length - 1];
                 args = args.split("~");
-                this.__repeatArg = args[0].trim();
+                var repArgs = args[0].trim().split(".");
+                this.__repeatArg = repArgs[0];
+                this.__indexArg = repArgs[1];
                 this._destroyCollection = false;
                 this._releaseValueCollection = false;
                 if (args.length > 1) {
@@ -4269,6 +4271,8 @@ Scoped.define("module:Partials.RepeatPartial", [
                 var self = this;
                 return this._node.mesh().execute(filter.dependencies, function(obj) {
                     obj[self.__repeatArg] = self._isArray ? prop.get("value") : prop.data();
+                    if (self.__indexArg)
+                        obj[self.__indexArg] = self._collection.getIndex(prop);
                     return filter.func.call(this, obj);
                 }, true);
             },
@@ -4340,6 +4344,8 @@ Scoped.define("module:Partials.RepeatPartial", [
                 var locals = {};
                 if (this.__repeatArg)
                     locals[this.__repeatArg] = this._isArray ? item.get("value") : item;
+                if (this.__indexArg)
+                    locals[this.__indexArg] = this._collection.getIndex(item);
                 var result = [];
                 var elements = this._newItemElements();
                 elements.forEach(function(element) {

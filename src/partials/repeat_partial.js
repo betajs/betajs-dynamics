@@ -39,7 +39,9 @@ Scoped.define("module:Partials.RepeatPartial", [
                     this.__dynOpts = Parser.parseCode(args[0].trim());
                 args = args[args.length - 1];
                 args = args.split("~");
-                this.__repeatArg = args[0].trim();
+                var repArgs = args[0].trim().split(".");
+                this.__repeatArg = repArgs[0];
+                this.__indexArg = repArgs[1];
                 this._destroyCollection = false;
                 this._releaseValueCollection = false;
                 if (args.length > 1) {
@@ -89,6 +91,8 @@ Scoped.define("module:Partials.RepeatPartial", [
                 var self = this;
                 return this._node.mesh().execute(filter.dependencies, function(obj) {
                     obj[self.__repeatArg] = self._isArray ? prop.get("value") : prop.data();
+                    if (self.__indexArg)
+                        obj[self.__indexArg] = self._collection.getIndex(prop);
                     return filter.func.call(this, obj);
                 }, true);
             },
@@ -160,6 +164,8 @@ Scoped.define("module:Partials.RepeatPartial", [
                 var locals = {};
                 if (this.__repeatArg)
                     locals[this.__repeatArg] = this._isArray ? item.get("value") : item;
+                if (this.__indexArg)
+                    locals[this.__indexArg] = this._collection.getIndex(item);
                 var result = [];
                 var elements = this._newItemElements();
                 elements.forEach(function(element) {

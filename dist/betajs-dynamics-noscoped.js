@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.140 - 2020-04-15
+betajs-dynamics - v0.0.142 - 2020-05-01
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,8 +12,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.140",
-    "datetime": 1587005532514
+    "version": "0.0.142",
+    "datetime": 1588366423989
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -213,16 +213,17 @@ Scoped.define("module:Data.Mesh", [
                 watcher.properties = n.properties;
                 var exp = n.head + (n.head && n.tail ? "." : "") + n.tail;
                 watcher.propertiesPrefix = exp;
+                var self = this;
                 watcher.properties.on("change:" + watcher.propertiesPrefix, function(value, oldValue, force) {
-                    Objs.iter(watcher.children, this.__unbindWatcher, this);
-                    Objs.iter(watcher.children, this.__bindWatcher, this);
+                    Objs.iter(watcher.children, self.__unbindWatcher, self);
+                    Objs.iter(watcher.children, self.__bindWatcher, self);
                     if (watcher.value != value || force) {
                         watcher.value = value;
                         Objs.iter(watcher.cbs, function(cb) {
                             cb.callback.apply(cb.context);
-                        }, this);
+                        }, self);
                     }
-                }, this);
+                }, watcher);
                 var value = watcher.properties.get(exp);
                 if (value != watcher.value) {
                     watcher.value = value;

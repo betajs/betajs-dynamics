@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.142 - 2020-05-01
+betajs-dynamics - v0.0.143 - 2020-11-05
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1010,7 +1010,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.142 - 2020-05-01
+betajs-dynamics - v0.0.143 - 2020-11-05
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1023,8 +1023,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.142",
-    "datetime": 1588366423989
+    "version": "0.0.143",
+    "datetime": 1604600208305
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -2226,6 +2226,7 @@ Scoped.define("module:Dynamic", [
         return {
 
             supportsGc: true,
+            proxyAttrs: false,
 
             _notifications: {
                 _activate: "__createActivate"
@@ -2300,6 +2301,10 @@ Scoped.define("module:Dynamic", [
                 this.friendgroup.registerScope(this, this.cls.registeredName());
                 if (this.friendgroup && this.parent() && this.parent().friendgroup !== this.friendgroup)
                     this.parent().friendgroup.registerScope(this, this.cls.registeredName());
+                if ("proxyAttrs" in options)
+                    this.proxyAttrs = options.proxyAttrs;
+                if (this.proxyAttrs)
+                    this.attrs = this.properties().getProxy();
             },
 
             handle_call_exception: function(name, args, e) {

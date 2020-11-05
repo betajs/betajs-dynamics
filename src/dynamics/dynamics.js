@@ -38,6 +38,7 @@ Scoped.define("module:Dynamic", [
         return {
 
             supportsGc: true,
+            proxyAttrs: false,
 
             _notifications: {
                 _activate: "__createActivate"
@@ -112,6 +113,10 @@ Scoped.define("module:Dynamic", [
                 this.friendgroup.registerScope(this, this.cls.registeredName());
                 if (this.friendgroup && this.parent() && this.parent().friendgroup !== this.friendgroup)
                     this.parent().friendgroup.registerScope(this, this.cls.registeredName());
+                if ("proxyAttrs" in options)
+                    this.proxyAttrs = options.proxyAttrs;
+                if (this.proxyAttrs)
+                    this.attrs = this.properties().getProxy();
             },
 
             handle_call_exception: function(name, args, e) {

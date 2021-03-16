@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.143 - 2020-11-05
+betajs-dynamics - v0.0.144 - 2021-03-15
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,8 +12,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.143",
-    "datetime": 1604600208305
+    "version": "0.0.144",
+    "datetime": 1615859516198
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -3547,14 +3547,19 @@ Scoped.define("module:Partials.ShowPartial", ["module:Handlers.Partial"], functi
     Cls.register("ba-show");
     return Cls;
 });
-Scoped.define("module:Partials.StylesPartial", ["module:Handlers.Partial"], function(Partial, scoped) {
+Scoped.define("module:Partials.StylesPartial", ["module:Handlers.Partial", "base:Objs"], function(Partial, Objs, scoped) {
     var Cls = Partial.extend({
         scoped: scoped
     }, {
 
         _apply: function(value) {
-            for (var key in value)
-                this._node._element.style[key] = value[key];
+            var s = this._node._element.style;
+            Objs.iter(this.__previousValue, function(v, k) {
+                if (!(k in value))
+                    s.removeProperty(k);
+            });
+            Objs.extend(s, value);
+            this.__previousValue = Objs.clone(value, 1);
         }
 
     });

@@ -1,11 +1,16 @@
-Scoped.define("module:Partials.StylesPartial", ["module:Handlers.Partial"], function(Partial, scoped) {
+Scoped.define("module:Partials.StylesPartial", ["module:Handlers.Partial", "base:Objs"], function(Partial, Objs, scoped) {
     var Cls = Partial.extend({
         scoped: scoped
     }, {
 
         _apply: function(value) {
-            for (var key in value)
-                this._node._element.style[key] = value[key];
+            var s = this._node._element.style;
+            Objs.iter(this.__previousValue, function(v, k) {
+                if (!(k in value))
+                    s.removeProperty(k);
+            });
+            Objs.extend(s, value);
+            this.__previousValue = Objs.clone(value, 1);
         }
 
     });

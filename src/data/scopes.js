@@ -270,7 +270,7 @@ Scoped.define("module:Data.Scope", [
                     else
                         return name.apply(this, args);
                 } catch (e) {
-                    this.__consoleShortError(e, name);
+                    console.error(e);
                     return this.handle_call_exception(name, args, e);
                 }
             },
@@ -349,45 +349,7 @@ Scoped.define("module:Data.Scope", [
                     }, this);
                 } else
                     this.properties().bind(key, scope.properties(), options);
-            },
-
-            __consoleShortError(e, name) {
-                var errorMessage = 'Error on action: ' + name + '; ';
-                if (typeof e.message !== 'undefined')
-                    errorMessage += "Message: " + e.message + "; ";
-
-                if (typeof e.fileName !== 'undefined')
-                    errorMessage += "In File: " + e.fileName + "; ";
-                else
-                    errorMessage += "File name is not determined; ";
-
-                if (typeof e.lineNumber !== 'undefined')
-                    errorMessage += "In line: " + e.lineNumber + "; ";
-
-                if (e instanceof ReferenceError) {
-                    errorMessage += "ReferenceError: Non-existent variable is referenced; ";
-                }
-                if (e instanceof RangeError) {
-                    errorMessage += "RangeError: Value is not in the set or range of allowed values; ";
-                }
-                if (e instanceof SyntaxError) {
-                    errorMessage += "SyntaxError: Syntactically invalid code (JavaScript engine encounters tokens or token order that does not conform to the syntax of the language when parsing code); ";
-                }
-                if (e instanceof TypeError) {
-                    errorMessage += "TypeError: An operand or argument passed to a function is incompatible with the type expected by that operator or function; OR attempting to modify a value that cannot be changed; OR attempting to use a value in an inappropriate way. ";
-                }
-                if (e instanceof URIError) {
-                    errorMessage += "URIError: A global URI handling function was used in a wrong way. ";
-                }
-                if (e instanceof EvalError) {
-                    errorMessage += "EvalError: Error regarding the global eval() function. ";
-                }
-                if (e instanceof AggregateError) {
-                    errorMessage += "AggregateError: A global URI handling function was used in a wrong way. ";
-                }
-                console.error('Error details: ', errorMessage);
             }
-
 
         };
     }], {

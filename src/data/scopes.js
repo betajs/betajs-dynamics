@@ -270,6 +270,7 @@ Scoped.define("module:Data.Scope", [
                     else
                         return name.apply(this, args);
                 } catch (e) {
+                    console.error(e);
                     return this.handle_call_exception(name, args, e);
                 }
             },

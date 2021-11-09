@@ -264,7 +264,8 @@ Scoped.define("module:Handlers.Node", [
 
             _removeChildren: function() {
                 Objs.iter(this._children, function(child) {
-                    child.destroy();
+                    if (child)
+                        child.weakDestroy();
                 });
             },
 

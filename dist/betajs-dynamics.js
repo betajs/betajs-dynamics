@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.145 - 2021-08-19
+betajs-dynamics - v0.0.146 - 2021-11-08
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1010,7 +1010,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.145 - 2021-08-19
+betajs-dynamics - v0.0.146 - 2021-11-08
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1023,8 +1023,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.145",
-    "datetime": 1629429237832
+    "version": "0.0.146",
+    "datetime": 1636432855101
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -3306,7 +3306,8 @@ Scoped.define("module:Handlers.Node", [
 
             _removeChildren: function() {
                 Objs.iter(this._children, function(child) {
-                    child.destroy();
+                    if (child)
+                        child.weakDestroy();
                 });
             },
 

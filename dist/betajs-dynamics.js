@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.146 - 2021-11-08
+betajs-dynamics - v0.0.146 - 2022-12-07
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1010,7 +1010,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.146 - 2021-11-08
+betajs-dynamics - v0.0.146 - 2022-12-07
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1024,7 +1024,7 @@ Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
     "version": "0.0.146",
-    "datetime": 1636432855101
+    "datetime": 1670451232293
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -2241,7 +2241,9 @@ Scoped.define("module:Dynamic", [
                 Objs.iter(this.cls.__initialForward, function(key) {
                     if (!(key in this))
                         return;
-                    if (key in options) {
+                    if (key === "attrs" && options.attrs && this.attrs && Types.is_function(this.attrs))
+                        options.attrs = Objs.extend(this.attrs.call(this), options.attrs);
+                    else if (key in options) {
                         if (Types.is_object(this[key]) && Types.is_object(options[key]))
                             options[key] = Objs.extend(Objs.clone(this[key], 1), options[key]);
                     } else

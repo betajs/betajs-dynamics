@@ -52,7 +52,9 @@ Scoped.define("module:Dynamic", [
                 Objs.iter(this.cls.__initialForward, function(key) {
                     if (!(key in this))
                         return;
-                    if (key in options) {
+                    if (key === "attrs" && options.attrs && this.attrs && Types.is_function(this.attrs))
+                        options.attrs = Objs.extend(this.attrs.call(this), options.attrs);
+                    else if (key in options) {
                         if (Types.is_object(this[key]) && Types.is_object(options[key]))
                             options[key] = Objs.extend(Objs.clone(this[key], 1), options[key]);
                     } else

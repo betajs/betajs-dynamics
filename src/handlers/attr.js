@@ -107,10 +107,14 @@ Scoped.define("module:Handlers.Attr", [
                             // Ensures the domEvent does not continue to
                             // overshadow another variable after the __executeDyn call ends.
                             var oldDomEvent = this._node._locals.domEvent;
+                            var oldCurrElement = this._node._locals.currElement;
                             this._node._locals.domEvent = arguments;
+                            this._node._locals.currElement = this._element;
                             this._node.__executeDyn(this._dyn);
-                            if (this._node && this._node._locals)
+                            if (this._node && this._node._locals) {
                                 this._node._locals.domEvent = oldDomEvent;
+                                this._node._locals.currElement = oldCurrElement;
+                            }
                         }, this);
                     }
                 }

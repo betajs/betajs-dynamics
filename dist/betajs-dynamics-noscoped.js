@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.146 - 2022-12-07
+betajs-dynamics - v0.0.148 - 2022-12-15
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,8 +12,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.146",
-    "datetime": 1670451232293
+    "version": "0.0.148",
+    "datetime": 1671098045275
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -1592,10 +1592,14 @@ Scoped.define("module:Handlers.Attr", [
                             // Ensures the domEvent does not continue to
                             // overshadow another variable after the __executeDyn call ends.
                             var oldDomEvent = this._node._locals.domEvent;
+                            var oldCurrElement = this._node._locals.currElement;
                             this._node._locals.domEvent = arguments;
+                            this._node._locals.currElement = this._element;
                             this._node.__executeDyn(this._dyn);
-                            if (this._node && this._node._locals)
+                            if (this._node && this._node._locals) {
                                 this._node._locals.domEvent = oldDomEvent;
+                                this._node._locals.currElement = oldCurrElement;
+                            }
                         }, this);
                     }
                 }

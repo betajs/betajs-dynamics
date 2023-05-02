@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.148 - 2022-12-15
+betajs-dynamics - v0.0.149 - 2023-05-02
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1010,7 +1010,7 @@ Public.exports();
 	return Public;
 }).call(this);
 /*!
-betajs-dynamics - v0.0.148 - 2022-12-15
+betajs-dynamics - v0.0.149 - 2023-05-02
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -1023,8 +1023,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.148",
-    "datetime": 1671098045275
+    "version": "0.0.149",
+    "datetime": 1683057106340
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -1594,16 +1594,21 @@ Scoped.define("module:Parser", [
         compileFunction: function(code) {
             code = code.trim();
             if (!(code in this.__functions)) {
-                if (this.secureMode)
-                    throw ("Dynamics Secure Mode prevents creation of function code '" + code + "'.");
-                /*jslint evil: true */
-                try {
-                    this.__functions[code] = new Function("obj", "with (obj) { return " + code + "; }");
-                } catch (e) {
-                    console.warn("Cannot compile `" + code + "` : " + e);
+                if (this.secureMode) {
+                    console.warn("Dynamics Secure Mode prevents creation of function code '" + code + "'.");
                     this.__functions[code] = function() {
                         return {};
                     };
+                } else {
+                    /*jslint evil: true */
+                    try {
+                        this.__functions[code] = new Function("obj", "with (obj) { return " + code + "; }");
+                    } catch (e) {
+                        console.warn("Cannot compile `" + code + "` : " + e);
+                        this.__functions[code] = function() {
+                            return {};
+                        };
+                    }
                 }
             }
             return this.__functions[code];

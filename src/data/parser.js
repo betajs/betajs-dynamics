@@ -14,16 +14,21 @@ Scoped.define("module:Parser", [
         compileFunction: function(code) {
             code = code.trim();
             if (!(code in this.__functions)) {
-                if (this.secureMode)
-                    throw ("Dynamics Secure Mode prevents creation of function code '" + code + "'.");
-                /*jslint evil: true */
-                try {
-                    this.__functions[code] = new Function("obj", "with (obj) { return " + code + "; }");
-                } catch (e) {
-                    console.warn("Cannot compile `" + code + "` : " + e);
+                if (this.secureMode) {
+                    console.warn("Dynamics Secure Mode prevents creation of function code '" + code + "'.");
                     this.__functions[code] = function() {
                         return {};
                     };
+                } else {
+                    /*jslint evil: true */
+                    try {
+                        this.__functions[code] = new Function("obj", "with (obj) { return " + code + "; }");
+                    } catch (e) {
+                        console.warn("Cannot compile `" + code + "` : " + e);
+                        this.__functions[code] = function() {
+                            return {};
+                        };
+                    }
                 }
             }
             return this.__functions[code];

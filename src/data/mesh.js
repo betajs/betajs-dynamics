@@ -278,13 +278,17 @@ Scoped.define("module:Data.Mesh", [
 
             __collapse: function(obj, expressions) {
                 var result = {};
-                Objs.iter(expressions, function(expression) {
-                    var keys = expression.split(".");
-                    var current = obj;
-                    for (var i = 0; i < keys.length; ++i)
-                        current = current[keys[i]];
-                    result[expression] = current;
-                });
+                try {
+                    Objs.iter(expressions, function(expression) {
+                        var keys = expression.split(".");
+                        var current = obj;
+                        for (var i = 0; i < keys.length; ++i)
+                            current = current[keys[i]];
+                        result[expression] = current;
+                    });
+                } catch (e) {
+                    console.warn("Could not collapse dynamics expression", obj, expressions);
+                }
                 return result;
             }
 

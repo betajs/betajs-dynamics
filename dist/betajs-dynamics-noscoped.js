@@ -1,5 +1,5 @@
 /*!
-betajs-dynamics - v0.0.149 - 2023-05-02
+betajs-dynamics - v0.0.150 - 2023-05-08
 Copyright (c) Victor Lingenthal,Oliver Friedmann
 Apache-2.0 Software License.
 */
@@ -12,8 +12,8 @@ Scoped.binding('browser', 'global:BetaJS.Browser');
 Scoped.define("module:", function () {
 	return {
     "guid": "d71ebf84-e555-4e9b-b18a-11d74fdcefe2",
-    "version": "0.0.149",
-    "datetime": 1683057106340
+    "version": "0.0.150",
+    "datetime": 1683566482589
 };
 });
 Scoped.assumeVersion('base:version', '~1.0.146');
@@ -367,13 +367,17 @@ Scoped.define("module:Data.Mesh", [
 
             __collapse: function(obj, expressions) {
                 var result = {};
-                Objs.iter(expressions, function(expression) {
-                    var keys = expression.split(".");
-                    var current = obj;
-                    for (var i = 0; i < keys.length; ++i)
-                        current = current[keys[i]];
-                    result[expression] = current;
-                });
+                try {
+                    Objs.iter(expressions, function(expression) {
+                        var keys = expression.split(".");
+                        var current = obj;
+                        for (var i = 0; i < keys.length; ++i)
+                            current = current[keys[i]];
+                        result[expression] = current;
+                    });
+                } catch (e) {
+                    console.warn("Could not collapse dynamics expression", obj, expressions);
+                }
                 return result;
             }
 
